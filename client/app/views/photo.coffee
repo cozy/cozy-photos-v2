@@ -4,13 +4,23 @@ module.exports = class PhotoView extends BaseView
     template: require 'templates/photo'
     className: 'photo'
 
-    events:
-        'click   btn.delete' : 'deletePhoto'
+    events: =>
+        'click   btn.delete' : => @model.destroy()
 
-    getRenderData: -> @model.attributes
+    getRenderData: ->
+        data = {}
+        data.thumbsrc = if @model.isNew() then @model.thumb_du
+        else "photos/thumbs/#{@model.id}.jpg"
+        data.thumbsrc ?= 'http://placehold.it/150/&text=loading'
 
-    initialize: ->
-        @listenTo @model, 'change', @render
+        data.src = if @model.isNew() then @model.file_du
+        else "photos/#{@model.id}.jpg"
+        data.src ?= "#"
 
-    deletePhoto: ->
-        @model.destroy()
+        _.extend data, @model.attributes
+
+    initialize: (options) ->
+        super
+        @listenTo @model, 'change', ->
+            console.log arguments
+            @render()

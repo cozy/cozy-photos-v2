@@ -4,14 +4,13 @@ Photo = require '../models/photo'
 module.exports =
 
     fetch: (req, res, next, id) ->
-        console.log 'in fetch : id='+id
+        console.log "album fetch"
         Album.find id, (err, album) ->
             if err
                 next res.error 500, 'An error occured', err
             else if album == null
                 next res.error 404, 'Album not found'
             else
-                console.log album
                 req.album = album
                 next()
 
@@ -27,7 +26,6 @@ module.exports =
             else res.error 500, "Creation failed.", err
 
     read: (req, res) ->
-        console.log req.album
         Photo.fromAlbum req.album, (err, photos) ->
             if err then res.error 500, 'An error occured', err
             else
@@ -51,7 +49,7 @@ module.exports =
             if err
                 res.error 500, "Update failed.", err
             else
-                res.success "Update succeded."
+                res.success req.album
 
     delete: (req, res) ->
         req.album.destroy (err) ->

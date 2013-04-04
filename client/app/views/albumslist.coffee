@@ -24,5 +24,7 @@ module.exports = class AlbumList extends ViewCollection
     events:
         'click #create-album' : 'createAlbum'
 
+    itemViewOptions: -> editable: @options.editable
+
     createAlbum: ->
         app.router.navigate "albums/new", trigger:true

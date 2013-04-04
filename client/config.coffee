@@ -19,6 +19,8 @@ exports.config =
           'vendor/scripts/backbone.js',
           # Photobox
           'vendor/scripts/photobox.js',
+          # Async
+          'vendor/scripts/async.js',
           # Twitter Bootstrap jquery plugins
           'vendor/scripts/bootstrap.js',
         ]

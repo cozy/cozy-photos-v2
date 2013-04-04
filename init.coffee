@@ -1,5 +1,5 @@
 # define requests here
-
+fs = require 'fs'
 Album = require './server/models/album'
 Photo = require './server/models/photo'
 
@@ -18,18 +18,11 @@ Photo.defineRequest 'all', allMap, (err) ->
         console.log err.stack
 
 byAlbumMap = (photo) ->
-    emit [photo.albumid, photo._id], photo
+    emit photo.albumid, photo
 
 Photo.defineRequest 'byalbum', byAlbumMap, (err) ->
     if err
         console.log 'failed to create request "byalbum" for photos'
         console.log err.stack
 
-album = new Album
-    title: 'Jura'
-    description: 'Some pictures from our hollidays in Jura'
-
-Album.create album, (err, final) ->
-    console.log 'album created'
-    console.log final.title
-    console.log err.stack if err
+fs.mkdir './uploads'

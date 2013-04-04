@@ -1,5 +1,6 @@
 Photo = require '../models/photo'
 async = require 'async'
+fs = require 'fs'
 
 module.exports =
 
@@ -25,8 +26,14 @@ module.exports =
                 res.error 500, "Creation failed.", err
             else
                 async.parallel [
-                    (cb) -> photo.attachFile raw.path, {name: 'raw'}, cb
-                    (cb) -> photo.attachFile thumb.path, {name: 'thumb'}, cb
+                    (cb) ->
+                        data = name: 'raw', type: raw.type
+                        photo.attachFile raw.path, data, ->
+                            fs.unlink raw.path, cb
+                    (cb) ->
+                        data = name: 'thumb', type: thumb.type
+                        photo.attachFile thumb.path, data, ->
+                            fs.unlink thumb.path, cb
                 ], (err) ->
                     if err then res.error 500, "Creation failed.", err
                     else
@@ -35,16 +42,16 @@ module.exports =
                         res.send photo, 201
 
     raw: (req, res) ->
-        res.contentType = "image/jpg"
+        res.setHeader 'Content-Type', 'image/jpg'
         stream = req.photo.getFile 'raw', (err) ->
-            res.error 500, "File fetching failed.", err if err
+            if err then res.error 500, "File fetching failed.", err
 
         stream.pipe res
 
     thumb: (req, res) ->
-        res.contentType = "image/jpg"
+        res.set 'Content-Type', 'image/jpeg'
         stream = req.photo.getFile 'thumb', (err) ->
-            res.error 500, "File fetching failed.", err if err
+            if err then res.error 500, "File fetching failed.", err
 
         stream.pipe res
 

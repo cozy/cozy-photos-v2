@@ -33,15 +33,17 @@ module.exports = class Router extends Backbone.Router
 
     album: (id) ->
         album = app.albums.get id
-        @displayView new AlbumView
-            model: album
-            editable: false
+        album.fetch().done =>
+            @displayView new AlbumView
+                model: album
+                editable: false
 
     albumedit: (id) ->
         album = app.albums.get id
-        @displayView new AlbumView
-            model: album
-            editable: true
+        album.fetch().done =>
+            @displayView new AlbumView
+                model: album
+                editable: true
 
     displayView: (view) =>
         @mainView.remove() if @mainView

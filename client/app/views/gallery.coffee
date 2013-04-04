@@ -1,6 +1,8 @@
 ViewCollection = require 'lib/view_collection'
+
 PhotoView = require 'views/photo'
 Photo = require 'models/photo'
+photoprocessor = require 'models/photoprocessor'
 
 module.exports = class Gallery extends ViewCollection
     itemview: PhotoView
@@ -14,7 +16,10 @@ module.exports = class Gallery extends ViewCollection
         @beforeUpload = options.beforeUpload
 
     afterRender: ->
-        @$el.photobox 'a', thumbs:true , ->
+        super
+        @$el.photobox 'a', thumbs:true
+
+    itemViewOptions: -> editable: @options.editable
 
     onFilesDropped: (evt) ->
         @$el.removeClass 'dragover'
@@ -31,10 +36,14 @@ module.exports = class Gallery extends ViewCollection
         return false
 
     handleFiles: (files) ->
+        console.log 'B'
         @beforeUpload (options) =>
+            console.log 'A'
             for file in files
-                photoattrs = title: file.name
-                photo = new Photo _.extend photoattrs, options
-
-                photo.doUpload file
+                console.log 'C'
+                photoattrs = _.extend title: file.name, options
+                photo = new Photo photoattrs
                 @collection.add photo
+                console.log 'D'
+
+                photoprocessor.process file, photo

@@ -4,7 +4,9 @@ module.exports = (app) ->
     shortcuts = require './helpers/shortcut'
 
     # all environements
-    app.use express.bodyParser uploadDir: './uploads'
+    app.use express.bodyParser
+        uploadDir: './uploads'
+        keepExtensions: true
     app.use shortcuts # extend express to DRY controllers
 
     #test environement

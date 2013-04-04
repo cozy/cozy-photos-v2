@@ -4,34 +4,26 @@ module.exports = class Photo extends Backbone.Model
 
     defaults: ->
         title:'noname'
-        src:'#'
-        thumbsrc:'http://placehold.it/150/&text=loading'
 
     sync: (method, model, options) ->
         if method is 'create'
             formdata = new FormData()
             formdata.append 'raw', @file
-            formdata.append 'thumb', @thumb
-            formdata.append 'title', @get 'title'
+            formdata.append 'thumb', @thumb, "thumb_#{@file.name}"
+            for key, value of @toJSON()
+                formdata.append key, value
 
             options.data = formdata
             options.contentType = false
 
         super method, model, options
 
-    initialize: ->
-        if @isNew() then @on 'change:id', @setSources
-        else @setSources()
-
-    setSources: =>
-        @set 'src', "photos/#{@id}.jpg"
-        @set 'thumbsrc', "photos/thumbs/#{@id}.jpg"
-
     readFile: (next) =>
         reader = new FileReader()
         @img = new Image()
         reader.readAsDataURL @file
         reader.onloadend = =>
+            @file_du = reader.result
             @img.src = reader.result
             @img.onload = ->
                 next()
@@ -67,19 +59,17 @@ module.exports = class Photo extends Backbone.Model
 
         next()
 
-    doUpload: (file) ->
+    doUpload: (file, done) ->
         @file = file
-        setTimeout =>
-            @readFile =>
-                @makeThumbDataURI =>
-                    @set 'thumbsrc', @thumb_du
-                    @makeThumbBlob =>
-                        @save
-                            success: =>
-                                @file = null
-                                @thumb = null
-
-
-        , 1
+        @readFile =>
+            @makeThumbDataURI =>
+                @makeThumbBlob =>
+                    @save null,
+                        success: =>
+                            delete @file
+                            delete @file_du
+                            delete @thumb
+                            delete @thumb_du
+                            done()
 
         return this

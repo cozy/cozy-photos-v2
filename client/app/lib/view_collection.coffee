@@ -7,15 +7,19 @@ module.exports = class ViewCollection extends BaseView
 
     template: -> ''
 
-    initialize: (options) ->
-        super
+    initialize: ->
+
+    itemViewOptions: ->
+
+    afterRender: ->
         @collection.forEach @onAdd
         @listenTo @collection, "reset",   @onReset
         @listenTo @collection, "add",     @onAdd
         @listenTo @collection, "remove",  @onRemove
 
     onAdd: (model) =>
-        view = new @itemview _.extend model: model, @options
+        options = _.extend {}, {model: model}, @itemViewOptions(model)
+        view = new @itemview options
         view.render()
         @views[model.id] = view
         @appendView view
@@ -34,7 +38,3 @@ module.exports = class ViewCollection extends BaseView
             view.remove()
         views = {}
         newcollection.forEach @onAdd
-
-    afterRender: =>
-        @collection.forEach @onAdd
-

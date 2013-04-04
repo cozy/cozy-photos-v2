@@ -8,12 +8,7 @@ module.exports = class AlbumView extends BaseView
 
     className: 'container-fluid'
 
-    initialize: (options) ->
-        super
-        @model.fetch() unless @model.isNew()
-
-    getRenderData: ->
-        _.extend {editable: @editable}, @model.attributes
+    getRenderData: -> @model.attributes
 
     afterRender: ->
         @about       = @$ '#about'
@@ -23,9 +18,11 @@ module.exports = class AlbumView extends BaseView
 
         @gallery = new Gallery
             el: @gallerydiv
-            editable : @editable
+            editable : @options.editable
             collection : @model.photos
             beforeUpload : @beforePhotoUpload
+
+        @gallery.render()
 
         if @options.editable
             editable @title,
@@ -38,7 +35,7 @@ module.exports = class AlbumView extends BaseView
 
     beforePhotoUpload: (done) =>
         if @model.isNew()
-            saveModel().then => done albumid:@model.id
+            @saveModel().then => done albumid:@model.id
         else
             done albumid:@model.id
 
