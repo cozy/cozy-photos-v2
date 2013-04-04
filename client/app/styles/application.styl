@@ -1,0 +1,137 @@
+@font-face
+    font-family: styled
+    src: url('/fonts/maven-pro-light-300.otf');
+
+@font-face
+    font-family: main
+    src: url('/fonts/signika-regular.ttf');
+
+bgcolor = #545e5f + 20%
+shadowcolor = #444
+highlightcolor = #E2F8FF
+
+body
+  height 97%
+  padding 1%
+  background-color bgcolor
+
+.editor
+  position absolute
+  top 5px
+  right 5px
+  background-color rgba(50, 50, 50, .5)
+  border-radius 3px
+  .btn
+    background transparent
+
+
+
+.albumitem
+  width 30%
+  min-width 450px
+  height 120px
+  float left
+  margin 15px
+  padding 10px
+  color white
+  position relative
+
+  a
+    display block
+
+  img
+    box-sizing: border-box
+    box-shadow: 3px 3px 3px shadowcolor
+    border-radius 10px
+    margin-right 10px
+    width 100px
+    height 100px
+    transition .2s ease-out
+    -webkit-transition .2s ease-out
+
+  img:hover
+    border 2px solid highlightcolor
+
+  img:active
+    transition 0s ease-out
+    -webkit-transition 0s ease-out
+    box-shadow: 0px 0px 0px shadowcolor
+
+#about
+  height 90%
+  transition .4s ease-out
+  -webkit-transition .4s ease-out
+
+  h1, h1 a
+    color white
+  h1 a:hover
+    color orange
+    text-decoration none
+
+  #path
+    float left
+
+
+  #description
+    background transparent
+    text-align justify
+    color darkgrey
+    width 100%
+    margin 0
+    padding 0
+    overflow auto
+    resize none
+    border 0px
+
+#about:hover #description
+  color white
+  transition .4s ease-out
+  -webkit-transition .4s ease-out
+
+btn.delete
+  position absolute
+  top 1px
+  right 1px
+  display block
+  z-index 2
+
+#photos
+  min-height 300px
+
+  .photo
+    float left
+    margin 5px
+    position relative
+
+    a
+      display block
+      width 75px
+      height 68px
+      vertical-align bottom
+      overflow hidden
+      background rgba(0,0,0,0.1)
+      transition .4s ease-out
+      -webkit-transition .4s ease-out
+      border 1px solid transparent
+
+      img
+        width 100%
+        height 100%
+
+    a:hover
+      border 1px solid white
+      box-shadow 0 0 0 2px #FFF, 0 0 20px 5px #000
+      transition .1s
+      -webkit-transition:0.1s
+
+  .photo:hover
+    transform scale(1.5)
+    -webkit-transform scale(1.5)
+    z-index 3
+
+    img
+      transform:scale(1.2)
+      -webkit-transform:scale(1.2)
+
+#photos.dragover
+  background-color green

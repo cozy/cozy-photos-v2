@@ -1,0 +1,17 @@
+div.row-fluid
+  div#about.span4
+    h1#path
+      a(href="#albums") &lt;
+      | &nbsp;
+    h1#title #{title}
+    div#description #{description}
+  div#photos.span8
+
+if 'undefined' != typeof id
+    div.btn-group.editor
+      if editable
+        a.btn.btn-inverse(href="#albums/#{id}")
+          i.icon-eye-open.icon-white
+      else
+        a.btn.btn-inverse(href="#albums/#{id}/edit")
+          i.icon-edit.icon-white

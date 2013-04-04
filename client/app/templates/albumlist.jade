@@ -1,0 +1,10 @@
+div.btn-group.editor
+  a.btn.btn-inverse(href="#albums/new")
+    i.icon-plus.icon-white
+
+  if editable
+    a.btn.btn-inverse(href="#albums")
+      i.icon-eye-open.icon-white
+  else
+    a.btn.btn-inverse(href="#albums/edit")
+      i.icon-edit.icon-white
