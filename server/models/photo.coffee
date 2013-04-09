@@ -10,6 +10,4 @@ Photo.fromAlbum = (album, callback) ->
     params =
         key: album.id
 
-    console.log "params=", params
-
     Photo.request 'byalbum', params, callback

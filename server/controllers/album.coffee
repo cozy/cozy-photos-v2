@@ -15,9 +15,30 @@ module.exports =
                 next()
 
     list: (req, res) ->
-        Album.request 'all', (err, albums) ->
-            if not err then res.send albums
-            else res.error 500, 'An error occured', err
+
+        output = null
+        albums = null
+        photos = null
+
+        albumPhotosOptions =
+            reduce: true
+            group: true
+
+        reunion = ->
+            if albums? and photos?
+                for album in albums
+                    for photo in photos
+                        if photo.key is album._id
+                            album.thumb = photo.value
+                res.send albums
+
+        Photo.rawRequest 'albumphotos', albumPhotosOptions, (err, result) ->
+            photos = result
+            reunion()
+
+        Album.request 'all', (err, result) ->
+            albums = result
+            reunion()
 
     create: (req, res) ->
         album = new Album req.body
@@ -49,7 +70,7 @@ module.exports =
             if err
                 res.error 500, "Update failed.", err
             else
-                res.success req.album
+                res.send req.album
 
     delete: (req, res) ->
         req.album.destroy (err) ->

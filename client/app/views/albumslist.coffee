@@ -8,11 +8,15 @@ Album = require 'models/album'
 class AlbumItem extends BaseView
     className: 'albumitem media'
     template: require 'templates/albumlist_item'
+    initialize: ->
+        @model.on 'change', => @render()
+
     events: =>
         'click btn.delete' : => @model.destroy()
 
     getRenderData: ->
         out = @model.attributes
+        out.thumbsrc = "photos/thumbs/#{out.thumb}.jpg"
         out.description = limitLength out.description, 250
         return out
 
@@ -21,10 +25,5 @@ module.exports = class AlbumList extends ViewCollection
     id: 'album-list'
     itemview: AlbumItem
     template: require 'templates/albumlist'
-    events:
-        'click #create-album' : 'createAlbum'
 
     itemViewOptions: -> editable: @options.editable
-
-    createAlbum: ->
-        app.router.navigate "albums/new", trigger:true

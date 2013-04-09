@@ -13,11 +13,13 @@ module.exports = class Router extends Backbone.Router
         'albums/:albumid/edit': 'albumedit'
 
     albumslist: ->
+        app.albums.fetch()
         @displayView new AlbumListView
             collection: app.albums
             editable: false
 
     albumslistedit: ->
+        app.albums.fetch()
         @displayView new AlbumListView
             collection: app.albums
             editable: true

@@ -13,7 +13,6 @@ module.exports = class Album extends Backbone.Model
         return super
 
     parse: (attrs) ->
-
         @photos.reset attrs.photos if attrs.photos?.length > 0
         delete attrs.photos
         return attrs
