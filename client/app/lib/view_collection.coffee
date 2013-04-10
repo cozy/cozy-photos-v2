@@ -1,4 +1,16 @@
 BaseView = require 'lib/base_view'
+
+# View that display a collection of subitems
+# used to DRY views
+# Usage : new ViewCollection(collection:collection)
+# Automatically populate itself by creating a itemView for each item
+# in its collection
+
+# can use a template that will be displayed alongside the itemViews
+
+# itemViews       : the Backbone.View to be used for items
+# itemViewOptions : the options that will be passed to itemViews
+
 module.exports = class ViewCollection extends BaseView
 
     itemview: null
@@ -12,7 +24,7 @@ module.exports = class ViewCollection extends BaseView
     itemViewOptions: ->
 
     afterRender: ->
-        @collection.forEach @onAdd
+        @onReset @collection
         @listenTo @collection, "reset",   @onReset
         @listenTo @collection, "add",     @onAdd
         @listenTo @collection, "remove",  @onRemove
