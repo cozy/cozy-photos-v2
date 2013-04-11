@@ -1,4 +1,4 @@
-module.exports = Application =
+module.exports =
 
     initialize: ->
         AlbumCollection = require('collections/album')
@@ -7,8 +7,6 @@ module.exports = Application =
         @albums = new AlbumCollection()
         @router = new Router()
 
-        @albums.fetch()
-        @albums.once 'sync', ->
-            Backbone.history.start()
+        Backbone.history.start()
 
         Object.freeze this if typeof Object.freeze is 'function'

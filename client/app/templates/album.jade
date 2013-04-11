@@ -9,6 +9,8 @@ div.row-fluid
 
 if 'undefined' != typeof id
     div.btn-group.editor
+      a.btn.delete.btn-inverse
+        i.icon-remove.icon-white
       if editable
         a.btn.btn-inverse(href="#albums/#{id}")
           i.icon-eye-open.icon-white

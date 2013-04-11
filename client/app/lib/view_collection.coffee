@@ -19,8 +19,6 @@ module.exports = class ViewCollection extends BaseView
 
     template: -> ''
 
-    initialize: ->
-
     itemViewOptions: ->
 
     afterRender: ->

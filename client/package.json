@@ -1,25 +1,16 @@
 {
   "name": "cozy-photos",
   "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
-  "dependencies": {
-  },
+  "description": "Photo management application for Cozy Cloud",
+  "dependencies": {},
   "devDependencies": {
     "css-brunch": "> 1.0 < 1.5",
     "javascript-brunch": "> 1.0 < 1.5",
     "coffee-script-brunch": "> 1.0 < 1.5",
     "jade-brunch": "> 1.0 < 1.5",
-    "stylus-brunch": ">= 1.0 < 1.4",
-    "uglify-js-brunch": "> 1.0 < 1.5",
-    "clean-css-brunch": "> 1.0 < 1.5",
-    "auto-reload-brunch": "> 1.0 < 1.5"
+    "stylus-brunch": ">= 1.0 < 1.4"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": "",
-  "author": "",
-  "license": "BSD",
+  "repository": "https://github.com/aenario/cozy-photos",
+  "author": "Romain M. Foucault",
   "readmeFilename": "README.md"
 }
