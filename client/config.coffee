@@ -40,7 +40,10 @@ exports.config =
                 'stylesheets/app.css': /^app/
                 'stylesheets/vendor.css': /^vendor/
             order:
-                before: []
+                before: [
+                    'vendor/styles/bootstrap.css'
+                    'vendor/styles/bootstrap-responsive.css',
+                ]
                 after: []
         templates:
             defaultExtension: 'jade'

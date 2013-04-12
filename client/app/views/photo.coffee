@@ -1,26 +1,31 @@
 BaseView = require 'lib/base_view'
 
 # View for a single photo
+# Expected options {model, editable}
 module.exports = class PhotoView extends BaseView
     template: require 'templates/photo'
     className: 'photo'
 
     initialize: (options) ->
         super
-        # render every time the model change
+        # re-render every time the model change
         @listenTo @model, 'change', -> @render()
 
     events: =>
-        'click   btn.delete' : => @model.destroy()
+        'click btn.delete' : 'destroyModel'
+        'click' : (evt) =>
+            if not @model.get 'src'
+                evt.stopPropagation()
+                evt.preventDefault()
+                return false
 
-    getRenderData: ->
-        thumb = 'img/loading.gif'
-        if not @model.isNew()
-            thumb = "photos/thumbs/#{@model.id}.jpg"
-        else if @model.thumb_du
-            thumb = @model.thumb_du
 
-        src = if not @model.isNew() then "photos/#{@model.id}.jpg"
-        else 'img/loading.gif'
 
-        return _.extend {thumbsrc:thumb, src:src}, @model.attributes
+    getRenderData: -> @model.attributes
+
+    afterRender: ->
+        @$('a').addClass 'server' if not @model.isNew()
+
+    destroyModel: ->
+        @model.destroy()
+
