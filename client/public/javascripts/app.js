@@ -88,6 +88,7 @@ window.require.register("application", function(exports, require, module) {
       Router = require('router');
       this.albums = new AlbumCollection();
       this.router = new Router();
+      this.mode = window.location.pathname.match(/public/) ? 'public' : 'owner';
       Backbone.history.start();
       if (typeof Object.freeze === 'function') {
         return Object.freeze(this);
@@ -206,6 +207,11 @@ window.require.register("lib/helpers", function(exports, require, module) {
       if (!el.text()) {
         el.text(placeholder);
       }
+      el.click(function() {
+        if (el.text() === placeholder) {
+          return el.empty().focus();
+        }
+      });
       el.focus(function() {
         if (el.text() === placeholder) {
           return el.empty();
@@ -234,7 +240,8 @@ window.require.register("lib/view_collection", function(exports, require, module
     __extends(ViewCollection, _super);
 
     function ViewCollection() {
-      this.onAdd = __bind(this.onAdd, this);    _ref = ViewCollection.__super__.constructor.apply(this, arguments);
+      this.removeItem = __bind(this.removeItem, this);
+      this.addItem = __bind(this.addItem, this);    _ref = ViewCollection.__super__.constructor.apply(this, arguments);
       return _ref;
     }
 
@@ -248,56 +255,77 @@ window.require.register("lib/view_collection", function(exports, require, module
 
     ViewCollection.prototype.itemViewOptions = function() {};
 
-    ViewCollection.prototype.afterRender = function() {
-      this.onReset(this.collection);
-      this.listenTo(this.collection, "reset", this.onReset);
-      this.listenTo(this.collection, "add", this.onAdd);
-      return this.listenTo(this.collection, "remove", this.onRemove);
-    };
-
-    ViewCollection.prototype.onAdd = function(model) {
-      var options, view;
-
-      options = _.extend({}, {
-        model: model
-      }, this.itemViewOptions(model));
-      view = new this.itemview(options);
-      view.render();
-      this.views[model.id] = view;
-      return this.appendView(view);
+    ViewCollection.prototype.onChange = function() {
+      return this.$el.toggleClass('empty', _.size(this.views) === 0);
     };
 
     ViewCollection.prototype.appendView = function(view) {
       return this.$el.append(view.el);
     };
 
-    ViewCollection.prototype.onRemove = function(model) {
-      var id, view, _ref1, _results;
+    ViewCollection.prototype.initialize = function() {
+      ViewCollection.__super__.initialize.apply(this, arguments);
+      this.views = {};
+      this.listenTo(this.collection, "reset", this.onReset);
+      this.listenTo(this.collection, "add", this.addItem);
+      return this.listenTo(this.collection, "remove", this.removeItem);
+    };
+
+    ViewCollection.prototype.render = function() {
+      var id, view, _ref1;
 
       _ref1 = this.views;
-      _results = [];
       for (id in _ref1) {
         view = _ref1[id];
-        if (view.model === model) {
-          view.remove();
-          _results.push(delete this.views[id]);
-        } else {
-          _results.push(void 0);
-        }
+        view.$el.detach();
       }
-      return _results;
+      return ViewCollection.__super__.render.apply(this, arguments);
+    };
+
+    ViewCollection.prototype.afterRender = function() {
+      var id, view, _ref1;
+
+      _ref1 = this.views;
+      for (id in _ref1) {
+        view = _ref1[id];
+        this.appendView(view.$el);
+      }
+      this.onReset(this.collection);
+      return this.onChange(this.views);
+    };
+
+    ViewCollection.prototype.remove = function() {
+      this.onReset([]);
+      return ViewCollection.__super__.remove.apply(this, arguments);
     };
 
     ViewCollection.prototype.onReset = function(newcollection) {
-      var id, view, views, _ref1;
+      var id, view, _ref1;
 
       _ref1 = this.views;
       for (id in _ref1) {
         view = _ref1[id];
         view.remove();
       }
-      views = {};
-      return newcollection.forEach(this.onAdd);
+      return newcollection.forEach(this.addItem);
+    };
+
+    ViewCollection.prototype.addItem = function(model) {
+      var options, view;
+
+      options = _.extend({}, {
+        model: model
+      }, this.itemViewOptions(model));
+      view = new this.itemview(options);
+      this.views[model.cid] = view.render();
+      this.appendView(view);
+      return this.onChange(this.views);
+    };
+
+    ViewCollection.prototype.removeItem = function(model) {
+      this.views[model.cid].remove();
+      delete this.views[model.cid];
+      return this.onChange(this.views);
     };
 
     return ViewCollection;
@@ -317,9 +345,12 @@ window.require.register("models/album", function(exports, require, module) {
 
     Album.prototype.urlRoot = 'albums';
 
-    Album.prototype.defaults = {
-      title: '',
-      description: ''
+    Album.prototype.defaults = function() {
+      return {
+        title: '',
+        description: '',
+        thumbsrc: 'img/nophotos.gif'
+      };
     };
 
     function Album() {
@@ -331,9 +362,14 @@ window.require.register("models/album", function(exports, require, module) {
       var _ref;
 
       if (((_ref = attrs.photos) != null ? _ref.length : void 0) > 0) {
-        this.photos.reset(attrs.photos);
+        this.photos.reset(attrs.photos, {
+          parse: true
+        });
       }
       delete attrs.photos;
+      if (attrs.thumb) {
+        attrs.thumbsrc = "photos/thumbs/" + attrs.thumb + ".jpg";
+      }
       return attrs;
     };
 
@@ -355,27 +391,56 @@ window.require.register("models/photo", function(exports, require, module) {
       return _ref;
     }
 
+    Photo.prototype.defaults = function() {
+      if (this.id) {
+        return {
+          thumbsrc: "photos/thumbs/" + this.id + ".jpg",
+          src: "photos/" + this.id + ".jpg"
+        };
+      } else {
+        return {
+          thumbsrc: 'img/loading.gif',
+          src: ''
+        };
+      }
+    };
+
+    Photo.prototype.parse = function(attrs) {
+      if (attrs.id) {
+        attrs.thumbsrc = "photos/thumbs/" + attrs.id + ".jpg";
+        attrs.src = "photos/" + attrs.id + ".jpg";
+      }
+      return attrs;
+    };
+
     return Photo;
 
   })(Backbone.Model);
   
 });
 window.require.register("models/photoprocessor", function(exports, require, module) {
-  var MAX_HEIGHT, MAX_WIDTH, Photo, clearTemp, concurrency, makeThumbBlob, makeThumbDataURI, operation, queue, readFile, upload;
+  var MAX_HEIGHT, MAX_WIDTH, Photo, PhotoProcessor, TYPEREGEX, makeThumbBlob, makeThumbDataURI, makeThumbWorker, readFile, upload, uploadWorker;
 
   Photo = require('models/photo');
 
   MAX_WIDTH = MAX_HEIGHT = 100;
 
+  TYPEREGEX = /image\/.*/;
+
   readFile = function(photo, next) {
     var reader,
       _this = this;
 
+    if (photo.file.size > 6 * 1024 * 1024) {
+      return next('too big');
+    }
+    if (!photo.file.type.match(TYPEREGEX)) {
+      return next('not an image');
+    }
     reader = new FileReader();
     photo.img = new Image();
     reader.readAsDataURL(photo.file);
     return reader.onloadend = function() {
-      photo.file_du = reader.result;
       photo.img.src = reader.result;
       return photo.img.onload = function() {
         return next();
@@ -400,9 +465,8 @@ window.require.register("models/photoprocessor", function(exports, require, modu
     canvas.height = MAX_HEIGHT;
     ctx = canvas.getContext('2d');
     ctx.drawImage(photo.img, 0, 0, newWidth, newHeight);
-    photo.thumb_du = canvas.toDataURL('image/jpeg');
-    photo.trigger('change');
-    delete photo.img;
+    photo.thumb_du = canvas.toDataURL(photo.file.type);
+    photo.set('thumbsrc', photo.thumb_du);
     return next();
   };
 
@@ -436,49 +500,85 @@ window.require.register("models/photoprocessor", function(exports, require, modu
       success: function() {
         return next();
       },
+      error: function() {
+        photo.set('thumbsrc', 'img/error.gif');
+        return next();
+      },
       data: formdata
     });
   };
 
-  clearTemp = function(photo, next) {
-    delete photo.file;
-    delete photo.img;
-    delete photo.file_du;
-    delete photo.thumb;
-    delete photo.thumb_du;
-    return next();
-  };
-
-  operation = function(task, callback) {
-    var file, photo;
-
-    photo = task.photo, file = task.file;
-    photo.file = file;
+  makeThumbWorker = function(photo, done) {
     return async.waterfall([
       function(cb) {
         return readFile(photo, cb);
       }, function(cb) {
         return makeThumbDataURI(photo, cb);
       }, function(cb) {
+        delete photo.img;
+        return cb();
+      }
+    ], function(err) {
+      if (err) {
+        photo.set({
+          thumbsrc: 'img/error.gif',
+          title: photo.get('title') + ' is ' + err
+        });
+      }
+      return done(err);
+    });
+  };
+
+  uploadWorker = function(photo, done) {
+    return async.waterfall([
+      function(cb) {
         return makeThumbBlob(photo, cb);
       }, function(cb) {
         return upload(photo, cb);
       }, function(cb) {
-        return clearTemp(Photo, cb);
+        delete photo.file;
+        delete photo.thumb;
+        delete photo.thumb_du;
+        return cb();
       }
-    ], callback);
+    ], function(err) {
+      if (err) {
+        photo.set({
+          thumbsrc: 'img/error.gif',
+          title: photo.get('title') + ' is ' + err
+        });
+      }
+      return done(err);
+    });
   };
 
-  concurrency = 3;
+  PhotoProcessor = (function() {
+    function PhotoProcessor() {}
 
-  queue = async.queue(operation, concurrency);
+    PhotoProcessor.prototype.thumbsQueue = async.queue(makeThumbWorker, 3);
 
-  module.exports.process = function(file, photo) {
-    return queue.push({
-      file: file,
-      photo: photo
-    }, function() {});
-  };
+    PhotoProcessor.prototype.uploadQueue = async.queue(uploadWorker, 2);
+
+    PhotoProcessor.prototype.process = function(photo) {
+      var _this = this;
+
+      return this.thumbsQueue.push(photo, function(err) {
+        if (err) {
+          return console.log(err);
+        }
+        return _this.uploadQueue.push(photo, function(err) {
+          if (err) {
+            return console.log(err);
+          }
+        });
+      });
+    };
+
+    return PhotoProcessor;
+
+  })();
+
+  module.exports = new PhotoProcessor();
   
 });
 window.require.register("router", function(exports, require, module) {
@@ -518,44 +618,9 @@ window.require.register("router", function(exports, require, module) {
       if (editable == null) {
         editable = false;
       }
-      return app.albums.fetch().then(function() {
+      return app.albums.fetch().done(function() {
         return _this.displayView(new AlbumsListView({
           collection: app.albums,
-          editable: editable
-        }));
-      });
-    };
-
-    Router.prototype.newalbum = function() {
-      var album,
-        _this = this;
-
-      album = new Album();
-      album.once('change:id', function(model, id) {
-        return _this.navigate("albums/" + id);
-      });
-      return this.displayView(new AlbumView({
-        model: album,
-        editable: true
-      }));
-    };
-
-    Router.prototype.album = function(id, editable) {
-      var album,
-        _this = this;
-
-      if (editable == null) {
-        editable = false;
-      }
-      album = app.albums.get(id);
-      if (album == null) {
-        album = new Album({
-          id: id
-        });
-      }
-      return album.fetch().done(function() {
-        return _this.displayView(new AlbumView({
-          model: album,
           editable: editable
         }));
       });
@@ -565,16 +630,45 @@ window.require.register("router", function(exports, require, module) {
       return this.albumslist(true);
     };
 
+    Router.prototype.album = function(id, editable) {
+      var album,
+        _this = this;
+
+      if (editable == null) {
+        editable = false;
+      }
+      album = app.albums.get(id) || new Album({
+        id: id
+      });
+      return album.fetch().done(function() {
+        return _this.displayView(new AlbumView({
+          model: album,
+          editable: editable
+        }));
+      });
+    };
+
     Router.prototype.albumedit = function(id) {
       return this.album(id, true);
     };
 
+    Router.prototype.newalbum = function() {
+      return this.displayView(new AlbumView({
+        model: new Album(),
+        editable: true
+      }));
+    };
+
     Router.prototype.displayView = function(view) {
+      var el;
+
       if (this.mainView) {
         this.mainView.remove();
       }
       this.mainView = view;
-      return $('body').append(view.render().el);
+      el = this.mainView.render().$el;
+      el.addClass("mode-" + app.mode);
+      return $('body').append(el);
     };
 
     return Router;
@@ -588,24 +682,16 @@ window.require.register("templates/album", function(exports, require, module) {
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<div class="row-fluid"><div id="about" class="span4"><h1 id="path"><a href="#albums">&lt;</a>&nbsp;</h1><h1 id="title">' + escape((interp = title) == null ? '' : interp) + '</h1><div id="description">' + escape((interp = description) == null ? '' : interp) + '</div></div><div id="photos" class="span8"></div></div>');
+  buf.push('<div class="row-fluid"><div id="about" class="span4"><div id="path"><a href="#albums">&lt;<span class="hidden-phone">Back</span></a></div><h1 id="title">' + escape((interp = title) == null ? '' : interp) + '</h1><div id="description">' + escape((interp = description) == null ? '' : interp) + '</div></div><div id="photos" class="span8"></div></div><div class="btn-group editor"><a class="delete btn btn-inverse"><i class="icon-remove icon-white"></i></a>');
   if ( 'undefined' != typeof id)
   {
-  buf.push('<div class="btn-group editor"><a class="btn delete btn-inverse"><i class="icon-remove icon-white"></i></a>');
-  if ( editable)
-  {
   buf.push('<a');
-  buf.push(attrs({ 'href':("#albums/" + (id) + ""), "class": ('btn') + ' ' + ('btn-inverse') }, {"href":true}));
-  buf.push('><i class="icon-eye-open icon-white"></i></a>');
-  }
-  else
-  {
-  buf.push('<a');
-  buf.push(attrs({ 'href':("#albums/" + (id) + "/edit"), "class": ('btn') + ' ' + ('btn-inverse') }, {"href":true}));
+  buf.push(attrs({ 'href':("#albums/" + (id) + ""), "class": ('stopediting') + ' ' + ('btn') + ' ' + ('btn-inverse') }, {"href":true}));
+  buf.push('><i class="icon-eye-open icon-white"></i></a><a');
+  buf.push(attrs({ 'href':("#albums/" + (id) + "/edit"), "class": ('startediting') + ' ' + ('btn') + ' ' + ('btn-inverse') }, {"href":true}));
   buf.push('><i class="icon-edit icon-white"></i></a>');
   }
   buf.push('</div>');
-  }
   }
   return buf.join("");
   };
@@ -616,16 +702,7 @@ window.require.register("templates/albumlist", function(exports, require, module
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<div class="btn-group editor"><a href="#albums/new" class="btn btn-inverse"><i class="icon-plus icon-white"></i></a>');
-  if ( editable)
-  {
-  buf.push('<a href="#albums" class="btn btn-inverse"><i class="icon-eye-open icon-white"></i></a>');
-  }
-  else
-  {
-  buf.push('<a href="#albums/edit" class="btn btn-inverse"><i class="icon-edit icon-white"></i></a>');
-  }
-  buf.push('</div>');
+  buf.push('<div class="btn-group editor"><a href="#albums/new" class="create btn btn-inverse"><i class="icon-plus icon-white"></i></a><a href="#albums" class="stopediting btn btn-inverse"><i class="icon-eye-open icon-white"></i></a><a href="#albums/edit" class="startediting btn btn-inverse"><i class="icon-edit icon-white"></i></a></div><p class="help">There is no albums.\n</p><p class="helpedit">You haven\'t any album yet, use the "+" button in the top-right corner\nto create one.</p>');
   }
   return buf.join("");
   };
@@ -640,11 +717,18 @@ window.require.register("templates/albumlist_item", function(exports, require, m
   buf.push(attrs({ 'href':("#albums/" + (id) + ""), "class": ('pull-left') }, {"href":true}));
   buf.push('><img');
   buf.push(attrs({ 'src':("" + (thumbsrc) + ""), "class": ('media-object') }, {"src":true}));
-  buf.push('/></a><div class="media-body"><h4 class="media-heading">' + escape((interp = title) == null ? '' : interp) + '</h4><p>' + escape((interp = description) == null ? '' : interp) + '</p></div>');
-  if ( editable)
-  {
-  buf.push('<btn class="btn delete btn-danger"><i class="icon-remove icon-white"></i></btn>');
+  buf.push('/></a><div class="media-body"><h4 class="media-heading">' + escape((interp = title) == null ? '' : interp) + '</h4><p>' + escape((interp = description) == null ? '' : interp) + '</p></div><btn class="delete btn btn-danger"><i class="icon-remove icon-white"></i></btn>');
   }
+  return buf.join("");
+  };
+});
+window.require.register("templates/gallery", function(exports, require, module) {
+  module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
+  attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
+  var buf = [];
+  with (locals || {}) {
+  var interp;
+  buf.push('<p class="help">There is no photos in this album</p><p class="helpedit">Drag your photos here to upload them</p>');
   }
   return buf.join("");
   };
@@ -659,11 +743,7 @@ window.require.register("templates/photo", function(exports, require, module) {
   buf.push(attrs({ 'href':("" + (src) + ""), 'title':("" + (title) + "") }, {"href":true,"title":true}));
   buf.push('><img');
   buf.push(attrs({ 'src':("" + (thumbsrc) + ""), 'alt':("" + (title) + "") }, {"src":true,"alt":true}));
-  buf.push('/></a>');
-  if ( editable)
-  {
-  buf.push('<btn class="btn delete btn-danger"><i class="icon-remove icon-white"></i></btn>');
-  }
+  buf.push('/></a><btn class="delete btn btn-danger"><i class="icon-remove icon-white"></i></btn>');
   }
   return buf.join("");
   };
@@ -694,17 +774,13 @@ window.require.register("views/album", function(exports, require, module) {
 
     AlbumView.prototype.template = require('templates/album');
 
+    AlbumView.prototype.id = 'album';
+
     AlbumView.prototype.className = 'container-fluid';
 
     AlbumView.prototype.events = function() {
-      var _this = this;
-
       return {
-        'click   a.delete': function() {
-          return _this.model.destroy().then(function() {
-            return app.router.navigate('albums', true);
-          });
-        }
+        'click   a.delete': this.destroyModel
       };
     };
 
@@ -713,12 +789,8 @@ window.require.register("views/album", function(exports, require, module) {
     };
 
     AlbumView.prototype.afterRender = function() {
-      this.about = this.$('#about');
-      this.title = this.$('#title');
-      this.gallerydiv = this.$('#photos');
-      this.description = this.$('#description');
       this.gallery = new Gallery({
-        el: this.gallerydiv,
+        el: this.$('#photos'),
         editable: this.options.editable,
         collection: this.model.photos,
         beforeUpload: this.beforePhotoUpload
@@ -729,26 +801,21 @@ window.require.register("views/album", function(exports, require, module) {
       }
     };
 
-    AlbumView.prototype.beforePhotoUpload = function(done) {
+    AlbumView.prototype.beforePhotoUpload = function(callback) {
       var _this = this;
 
-      if (this.model.isNew()) {
-        return this.saveModel().then(function() {
-          return done({
-            albumid: _this.model.id
-          });
+      return this.saveModel().then(function() {
+        return callback({
+          albumid: _this.model.id
         });
-      } else {
-        return done({
-          albumid: this.model.id
-        });
-      }
+      });
     };
 
     AlbumView.prototype.makeEditable = function() {
       var _this = this;
 
-      editable(this.title, {
+      this.$el.addClass('editing');
+      editable(this.$('#title'), {
         placeholder: 'Title ...',
         onChanged: function(text) {
           return _this.saveModel({
@@ -756,7 +823,7 @@ window.require.register("views/album", function(exports, require, module) {
           });
         }
       });
-      return editable(this.description, {
+      return editable(this.$('#description'), {
         placeholder: 'Write some more ...',
         onChanged: function(text) {
           return _this.saveModel({
@@ -766,10 +833,29 @@ window.require.register("views/album", function(exports, require, module) {
       });
     };
 
+    AlbumView.prototype.destroyModel = function() {
+      if (this.model.isNew()) {
+        return app.router.navigate('albums', true);
+      }
+      if (confirm('Are you sure ?')) {
+        return this.model.destroy().then(function() {
+          return app.router.navigate('albums', true);
+        });
+      }
+    };
+
     AlbumView.prototype.saveModel = function(hash) {
-      return this.model.save(hash).then(function() {
-        return app.albums.add(this.model);
-      });
+      var promise,
+        _this = this;
+
+      promise = this.model.save(hash);
+      if (this.model.isNew()) {
+        promise = promise.then(function() {
+          app.albums.add(_this.model);
+          return app.router.navigate("albums/" + _this.model.id + "/edit");
+        });
+      }
+      return promise;
     };
 
     return AlbumView;
@@ -798,10 +884,11 @@ window.require.register("views/albumslist", function(exports, require, module) {
 
     AlbumsList.prototype.template = require('templates/albumlist');
 
-    AlbumsList.prototype.itemViewOptions = function() {
-      return {
-        editable: this.options.editable
-      };
+    AlbumsList.prototype.initialize = function() {
+      AlbumsList.__super__.initialize.apply(this, arguments);
+      if (this.options.editable) {
+        return this.$el.addClass('editing');
+      }
     };
 
     return AlbumsList;
@@ -840,26 +927,23 @@ window.require.register("views/albumslist_item", function(exports, require, modu
     };
 
     AlbumItem.prototype.events = function() {
-      var _this = this;
-
       return {
-        'click btn.delete': function() {
-          return _this.model.destroy();
-        }
+        'click btn.delete': 'destroyModel'
       };
     };
 
     AlbumItem.prototype.getRenderData = function() {
       var out;
 
-      out = this.model.attributes;
-      if (out.thumb != null) {
-        out.thumbsrc = "photos/thumbs/" + out.thumb + ".jpg";
-      } else {
-        out.thumbsrc = "img/nophotos.gif";
-      }
+      out = _.clone(this.model.attributes);
       out.description = limitLength(out.description, 250);
       return out;
+    };
+
+    AlbumItem.prototype.destroyModel = function() {
+      if (confirm('Are you sure ?')) {
+        return this.model.destroy();
+      }
     };
 
     return AlbumItem;
@@ -890,17 +974,14 @@ window.require.register("views/gallery", function(exports, require, module) {
 
     Gallery.prototype.itemview = PhotoView;
 
+    Gallery.prototype.template = require('templates/gallery');
+
     Gallery.prototype.afterRender = function() {
       Gallery.__super__.afterRender.apply(this, arguments);
-      return this.$el.photobox('a', {
-        thumbs: true
+      return this.$el.photobox('a.server', {
+        thumbs: true,
+        history: false
       });
-    };
-
-    Gallery.prototype.itemViewOptions = function() {
-      return {
-        editable: this.options.editable
-      };
     };
 
     Gallery.prototype.events = function() {
@@ -913,13 +994,10 @@ window.require.register("views/gallery", function(exports, require, module) {
     };
 
     Gallery.prototype.onFilesDropped = function(evt) {
-      var files;
-
       this.$el.removeClass('dragover');
+      this.handleFiles(evt.dataTransfer.files);
       evt.stopPropagation();
       evt.preventDefault();
-      files = evt.dataTransfer.files;
-      this.handleFiles(files);
       return false;
     };
 
@@ -933,18 +1011,17 @@ window.require.register("views/gallery", function(exports, require, module) {
     Gallery.prototype.handleFiles = function(files) {
       var _this = this;
 
-      return this.options.beforeUpload(function(options) {
-        var file, photo, photoattrs, _i, _len, _results;
+      return this.options.beforeUpload(function(photoAttributes) {
+        var file, photo, _i, _len, _results;
 
         _results = [];
         for (_i = 0, _len = files.length; _i < _len; _i++) {
           file = files[_i];
-          photoattrs = _.extend({
-            title: file.name
-          }, options);
-          photo = new Photo(photoattrs);
+          photoAttributes.title = file.name;
+          photo = new Photo(photoAttributes);
+          photo.file = file;
           _this.collection.add(photo);
-          _results.push(photoprocessor.process(file, photo));
+          _results.push(photoprocessor.process(photo));
         }
         return _results;
       });
@@ -986,26 +1063,29 @@ window.require.register("views/photo", function(exports, require, module) {
       var _this = this;
 
       return {
-        'click   btn.delete': function() {
-          return _this.model.destroy();
+        'click btn.delete': 'destroyModel',
+        'click': function(evt) {
+          if (!_this.model.get('src')) {
+            evt.stopPropagation();
+            evt.preventDefault();
+            return false;
+          }
         }
       };
     };
 
     PhotoView.prototype.getRenderData = function() {
-      var src, thumb;
+      return this.model.attributes;
+    };
 
-      thumb = 'img/loading.gif';
+    PhotoView.prototype.afterRender = function() {
       if (!this.model.isNew()) {
-        thumb = "photos/thumbs/" + this.model.id + ".jpg";
-      } else if (this.model.thumb_du) {
-        thumb = this.model.thumb_du;
+        return this.$('a').addClass('server');
       }
-      src = !this.model.isNew() ? "photos/" + this.model.id + ".jpg" : 'img/loading.gif';
-      return _.extend({
-        thumbsrc: thumb,
-        src: src
-      }, this.model.attributes);
+    };
+
+    PhotoView.prototype.destroyModel = function() {
+      return this.model.destroy();
     };
 
     return PhotoView;

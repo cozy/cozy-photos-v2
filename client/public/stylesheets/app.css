@@ -9,13 +9,44 @@
 body {
   height: 97%;
   padding: 1%;
-  background-color: #738182;
+  background-color: #fcfcfc;
+  font-family: main;
+}
+h1,
+h4 {
+  font-family: styled;
 }
 .editor {
   position: absolute;
   top: 5px;
   right: 5px;
   border-radius: 3px;
+}
+btn.delete {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  z-index: 2;
+}
+.mode-public .editor,
+.help,
+.helpedit,
+.editing .empty .help,
+.btn.delete,
+.btn.stopediting,
+.editing .btn.startediting,
+#album-list.empty .btn.startediting,
+#album-list.empty .btn.stopediting {
+  display: none;
+}
+.btn.startediting,
+.editing .btn.delete,
+.editing .btn.stopediting {
+  display: inline-block;
+}
+.empty .help,
+.editing .empty .helpedit {
+  display: block;
 }
 .albumitem {
   width: 30%;
@@ -24,7 +55,6 @@ body {
   float: left;
   margin: 15px;
   padding: 10px;
-  color: #fff;
   position: relative;
 }
 .albumitem a {
@@ -32,6 +62,7 @@ body {
 }
 .albumitem img {
   box-sizing: border-box;
+  border: 2px solid #444;
   box-shadow: 3px 3px 3px #444;
   border-radius: 10px;
   margin-right: 10px;
@@ -41,7 +72,7 @@ body {
   -webkit-transition: 0.2s ease-out;
 }
 .albumitem img:hover {
-  border: 2px solid #e2f8ff;
+  border: 2px solid #ffa500;
 }
 .albumitem img:active {
   transition: 0s ease-out;
@@ -53,37 +84,29 @@ body {
   transition: 0.4s ease-out;
   -webkit-transition: 0.4s ease-out;
 }
-#about h1,
-#about h1 a {
+#about #path {
+  margin-bottom: 20px;
+  line-height: 20px;
+  font-size: 18.5px;
+}
+#about #path a {
+  display: inline-block;
+  padding: 5px 10px;
+  background-color: #d3d3d3;
+  border-radius: 5px;
   color: #fff;
 }
-#about h1 a:hover {
-  color: #ffa500;
+#about #path a span {
+  margin-left: 5px;
+}
+#about #path a:hover {
+  background-color: #ffa500;
   text-decoration: none;
 }
-#about #path {
-  float: left;
-}
 #about #description {
-  background: transparent;
   text-align: justify;
-  color: #a9a9a9;
-  width: 100%;
-  margin: 0;
   padding: 1px;
   border: 0px;
-}
-#about:hover #description {
-  color: #fff;
-  transition: 0.4s ease-out;
-  -webkit-transition: 0.4s ease-out;
-}
-btn.delete {
-  position: absolute;
-  top: 1px;
-  right: 1px;
-  display: block;
-  z-index: 2;
 }
 #photos {
   min-height: 300px;
@@ -123,6 +146,27 @@ btn.delete {
   transform: scale(1.2);
   -webkit-transform: scale(1.2);
 }
+.editing #photos.empty {
+  border: 1px dashed #d3d3d3;
+}
 #photos.dragover {
-  background-color: #008000;
+  background-color: #90ee90;
+}
+#pbOverlay.show .imageWrap img,
+#pbOverlay.show .imageWrap img,
+#pbOverlay.on .imageWrap img,
+#pbOverlay .imageWrap img,
+#pbOverlay .imageWrap img.prepare,
+#pbOverlay.hide .imageWrap img,
+#pbOverlay.hide .imageWrap img.prepare,
+#pbOverlay .imageWrap img.zoomable {
+  transform: none;
+  -webkit-transform: none;
+  -ms-transform: none;
+  transition: 0.01s;
+  -webkit-transition: 0.01s;
+  -ms-transition: 0.01s;
+  transition-delay: 0s;
+  -webkit-transition-delay: 0s;
+  -ms-transition-delay: 0s;
 }
