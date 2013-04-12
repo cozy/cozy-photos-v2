@@ -16,6 +16,7 @@ module.exports =
         {placeholder, onChanged} = options
         el.prop 'contenteditable', true
         el.text placeholder if not el.text()
+        el.click -> el.empty().focus() if el.text() is placeholder
         el.focus -> el.empty() if el.text() is placeholder
         el.blur  ->
             if not el.text()
