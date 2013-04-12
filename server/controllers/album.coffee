@@ -1,7 +1,6 @@
 Album = require '../models/album'
 Photo = require '../models/photo'
 async = require 'async'
-eyes = require 'eyes'
 
 module.exports =
 
