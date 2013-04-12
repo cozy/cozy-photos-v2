@@ -3,10 +3,14 @@ module.exports = (app) ->
     express = require 'express'
     shortcuts = require './helpers/shortcut'
 
+    # app.use express.limit '6M'
+
     # all environements
     app.use express.bodyParser
         uploadDir: './uploads'
         keepExtensions: true
+        maxFieldsSize: 6 * 1024 * 1024;
+
     app.use shortcuts # extend express to DRY controllers
 
     #test environement

@@ -7,7 +7,10 @@ module.exports = app = express()
 
 app.init = ->
     configure(app)
-    app.use express.static __dirname + '/client/public', maxAge: 86400000
+    clientdir = __dirname + '/client/public'
+    staticOptions = maxAge: 86400000
+    app.use '/public', express.static clientdir, staticOptions
+    app.use express.static clientdir, staticOptions
     router(app)
     return app
 

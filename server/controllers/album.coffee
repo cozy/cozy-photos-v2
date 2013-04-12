@@ -57,4 +57,8 @@ module.exports =
         req.album.destroy (err) ->
             return res.error 500, "Deletion failed.", err if err
 
+            Photo.fromAlbum req.album, (err, photos) ->
+                for photo in photos
+                    photo.destroy()
+
             res.success "Deletion succeded."
