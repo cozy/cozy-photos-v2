@@ -14,42 +14,38 @@ module.exports = class Router extends Backbone.Router
 
     # display the "home" page : list of albums
     albumslist: (editable=false)->
-        app.albums.fetch().then =>
+        app.albums.fetch().done =>
             @displayView new AlbumsListView
                 collection: app.albums
-                editable: editable
-
-    # display the album view for a new Album
-    newalbum: ->
-        album = new Album()
-        # when the album have been saved, we change the hash
-        album.once 'change:id', (model, id) =>
-            @navigate "albums/#{id}"
-
-        @displayView new AlbumView
-            model: album
-            editable: true
-
-    # display the album view for an album from the app.albums collection
-    # fetch before displaying it
-    album: (id, editable=false) ->
-        album = app.albums.get id
-        album ?= new Album id:id
-        album.fetch().done =>
-            @displayView new AlbumView
-                model: album
                 editable: editable
 
     # display the list of albums in edit mode
     albumslistedit: ->
         @albumslist true
 
+    # display the album view for an album with given id
+    # fetch before displaying it
+    album: (id, editable=false) ->
+        album = app.albums.get(id) or new Album id:id
+        album.fetch().done =>
+            @displayView new AlbumView
+                model: album
+                editable: editable
+
     # display the album view in edit mode
     albumedit: (id) ->
         @album id, true
 
-    # display a view properly (remove previous view)
+    # display the album view for a new Album
+    newalbum: ->
+        @displayView new AlbumView
+            model: new Album()
+            editable: true
+
+    # display a page properly (remove previous page)
     displayView: (view) =>
         @mainView.remove() if @mainView
         @mainView = view
-        $('body').append view.render().el
+        el = @mainView.render().$el
+        el.addClass "mode-#{app.mode}"
+        $('body').append el

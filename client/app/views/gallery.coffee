@@ -8,14 +8,12 @@ photoprocessor = require 'models/photoprocessor'
 module.exports = class Gallery extends ViewCollection
     itemview: PhotoView
 
+    template: require 'templates/gallery'
+
     # launch photobox after render
     afterRender: ->
         super
-        @$el.photobox 'a', thumbs:true
-
-    # pass editable to child views
-    itemViewOptions: ->
-        editable: @options.editable
+        @$el.photobox 'a.server', thumbs: true, history: false
 
     # D&D events
     events: ->
@@ -26,10 +24,9 @@ module.exports = class Gallery extends ViewCollection
     # event listeners for D&D events
     onFilesDropped: (evt) ->
         @$el.removeClass 'dragover'
+        @handleFiles evt.dataTransfer.files
         evt.stopPropagation()
         evt.preventDefault()
-        files = evt.dataTransfer.files
-        @handleFiles(files)
         return false
 
     onDragOver: (evt) ->
@@ -41,10 +38,11 @@ module.exports = class Gallery extends ViewCollection
     handleFiles: (files) ->
         # allow parent view to set some attributes on the photo
         # (current usage = albumid + save album if it is new)
-        @options.beforeUpload (options) =>
+        @options.beforeUpload (photoAttributes) =>
             for file in files
-                photoattrs = _.extend title: file.name, options
-                photo = new Photo photoattrs
+                photoAttributes.title = file.name
+                photo = new Photo photoAttributes
+                photo.file = file
                 @collection.add photo
 
-                photoprocessor.process file, photo
+                photoprocessor.process photo

@@ -9,6 +9,7 @@ module.exports = class AlbumsList extends ViewCollection
     itemview: require 'views/albumslist_item'
     template: require 'templates/albumlist'
 
-    itemViewOptions: ->
-        editable: @options.editable
+    initialize: ->
+        super
+        @$el.addClass 'editing' if @options.editable
 

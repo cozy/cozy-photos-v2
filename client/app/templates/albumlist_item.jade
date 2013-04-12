@@ -1,10 +1,9 @@
 a.pull-left(href="#albums/#{id}")
-  img.media-object(src="#{thumbsrc}")
+    img.media-object(src="#{thumbsrc}")
 
 div.media-body
-  h4.media-heading #{title}
-  p #{description}
+    h4.media-heading #{title}
+    p #{description}
 
-if editable
-  btn.btn.delete.btn-danger
+btn.delete.btn.btn-danger
     i.icon-remove.icon-white

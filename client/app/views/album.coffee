@@ -6,23 +6,18 @@ Gallery = require 'views/gallery'
 module.exports = class AlbumView extends BaseView
     template: require 'templates/album'
 
+    id: 'album'
     className: 'container-fluid'
 
     events: =>
-        'click   a.delete' : =>
-            @model.destroy().then ->
-                app.router.navigate 'albums', true
+        'click   a.delete' : @destroyModel
 
-    getRenderData: -> @model.attributes
+    getRenderData: ->
+        @model.attributes
 
     afterRender: ->
-        @about       = @$ '#about'
-        @title       = @$ '#title'
-        @gallerydiv  = @$ '#photos'
-        @description = @$ '#description'
-
         @gallery = new Gallery
-            el: @gallerydiv
+            el: @$ '#photos'
             editable: @options.editable
             collection: @model.photos
             beforeUpload: @beforePhotoUpload
@@ -33,23 +28,38 @@ module.exports = class AlbumView extends BaseView
 
     # save album before photos are uploaded to it
     # store albumid in the photo
-    beforePhotoUpload: (done) =>
-        if @model.isNew()
-            @saveModel().then => done albumid:@model.id
-        else
-            done albumid:@model.id
+    beforePhotoUpload: (callback) =>
+        @saveModel().then =>
+            callback albumid: @model.id
 
     # make the divs editable
     makeEditable: =>
-        editable @title,
+
+        @$el.addClass 'editing'
+
+        editable @$('#title'),
             placeholder: 'Title ...'
             onChanged: (text) => @saveModel title: text
 
-        editable @description,
+        editable @$('#description'),
             placeholder: 'Write some more ...'
             onChanged: (text) => @saveModel description: text
 
+    destroyModel: ->
+        if @model.isNew()
+            return app.router.navigate 'albums', true
+
+        if confirm 'Are you sure ?'
+            @model.destroy().then ->
+                app.router.navigate 'albums', true
+
     saveModel: (hash) ->
-        @model.save(hash).then -> app.albums.add @model
+        promise = @model.save(hash)
+        if @model.isNew()
+            promise = promise.then =>
+                app.albums.add @model
+                app.router.navigate "albums/#{@model.id}/edit"
+
+        return promise
 
 

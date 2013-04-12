@@ -21,30 +21,57 @@ module.exports = class ViewCollection extends BaseView
 
     itemViewOptions: ->
 
-    afterRender: ->
-        @onReset @collection
-        @listenTo @collection, "reset",   @onReset
-        @listenTo @collection, "add",     @onAdd
-        @listenTo @collection, "remove",  @onRemove
+    # add 'empty' class to view when there is no subview
+    onChange: ->
+        @$el.toggleClass 'empty', _.size(@views) is 0
 
-    onAdd: (model) =>
-        options = _.extend {}, {model: model}, @itemViewOptions(model)
-        view = new @itemview options
-        view.render()
-        @views[model.id] = view
-        @appendView view
-
+    # can be overriden if we want to place the subviews somewhere else
     appendView: (view) ->
         @$el.append view.el
 
-    onRemove: (model) ->
-        for id, view of @views
-            if view.model is model
-                view.remove()
-                delete @views[id]
+    # bind listeners to the collection
+    initialize: ->
+        super
+        @views = {}
+        @listenTo @collection, "reset",   @onReset
+        @listenTo @collection, "add",     @addItem
+        @listenTo @collection, "remove",  @removeItem
 
+    # if we have views before a render call, we detach them
+    render: ->
+        view.$el.detach() for id, view of @views
+        super
+
+    # after render, we reattach the views
+    afterRender: ->
+        @appendView view.$el for id, view of @views
+        @onReset @collection
+        @onChange @views
+
+    # destroy all sub views before remove
+    remove: ->
+        @onReset []
+        super
+
+    # event listener for reset
     onReset: (newcollection) ->
-        for id, view of @views
-            view.remove()
-        views = {}
-        newcollection.forEach @onAdd
+        view.remove() for id, view of @views
+        newcollection.forEach @addItem
+
+    # event listeners for add
+    addItem: (model) =>
+        options = _.extend {}, {model: model}, @itemViewOptions(model)
+        view = new @itemview(options)
+        @views[model.cid] = view.render()
+        @appendView view
+        @onChange @views
+
+    # event listeners for remove
+    removeItem: (model) =>
+        @views[model.cid].remove()
+        delete @views[model.cid]
+
+        @onChange @views
+
+
+

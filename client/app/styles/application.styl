@@ -6,14 +6,19 @@
     font-family: main
     src: url('/fonts/signika-regular.ttf');
 
-bgcolor = #545e5f + 20%
+bgcolor = #fcfcfc
 shadowcolor = #444
-highlightcolor = #E2F8FF
+highlightcolor = orange
+basecolor = lightgrey
 
 body
   height 97%
   padding 1%
   background-color bgcolor
+  font-family main
+
+h1, h4
+  font-family styled
 
 .editor
   position absolute
@@ -21,7 +26,35 @@ body
   right 5px
   border-radius 3px
 
+btn.delete
+  position absolute
+  top 1px
+  right 1px
+  z-index 2
 
+// ### Logic ###
+.mode-public .editor
+.help
+.helpedit
+.editing .empty .help
+.btn.delete
+.btn.stopediting
+.editing .btn.startediting
+#album-list.empty .btn.startediting
+#album-list.empty .btn.stopediting
+  display none
+
+.btn.startediting
+.editing .btn.delete
+.editing .btn.stopediting
+  display inline-block
+
+.empty .help
+.editing .empty .helpedit
+  display block
+
+
+// #### album list page ###
 
 .albumitem
   width 30%
@@ -30,7 +63,6 @@ body
   float left
   margin 15px
   padding 10px
-  color white
   position relative
 
   a
@@ -38,6 +70,7 @@ body
 
   img
     box-sizing: border-box
+    border 2px solid shadowcolor
     box-shadow: 3px 3px 3px shadowcolor
     border-radius 10px
     margin-right 10px
@@ -54,41 +87,36 @@ body
     -webkit-transition 0s ease-out
     box-shadow: 0px 0px 0px shadowcolor
 
+// #### album page ###
+
 #about
   height 90%
   transition .4s ease-out
   -webkit-transition .4s ease-out
 
-  h1, h1 a
-    color white
-
-  h1 a:hover
-    color orange
-    text-decoration none
-
   #path
-    float left
+    margin-bottom 20px
+    line-height 20px
+    font-size 18.5px
+
+    a
+      display inline-block
+      padding 5px 10px
+      background-color basecolor
+      border-radius 5px
+      color white
+
+      span
+        margin-left 5px
+    a:hover
+      background-color highlightcolor
+      text-decoration none
 
   #description
-    background transparent
     text-align justify
-    color darkgrey
-    width 100%
-    margin 0
     padding 1px
     border 0px
 
-#about:hover #description
-  color white
-  transition .4s ease-out
-  -webkit-transition .4s ease-out
-
-btn.delete
-  position absolute
-  top 1px
-  right 1px
-  display block
-  z-index 2
 
 #photos
   min-height 300px
@@ -125,8 +153,32 @@ btn.delete
     z-index 3
 
     img
-      transform:scale(1.2)
-      -webkit-transform:scale(1.2)
+      transform scale(1.2)
+      -webkit-transform scale(1.2)
+
+.editing #photos.empty
+  border 1px dashed basecolor
 
 #photos.dragover
-  background-color green
+  background-color lightgreen
+
+
+// # Remove effect from photobox //
+
+#pbOverlay.show .imageWrap img,
+#pbOverlay.show .imageWrap img,
+#pbOverlay.on .imageWrap img,
+#pbOverlay .imageWrap img,
+#pbOverlay .imageWrap img.prepare,
+#pbOverlay.hide .imageWrap img,
+#pbOverlay.hide .imageWrap img.prepare,
+#pbOverlay .imageWrap img.zoomable
+  transform none
+  -webkit-transform none
+  -ms-transform none
+  transition 0.01s
+  -webkit-transition 0.01s
+  -ms-transition 0.01s
+  transition-delay 0s
+  -webkit-transition-delay 0s
+  -ms-transition-delay 0s
