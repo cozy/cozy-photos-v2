@@ -2,17 +2,22 @@ Photo = require 'models/photo'
 
 # width and height of generated thumbs
 MAX_WIDTH = MAX_HEIGHT = 100
+TYPEREGEX = ///image/.*///
 
 # read the file from photo.file using a FileReader
 # create photo.img : an Image
-# next : callback when the file have been read
 
 readFile = (photo, next) ->
+    if photo.file.size > 6*1024*1024
+        return next('too big')
+
+    if not photo.file.type.match TYPEREGEX
+        return next('not an image')
+
     reader = new FileReader()
     photo.img = new Image()
     reader.readAsDataURL photo.file
     reader.onloadend = =>
-        photo.file_du = reader.result
         photo.img.src = reader.result
         photo.img.onload = ->
             next()
@@ -34,13 +39,10 @@ makeThumbDataURI = (photo, next) ->
     canvas.height = MAX_HEIGHT
     ctx = canvas.getContext '2d'
     ctx.drawImage photo.img, 0, 0, newWidth, newHeight
-    photo.thumb_du = canvas.toDataURL 'image/jpeg'
+    photo.thumb_du = canvas.toDataURL photo.file.type
 
     # let the view update itself
-    photo.trigger 'change'
-
-    # free memory
-    delete photo.img
+    photo.set 'thumbsrc', photo.thumb_du
 
     next()
 
@@ -58,7 +60,6 @@ makeThumbBlob = (photo, next) ->
 # create a FormData object with photo.file and photo.thumb
 # save the model with these files
 upload = (photo, next) ->
-
     formdata = new FormData()
     formdata.append 'raw', photo.file
     formdata.append 'thumb', photo.thumb, "thumb_#{photo.file.name}"
@@ -67,40 +68,59 @@ upload = (photo, next) ->
 
     Backbone.sync 'create', photo,
       contentType: false # Prevent $.ajax from being smart
-      success: -> next()
+      success: ->
+            next()
+      error: ->
+            photo.set 'thumbsrc', 'img/error.gif'
+            next() # clear tmps anyway
       data: formdata
 
-
-# delete all object attached to the photo
-# the photo is now backed by the server
-clearTemp = (photo, next) ->
-    delete photo.file
-    delete photo.img
-    delete photo.file_du
-    delete photo.thumb
-    delete photo.thumb_du
-    next()
-
-
 # async waterfall of all the above
-operation = (task , callback) ->
-    {photo, file} = task
-    photo.file = file
+makeThumbWorker = (photo , done) ->
     async.waterfall [
-        (cb) -> readFile photo         , cb
-        (cb) -> makeThumbDataURI photo , cb
-        (cb) -> makeThumbBlob photo    , cb
-        (cb) -> upload photo           , cb
-        (cb) -> clearTemp Photo        , cb
-    ], callback
+        (cb) -> readFile         photo, cb
+        (cb) -> makeThumbDataURI photo, cb
+        (cb) ->
+            delete photo.img
+            cb()
+    ], (err) ->
+        if err
+            photo.set
+                thumbsrc:'img/error.gif'
+                title: photo.get('title') + ' is ' + err
+        done(err)
 
-# number of pictures being processed at any time
-concurrency = 3
+uploadWorker = (photo, done) ->
+    async.waterfall [
+        (cb) -> makeThumbBlob    photo, cb
+        (cb) -> upload           photo, cb
+        (cb) ->
+            # the photo is now backed by the server
+            # delete all object attached to the photo
+            delete photo.file
+            delete photo.thumb
+            delete photo.thumb_du
+            cb()
+    ], (err) ->
+        if err
+            photo.set
+                thumbsrc:'img/error.gif'
+                title: photo.get('title') + ' is ' + err
+        done(err)
 
-queue = async.queue operation, concurrency
 
-module.exports.process = (file, photo) ->
-    queue.push
-        file: file
-        photo: photo
-    , ->
+class PhotoProcessor
+
+    # create thumbs 3 by 3
+    thumbsQueue: async.queue makeThumbWorker, 3
+
+    # upload 2 by 2
+    uploadQueue: async.queue uploadWorker, 2
+
+    process: (photo) ->
+        @thumbsQueue.push photo, (err) =>
+            return console.log err if err
+            @uploadQueue.push photo, (err) =>
+                return console.log err if err
+
+module.exports = new PhotoProcessor()
