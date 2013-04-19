@@ -13,6 +13,11 @@ module.exports = (app) ->
 
     app.use shortcuts # extend express to DRY controllers
 
+    app.use (req, res, next) ->
+        if req.url.match /^\/public/
+            req.public = true
+        next()
+
     #test environement
     app.configure 'test', ->
 

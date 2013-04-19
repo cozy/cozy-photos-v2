@@ -1,6 +1,8 @@
 Album = require '../models/album'
 Photo = require '../models/photo'
 async = require 'async'
+zipstream = require 'zipstream'
+fs = require 'fs'
 
 module.exports =
 
@@ -14,9 +16,11 @@ module.exports =
 
     list: (req, res) ->
 
+        request = if req.public then 'public' else 'all'
+
         async.parallel [
             (cb) -> Photo.albumsThumbs cb
-            (cb) -> Album.request 'all', cb
+            (cb) -> Album.request request, cb
         ], (err, results) ->
             [photos, albums] = results
             out = []
@@ -36,6 +40,9 @@ module.exports =
 
     read: (req, res) ->
 
+        if req.album.clearance is 'private' and req.public
+            return res.error 401, "You are not allowed to view this album."
+
         Photo.fromAlbum req.album, (err, photos) ->
             return res.error 500, 'An error occured', err if err
 
@@ -45,6 +52,24 @@ module.exports =
             out.thumb = photos[0].id if photos.length
 
             res.send out
+
+    zip: (req, res) ->
+        Photo.fromAlbum req.album, (err, photos) ->
+            return res.error 500, 'An error occured', err if err
+
+            zip = zipstream.createZip level:1
+
+            addToZip = (photo, cb) ->
+                stream = photo.getFile 'raw', ->
+                zip.addFile stream, name: "#{photo.id}.jpg", cb
+
+            async.eachSeries photos, addToZip, (err) ->
+                zip.finalize ->
+
+            res.setHeader 'Content-Type', 'application/zip'
+            zip.pipe res
+
+
 
     update: (req, res) ->
         req.album.updateAttributes req.body, (err) ->

@@ -9,6 +9,7 @@ module.exports = (app) ->
     # editor routes
     app.get   '/albums/?',                                  album.list
     app.post  '/albums/?',                                  album.create
+    app.get   '/albums/:albumid.zip',                       album.zip
     app.get   '/albums/:albumid/?',                         album.read
     app.put   '/albums/:albumid/?',                         album.update
     app.del   '/albums/:albumid/?',                         album.delete
@@ -20,6 +21,7 @@ module.exports = (app) ->
     app.del   '/photos/:photoid/?',                         photo.delete
 
     # public routes
+    app.get   '/public/albums/:albumid.zip',                album.zip
     app.get   '/public/albums/?',                           album.list
     app.get   '/public/albums/:albumid/?',                  album.read
     app.get   '/public/photos/:photoid.jpg',                photo.raw

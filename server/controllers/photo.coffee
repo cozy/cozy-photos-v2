@@ -21,13 +21,12 @@ module.exports =
             async.parallel [
                 (cb) ->
                     data = name: 'raw', type: raw.type
-                    photo.attachFile raw.path, data, ->
-                        fs.unlink raw.path, cb
+                    photo.attachFile raw.path, data, cb
                 (cb) ->
                     data = name: 'thumb', type: thumb.type
-                    photo.attachFile thumb.path, data, ->
-                        fs.unlink thumb.path, cb
+                    photo.attachFile thumb.path, data, cb
             ], (err) ->
+                fs.unlink file.path for file in req.files
                 return res.error 500, "Creation failed.", err if err
 
                 res.send photo, 201
