@@ -209,8 +209,9 @@ window.require.register("lib/helpers", function(exports, require, module) {
       }
       el.click(function() {
         if (el.text() === placeholder) {
-          return el.empty().focus();
+          el.empty();
         }
+        return module.exports.forceFocus(el);
       });
       el.focus(function() {
         if (el.text() === placeholder) {
@@ -224,6 +225,16 @@ window.require.register("lib/helpers", function(exports, require, module) {
           return onChanged(el.text());
         }
       });
+    },
+    forceFocus: function(el) {
+      var range, sel;
+
+      range = document.createRange();
+      range.selectNodeContents(el[0]);
+      sel = document.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      return el.focus();
     }
   };
   
@@ -245,17 +256,13 @@ window.require.register("lib/view_collection", function(exports, require, module
       return _ref;
     }
 
-    ViewCollection.prototype.itemview = null;
-
     ViewCollection.prototype.views = {};
 
-    ViewCollection.prototype.template = function() {
-      return '';
-    };
+    ViewCollection.prototype.itemView = null;
 
     ViewCollection.prototype.itemViewOptions = function() {};
 
-    ViewCollection.prototype.onChange = function() {
+    ViewCollection.prototype.checkIfEmpty = function() {
       return this.$el.toggleClass('empty', _.size(this.views) === 0);
     };
 
@@ -268,7 +275,8 @@ window.require.register("lib/view_collection", function(exports, require, module
       this.views = {};
       this.listenTo(this.collection, "reset", this.onReset);
       this.listenTo(this.collection, "add", this.addItem);
-      return this.listenTo(this.collection, "remove", this.removeItem);
+      this.listenTo(this.collection, "remove", this.removeItem);
+      return this.onReset(this.collection);
     };
 
     ViewCollection.prototype.render = function() {
@@ -288,10 +296,9 @@ window.require.register("lib/view_collection", function(exports, require, module
       _ref1 = this.views;
       for (id in _ref1) {
         view = _ref1[id];
-        this.appendView(view.$el);
+        this.appendView(view);
       }
-      this.onReset(this.collection);
-      return this.onChange(this.views);
+      return this.checkIfEmpty(this.views);
     };
 
     ViewCollection.prototype.remove = function() {
@@ -316,16 +323,16 @@ window.require.register("lib/view_collection", function(exports, require, module
       options = _.extend({}, {
         model: model
       }, this.itemViewOptions(model));
-      view = new this.itemview(options);
+      view = new this.itemView(options);
       this.views[model.cid] = view.render();
       this.appendView(view);
-      return this.onChange(this.views);
+      return this.checkIfEmpty(this.views);
     };
 
     ViewCollection.prototype.removeItem = function(model) {
       this.views[model.cid].remove();
       delete this.views[model.cid];
-      return this.onChange(this.views);
+      return this.checkIfEmpty(this.views);
     };
 
     return ViewCollection;
@@ -349,6 +356,7 @@ window.require.register("models/album", function(exports, require, module) {
       return {
         title: '',
         description: '',
+        clearance: 'private',
         thumbsrc: 'img/nophotos.gif'
       };
     };
@@ -682,16 +690,20 @@ window.require.register("templates/album", function(exports, require, module) {
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<div class="row-fluid"><div id="about" class="span4"><div id="path"><a href="#albums">&lt;<span class="hidden-phone">Back</span></a></div><h1 id="title">' + escape((interp = title) == null ? '' : interp) + '</h1><div id="description">' + escape((interp = description) == null ? '' : interp) + '</div></div><div id="photos" class="span8"></div></div><div class="btn-group editor"><a class="delete btn btn-inverse"><i class="icon-remove icon-white"></i></a>');
+  buf.push('<div class="row-fluid"><div id="about" class="span4"><div id="links"><a href="#albums" class="flatbtn back"><i class="icon-arrow-left icon-white"></i><span>Back</span></a>');
   if ( 'undefined' != typeof id)
   {
   buf.push('<a');
-  buf.push(attrs({ 'href':("#albums/" + (id) + ""), "class": ('stopediting') + ' ' + ('btn') + ' ' + ('btn-inverse') }, {"href":true}));
-  buf.push('><i class="icon-eye-open icon-white"></i></a><a');
-  buf.push(attrs({ 'href':("#albums/" + (id) + "/edit"), "class": ('startediting') + ' ' + ('btn') + ' ' + ('btn-inverse') }, {"href":true}));
-  buf.push('><i class="icon-edit icon-white"></i></a>');
+  buf.push(attrs({ 'href':("#albums/" + (id) + "/edit"), "class": ('flatbtn') + ' ' + ('startediting') }, {"href":true}));
+  buf.push('><i class="icon-edit icon-white"></i><span>Edit</span></a><a');
+  buf.push(attrs({ 'href':("albums/" + (id) + ".zip"), "class": ('flatbtn') + ' ' + ('download') }, {"href":true}));
+  buf.push('><i class="icon-download-alt icon-white"></i><span>Download</span></a><a');
+  buf.push(attrs({ 'href':("#albums/" + (id) + ""), "class": ('flatbtn') + ' ' + ('stopediting') }, {"href":true}));
+  buf.push('><i class="icon-eye-open icon-white"></i><span>View</span></a><a class="flatbtn delete"><i class="icon-remove icon-white"></i><span>Delete</span></a><div class="btn-group"><a class="flatbtn clearance"><i class="icon-upload icon-white"></i><span>' + escape((interp = clearance) == null ? '' : interp) + '</span></a><a');
+  buf.push(attrs({ 'data-toggle':("popover"), 'data-placement':("bottom"), 'data-container':("body"), 'data-title':(clearanceHelpers.title), 'data-content':(clearanceHelpers.content), "class": ('flatbtn') + ' ' + ('clearancehelper') }, {"data-toggle":true,"data-placement":true,"data-container":true,"data-title":true,"data-content":true}));
+  buf.push('>?</a></div>');
   }
-  buf.push('</div>');
+  buf.push('</div><h1 id="title">' + escape((interp = title) == null ? '' : interp) + '</h1><div id="description">' + escape((interp = description) == null ? '' : interp) + '</div></div><div id="photos" class="span8"></div></div>');
   }
   return buf.join("");
   };
@@ -702,7 +714,7 @@ window.require.register("templates/albumlist", function(exports, require, module
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<div class="btn-group editor"><a href="#albums/new" class="create btn btn-inverse"><i class="icon-plus icon-white"></i></a><a href="#albums" class="stopediting btn btn-inverse"><i class="icon-eye-open icon-white"></i></a><a href="#albums/edit" class="startediting btn btn-inverse"><i class="icon-edit icon-white"></i></a></div><p class="help">There is no albums.\n</p><p class="helpedit">You haven\'t any album yet, use the "+" button in the top-right corner\nto create one.</p>');
+  buf.push('<div class="albumitem create"><a href="#albums/new"><img src="/img/create.gif"/></a><div><h4>New</h4><p>Create a new album</p></div></div><p class="help">There is no public albums.</p>');
   }
   return buf.join("");
   };
@@ -714,10 +726,10 @@ window.require.register("templates/albumlist_item", function(exports, require, m
   with (locals || {}) {
   var interp;
   buf.push('<a');
-  buf.push(attrs({ 'href':("#albums/" + (id) + ""), "class": ('pull-left') }, {"href":true}));
+  buf.push(attrs({ 'href':("#albums/" + (id) + "") }, {"href":true}));
   buf.push('><img');
-  buf.push(attrs({ 'src':("" + (thumbsrc) + ""), "class": ('media-object') }, {"src":true}));
-  buf.push('/></a><div class="media-body"><h4 class="media-heading">' + escape((interp = title) == null ? '' : interp) + '</h4><p>' + escape((interp = description) == null ? '' : interp) + '</p></div><btn class="delete btn btn-danger"><i class="icon-remove icon-white"></i></btn>');
+  buf.push(attrs({ 'src':("" + (thumbsrc) + "") }, {"src":true}));
+  buf.push('/></a><div><h4>' + escape((interp = title) == null ? '' : interp) + '</h4><p>' + escape((interp = description) == null ? '' : interp) + '</p></div>');
   }
   return buf.join("");
   };
@@ -780,12 +792,18 @@ window.require.register("views/album", function(exports, require, module) {
 
     AlbumView.prototype.events = function() {
       return {
-        'click   a.delete': this.destroyModel
+        'click   a.delete': this.destroyModel,
+        'click   a.clearance': this.changeClearance
       };
     };
 
     AlbumView.prototype.getRenderData = function() {
-      return this.model.attributes;
+      var clearanceHelpers;
+
+      clearanceHelpers = this.clearanceHelpers(this.model.get('clearance'));
+      return _.extend({
+        clearanceHelpers: clearanceHelpers
+      }, this.model.attributes);
     };
 
     AlbumView.prototype.afterRender = function() {
@@ -812,9 +830,18 @@ window.require.register("views/album", function(exports, require, module) {
     };
 
     AlbumView.prototype.makeEditable = function() {
-      var _this = this;
+      var help,
+        _this = this;
 
       this.$el.addClass('editing');
+      help = this.clearanceHelpers(this.model.get('clearance'));
+      this.$('.clearancehelper').popover('destroy');
+      this.$('.clearancehelper').popover({
+        trigger: 'click',
+        placement: 'bottom',
+        title: help.Title,
+        content: help.content
+      });
       editable(this.$('#title'), {
         placeholder: 'Title ...',
         onChanged: function(text) {
@@ -844,6 +871,37 @@ window.require.register("views/album", function(exports, require, module) {
       }
     };
 
+    AlbumView.prototype.changeClearance = function() {
+      var clearance, helper, newclearance,
+        _this = this;
+
+      clearance = this.model.get('clearance');
+      if (clearance === 'public') {
+        newclearance = 'hidden';
+      }
+      if (clearance === 'hidden') {
+        newclearance = 'private';
+      }
+      if (clearance === 'private') {
+        newclearance = 'public';
+      }
+      return helper = this.saveModel({
+        clearance: newclearance
+      }).then(function() {
+        var help;
+
+        _this.$('.clearance').find('span').text(newclearance);
+        help = _this.clearanceHelpers(newclearance);
+        _this.$('.clearancehelper').popover('destroy');
+        return _this.$('.clearancehelper').popover({
+          trigger: 'click',
+          placement: 'bottom',
+          title: help.title,
+          content: help.content
+        });
+      });
+    };
+
     AlbumView.prototype.saveModel = function(hash) {
       var promise,
         _this = this;
@@ -856,6 +914,36 @@ window.require.register("views/album", function(exports, require, module) {
         });
       }
       return promise;
+    };
+
+    AlbumView.prototype.getPublicUrl = function() {
+      var origin, path;
+
+      origin = window.location.origin;
+      path = window.location.pathname.replace('apps', 'public');
+      if (path === '/') {
+        path = '/public/';
+      }
+      return origin + path + window.location.hash;
+    };
+
+    AlbumView.prototype.clearanceHelpers = function(clearance) {
+      if (clearance === 'public') {
+        return {
+          title: 'This album is public',
+          content: 'It will appears on your homepage.'
+        };
+      } else if (clearance === 'hidden') {
+        return {
+          title: 'This album is hidden',
+          content: "It will not appears on your homepage.                But you can share it with the following url :                " + (this.getPublicUrl())
+        };
+      } else if (clearance === 'private') {
+        return {
+          title: 'This album is private',
+          content: 'It cannot be accessed from the public side'
+        };
+      }
     };
 
     return AlbumView;
@@ -880,15 +968,16 @@ window.require.register("views/albumslist", function(exports, require, module) {
 
     AlbumsList.prototype.id = 'album-list';
 
-    AlbumsList.prototype.itemview = require('views/albumslist_item');
+    AlbumsList.prototype.itemView = require('views/albumslist_item');
 
     AlbumsList.prototype.template = require('templates/albumlist');
 
     AlbumsList.prototype.initialize = function() {
-      AlbumsList.__super__.initialize.apply(this, arguments);
-      if (this.options.editable) {
-        return this.$el.addClass('editing');
-      }
+      return AlbumsList.__super__.initialize.apply(this, arguments);
+    };
+
+    AlbumsList.prototype.appendView = function(view) {
+      return this.$el.prepend(view.el);
     };
 
     return AlbumsList;
@@ -898,7 +987,6 @@ window.require.register("views/albumslist", function(exports, require, module) {
 });
 window.require.register("views/albumslist_item", function(exports, require, module) {
   var AlbumItem, BaseView, limitLength, _ref,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -910,11 +998,11 @@ window.require.register("views/albumslist_item", function(exports, require, modu
     __extends(AlbumItem, _super);
 
     function AlbumItem() {
-      this.events = __bind(this.events, this);    _ref = AlbumItem.__super__.constructor.apply(this, arguments);
+      _ref = AlbumItem.__super__.constructor.apply(this, arguments);
       return _ref;
     }
 
-    AlbumItem.prototype.className = 'albumitem media';
+    AlbumItem.prototype.className = 'albumitem';
 
     AlbumItem.prototype.template = require('templates/albumlist_item');
 
@@ -926,24 +1014,12 @@ window.require.register("views/albumslist_item", function(exports, require, modu
       });
     };
 
-    AlbumItem.prototype.events = function() {
-      return {
-        'click btn.delete': 'destroyModel'
-      };
-    };
-
     AlbumItem.prototype.getRenderData = function() {
       var out;
 
       out = _.clone(this.model.attributes);
       out.description = limitLength(out.description, 250);
       return out;
-    };
-
-    AlbumItem.prototype.destroyModel = function() {
-      if (confirm('Are you sure ?')) {
-        return this.model.destroy();
-      }
     };
 
     return AlbumItem;
@@ -972,7 +1048,7 @@ window.require.register("views/gallery", function(exports, require, module) {
       return _ref;
     }
 
-    Gallery.prototype.itemview = PhotoView;
+    Gallery.prototype.itemView = PhotoView;
 
     Gallery.prototype.template = require('templates/gallery');
 
@@ -1044,6 +1120,7 @@ window.require.register("views/photo", function(exports, require, module) {
     __extends(PhotoView, _super);
 
     function PhotoView() {
+      this.onClickListener = __bind(this.onClickListener, this);
       this.events = __bind(this.events, this);    _ref = PhotoView.__super__.constructor.apply(this, arguments);
       return _ref;
     }
@@ -1060,17 +1137,9 @@ window.require.register("views/photo", function(exports, require, module) {
     };
 
     PhotoView.prototype.events = function() {
-      var _this = this;
-
       return {
-        'click btn.delete': 'destroyModel',
-        'click': function(evt) {
-          if (!_this.model.get('src')) {
-            evt.stopPropagation();
-            evt.preventDefault();
-            return false;
-          }
-        }
+        'click': 'onClickListener',
+        'click btn.delete': 'destroyModel'
       };
     };
 
@@ -1079,8 +1148,18 @@ window.require.register("views/photo", function(exports, require, module) {
     };
 
     PhotoView.prototype.afterRender = function() {
-      if (!this.model.isNew()) {
-        return this.$('a').addClass('server');
+      var className;
+
+      this.$('a').removeClass('loading server');
+      className = this.model.isNew() ? 'loading' : 'server';
+      return this.$('a').addClass(className);
+    };
+
+    PhotoView.prototype.onClickListener = function(evt) {
+      if (!this.model.get('src')) {
+        evt.stopPropagation();
+        evt.preventDefault();
+        return false;
       }
     };
 

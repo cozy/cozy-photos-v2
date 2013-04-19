@@ -16,11 +16,36 @@ h1,
 h4 {
   font-family: styled;
 }
-.editor {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  border-radius: 3px;
+.flatbtn {
+  margin-bottom: 20px;
+  line-height: 20px;
+  font-size: 18.5px;
+  margin-right: 5px;
+  padding: 5px 10px;
+  background-color: #d3d3d3;
+  border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+  text-transform: capitalize;
+}
+.flatbtn i {
+  vertical-align: baseline;
+  margin-right: 2px;
+}
+.flatbtn:hover {
+  background-color: #ffa500;
+  color: #fff;
+  text-decoration: none;
+}
+.btn-group .flatbtn:first-child {
+  margin-right: 1px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+.btn-group .flatbtn:last-child {
+  margin-right: 1px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
 }
 btn.delete {
   position: absolute;
@@ -28,53 +53,37 @@ btn.delete {
   right: 1px;
   z-index: 2;
 }
-.mode-public .editor,
-.help,
-.helpedit,
-.editing .empty .help,
-.btn.delete,
-.btn.stopediting,
-.editing .btn.startediting,
-#album-list.empty .btn.startediting,
-#album-list.empty .btn.stopediting {
-  display: none;
-}
-.btn.startediting,
-.editing .btn.delete,
-.editing .btn.stopediting {
-  display: inline-block;
-}
-.empty .help,
-.editing .empty .helpedit {
-  display: block;
-}
 .albumitem {
   width: 30%;
   min-width: 450px;
   height: 120px;
   float: left;
-  margin: 15px;
   padding: 10px;
   position: relative;
 }
 .albumitem a {
   display: block;
-}
-.albumitem img {
+  float: left;
+  margin-right: 10px;
   box-sizing: border-box;
+  border-radius: 10px;
   border: 2px solid #444;
   box-shadow: 3px 3px 3px #444;
-  border-radius: 10px;
-  margin-right: 10px;
+  margin-right: 20px;
   width: 100px;
   height: 100px;
   transition: 0.2s ease-out;
   -webkit-transition: 0.2s ease-out;
+  overflow: hidden;
 }
-.albumitem img:hover {
+.albumitem a img {
+  width: 100px;
+  height: 100px;
+}
+.albumitem a:hover {
   border: 2px solid #ffa500;
 }
-.albumitem img:active {
+.albumitem a:active {
   transition: 0s ease-out;
   -webkit-transition: 0s ease-out;
   box-shadow: 0px 0px 0px #444;
@@ -83,25 +92,6 @@ btn.delete {
   height: 90%;
   transition: 0.4s ease-out;
   -webkit-transition: 0.4s ease-out;
-}
-#about #path {
-  margin-bottom: 20px;
-  line-height: 20px;
-  font-size: 18.5px;
-}
-#about #path a {
-  display: inline-block;
-  padding: 5px 10px;
-  background-color: #d3d3d3;
-  border-radius: 5px;
-  color: #fff;
-}
-#about #path a span {
-  margin-left: 5px;
-}
-#about #path a:hover {
-  background-color: #ffa500;
-  text-decoration: none;
 }
 #about #description {
   text-align: justify;
@@ -131,16 +121,16 @@ btn.delete {
   width: 100%;
   height: 100%;
 }
-#photos .photo a:hover {
-  border: 1px solid #fff;
-  box-shadow: 0 0 0 2px #fff, 0 0 20px 5px #000;
-  transition: 0.1s;
-  -webkit-transition: 0.1s;
-}
 #photos .photo:hover {
   transform: scale(1.5);
   -webkit-transform: scale(1.5);
   z-index: 3;
+}
+#photos .photo:hover a {
+  border: 1px solid #fff;
+  box-shadow: 0 0 0 2px #fff, 0 0 20px 5px #000;
+  transition: 0.1s;
+  -webkit-transition: 0.1s;
 }
 #photos .photo:hover img {
   transform: scale(1.2);
@@ -152,21 +142,29 @@ btn.delete {
 #photos.dragover {
   background-color: #90ee90;
 }
-#pbOverlay.show .imageWrap img,
-#pbOverlay.show .imageWrap img,
-#pbOverlay.on .imageWrap img,
-#pbOverlay .imageWrap img,
-#pbOverlay .imageWrap img.prepare,
-#pbOverlay.hide .imageWrap img,
-#pbOverlay.hide .imageWrap img.prepare,
-#pbOverlay .imageWrap img.zoomable {
-  transform: none;
-  -webkit-transform: none;
-  -ms-transform: none;
-  transition: 0.01s;
-  -webkit-transition: 0.01s;
-  -ms-transition: 0.01s;
-  transition-delay: 0s;
-  -webkit-transition-delay: 0s;
-  -ms-transition-delay: 0s;
+.mode-public .flatbtn,
+.mode-public .flatbtn.startediting,
+.mode-public .create,
+.mode-owner.empty .help,
+.mode-owner .empty .help,
+.help,
+.helpedit,
+.stopediting,
+.flatbtn,
+.delete,
+.editing .flatbtn.startediting,
+.editing .flatbtn.download {
+  display: none;
+}
+.editing .flatbtn,
+.editing .delete,
+.mode-public .flatbtn.back,
+.flatbtn.back,
+.flatbtn.startediting,
+.flatbtn.download {
+  display: inline;
+}
+.empty .help,
+.editing .empty .helpedit {
+  display: block;
 }
