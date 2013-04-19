@@ -1,9 +1,6 @@
-a.pull-left(href="#albums/#{id}")
-    img.media-object(src="#{thumbsrc}")
+a(href="#albums/#{id}")
+    img(src="#{thumbsrc}")
 
-div.media-body
-    h4.media-heading #{title}
+div
+    h4 #{title}
     p #{description}
-
-btn.delete.btn.btn-danger
-    i.icon-remove.icon-white

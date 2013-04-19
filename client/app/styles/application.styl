@@ -20,39 +20,45 @@ body
 h1, h4
   font-family styled
 
-.editor
-  position absolute
-  top 5px
-  right 5px
-  border-radius 3px
+// # commons
+.flatbtn
+  margin-bottom 20px
+  line-height 20px
+  font-size 18.5px
+  margin-right 5px
+  padding 5px 10px
+  background-color basecolor
+  border-radius 5px
+  color white
+  cursor pointer
+  text-transform capitalize
+
+  i
+    vertical-align baseline
+    margin-right 2px
+
+.flatbtn:hover
+  background-color highlightcolor
+  color white
+  text-decoration none
+
+.btn-group .flatbtn:first-child
+  margin-right 1px
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+
+.btn-group .flatbtn:last-child
+  margin-right 1px
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+
+
 
 btn.delete
   position absolute
   top 1px
   right 1px
   z-index 2
-
-// ### Logic ###
-.mode-public .editor
-.help
-.helpedit
-.editing .empty .help
-.btn.delete
-.btn.stopediting
-.editing .btn.startediting
-#album-list.empty .btn.startediting
-#album-list.empty .btn.stopediting
-  display none
-
-.btn.startediting
-.editing .btn.delete
-.editing .btn.stopediting
-  display inline-block
-
-.empty .help
-.editing .empty .helpedit
-  display block
-
 
 // #### album list page ###
 
@@ -61,28 +67,32 @@ btn.delete
   min-width 450px
   height 120px
   float left
-  margin 15px
   padding 10px
   position relative
 
   a
     display block
-
-  img
+    float left
+    margin-right 10px
     box-sizing: border-box
+    border-radius 10px
     border 2px solid shadowcolor
     box-shadow: 3px 3px 3px shadowcolor
-    border-radius 10px
-    margin-right 10px
+    margin-right 20px
     width 100px
     height 100px
     transition .2s ease-out
     -webkit-transition .2s ease-out
+    overflow hidden
 
-  img:hover
+    img
+      width 100px
+      height 100px
+
+  a:hover
     border 2px solid highlightcolor
 
-  img:active
+  a:active
     transition 0s ease-out
     -webkit-transition 0s ease-out
     box-shadow: 0px 0px 0px shadowcolor
@@ -93,24 +103,6 @@ btn.delete
   height 90%
   transition .4s ease-out
   -webkit-transition .4s ease-out
-
-  #path
-    margin-bottom 20px
-    line-height 20px
-    font-size 18.5px
-
-    a
-      display inline-block
-      padding 5px 10px
-      background-color basecolor
-      border-radius 5px
-      color white
-
-      span
-        margin-left 5px
-    a:hover
-      background-color highlightcolor
-      text-decoration none
 
   #description
     text-align justify
@@ -141,16 +133,17 @@ btn.delete
         width 100%
         height 100%
 
-    a:hover
-      border 1px solid white
-      box-shadow 0 0 0 2px #FFF, 0 0 20px 5px #000
-      transition .1s
-      -webkit-transition:0.1s
 
   .photo:hover
     transform scale(1.5)
     -webkit-transform scale(1.5)
     z-index 3
+
+    a
+      border 1px solid white
+      box-shadow 0 0 0 2px #FFF, 0 0 20px 5px #000
+      transition .1s
+      -webkit-transition:0.1s
 
     img
       transform scale(1.2)
@@ -162,23 +155,49 @@ btn.delete
 #photos.dragover
   background-color lightgreen
 
+// ### Logic ###
+.mode-public .flatbtn
+.mode-public .flatbtn.startediting
+.mode-public .create
+.mode-owner.empty .help
+.mode-owner .empty .help
+.help
+.helpedit
+.stopediting
+.flatbtn
+.delete
+.editing .flatbtn.startediting
+.editing .flatbtn.download
+  display none
+
+.editing .flatbtn
+.editing .delete
+.mode-public .flatbtn.back
+.flatbtn.back
+.flatbtn.startediting
+.flatbtn.download
+  display inline
+
+.empty .help
+.editing .empty .helpedit
+  display block
 
 // # Remove effect from photobox //
 
-#pbOverlay.show .imageWrap img,
-#pbOverlay.show .imageWrap img,
-#pbOverlay.on .imageWrap img,
-#pbOverlay .imageWrap img,
-#pbOverlay .imageWrap img.prepare,
-#pbOverlay.hide .imageWrap img,
-#pbOverlay.hide .imageWrap img.prepare,
-#pbOverlay .imageWrap img.zoomable
-  transform none
-  -webkit-transform none
-  -ms-transform none
-  transition 0.01s
-  -webkit-transition 0.01s
-  -ms-transition 0.01s
-  transition-delay 0s
-  -webkit-transition-delay 0s
-  -ms-transition-delay 0s
+// #pbOverlay.show .imageWrap img,
+// #pbOverlay.show .imageWrap img,
+// #pbOverlay.on .imageWrap img,
+// #pbOverlay .imageWrap img,
+// #pbOverlay .imageWrap img.prepare,
+// #pbOverlay.hide .imageWrap img,
+// #pbOverlay.hide .imageWrap img.prepare,
+// #pbOverlay .imageWrap img.zoomable
+//   transform none
+//   -webkit-transform none
+//   -ms-transform none
+//   transition 0.01s
+//   -webkit-transition 0.01s
+//   -ms-transition 0.01s
+//   transition-delay 0s
+//   -webkit-transition-delay 0s
+//   -ms-transition-delay 0s

@@ -1,17 +1,40 @@
 div.row-fluid
   div#about.span4
-    div#path
-      a(href="#albums") &lt;
-        span.hidden-phone Back
+    div#links
+      a.flatbtn.back(href="#albums")
+        i.icon-arrow-left.icon-white
+        span Back
+
+      if 'undefined' != typeof id
+        a.flatbtn.startediting(href="#albums/#{id}/edit")
+          i.icon-edit.icon-white
+          span Edit
+
+        a.flatbtn.download(href="albums/#{id}.zip")
+          i.icon-download-alt.icon-white
+          span Download
+
+
+        a.flatbtn.stopediting(href="#albums/#{id}")
+          i.icon-eye-open.icon-white
+          span View
+
+        a.flatbtn.delete
+          i.icon-remove.icon-white
+          span Delete
+
+        div.btn-group
+          a.flatbtn.clearance
+            i.icon-upload.icon-white
+            span #{clearance}
+          a.flatbtn.clearancehelper(
+            data-toggle="popover"
+            data-placement="bottom"
+            data-container="body"
+            data-title=clearanceHelpers.title
+            data-content=clearanceHelpers.content)
+            ?
+
     h1#title #{title}
     div#description #{description}
   div#photos.span8
-
-div.btn-group.editor
-  a.delete.btn.btn-inverse
-    i.icon-remove.icon-white
-  if 'undefined' != typeof id
-    a.stopediting.btn.btn-inverse(href="#albums/#{id}")
-      i.icon-eye-open.icon-white
-    a.startediting.btn.btn-inverse(href="#albums/#{id}/edit")
-      i.icon-edit.icon-white

@@ -6,7 +6,7 @@ photoprocessor = require 'models/photoprocessor'
 
 # gallery : collection of PhotoViews
 module.exports = class Gallery extends ViewCollection
-    itemview: PhotoView
+    itemView: PhotoView
 
     template: require 'templates/gallery'
 

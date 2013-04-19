@@ -12,6 +12,7 @@ module.exports = class Album extends Backbone.Model
     defaults: ->
         title: ''
         description: ''
+        clearance: 'private'
         thumbsrc: 'img/nophotos.gif'
 
     constructor: ->

@@ -6,10 +6,12 @@ ViewCollection = require 'lib/view_collection'
 
 module.exports = class AlbumsList extends ViewCollection
     id: 'album-list'
-    itemview: require 'views/albumslist_item'
+    itemView: require 'views/albumslist_item'
     template: require 'templates/albumlist'
 
     initialize: ->
         super
-        @$el.addClass 'editing' if @options.editable
 
+    # place the items before the create button
+    appendView: (view) ->
+        @$el.prepend view.el

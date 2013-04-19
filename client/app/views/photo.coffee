@@ -12,19 +12,22 @@ module.exports = class PhotoView extends BaseView
         @listenTo @model, 'change', -> @render()
 
     events: =>
+        'click' : 'onClickListener'
         'click btn.delete' : 'destroyModel'
-        'click' : (evt) =>
-            if not @model.get 'src'
-                evt.stopPropagation()
-                evt.preventDefault()
-                return false
-
-
 
     getRenderData: -> @model.attributes
 
     afterRender: ->
-        @$('a').addClass 'server' if not @model.isNew()
+        @$('a').removeClass 'loading server'
+
+        className = if @model.isNew() then 'loading' else 'server'
+        @$('a').addClass className
+
+    onClickListener: (evt) =>
+        if not @model.get 'src'
+            evt.stopPropagation()
+            evt.preventDefault()
+            return false
 
     destroyModel: ->
         @model.destroy()
