@@ -1,4 +1,4 @@
-describe 'helpers', ->
+describe 'view/helpers', ->
 
     helpers = require 'lib/helpers'
 

@@ -8,21 +8,20 @@ BaseView = require 'lib/base_view'
 
 # can use a template that will be displayed alongside the itemViews
 
-# itemViews       : the Backbone.View to be used for items
+# itemView       : the Backbone.View to be used for items
 # itemViewOptions : the options that will be passed to itemViews
 
 module.exports = class ViewCollection extends BaseView
 
-    itemview: null
-
     views: {}
 
-    template: -> ''
+    itemView: null
+
 
     itemViewOptions: ->
 
     # add 'empty' class to view when there is no subview
-    onChange: ->
+    checkIfEmpty: ->
         @$el.toggleClass 'empty', _.size(@views) is 0
 
     # can be overriden if we want to place the subviews somewhere else
@@ -36,6 +35,7 @@ module.exports = class ViewCollection extends BaseView
         @listenTo @collection, "reset",   @onReset
         @listenTo @collection, "add",     @addItem
         @listenTo @collection, "remove",  @removeItem
+        @onReset @collection
 
     # if we have views before a render call, we detach them
     render: ->
@@ -44,9 +44,8 @@ module.exports = class ViewCollection extends BaseView
 
     # after render, we reattach the views
     afterRender: ->
-        @appendView view.$el for id, view of @views
-        @onReset @collection
-        @onChange @views
+        @appendView view for id, view of @views
+        @checkIfEmpty @views
 
     # destroy all sub views before remove
     remove: ->
@@ -61,17 +60,16 @@ module.exports = class ViewCollection extends BaseView
     # event listeners for add
     addItem: (model) =>
         options = _.extend {}, {model: model}, @itemViewOptions(model)
-        view = new @itemview(options)
+        view = new @itemView(options)
         @views[model.cid] = view.render()
         @appendView view
-        @onChange @views
+        @checkIfEmpty @views
 
     # event listeners for remove
     removeItem: (model) =>
         @views[model.cid].remove()
         delete @views[model.cid]
-
-        @onChange @views
+        @checkIfEmpty @views
 
 
 

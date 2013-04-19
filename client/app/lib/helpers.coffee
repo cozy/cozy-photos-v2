@@ -16,10 +16,20 @@ module.exports =
         {placeholder, onChanged} = options
         el.prop 'contenteditable', true
         el.text placeholder if not el.text()
-        el.click -> el.empty().focus() if el.text() is placeholder
+        el.click ->
+            el.empty() if el.text() is placeholder
+            module.exports.forceFocus el
         el.focus -> el.empty() if el.text() is placeholder
         el.blur  ->
             if not el.text()
                 el.text placeholder
             else
                 onChanged el.text()
+
+    forceFocus: (el) ->
+        range = document.createRange()
+        range.selectNodeContents el[0]
+        sel = document.getSelection()
+        sel.removeAllRanges()
+        sel.addRange(range)
+        el.focus()

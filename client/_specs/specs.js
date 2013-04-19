@@ -133,7 +133,247 @@ createSinonServer = function() {
   return this.server;
 };
 ;
-describe('Models/Album', function() {
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+describe('lib/base_view', function() {
+  var BaseView, options, spyRenderData, spyTemplate, testView, _ref;
+
+  BaseView = require('lib/base_view');
+  testView = (function(_super) {
+    __extends(testView, _super);
+
+    function testView() {
+      _ref = testView.__super__.constructor.apply(this, arguments);
+      return _ref;
+    }
+
+    testView.prototype.template = function() {
+      return '<div id="test"></div>';
+    };
+
+    testView.prototype.getRenderData = function() {
+      return {
+        key: 'value'
+      };
+    };
+
+    return testView;
+
+  })(BaseView);
+  options = {
+    optkey: 'optvalue'
+  };
+  spyTemplate = sinon.spy(testView.prototype, 'template');
+  spyRenderData = sinon.spy(testView.prototype, 'getRenderData');
+  it('should not call anything on creation', function() {
+    this.view = new testView(options);
+    expect(spyTemplate.called).to.be["false"];
+    return expect(spyRenderData.called).to.be["false"];
+  });
+  it('should not throw on render', function() {
+    return this.view.render();
+  });
+  it('should have called getRenderData', function() {
+    return expect(spyRenderData.calledOnce).to.be["true"];
+  });
+  it('should have called template with renderData and options', function() {
+    var arg;
+
+    expect(spyTemplate.calledOnce).to.be["true"];
+    arg = spyTemplate.firstCall.args[0];
+    expect(arg).to.have.property('key', 'value');
+    return expect(arg).to.have.property('optkey', 'optvalue');
+  });
+  return it('should contains the template', function() {
+    return expect(this.view.$el.find('#test')).to.have.length(1);
+  });
+});
+;
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+describe('lib/base_view', function() {
+  var BaseView, options, spyRenderData, spyTemplate, testView, _ref;
+
+  BaseView = require('lib/base_view');
+  testView = (function(_super) {
+    __extends(testView, _super);
+
+    function testView() {
+      _ref = testView.__super__.constructor.apply(this, arguments);
+      return _ref;
+    }
+
+    testView.prototype.template = function() {
+      return '<div id="test"></div>';
+    };
+
+    testView.prototype.getRenderData = function() {
+      return {
+        key: 'value'
+      };
+    };
+
+    return testView;
+
+  })(BaseView);
+  options = {
+    optkey: 'optvalue'
+  };
+  spyTemplate = sinon.spy(testView.prototype, 'template');
+  spyRenderData = sinon.spy(testView.prototype, 'getRenderData');
+  it('should not call anything on creation', function() {
+    this.view = new testView(options);
+    expect(spyTemplate.called).to.be["false"];
+    return expect(spyRenderData.called).to.be["false"];
+  });
+  it('should not throw on render', function() {
+    return this.view.render();
+  });
+  it('should have called getRenderData', function() {
+    return expect(spyRenderData.calledOnce).to.be["true"];
+  });
+  it('should have called template with renderData and options', function() {
+    var arg;
+
+    expect(spyTemplate.calledOnce).to.be["true"];
+    arg = spyTemplate.firstCall.args[0];
+    expect(arg).to.have.property('key', 'value');
+    return expect(arg).to.have.property('optkey', 'optvalue');
+  });
+  return it('should contains the template', function() {
+    return expect(this.view.$el.find('#test')).to.have.length(1);
+  });
+});
+;
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+describe('lib/view_collection', function() {
+  var BaseView, ViewCollection, myCollection, myCollectionView, myModel, myView, options, spyItemRemove, spyItemRender, spyItemTemplate, spyRender, spyTemplate, _ref, _ref1, _ref2, _ref3;
+
+  BaseView = require('lib/base_view');
+  ViewCollection = require('lib/view_collection');
+  myModel = (function(_super) {
+    __extends(myModel, _super);
+
+    function myModel() {
+      _ref = myModel.__super__.constructor.apply(this, arguments);
+      return _ref;
+    }
+
+    return myModel;
+
+  })(Backbone.Model);
+  myCollection = (function(_super) {
+    __extends(myCollection, _super);
+
+    function myCollection() {
+      _ref1 = myCollection.__super__.constructor.apply(this, arguments);
+      return _ref1;
+    }
+
+    myCollection.prototype.model = myModel;
+
+    return myCollection;
+
+  })(Backbone.Collection);
+  myView = (function(_super) {
+    __extends(myView, _super);
+
+    function myView() {
+      _ref2 = myView.__super__.constructor.apply(this, arguments);
+      return _ref2;
+    }
+
+    myView.prototype.className = 'item';
+
+    myView.prototype.template = function() {
+      return 'item content';
+    };
+
+    myView.prototype.getRenderData = function() {
+      return this.model.attributes;
+    };
+
+    return myView;
+
+  })(BaseView);
+  myCollectionView = (function(_super) {
+    __extends(myCollectionView, _super);
+
+    function myCollectionView() {
+      _ref3 = myCollectionView.__super__.constructor.apply(this, arguments);
+      return _ref3;
+    }
+
+    myCollectionView.prototype.itemView = myView;
+
+    myCollectionView.prototype.template = function() {
+      return '<div id="test"></div>';
+    };
+
+    myCollectionView.prototype.itemViewOptions = function() {
+      return {
+        optkey: 'optvalue'
+      };
+    };
+
+    return myCollectionView;
+
+  })(ViewCollection);
+  options = {
+    optkey: 'optvalue'
+  };
+  spyRender = sinon.spy(myCollectionView.prototype, 'render');
+  spyTemplate = sinon.spy(myCollectionView.prototype, 'template');
+  spyItemRender = sinon.spy(myView.prototype, 'render');
+  spyItemRemove = sinon.spy(myView.prototype, 'remove');
+  spyItemTemplate = sinon.spy(myView.prototype, 'template');
+  it('should not call anything on creation', function() {
+    this.collection = new myCollection();
+    this.view = new myCollectionView({
+      collection: this.collection
+    });
+    expect(spyTemplate.called).to.be["false"];
+    return expect(spyRender.called).to.be["false"];
+  });
+  it('should render a subview when I add a model to the collection', function() {
+    var arg;
+
+    this.model = new myModel({
+      attribute1: 'value1'
+    });
+    this.collection.add(this.model);
+    expect(spyItemRender.calledOnce).to.be["true"];
+    expect(spyItemTemplate.calledOnce).to.be["true"];
+    arg = spyItemTemplate.firstCall.args[0];
+    expect(arg).to.have.property('attribute1', 'value1');
+    expect(arg).to.have.property('optkey', 'optvalue');
+    return expect(this.view.$el.find('.item')).to.have.length(1);
+  });
+  it('should not touch subviews on render', function() {
+    var i, _i;
+
+    for (i = _i = 1; _i <= 100; i = ++_i) {
+      this.view.render();
+    }
+    expect(spyItemRender.calledOnce).to.be["true"];
+    expect(spyItemTemplate.calledOnce).to.be["true"];
+    return expect(this.view.$el.find('#test')).to.have.length(1);
+  });
+  it('should remove the subview when I remove the model', function() {
+    this.collection.remove(this.model);
+    return expect(this.view.$el.find('.item')).to.have.length(0);
+  });
+  return it('should not keep a reference to the view', function() {
+    expect(_.size(this.view.views)).to.equal(0);
+    return expect(spyItemRemove.calledOnce).to.be["true"];
+  });
+});
+;
+describe('models/album', function() {
   var Album, PhotoCollection;
 
   Album = require('models/album');
@@ -145,57 +385,12 @@ describe('Models/Album', function() {
   after(function() {
     return this.server.restore();
   });
-  it('should have a photos field, of type PhotoCollection', function() {
+  return it('should have a photos field, of type PhotoCollection', function() {
     return expect(this.model.photos).to.be["instanceof"](PhotoCollection);
-  });
-  it('should post /albums on save', function() {
-    var callback;
-
-    callback = sinon.spy();
-    this.model.save({
-      title: 'test-title'
-    }).then(callback);
-    this.server.checkLastRequestIs('POST', 'albums');
-    this.server.respond();
-    return expect(callback.calledOnce).to.be.ok;
-  });
-  it('should then have id from the server', function() {
-    return expect(this.model.id).to.equal('a1');
-  });
-  it('should put /albums/a1 on save', function() {
-    var callback;
-
-    callback = sinon.spy();
-    this.model.save({
-      description: 'test-desc'
-    }).then(callback);
-    this.server.checkLastRequestIs('PUT', 'albums/a1');
-    this.server.respond();
-    return expect(callback.calledOnce).to.be.ok;
-  });
-  it('should get /albums/a1 on fetch', function() {
-    var callback;
-
-    callback = sinon.spy();
-    this.model.fetch().then(callback);
-    this.server.checkLastRequestIs('GET', 'albums/a1');
-    this.server.respond();
-    return expect(callback.calledOnce).to.be.ok;
-  });
-  return it('should del /albums/a1 on destroy', function() {
-    var callback;
-
-    callback = sinon.spy();
-    this.model.destroy().then(callback);
-    this.server.checkLastRequestIs('DELETE', 'albums/a1');
-    this.server.respond();
-    return expect(callback.calledOnce).to.be.ok;
   });
 });
 ;
-describe('BaseView', function() {});
-;
-describe('helpers', function() {
+describe('view/helpers', function() {
   var helpers;
 
   helpers = require('lib/helpers');
@@ -220,6 +415,4 @@ describe('helpers', function() {
     });
   });
 });
-;
-describe('ViewCollection', function() {});
 ;
