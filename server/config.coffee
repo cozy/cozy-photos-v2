@@ -1,18 +1,30 @@
 module.exports = (app) ->
 
-    express = require 'express'
     shortcuts = require './helpers/shortcut'
+    express   = require 'express'
+    http      = require 'http'
+    sio       = require 'socket.io'
 
-    # app.use express.limit '6M'
+    # extract http server from express ...
+    server = http.createServer app
+    app.listen = -> server.listen.apply server, arguments
+
+    # ... so we can plug socket.io
+    app.io = sio.listen server
+    app.io.set 'log level', 2
+    app.io.set 'transports', ['websocket']
 
     # all environements
     app.use express.bodyParser
         uploadDir: './uploads'
+        defer: true # don't wait for full form. Needed for progress events
         keepExtensions: true
-        maxFieldsSize: 6 * 1024 * 1024;
+        maxFieldsSize: 10 * 1024 * 1024;
 
-    app.use shortcuts # extend express to DRY controllers
+    # extend express to DRY controllers
+    app.use shortcuts
 
+    # mark public request
     app.use (req, res, next) ->
         if req.url.match /^\/public/
             req.public = true
@@ -34,3 +46,11 @@ module.exports = (app) ->
         app.use express.errorHandler
             dumpExceptions: true
             showStack: true
+
+    # static middleware
+    staticMiddleware = express.static __dirname + '/../client/public',
+        maxAge: 86400000
+
+    # same client for public and private routes
+    app.use '/public', staticMiddleware
+    app.use staticMiddleware

@@ -34,9 +34,13 @@ module.exports =
           return done err if err
           thumb = {name:'thumb', type: 'image/jpeg'}
           raw = {name:'raw', type: 'image/jpeg'}
+          screen = {name:'raw', type: 'image/jpeg'}
           photo.attachFile data.thumbpath, thumb, (err) ->
               return done err if err
-              photo.attachFile data.rawpath, raw, done
+              photo.attachFile data.rawpath, raw, (err) ->
+                  return done err if err
+                  photo.attachFile data.screenpath, screen, done
+
 
   makeTestClient: (done) ->
       old = new Client "http://localhost:#{TESTPORT}/"

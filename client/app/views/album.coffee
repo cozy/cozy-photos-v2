@@ -11,7 +11,7 @@ module.exports = class AlbumView extends BaseView
 
     events: =>
         'click   a.delete' : @destroyModel
-        'click   a.clearance' : @changeClearance
+        'click   a.changeclearance' : @changeClearance
 
     getRenderData: ->
         clearanceHelpers = @clearanceHelpers(@model.get 'clearance')
@@ -38,15 +38,7 @@ module.exports = class AlbumView extends BaseView
     makeEditable: =>
         @$el.addClass 'editing'
 
-        help =  @clearanceHelpers @model.get 'clearance'
-
-        @$('.clearancehelper').popover 'destroy'
-
-        @$('.clearancehelper').popover
-            trigger: 'click'
-            placement: 'bottom'
-            title: help.Title
-            content: help.content
+        @refreshPopOver @model.get 'clearance'
 
         editable @$('#title'),
             placeholder: 'Title ...'
@@ -64,26 +56,21 @@ module.exports = class AlbumView extends BaseView
             @model.destroy().then ->
                 app.router.navigate 'albums', true
 
-    changeClearance: ->
-        clearance = @model.get 'clearance'
-        newclearance = 'hidden'  if clearance is 'public'
-        newclearance = 'private' if clearance is 'hidden'
-        newclearance = 'public'  if clearance is 'private'
-        helper =
+    changeClearance: (event) ->
+        newclearance = event.target.id.replace 'change', ''
+
         @saveModel(clearance: newclearance).then =>
+            @refreshPopOver newclearance
 
-            @$('.clearance').find('span').text newclearance
+    refreshPopOver: (clearance) ->
+        help =  @clearanceHelpers clearance
+        modal = @$('#clearance-modal')
 
-            help =  @clearanceHelpers newclearance
-
-            @$('.clearancehelper').popover 'destroy'
-            @$('.clearancehelper').popover
-                trigger: 'click'
-                placement: 'bottom'
-                title: help.title
-                content: help.content
-
-
+        @$('.clearance').find('span').text clearance
+        modal.find('h3').text help.title
+        modal.find('.modal-body').html help.content
+        modal.find('.changeclearance').show()
+        modal.find('#change' + clearance).hide()
 
     saveModel: (hash) ->
         promise = @model.save(hash)
@@ -98,7 +85,8 @@ module.exports = class AlbumView extends BaseView
         origin = window.location.origin
         path = window.location.pathname.replace 'apps', 'public'
         path = '/public/' if path is '/'
-        return origin + path + window.location.hash
+        hash = window.location.hash.replace '/edit', ''
+        return origin + path + hash
 
     clearanceHelpers: (clearance) ->
         if clearance is 'public'
