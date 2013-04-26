@@ -766,7 +766,7 @@ window.require.register("templates/albumlist", function(exports, require, module
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<div class="albumitem create"><a href="#albums/new"><img src="/img/create.gif"/></a><div><h4>New</h4><p>Create a new album</p></div></div><p class="help">There is no public albums.</p>');
+  buf.push('<div class="albumitem create"><a href="#albums/new"><img src="img/create.gif"/></a><div><h4>New</h4><p>Create a new album</p></div></div><p class="help">There is no public albums.</p>');
   }
   return buf.join("");
   };
