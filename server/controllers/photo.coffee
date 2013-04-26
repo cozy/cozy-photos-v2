@@ -2,7 +2,8 @@ Photo = require '../models/photo'
 async = require 'async'
 fs = require 'fs'
 
-module.exports =
+module.exports = (app) ->
+
     fetch: (req, res, next, id) ->
         Photo.find id, (err, photo) =>
             return res.error 500, 'An error occured', err if err
@@ -11,30 +12,53 @@ module.exports =
             req.photo = photo
             next()
 
-    create: (req, res) ->
-        photo = new Photo req.body
-        raw = req.files['raw']
-        thumb = req.files['thumb']
-        Photo.create photo, (err, photo) ->
-            return res.error 500, "Creation failed.", err if err
+    create: (req, res) =>
 
-            async.parallel [
-                (cb) ->
-                    data = name: 'raw', type: raw.type
-                    photo.attachFile raw.path, data, cb
-                (cb) ->
-                    data = name: 'thumb', type: thumb.type
-                    photo.attachFile thumb.path, data, cb
-            ], (err) ->
-                fs.unlink file.path for file in req.files
+        cid = null
+
+        req.form.on 'field', (name, value) ->
+            cid = value if name is 'cid'
+
+        req.form.on 'progress', (bytesReceived, bytesExpected) ->
+            return unless cid?
+            app.io.sockets.emit 'uploadprogress',
+                cid: cid
+                p: bytesReceived/bytesExpected
+
+        req.form.on 'end', =>
+            photo = new Photo req.body
+            Photo.create photo, (err, photo) ->
                 return res.error 500, "Creation failed.", err if err
 
-                res.send photo, 201
+                async.parallel [
+                    (cb) ->
+                        raw = req.files['raw']
+                        data = name: 'raw', type: raw.type
+                        photo.attachFile raw.path, data, cb
+                    (cb) ->
+                        screen = req.files['screen']
+                        data = name: 'screen', type: screen.type
+                        photo.attachFile screen.path, data, cb
+                    (cb) ->
+                        thumb = req.files['thumb']
+                        data = name: 'thumb', type: thumb.type
+                        photo.attachFile thumb.path, data, cb
+                ], (err) ->
+                    for name, file in req.files
+                        fs.unlink file.path, (err) ->
+                            return unless err
+                            console.log 'Could not delete, flush uploads'
 
-    raw: (req, res) ->
+                    if err
+                        return res.error 500, "Creation failed.", err
+                    else
+                        res.send photo, 201
+
+    screen: (req, res) ->
         res.setHeader 'Content-Type', 'image/jpg'
         res.setHeader 'Cache-Control', 'public, max-age=31557600'
-        stream = req.photo.getFile 'raw', (err) ->
+        which = if req.photo._attachments.screen then 'screen' else 'raw'
+        stream = req.photo.getFile which, (err) ->
             if err then res.error 500, "File fetching failed.", err
 
         stream.pipe res

@@ -30,6 +30,7 @@ describe 'Write operations', ->
     describe 'Create Photo - POST /photos', ->
 
         raw = "./server/_specs/fixtures/test.jpg"
+        screen = "./server/_specs/fixtures/screen.jpg"
         thumb = "./server/_specs/fixtures/thumb.jpg"
 
         it "should allow request", (done) ->
@@ -38,6 +39,7 @@ describe 'Write operations', ->
             form.append 'title', 'phototitle'
             form.append 'albumid', @albumid
             form.append 'raw', fs.createReadStream(raw)
+            form.append 'screen', fs.createReadStream(screen)
             form.append 'thumb', fs.createReadStream(thumb)
 
         it 'should reply with the created photo', ->

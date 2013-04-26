@@ -8,8 +8,7 @@ module.exports = class PhotoView extends BaseView
 
     initialize: (options) ->
         super
-        # re-render every time the model change
-        @listenTo @model, 'change', -> @render()
+        @listenTo @model, 'change', @onChange
 
     events: =>
         'click' : 'onClickListener'
@@ -17,14 +16,22 @@ module.exports = class PhotoView extends BaseView
 
     getRenderData: -> @model.attributes
 
-    afterRender: ->
-        @$('a').removeClass 'loading server'
+    onChange: ->
+        if @model.hasChanged 'progress'
+            percent = @model.get('progress') * 100 + '%'
+            @$('a .progressfill').css 'height', percent
 
-        className = if @model.isNew() then 'loading' else 'server'
-        @$('a').addClass className
+        else
+            # re-render every time the model change
+            console.log 're-render'
+            @render()
+
+    afterRender: ->
+        @$('a').removeClass('loading thumbed server')
+        .addClass @model.get 'state'
 
     onClickListener: (evt) =>
-        if not @model.get 'src'
+        unless @model.get('state') is 'server'
             evt.stopPropagation()
             evt.preventDefault()
             return false

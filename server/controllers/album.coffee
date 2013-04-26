@@ -3,8 +3,9 @@ Photo = require '../models/photo'
 async = require 'async'
 zipstream = require 'zipstream'
 fs = require 'fs'
+{slugify, noop} = require '../helpers/helpers'
 
-module.exports =
+module.exports = (app) ->
 
     fetch: (req, res, next, id) ->
         Album.find id, (err, album) ->
@@ -57,15 +58,19 @@ module.exports =
         Photo.fromAlbum req.album, (err, photos) ->
             return res.error 500, 'An error occured', err if err
 
-            zip = zipstream.createZip level:1
+            zip = zipstream.createZip level: 1
 
             addToZip = (photo, cb) ->
-                stream = photo.getFile 'raw', ->
-                zip.addFile stream, name: "#{photo.id}.jpg", cb
+                stream = photo.getFile 'raw', noop
+                photoname = slugify(photo.title)
+                zip.addFile stream, name: "#{photoname}.jpg", cb
 
             async.eachSeries photos, addToZip, (err) ->
-                zip.finalize ->
+                zip.finalize noop
 
+            zipname = slugify(req.album.title)
+            disposition = "attachment; filename=\"#{zipname}.zip\""
+            res.setHeader 'Content-Disposition', disposition
             res.setHeader 'Content-Type', 'application/zip'
             zip.pipe res
 

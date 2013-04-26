@@ -23,18 +23,24 @@ div.row-fluid
           i.icon-remove.icon-white
           span Delete
 
-        div.btn-group
-          a.flatbtn.clearance
-            i.icon-upload.icon-white
-            span #{clearance}
-          a.flatbtn.clearancehelper(
-            data-toggle="popover"
-            data-placement="bottom"
-            data-container="body"
-            data-title=clearanceHelpers.title
-            data-content=clearanceHelpers.content)
-            ?
+        a.flatbtn.clearance(
+          href="#clearance-modal",
+          data-toggle="modal")
+          i.icon-upload.icon-white
+          span #{clearance}
 
     h1#title #{title}
     div#description #{description}
   div#photos.span8
+
+  #clearance-modal.modal.hide
+    .modal-header
+      button.close(type="button", data-dismiss="modal") &times;
+      h3 clearanceHelpers.title
+
+    .modal-body clearanceHelpers.content
+
+    .modal-footer
+      a#changeprivate.btn.changeclearance Make it Private
+      a#changehidden.btn.changeclearance  Make it Hidden
+      a#changepublic.btn.changeclearance  Make it Public
