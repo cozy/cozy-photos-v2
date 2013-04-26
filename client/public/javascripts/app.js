@@ -239,6 +239,20 @@ window.require.register("lib/helpers", function(exports, require, module) {
   };
   
 });
+window.require.register("lib/socketprogress", function(exports, require, module) {
+  var pathToSocketIO, socket, url;
+
+  url = window.location.origin;
+
+  pathToSocketIO = "" + (window.location.pathname.substring(1)) + "socket.io";
+
+  socket = io.connect(url, {
+    resource: pathToSocketIO
+  });
+
+  module.exports = socket;
+  
+});
 window.require.register("lib/view_collection", function(exports, require, module) {
   var BaseView, ViewCollection, _ref,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
@@ -403,12 +417,14 @@ window.require.register("models/photo", function(exports, require, module) {
       if (this.id) {
         return {
           thumbsrc: "photos/thumbs/" + this.id + ".jpg",
-          src: "photos/" + this.id + ".jpg"
+          src: "photos/" + this.id + ".jpg",
+          state: 'server'
         };
       } else {
         return {
           thumbsrc: 'img/loading.gif',
-          src: ''
+          src: '',
+          state: 'loading'
         };
       }
     };
@@ -417,6 +433,7 @@ window.require.register("models/photo", function(exports, require, module) {
       if (attrs.id) {
         attrs.thumbsrc = "photos/thumbs/" + attrs.id + ".jpg";
         attrs.src = "photos/" + attrs.id + ".jpg";
+        attrs.state = 'server';
       }
       return attrs;
     };
@@ -427,22 +444,18 @@ window.require.register("models/photo", function(exports, require, module) {
   
 });
 window.require.register("models/photoprocessor", function(exports, require, module) {
-  var MAX_HEIGHT, MAX_WIDTH, Photo, PhotoProcessor, TYPEREGEX, makeThumbBlob, makeThumbDataURI, makeThumbWorker, readFile, upload, uploadWorker;
+  var Photo, PhotoProcessor, blobify, makeScreenBlob, makeScreenDataURI, makeThumbBlob, makeThumbDataURI, makeThumbWorker, readFile, resize, upload, uploadWorker;
 
   Photo = require('models/photo');
-
-  MAX_WIDTH = MAX_HEIGHT = 100;
-
-  TYPEREGEX = /image\/.*/;
 
   readFile = function(photo, next) {
     var reader,
       _this = this;
 
-    if (photo.file.size > 6 * 1024 * 1024) {
-      return next('too big');
+    if (photo.file.size > 10 * 1024 * 1024) {
+      return next('too big (max 10Mo)');
     }
-    if (!photo.file.type.match(TYPEREGEX)) {
+    if (!photo.file.type.match(/image\/.*/)) {
       return next('not an image');
     }
     reader = new FileReader();
@@ -456,7 +469,7 @@ window.require.register("models/photoprocessor", function(exports, require, modu
     };
   };
 
-  makeThumbDataURI = function(photo, next) {
+  resize = function(photo, MAX_WIDTH, MAX_HEIGHT) {
     var canvas, ctx, height, newHeight, newWidth, width;
 
     width = photo.img.width;
@@ -473,46 +486,66 @@ window.require.register("models/photoprocessor", function(exports, require, modu
     canvas.height = MAX_HEIGHT;
     ctx = canvas.getContext('2d');
     ctx.drawImage(photo.img, 0, 0, newWidth, newHeight);
-    photo.thumb_du = canvas.toDataURL(photo.file.type);
-    photo.set('thumbsrc', photo.thumb_du);
-    return next();
+    return canvas.toDataURL(photo.file.type);
   };
 
-  makeThumbBlob = function(photo, next) {
+  blobify = function(dataUrl, type) {
     var array, binary, i, _i, _ref;
 
-    binary = atob(photo.thumb_du.split(',')[1]);
+    binary = atob(dataUrl.split(',')[1]);
     array = [];
     for (i = _i = 0, _ref = binary.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
       array.push(binary.charCodeAt(i));
     }
-    photo.thumb = new Blob([new Uint8Array(array)], {
-      type: 'image/jpeg'
+    return new Blob([new Uint8Array(array)], {
+      type: type
     });
+  };
+
+  makeThumbDataURI = function(photo, next) {
+    photo.thumb_du = resize(photo, 100, 100);
+    photo.set('thumbsrc', photo.thumb_du);
+    photo.set('state', 'thumbed');
+    return next();
+  };
+
+  makeScreenDataURI = function(photo, next) {
+    photo.screen_du = resize(photo, 1200, 800);
+    return next();
+  };
+
+  makeScreenBlob = function(photo, next) {
+    photo.thumb = blobify(photo.thumb_du, photo.file.type);
+    return next();
+  };
+
+  makeThumbBlob = function(photo, next) {
+    photo.screen = blobify(photo.screen_du, photo.file.type);
     return next();
   };
 
   upload = function(photo, next) {
-    var formdata, key, value, _ref;
+    var formdata;
 
     formdata = new FormData();
+    formdata.append('cid', photo.cid);
+    formdata.append('title', photo.get('title'));
+    formdata.append('description', photo.get('description'));
+    formdata.append('albumid', photo.get('albumid'));
     formdata.append('raw', photo.file);
     formdata.append('thumb', photo.thumb, "thumb_" + photo.file.name);
-    _ref = photo.toJSON();
-    for (key in _ref) {
-      value = _ref[key];
-      formdata.append(key, value);
-    }
+    formdata.append('screen', photo.screen, "screen_" + photo.file.name);
     return Backbone.sync('create', photo, {
       contentType: false,
-      success: function() {
+      data: formdata,
+      success: function(data) {
+        photo.set(photo.parse(data));
         return next();
       },
       error: function() {
         photo.set('thumbsrc', 'img/error.gif');
         return next();
-      },
-      data: formdata
+      }
     });
   };
 
@@ -540,13 +573,22 @@ window.require.register("models/photoprocessor", function(exports, require, modu
   uploadWorker = function(photo, done) {
     return async.waterfall([
       function(cb) {
+        return readFile(photo, cb);
+      }, function(cb) {
+        return makeScreenDataURI(photo, cb);
+      }, function(cb) {
+        return makeScreenBlob(photo, cb);
+      }, function(cb) {
         return makeThumbBlob(photo, cb);
       }, function(cb) {
         return upload(photo, cb);
       }, function(cb) {
         delete photo.file;
+        delete photo.img;
         delete photo.thumb;
         delete photo.thumb_du;
+        delete photo.scren;
+        delete photo.screen_du;
         return cb();
       }
     ], function(err) {
@@ -635,6 +677,9 @@ window.require.register("router", function(exports, require, module) {
     };
 
     Router.prototype.albumslistedit = function() {
+      if (app.mode === 'public') {
+        return this.navigate('albums', true);
+      }
       return this.albumslist(true);
     };
 
@@ -653,14 +698,23 @@ window.require.register("router", function(exports, require, module) {
           model: album,
           editable: editable
         }));
+      }).fail(function() {
+        alert('this album does not exist');
+        return _this.navigate('albums', true);
       });
     };
 
     Router.prototype.albumedit = function(id) {
+      if (app.mode === 'public') {
+        return this.navigate('albums', true);
+      }
       return this.album(id, true);
     };
 
     Router.prototype.newalbum = function() {
+      if (app.mode === 'public') {
+        return this.navigate('albums', true);
+      }
       return this.displayView(new AlbumView({
         model: new Album(),
         editable: true
@@ -699,11 +753,9 @@ window.require.register("templates/album", function(exports, require, module) {
   buf.push(attrs({ 'href':("albums/" + (id) + ".zip"), "class": ('flatbtn') + ' ' + ('download') }, {"href":true}));
   buf.push('><i class="icon-download-alt icon-white"></i><span>Download</span></a><a');
   buf.push(attrs({ 'href':("#albums/" + (id) + ""), "class": ('flatbtn') + ' ' + ('stopediting') }, {"href":true}));
-  buf.push('><i class="icon-eye-open icon-white"></i><span>View</span></a><a class="flatbtn delete"><i class="icon-remove icon-white"></i><span>Delete</span></a><div class="btn-group"><a class="flatbtn clearance"><i class="icon-upload icon-white"></i><span>' + escape((interp = clearance) == null ? '' : interp) + '</span></a><a');
-  buf.push(attrs({ 'data-toggle':("popover"), 'data-placement':("bottom"), 'data-container':("body"), 'data-title':(clearanceHelpers.title), 'data-content':(clearanceHelpers.content), "class": ('flatbtn') + ' ' + ('clearancehelper') }, {"data-toggle":true,"data-placement":true,"data-container":true,"data-title":true,"data-content":true}));
-  buf.push('>?</a></div>');
+  buf.push('><i class="icon-eye-open icon-white"></i><span>View</span></a><a class="flatbtn delete"><i class="icon-remove icon-white"></i><span>Delete</span></a><a href="#clearance-modal" data-toggle="modal" class="flatbtn clearance"><i class="icon-upload icon-white"></i><span>' + escape((interp = clearance) == null ? '' : interp) + '</span></a>');
   }
-  buf.push('</div><h1 id="title">' + escape((interp = title) == null ? '' : interp) + '</h1><div id="description">' + escape((interp = description) == null ? '' : interp) + '</div></div><div id="photos" class="span8"></div></div>');
+  buf.push('</div><h1 id="title">' + escape((interp = title) == null ? '' : interp) + '</h1><div id="description">' + escape((interp = description) == null ? '' : interp) + '</div></div><div id="photos" class="span8"></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer"><a id="changeprivate" class="btn changeclearance">Make it Private</a><a id="changehidden" class="btn changeclearance"> Make it Hidden</a><a id="changepublic" class="btn changeclearance"> Make it Public</a></div></div></div>');
   }
   return buf.join("");
   };
@@ -755,7 +807,7 @@ window.require.register("templates/photo", function(exports, require, module) {
   buf.push(attrs({ 'href':("" + (src) + ""), 'title':("" + (title) + "") }, {"href":true,"title":true}));
   buf.push('><img');
   buf.push(attrs({ 'src':("" + (thumbsrc) + ""), 'alt':("" + (title) + "") }, {"src":true,"alt":true}));
-  buf.push('/></a><btn class="delete btn btn-danger"><i class="icon-remove icon-white"></i></btn>');
+  buf.push('/><div class="progressfill"></div></a><btn class="delete btn btn-danger"><i class="icon-remove icon-white"></i></btn>');
   }
   return buf.join("");
   };
@@ -793,7 +845,7 @@ window.require.register("views/album", function(exports, require, module) {
     AlbumView.prototype.events = function() {
       return {
         'click   a.delete': this.destroyModel,
-        'click   a.clearance': this.changeClearance
+        'click   a.changeclearance': this.changeClearance
       };
     };
 
@@ -830,18 +882,10 @@ window.require.register("views/album", function(exports, require, module) {
     };
 
     AlbumView.prototype.makeEditable = function() {
-      var help,
-        _this = this;
+      var _this = this;
 
       this.$el.addClass('editing');
-      help = this.clearanceHelpers(this.model.get('clearance'));
-      this.$('.clearancehelper').popover('destroy');
-      this.$('.clearancehelper').popover({
-        trigger: 'click',
-        placement: 'bottom',
-        title: help.Title,
-        content: help.content
-      });
+      this.refreshPopOver(this.model.get('clearance'));
       editable(this.$('#title'), {
         placeholder: 'Title ...',
         onChanged: function(text) {
@@ -871,35 +915,28 @@ window.require.register("views/album", function(exports, require, module) {
       }
     };
 
-    AlbumView.prototype.changeClearance = function() {
-      var clearance, helper, newclearance,
+    AlbumView.prototype.changeClearance = function(event) {
+      var newclearance,
         _this = this;
 
-      clearance = this.model.get('clearance');
-      if (clearance === 'public') {
-        newclearance = 'hidden';
-      }
-      if (clearance === 'hidden') {
-        newclearance = 'private';
-      }
-      if (clearance === 'private') {
-        newclearance = 'public';
-      }
-      return helper = this.saveModel({
+      newclearance = event.target.id.replace('change', '');
+      return this.saveModel({
         clearance: newclearance
       }).then(function() {
-        var help;
-
-        _this.$('.clearance').find('span').text(newclearance);
-        help = _this.clearanceHelpers(newclearance);
-        _this.$('.clearancehelper').popover('destroy');
-        return _this.$('.clearancehelper').popover({
-          trigger: 'click',
-          placement: 'bottom',
-          title: help.title,
-          content: help.content
-        });
+        return _this.refreshPopOver(newclearance);
       });
+    };
+
+    AlbumView.prototype.refreshPopOver = function(clearance) {
+      var help, modal;
+
+      help = this.clearanceHelpers(clearance);
+      modal = this.$('#clearance-modal');
+      this.$('.clearance').find('span').text(clearance);
+      modal.find('h3').text(help.title);
+      modal.find('.modal-body').html(help.content);
+      modal.find('.changeclearance').show();
+      return modal.find('#change' + clearance).hide();
     };
 
     AlbumView.prototype.saveModel = function(hash) {
@@ -917,14 +954,15 @@ window.require.register("views/album", function(exports, require, module) {
     };
 
     AlbumView.prototype.getPublicUrl = function() {
-      var origin, path;
+      var hash, origin, path;
 
       origin = window.location.origin;
       path = window.location.pathname.replace('apps', 'public');
       if (path === '/') {
         path = '/public/';
       }
-      return origin + path + window.location.hash;
+      hash = window.location.hash.replace('/edit', '');
+      return origin + path + hash;
     };
 
     AlbumView.prototype.clearanceHelpers = function(clearance) {
@@ -1052,6 +1090,15 @@ window.require.register("views/gallery", function(exports, require, module) {
 
     Gallery.prototype.template = require('templates/gallery');
 
+    Gallery.prototype.initialize = function() {
+      var _this = this;
+
+      Gallery.__super__.initialize.apply(this, arguments);
+      return require('lib/socketprogress').on('uploadprogress', function(progress) {
+        return _this.collection.get(progress.cid).set('progress', progress.p);
+      });
+    };
+
     Gallery.prototype.afterRender = function() {
       Gallery.__super__.afterRender.apply(this, arguments);
       return this.$el.photobox('a.server', {
@@ -1131,9 +1178,7 @@ window.require.register("views/photo", function(exports, require, module) {
 
     PhotoView.prototype.initialize = function(options) {
       PhotoView.__super__.initialize.apply(this, arguments);
-      return this.listenTo(this.model, 'change', function() {
-        return this.render();
-      });
+      return this.listenTo(this.model, 'change', this.onChange);
     };
 
     PhotoView.prototype.events = function() {
@@ -1147,16 +1192,24 @@ window.require.register("views/photo", function(exports, require, module) {
       return this.model.attributes;
     };
 
-    PhotoView.prototype.afterRender = function() {
-      var className;
+    PhotoView.prototype.onChange = function() {
+      var percent;
 
-      this.$('a').removeClass('loading server');
-      className = this.model.isNew() ? 'loading' : 'server';
-      return this.$('a').addClass(className);
+      if (this.model.hasChanged('progress')) {
+        percent = this.model.get('progress') * 100 + '%';
+        return this.$('a .progressfill').css('height', percent);
+      } else {
+        console.log('re-render');
+        return this.render();
+      }
+    };
+
+    PhotoView.prototype.afterRender = function() {
+      return this.$('a').removeClass('loading thumbed server').addClass(this.model.get('state'));
     };
 
     PhotoView.prototype.onClickListener = function(evt) {
-      if (!this.model.get('src')) {
+      if (this.model.get('state') !== 'server') {
         evt.stopPropagation();
         evt.preventDefault();
         return false;

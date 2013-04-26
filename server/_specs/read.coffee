@@ -54,7 +54,7 @@ describe 'Read operations', ->
             @client.saveFile "photos/#{@photoid}.jpg", downloadPath, done
 
         it "should not change the file", ->
-            fileStats = fs.statSync(fixtures.basePhoto1.rawpath)
+            fileStats = fs.statSync(fixtures.basePhoto1.screenpath)
             resultStats = fs.statSync(downloadPath)
             expect(resultStats.size).to.equal fileStats.size
 

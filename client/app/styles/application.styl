@@ -8,30 +8,42 @@
 
 bgcolor = #fcfcfc
 shadowcolor = #444
-highlightcolor = orange
 basecolor = lightgrey
+highlightcolor = #fe8800
+buttoncolor = #34a6ff
+uploadcolor = #34a6ff
+
 
 body
   height 97%
-  padding 1%
+  padding-top 1%
   background-color bgcolor
+
+
+// # commons
+#album, #album-list
   font-family main
 
 h1, h4
   font-family styled
 
-// # commons
+
 .flatbtn
   margin-bottom 20px
+  display block
   line-height 20px
   font-size 18.5px
-  margin-right 5px
-  padding 5px 10px
-  background-color basecolor
-  border-radius 5px
+  margin 2px 1%
+  padding 10px 1%
+  background-color buttoncolor
   color white
   cursor pointer
   text-transform capitalize
+  width 21%
+  float left
+
+  span
+    text-align center
 
   i
     vertical-align baseline
@@ -42,15 +54,19 @@ h1, h4
   color white
   text-decoration none
 
-.btn-group .flatbtn:first-child
-  margin-right 1px
-  border-top-right-radius: 0px;
-  border-bottom-right-radius: 0px;
+.flatbtn:focus
+  background-color buttoncolor
+  color white
+  text-decoration none
 
-.btn-group .flatbtn:last-child
-  margin-right 1px
-  border-top-left-radius: 0px;
-  border-bottom-left-radius: 0px;
+
+@media (max-width: 1210px)
+  .flatbtn
+    width 46%
+
+@media (max-width: 767px)
+  .flatbtn
+    width 21%
 
 
 
@@ -59,6 +75,9 @@ btn.delete
   top 1px
   right 1px
   z-index 2
+
+#title
+  clear both
 
 // #### album list page ###
 
@@ -101,8 +120,6 @@ btn.delete
 
 #about
   height 90%
-  transition .4s ease-out
-  -webkit-transition .4s ease-out
 
   #description
     text-align justify
@@ -133,6 +150,15 @@ btn.delete
         width 100%
         height 100%
 
+  .photo a.thumbed
+    border 1px solid uploadcolor
+
+  .photo a.thumbed .progressfill
+    width 100%
+    height 10%
+    position absolute
+    bottom 0px
+    background-color uploadcolor
 
   .photo:hover
     transform scale(1.5)
@@ -155,6 +181,15 @@ btn.delete
 #photos.dragover
   background-color lightgreen
 
+
+.modal
+  border-radius 0px
+  border 0px
+.modal-header
+  background-color buttoncolor
+  color white
+  font-family styled
+
 // ### Logic ###
 .mode-public .flatbtn
 .mode-public .flatbtn.startediting
@@ -176,8 +211,6 @@ btn.delete
 .flatbtn.back
 .flatbtn.startediting
 .flatbtn.download
-  display inline
-
 .empty .help
 .editing .empty .helpedit
   display block

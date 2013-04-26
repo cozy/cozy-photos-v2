@@ -10,6 +10,12 @@ module.exports = class Gallery extends ViewCollection
 
     template: require 'templates/gallery'
 
+    initialize: ->
+        super
+        require('lib/socketprogress').on 'uploadprogress', (progress) =>
+            @collection.get(progress.cid)
+            .set 'progress', progress.p
+
     # launch photobox after render
     afterRender: ->
         super
