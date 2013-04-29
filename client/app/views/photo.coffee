@@ -23,7 +23,6 @@ module.exports = class PhotoView extends BaseView
 
         else
             # re-render every time the model change
-            console.log 're-render'
             @render()
 
     afterRender: ->
