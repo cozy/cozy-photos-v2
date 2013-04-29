@@ -18,22 +18,27 @@ readFile = (photo, next) ->
         photo.img.onload = ->
             next()
 
-resize = (photo, MAX_WIDTH, MAX_HEIGHT) ->
-    width = photo.img.width
-    height = photo.img.height
-    if width > height and height > MAX_HEIGHT
-        newWidth = width * MAX_HEIGHT / height
-        newHeight = MAX_HEIGHT
-    else if width > MAX_WIDTH
-        newWidth = MAX_WIDTH
-        newHeight = height * MAX_WIDTH / width
+resize = (photo, MAX_WIDTH, MAX_HEIGHT, fill) ->
+
+    max = width: MAX_WIDTH, height:MAX_HEIGHT
+    if (photo.img.width > photo.img.height) is fill
+        ratiodim = 'height'
+    else
+        ratiodim = 'width'
+
+    ratio = max[ratiodim] / photo.img[ratiodim]
+
+    newdims =
+        height: ratio*photo.img.height
+        width: ratio*photo.img.width
+
 
     # use canvas to resize the image
     canvas = document.createElement 'canvas'
-    canvas.width = MAX_WIDTH
-    canvas.height = MAX_HEIGHT
+    canvas.width = if fill then MAX_WIDTH else newdims.width
+    canvas.height = if fill then MAX_HEIGHT else newdims.height
     ctx = canvas.getContext '2d'
-    ctx.drawImage photo.img, 0, 0, newWidth, newHeight
+    ctx.drawImage photo.img, 0, 0, newdims.width, newdims.height
     return canvas.toDataURL photo.file.type
 
 blobify = (dataUrl, type) ->
@@ -47,7 +52,7 @@ blobify = (dataUrl, type) ->
 # create photo.thumb_du : a DataURL encoded thumbnail of photo.img
 makeThumbDataURI = (photo, next) ->
 
-    photo.thumb_du = resize photo, 100, 100
+    photo.thumb_du = resize photo, 100, 100, true
     # let the view update itself
     photo.set 'thumbsrc', photo.thumb_du
     photo.set 'state'   , 'thumbed'
@@ -57,7 +62,7 @@ makeThumbDataURI = (photo, next) ->
 # create photo.screen_du : a DataURL encoded thumbnail of photo.img
 makeScreenDataURI = (photo, next) ->
 
-    photo.screen_du = resize photo, 1200, 800
+    photo.screen_du = resize photo, 1200, 800, false
 
     next()
 
