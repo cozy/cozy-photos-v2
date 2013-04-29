@@ -12,9 +12,10 @@ module.exports = class Gallery extends ViewCollection
 
     initialize: ->
         super
-        require('lib/socketprogress').on 'uploadprogress', (progress) =>
-            @collection.get(progress.cid)
-            .set 'progress', progress.p
+        if @options.editable
+            require('lib/socketprogress').on 'uploadprogress', (progress) =>
+                @collection.get(progress.cid)
+                .set 'progress', progress.p
 
     # launch photobox after render
     afterRender: ->
