@@ -62,8 +62,10 @@ module.exports = (app) ->
 
             addToZip = (photo, cb) ->
                 stream = photo.getFile 'raw', noop
-                photoname = slugify(photo.title)
-                zip.addFile stream, name: "#{photoname}.jpg", cb
+                extension = photo.title.substr photo.title.lastIndexOf '.'
+                photoname = photo.title.substr 0, photo.title.lastIndexOf '.'
+                photoname = slugify(photoname) + extension
+                zip.addFile stream, name: photoname, cb
 
             async.eachSeries photos, addToZip, (err) ->
                 zip.finalize noop
