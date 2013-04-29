@@ -509,8 +509,10 @@ window.require.register("models/photoprocessor", function(exports, require, modu
 
   makeThumbDataURI = function(photo, next) {
     photo.thumb_du = resize(photo, 100, 100, true);
-    photo.set('thumbsrc', photo.thumb_du);
-    photo.set('state', 'thumbed');
+    photo.set({
+      state: 'thumbed',
+      thumbsrc: photo.thumb_du
+    });
     return next();
   };
 
@@ -548,7 +550,11 @@ window.require.register("models/photoprocessor", function(exports, require, modu
         return next();
       },
       error: function() {
-        photo.set('thumbsrc', 'img/error.gif');
+        photo.set({
+          state: 'error',
+          thumbsrc: 'img/error.gif',
+          title: photo.get('title') + ': upload failed'
+        });
         return next();
       }
     });
@@ -567,6 +573,7 @@ window.require.register("models/photoprocessor", function(exports, require, modu
     ], function(err) {
       if (err) {
         photo.set({
+          state: error,
           thumbsrc: 'img/error.gif',
           title: photo.get('title') + ' is ' + err
         });
@@ -599,6 +606,7 @@ window.require.register("models/photoprocessor", function(exports, require, modu
     ], function(err) {
       if (err) {
         photo.set({
+          state: error,
           thumbsrc: 'img/error.gif',
           title: photo.get('title') + ' is ' + err
         });
@@ -1163,12 +1171,14 @@ window.require.register("views/gallery", function(exports, require, module) {
   
 });
 window.require.register("views/photo", function(exports, require, module) {
-  var BaseView, PhotoView, _ref,
+  var BaseView, PhotoView, transitionendEvents, _ref,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   BaseView = require('lib/base_view');
+
+  transitionendEvents = ["transitionend", "webkitTransitionEnd", "oTransitionEnd", "MSTransitionEnd"].join(" ");
 
   module.exports = PhotoView = (function(_super) {
     __extends(PhotoView, _super);
@@ -1185,7 +1195,10 @@ window.require.register("views/photo", function(exports, require, module) {
 
     PhotoView.prototype.initialize = function(options) {
       PhotoView.__super__.initialize.apply(this, arguments);
-      return this.listenTo(this.model, 'change', this.onChange);
+      this.listenTo(this.model, 'change:progress', this.onProgress);
+      this.listenTo(this.model, 'change:thumbsrc', this.onSrcChanged);
+      this.listenTo(this.model, 'change:src', this.onSrcChanged);
+      return this.listenTo(this.model, 'change:state', this.onStateChanged);
     };
 
     PhotoView.prototype.events = function() {
@@ -1199,19 +1212,43 @@ window.require.register("views/photo", function(exports, require, module) {
       return this.model.attributes;
     };
 
-    PhotoView.prototype.onChange = function() {
-      var percent;
+    PhotoView.prototype.afterRender = function() {
+      this.link = this.$('a');
+      this.image = this.$('img');
+      this.progressbar = this.$('.progressfill');
+      this.link.removeClass('loading thumbed server error');
+      return this.link.addClass(this.model.get('state'));
+    };
 
-      if (this.model.hasChanged('progress')) {
-        percent = this.model.get('progress') * 100 + '%';
-        return this.$('a .progressfill').css('height', percent);
-      } else {
-        return this.render();
+    PhotoView.prototype.onProgress = function(model) {
+      var p;
+
+      p = 10 + 90 * model.get('progress');
+      return this.progressbar.css('height', p + '%');
+    };
+
+    PhotoView.prototype.onStateChanged = function(model) {
+      var _this = this;
+
+      this.link.removeClass('loading thumbed server error');
+      this.link.addClass(this.model.get('state'));
+      console.log(model.previous('state'), '->', model.get('state'));
+      if (model.get('state') === 'thumbed') {
+        this.progressbar.css('height', '10%');
+      }
+      if (model.previous('state') === 'thumbed' && model.get('state') === 'server') {
+        console.log('hey');
+        this.progressbar.css('height', '100%');
+        return setTimeout(function() {
+          console.log('ho');
+          return _this.progressbar.hide();
+        }, 500);
       }
     };
 
-    PhotoView.prototype.afterRender = function() {
-      return this.$('a').removeClass('loading thumbed server').addClass(this.model.get('state'));
+    PhotoView.prototype.onSrcChanged = function(model) {
+      this.link.attr('href', model.get('src'));
+      return this.image.attr('src', model.get('thumbsrc'));
     };
 
     PhotoView.prototype.onClickListener = function(evt) {

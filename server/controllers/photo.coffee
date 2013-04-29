@@ -15,15 +15,18 @@ module.exports = (app) ->
     create: (req, res) =>
 
         cid = null
+        lastPercent = 0
 
         req.form.on 'field', (name, value) ->
             cid = value if name is 'cid'
 
         req.form.on 'progress', (bytesReceived, bytesExpected) ->
             return unless cid?
-            app.io.sockets.emit 'uploadprogress',
-                cid: cid
-                p: bytesReceived/bytesExpected
+            percent = bytesReceived/bytesExpected
+            return unless percent - lastPercent > 0.05
+
+            lastPercent = percent
+            app.io.sockets.emit 'uploadprogress', cid: cid, p: percent
 
         req.form.on 'end', =>
             photo = new Photo req.body

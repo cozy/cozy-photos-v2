@@ -54,8 +54,9 @@ makeThumbDataURI = (photo, next) ->
 
     photo.thumb_du = resize photo, 100, 100, true
     # let the view update itself
-    photo.set 'thumbsrc', photo.thumb_du
-    photo.set 'state'   , 'thumbed'
+    photo.set
+        state: 'thumbed'
+        thumbsrc: photo.thumb_du
 
     next()
 
@@ -101,7 +102,10 @@ upload = (photo, next) ->
             photo.set photo.parse(data)
             next()
         error: ->
-            photo.set 'thumbsrc', 'img/error.gif'
+            photo.set
+                state: 'error'
+                thumbsrc: 'img/error.gif'
+                title: photo.get('title') + ': upload failed'
             next() # clear tmps anyway
 
 # async waterfall of all the above
@@ -115,6 +119,7 @@ makeThumbWorker = (photo , done) ->
     ], (err) ->
         if err
             photo.set
+                state: error
                 thumbsrc: 'img/error.gif'
                 title: photo.get('title') + ' is ' + err
         done(err)
@@ -139,6 +144,7 @@ uploadWorker = (photo, done) ->
     ], (err) ->
         if err
             photo.set
+                state: error
                 thumbsrc:'img/error.gif'
                 title: photo.get('title') + ' is ' + err
         done(err)

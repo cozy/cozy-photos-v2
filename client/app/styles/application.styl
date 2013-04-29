@@ -150,15 +150,17 @@ btn.delete
         width 100%
         height 100%
 
-  .photo a.thumbed
-    border 1px solid uploadcolor
-
-  .photo a.thumbed .progressfill
+  .photo .progressfill
     width 100%
-    height 10%
+    height 0%
     position absolute
     bottom 0px
     background-color uploadcolor
+    transition .3s
+    -webkit-transition .3s
+
+  .photo a.thumbed
+    border 1px solid uploadcolor
 
   .photo:hover
     transform scale(1.5)
