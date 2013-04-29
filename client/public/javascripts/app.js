@@ -469,23 +469,28 @@ window.require.register("models/photoprocessor", function(exports, require, modu
     };
   };
 
-  resize = function(photo, MAX_WIDTH, MAX_HEIGHT) {
-    var canvas, ctx, height, newHeight, newWidth, width;
+  resize = function(photo, MAX_WIDTH, MAX_HEIGHT, fill) {
+    var canvas, ctx, max, newdims, ratio, ratiodim;
 
-    width = photo.img.width;
-    height = photo.img.height;
-    if (width > height && height > MAX_HEIGHT) {
-      newWidth = width * MAX_HEIGHT / height;
-      newHeight = MAX_HEIGHT;
-    } else if (width > MAX_WIDTH) {
-      newWidth = MAX_WIDTH;
-      newHeight = height * MAX_WIDTH / width;
+    max = {
+      width: MAX_WIDTH,
+      height: MAX_HEIGHT
+    };
+    if ((photo.img.width > photo.img.height) === fill) {
+      ratiodim = 'height';
+    } else {
+      ratiodim = 'width';
     }
+    ratio = max[ratiodim] / photo.img[ratiodim];
+    newdims = {
+      height: ratio * photo.img.height,
+      width: ratio * photo.img.width
+    };
     canvas = document.createElement('canvas');
-    canvas.width = MAX_WIDTH;
-    canvas.height = MAX_HEIGHT;
+    canvas.width = fill ? MAX_WIDTH : newdims.width;
+    canvas.height = fill ? MAX_HEIGHT : newdims.height;
     ctx = canvas.getContext('2d');
-    ctx.drawImage(photo.img, 0, 0, newWidth, newHeight);
+    ctx.drawImage(photo.img, 0, 0, newdims.width, newdims.height);
     return canvas.toDataURL(photo.file.type);
   };
 
@@ -503,14 +508,14 @@ window.require.register("models/photoprocessor", function(exports, require, modu
   };
 
   makeThumbDataURI = function(photo, next) {
-    photo.thumb_du = resize(photo, 100, 100);
+    photo.thumb_du = resize(photo, 100, 100, true);
     photo.set('thumbsrc', photo.thumb_du);
     photo.set('state', 'thumbed');
     return next();
   };
 
   makeScreenDataURI = function(photo, next) {
-    photo.screen_du = resize(photo, 1200, 800);
+    photo.screen_du = resize(photo, 1200, 800, false);
     return next();
   };
 
@@ -1094,9 +1099,11 @@ window.require.register("views/gallery", function(exports, require, module) {
       var _this = this;
 
       Gallery.__super__.initialize.apply(this, arguments);
-      return require('lib/socketprogress').on('uploadprogress', function(progress) {
-        return _this.collection.get(progress.cid).set('progress', progress.p);
-      });
+      if (this.options.editable) {
+        return require('lib/socketprogress').on('uploadprogress', function(progress) {
+          return _this.collection.get(progress.cid).set('progress', progress.p);
+        });
+      }
     };
 
     Gallery.prototype.afterRender = function() {
@@ -1199,7 +1206,6 @@ window.require.register("views/photo", function(exports, require, module) {
         percent = this.model.get('progress') * 100 + '%';
         return this.$('a .progressfill').css('height', percent);
       } else {
-        console.log('re-render');
         return this.render();
       }
     };
