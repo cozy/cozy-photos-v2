@@ -6,78 +6,81 @@
     font-family: main
     src: url('/fonts/signika-regular.ttf');
 
+
 bgcolor = #fcfcfc
-shadowcolor = #444
-basecolor = lightgrey
-highlightcolor = #fe8800
-buttoncolor = #34a6ff
 uploadcolor = #34a6ff
+darkgrey = #444
+basecolor = lightgrey
+orange = #fe8800
+blue = #34a6ff
 
 
 body
-  height 97%
-  padding-top 1%
+  height 96%
+  padding 1%
   background-color bgcolor
 
-
 // # commons
+
 #album, #album-list
   font-family main
 
 h1, h4
   font-family styled
 
-
 .flatbtn
   margin-bottom 20px
   display block
   line-height 20px
-  font-size 18.5px
+  font-size 18px
   margin 2px 1%
-  padding 10px 1%
-  background-color buttoncolor
+  padding 10px 2%
+  background-color blue
   color white
   cursor pointer
   text-transform capitalize
-  width 21%
+  width 30%
   float left
+  border 0
 
   span
     text-align center
+    margin-left: 10px
 
   i
     vertical-align baseline
-    margin-right 2px
 
 .flatbtn:hover
-  background-color highlightcolor
+  background-color orange
   color white
   text-decoration none
 
 .flatbtn:focus
-  background-color buttoncolor
+  background-color blue
   color white
   text-decoration none
 
+.flatbtn:active
+.flatbtn:focus
+  background orange 
+  box-shadow 1px 3px 2px rgba(0, 0, 0, 0.2) inset
 
 @media (max-width: 1210px)
   .flatbtn
-    width 46%
+    width 36%
 
 @media (max-width: 767px)
   .flatbtn
-    width 21%
+    width 19%
 
-
-
-btn.delete
+button.delete
   position absolute
   top 1px
   right 1px
   z-index 2
+  padding 5px
+  width: auto
 
-#title
-  clear both
 
 // #### album list page ###
 
@@ -93,10 +96,10 @@ btn.delete
     display block
     float left
     margin-right 10px
-    box-sizing: border-box
-    border-radius 10px
-    border 2px solid shadowcolor
-    box-shadow: 3px 3px 3px shadowcolor
+    box-sizing border-box
+    border-radius 2px
+    border 2px solid blue
+    box-shadow 3px 3px 3px darkgrey
     margin-right 20px
     width 100px
     height 100px
@@ -109,14 +112,23 @@ btn.delete
       height 100px
 
   a:hover
-    border 2px solid highlightcolor
+    border 2px solid orange
 
   a:active
     transition 0s ease-out
     -webkit-transition 0s ease-out
-    box-shadow: 0px 0px 0px shadowcolor
+    box-shadow: 0px 0px 0px darkgrey
 
 // #### album page ###
+
+#album
+  padding: 0
+
+#links
+  margin-bottom: 20px
+
+  a
+      margin: 0 10px 10px 0
 
 #about
   height 90%
@@ -125,6 +137,14 @@ btn.delete
     text-align justify
     padding 1px
     border 0px
+
+  #title:active
+  #description:active
+    outline 0
+
+  #title:focus
+  #description:focus
+    outline 1px solid orange
 
 
 #photos
@@ -178,17 +198,17 @@ btn.delete
       -webkit-transform scale(1.2)
 
 .editing #photos.empty
-  border 1px dashed basecolor
+  border 1px solid orange
 
 #photos.dragover
-  background-color lightgreen
+  background-color orange
 
 
 .modal
   border-radius 0px
   border 0px
 .modal-header
-  background-color buttoncolor
+  background-color blue
   color white
   font-family styled
 

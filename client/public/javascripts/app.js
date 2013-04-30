@@ -757,7 +757,7 @@ window.require.register("templates/album", function(exports, require, module) {
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<div class="row-fluid"><div id="about" class="span4"><div id="links"><a href="#albums" class="flatbtn back"><i class="icon-arrow-left icon-white"></i><span>Back</span></a>');
+  buf.push('<div class="row-fluid"><div id="about" class="span4"><div id="links" class="clearfix"><a href="#albums" class="flatbtn back"><i class="icon-arrow-left icon-white"></i><span>Back</span></a>');
   if ( 'undefined' != typeof id)
   {
   buf.push('<a');
@@ -820,7 +820,7 @@ window.require.register("templates/photo", function(exports, require, module) {
   buf.push(attrs({ 'href':("" + (src) + ""), 'title':("" + (title) + "") }, {"href":true,"title":true}));
   buf.push('><img');
   buf.push(attrs({ 'src':("" + (thumbsrc) + ""), 'alt':("" + (title) + "") }, {"src":true,"alt":true}));
-  buf.push('/><div class="progressfill"></div></a><btn class="delete btn btn-danger"><i class="icon-remove icon-white"></i></btn>');
+  buf.push('/><div class="progressfill"></div></a><button class="delete flatbtn"><i class="icon-remove icon-white"></i></button>');
   }
   return buf.join("");
   };
@@ -1232,15 +1232,12 @@ window.require.register("views/photo", function(exports, require, module) {
 
       this.link.removeClass('loading thumbed server error');
       this.link.addClass(this.model.get('state'));
-      console.log(model.previous('state'), '->', model.get('state'));
       if (model.get('state') === 'thumbed') {
         this.progressbar.css('height', '10%');
       }
       if (model.previous('state') === 'thumbed' && model.get('state') === 'server') {
-        console.log('hey');
         this.progressbar.css('height', '100%');
         return setTimeout(function() {
-          console.log('ho');
           return _this.progressbar.hide();
         }, 500);
       }

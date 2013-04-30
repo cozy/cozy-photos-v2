@@ -7,8 +7,8 @@
   src: url("/fonts/signika-regular.ttf");
 }
 body {
-  height: 97%;
-  padding-top: 1%;
+  height: 96%;
+  padding: 1%;
   background-color: #fcfcfc;
 }
 #album,
@@ -23,22 +23,23 @@ h4 {
   margin-bottom: 20px;
   display: block;
   line-height: 20px;
-  font-size: 18.5px;
+  font-size: 18px;
   margin: 2px 1%;
-  padding: 10px 1%;
+  padding: 10px 2%;
   background-color: #34a6ff;
   color: #fff;
   cursor: pointer;
   text-transform: capitalize;
-  width: 21%;
+  width: 30%;
   float: left;
+  border: 0;
 }
 .flatbtn span {
   text-align: center;
+  margin-left: 10px;
 }
 .flatbtn i {
   vertical-align: baseline;
-  margin-right: 2px;
 }
 .flatbtn:hover {
   background-color: #fe8800;
@@ -50,24 +51,28 @@ h4 {
   color: #fff;
   text-decoration: none;
 }
+.flatbtn:active,
+.flatbtn:focus {
+  background: #fe8800;
+  box-shadow: 1px 3px 2px rgba(0,0,0,0.2) inset;
+}
 @media (max-width: 1210px) {
   .flatbtn {
-    width: 46%;
+    width: 36%;
   }
 }
 @media (max-width: 767px) {
   .flatbtn {
-    width: 21%;
+    width: 19%;
   }
 }
-btn.delete {
+button.delete {
   position: absolute;
   top: 1px;
   right: 1px;
   z-index: 2;
-}
-#title {
-  clear: both;
+  padding: 5px;
+  width: auto;
 }
 .albumitem {
   width: 30%;
@@ -82,8 +87,8 @@ btn.delete {
   float: left;
   margin-right: 10px;
   box-sizing: border-box;
-  border-radius: 10px;
-  border: 2px solid #444;
+  border-radius: 2px;
+  border: 2px solid #34a6ff;
   box-shadow: 3px 3px 3px #444;
   margin-right: 20px;
   width: 100px;
@@ -104,6 +109,15 @@ btn.delete {
   -webkit-transition: 0s ease-out;
   box-shadow: 0px 0px 0px #444;
 }
+#album {
+  padding: 0;
+}
+#links {
+  margin-bottom: 20px;
+}
+#links a {
+  margin: 0 10px 10px 0;
+}
 #about {
   height: 90%;
 }
@@ -111,6 +125,14 @@ btn.delete {
   text-align: justify;
   padding: 1px;
   border: 0px;
+}
+#about #title:active,
+#about #description:active {
+  outline: 0;
+}
+#about #title:focus,
+#about #description:focus {
+  outline: 1px solid #fe8800;
 }
 #photos {
   min-height: 300px;
@@ -163,10 +185,10 @@ btn.delete {
   -webkit-transform: scale(1.2);
 }
 .editing #photos.empty {
-  border: 1px dashed #d3d3d3;
+  border: 1px solid #fe8800;
 }
 #photos.dragover {
-  background-color: #90ee90;
+  background-color: #fe8800;
 }
 .modal {
   border-radius: 0px;
