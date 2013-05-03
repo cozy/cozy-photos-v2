@@ -132,6 +132,10 @@ button.delete {
 }
 #about #title:focus,
 #about #description:focus {
+  outline: 1px solid #34a6ff;
+}
+#about #title:hover,
+#about #description:hover {
   outline: 1px solid #fe8800;
 }
 #photos {
