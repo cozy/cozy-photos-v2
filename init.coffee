@@ -12,7 +12,7 @@ publicMap = (doc) ->
 
 
 # MapReduce's map to fetch photos by albumid
-byAlbumMap = (photo) -> emit photo.albumid, photo
+byAlbumMap = (photo) -> emit [photo.albumid, photo.title], photo
 
 # MapReduce to fetch thumbs for every album
 albumPhotosRequest =

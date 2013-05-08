@@ -8,7 +8,10 @@ module.exports = Photo = db.define 'Photo',
     _attachments : Object
 
 Photo.fromAlbum = (album, callback) ->
-    Photo.request 'byalbum', key: album.id, callback
+    params =
+        startkey: [album.id]
+        endKey: [album.id, "z0"]
+    Photo.request 'byalbum', params, callback
 
 Photo.albumsThumbs = (callback) ->
     params =
