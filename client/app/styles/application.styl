@@ -16,205 +16,205 @@ blue = #34a6ff
 
 
 body
-  height 96%
-  padding 1%
-  background-color bgcolor
+    height 96%
+    padding 1%
+    background-color bgcolor
 
 // # commons
 
 #album, #album-list
-  font-family main
+    font-family main
 
 h1, h4
-  font-family styled
+    font-family styled
 
 .flatbtn
-  margin-bottom 20px
-  display block
-  line-height 20px
-  font-size 18px
-  margin 2px 1%
-  padding 10px 2%
-  background-color blue
-  color white
-  cursor pointer
-  text-transform capitalize
-  width 30%
-  float left
-  border 0
+    margin-bottom 20px
+    display block
+    line-height 20px
+    font-size 18px
+    margin 2px 1%
+    padding 10px 2%
+    background-color blue
+    color white
+    cursor pointer
+    text-transform capitalize
+    width 30%
+    float left
+    border 0
 
-  span
-    text-align center
-    margin-left: 10px
+    span
+        text-align center
+        margin-left: 10px
 
-  i
-    vertical-align baseline
+    i
+        vertical-align baseline
 
 .flatbtn:hover
-  background-color orange
-  color white
-  text-decoration none
+    background-color orange
+    color white
+    text-decoration none
 
 .flatbtn:focus
-  background-color blue
-  color white
-  text-decoration none
+    background-color blue
+    color white
+    text-decoration none
 
 .flatbtn:active
 .flatbtn:focus
-  background orange 
-  box-shadow 1px 3px 2px rgba(0, 0, 0, 0.2) inset
+    background orange 
+    box-shadow 1px 3px 2px rgba(0, 0, 0, 0.2) inset
 
 @media (max-width: 1210px)
-  .flatbtn
-    width 36%
+    .flatbtn
+        width 36%
 
 @media (max-width: 767px)
-  .flatbtn
-    width 19%
+    .flatbtn
+        width 19%
 
 button.delete
-  position absolute
-  top 1px
-  right 1px
-  z-index 2
-  padding 5px
-  width: auto
+    position absolute
+    top 1px
+    right 1px
+    z-index 2
+    padding 5px
+    width: auto
 
 
 // #### album list page ###
 
 .albumitem
-  width 30%
-  min-width 450px
-  height 120px
-  float left
-  padding 10px
-  position relative
-
-  a
-    display block
+    width 30%
+    min-width 450px
+    height 120px
     float left
-    margin-right 10px
-    box-sizing border-box
-    border-radius 2px
-    border 2px solid blue
-    box-shadow 3px 3px 3px darkgrey
-    margin-right 20px
-    width 100px
-    height 100px
-    transition .2s ease-out
-    -webkit-transition .2s ease-out
-    overflow hidden
+    padding 10px
+    position relative
 
-    img
-      width 100px
-      height 100px
+    a
+        display block
+        float left
+        margin-right 10px
+        box-sizing border-box
+        border-radius 2px
+        border 2px solid blue
+        box-shadow 3px 3px 3px darkgrey
+        margin-right 20px
+        width 100px
+        height 100px
+        transition .2s ease-out
+        -webkit-transition .2s ease-out
+        overflow hidden
 
-  a:hover
-    border 2px solid orange
+        img
+            width 100px
+            height 100px
 
-  a:active
-    transition 0s ease-out
-    -webkit-transition 0s ease-out
-    box-shadow: 0px 0px 0px darkgrey
+    a:hover
+        border 2px solid orange
+
+    a:active
+        transition 0s ease-out
+        -webkit-transition 0s ease-out
+        box-shadow: 0px 0px 0px darkgrey
 
 // #### album page ###
 
 #album
-  padding: 0
+    padding: 0
 
 #links
-  margin-bottom: 20px
+    margin-bottom: 20px
 
-  a
-      margin: 0 10px 10px 0
+    a
+        margin: 0 10px 10px 0
 
 #about
-  height 90%
+    height 90%
 
-  #description
-    text-align justify
-    padding 1px
-    border 0px
+    #description
+        text-align justify
+        padding 1px
+        border 0px
 
-  #title:active
-  #description:active
-    outline 0
+    #title:active
+    #description:active
+        outline 0
 
 #album.editing
-  #title:focus
-  #description:focus
-    outline 1px solid blue
+    #title:focus
+    #description:focus
+        outline 1px solid blue
 
-  #title:hover
-  #description:hover
-    outline 1px solid orange
+    #title:hover
+    #description:hover
+        outline 1px solid orange
 
 #photos
-  min-height 300px
+    min-height 300px
 
-  .photo
-    float left
-    margin 5px
-    position relative
+    .photo
+        float left
+        margin 5px
+        position relative
 
-    a
-      display block
-      width 75px
-      height 68px
-      vertical-align bottom
-      overflow hidden
-      background rgba(0,0,0,0.1)
-      transition .4s ease-out
-      -webkit-transition .4s ease-out
-      border 1px solid transparent
+        a
+            display block
+            width 75px
+            height 68px
+            vertical-align bottom
+            overflow hidden
+            background rgba(0,0,0,0.1)
+            transition .4s ease-out
+            -webkit-transition .4s ease-out
+            border 1px solid transparent
 
-      img
+            img
+                width 100%
+                height 100%
+
+    .photo .progressfill
         width 100%
-        height 100%
+        height 0%
+        position absolute
+        bottom 0px
+        background-color uploadcolor
+        transition .3s
+        -webkit-transition .3s
 
-  .photo .progressfill
-    width 100%
-    height 0%
-    position absolute
-    bottom 0px
-    background-color uploadcolor
-    transition .3s
-    -webkit-transition .3s
+    .photo a.thumbed
+        border 1px solid uploadcolor
 
-  .photo a.thumbed
-    border 1px solid uploadcolor
+    .photo:hover
+        transform scale(1.5)
+        -webkit-transform scale(1.5)
+        z-index 3
 
-  .photo:hover
-    transform scale(1.5)
-    -webkit-transform scale(1.5)
-    z-index 3
+        a
+            border 1px solid white
+            box-shadow 0 0 0 2px #FFF, 0 0 20px 5px #000
+            transition .1s
+            -webkit-transition:0.1s
 
-    a
-      border 1px solid white
-      box-shadow 0 0 0 2px #FFF, 0 0 20px 5px #000
-      transition .1s
-      -webkit-transition:0.1s
-
-    img
-      transform scale(1.2)
-      -webkit-transform scale(1.2)
+        img
+            transform scale(1.2)
+            -webkit-transform scale(1.2)
 
 .editing #photos.empty
-  border 1px solid orange
+    border 1px solid orange
 
 #photos.dragover
-  background-color orange
+    background-color orange
 
 
 .modal
-  border-radius 0px
-  border 0px
+    border-radius 0px
+    border 0px
 .modal-header
-  background-color blue
-  color white
-  font-family styled
+    background-color blue
+    color white
+    font-family styled
 
 // ### Logic ###
 .mode-public .flatbtn
@@ -229,7 +229,7 @@ button.delete
 .delete
 .editing .flatbtn.startediting
 .editing .flatbtn.download
-  display none
+    display none
 
 .editing .flatbtn
 .editing .delete
@@ -239,7 +239,7 @@ button.delete
 .flatbtn.download
 .empty .help
 .editing .empty .helpedit
-  display block
+    display block
 
 // # Remove effect from photobox //
 
@@ -251,12 +251,12 @@ button.delete
 // #pbOverlay.hide .imageWrap img,
 // #pbOverlay.hide .imageWrap img.prepare,
 // #pbOverlay .imageWrap img.zoomable
-//   transform none
-//   -webkit-transform none
-//   -ms-transform none
-//   transition 0.01s
-//   -webkit-transition 0.01s
-//   -ms-transition 0.01s
-//   transition-delay 0s
-//   -webkit-transition-delay 0s
-//   -ms-transition-delay 0s
+//     transform none
+//     -webkit-transform none
+//     -ms-transform none
+//     transition 0.01s
+//     -webkit-transition 0.01s
+//     -ms-transition 0.01s
+//     transition-delay 0s
+//     -webkit-transition-delay 0s
+//     -ms-transition-delay 0s
