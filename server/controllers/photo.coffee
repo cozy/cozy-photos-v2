@@ -47,10 +47,10 @@ module.exports = (app) ->
                         data = name: 'thumb', type: thumb.type
                         photo.attachFile thumb.path, data, cb
                 ], (err) ->
-                    for name, file in req.files
+                    for name, file of req.files
                         fs.unlink file.path, (err) ->
-                            return unless err
-                            console.log 'Could not delete, flush uploads'
+                            if err
+                                console.log 'Could not delete', file.path
 
                     if err
                         return res.error 500, "Creation failed.", err

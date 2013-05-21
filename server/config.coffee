@@ -16,10 +16,10 @@ module.exports = (app) ->
 
     # all environements
     app.use express.bodyParser
-        uploadDir: './uploads'
+        uploadDir: __dirname + '/uploads'
         defer: true # don't wait for full form. Needed for progress events
         keepExtensions: true
-        maxFieldsSize: 10 * 1024 * 1024;
+        maxFieldsSize: 10 * 1024 * 1024
 
     # extend express to DRY controllers
     app.use shortcuts
