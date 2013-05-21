@@ -19,7 +19,7 @@ module.exports = class PhotoView extends BaseView
 
     events: =>
         'click' : 'onClickListener'
-        'click btn.delete' : 'destroyModel'
+        'click .delete' : 'destroyModel'
 
     getRenderData: -> @model.attributes
 

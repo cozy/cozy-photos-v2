@@ -1204,7 +1204,7 @@ window.require.register("views/photo", function(exports, require, module) {
     PhotoView.prototype.events = function() {
       return {
         'click': 'onClickListener',
-        'click btn.delete': 'destroyModel'
+        'click .delete': 'destroyModel'
       };
     };
 
