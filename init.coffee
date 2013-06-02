@@ -27,7 +27,7 @@ module.exports = init = (done) ->
         (cb) -> Photo.defineRequest 'all',         allMap,             cb
         (cb) -> Photo.defineRequest 'byalbum',     byAlbumMap,         cb
         (cb) -> Photo.defineRequest 'albumphotos', albumPhotosRequest, cb
-        (cb) -> fs.mkdir './uploads', cb
+        (cb) -> fs.mkdir __dirname + '/server/uploads', cb
     ], (err) ->
         if err and err.code isnt 'EEXIST'
             console.log "Something went wrong"
