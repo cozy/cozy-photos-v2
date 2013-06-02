@@ -227,3 +227,8 @@ button.delete {
 .editing .empty .helpedit {
   display: block;
 }
+@media (max-width: 700px) {
+  .flatbtn {
+    width: auto;
+  }
+}
