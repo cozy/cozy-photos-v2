@@ -1,7 +1,7 @@
 {
   "name": "cozy-photos",
   "version": "0.0.1",
-  "description": "",
+  "description": "A cozy app to store, browse and share your photos.",
   "main": "server.coffee",
   "dependencies": {
     "jugglingdb": "~0.2.0-25",
@@ -23,5 +23,13 @@
   "repository": "",
   "author": "",
   "license": "BSD",
-  "readmeFilename": "README.md"
+  "readmeFilename": "README.md",
+  "cozy-permissions": {
+    "Album":{
+      "description": "Used to manage your albums"
+    } ,
+    "Photo": {
+      "description": "Used to manage your photos"
+    }
+  }
 }
