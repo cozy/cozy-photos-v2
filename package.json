@@ -9,7 +9,8 @@
     "express": "~3.1.0",
     "async": "~0.2.6",
     "zipstream": "~0.2.1",
-    "socket.io": "~0.9.14"
+    "socket.io": "~0.9.14",
+    "cozy-i18n-helper": "0.0.1"
   },
   "devDependencies": {
     "chai": "~1.5.0",
@@ -28,8 +29,11 @@
     "Photo": {
       "description": "Creates and edits your photos"
     },
-    "Album":{
+    "Album": {
       "description": "Creates and edits your album which contains your photos."
+    },
+    "CozyInstance": {
+      "description": "Read language setting"
     }
   }
 }

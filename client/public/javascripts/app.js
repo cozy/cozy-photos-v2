@@ -82,17 +82,38 @@
 window.require.register("application", function(exports, require, module) {
   module.exports = {
     initialize: function() {
-      var AlbumCollection, Router;
+      var promise,
+        _this = this;
 
+      promise = $.ajax('cozy-locale.json');
+      promise.done(function(data) {
+        return _this.locale = data.locale;
+      });
+      promise.fail(function() {
+        return _this.locale = 'en';
+      });
+      return promise.always(function() {
+        return _this.initializeStep2();
+      });
+    },
+    initializeStep2: function() {
+      var AlbumCollection, Router, e, locales;
+
+      this.polyglot = new Polyglot();
+      try {
+        locales = require('locales/' + this.locale);
+      } catch (_error) {
+        e = _error;
+        locales = require('locales/en');
+      }
+      this.polyglot.extend(locales);
+      window.t = this.polyglot.t.bind(this.polyglot);
       AlbumCollection = require('collections/album');
       Router = require('router');
       this.albums = new AlbumCollection();
       this.router = new Router();
       this.mode = window.location.pathname.match(/public/) ? 'public' : 'owner';
-      Backbone.history.start();
-      if (typeof Object.freeze === 'function') {
-        return Object.freeze(this);
-      }
+      return Backbone.history.start();
     }
   };
   
@@ -352,6 +373,64 @@ window.require.register("lib/view_collection", function(exports, require, module
     return ViewCollection;
 
   })(BaseView);
+  
+});
+window.require.register("locales/en", function(exports, require, module) {
+  module.exports = {
+    "Back": "Back",
+    "Create a new album": "Create a new album",
+    "Delete": "Delete",
+    "Download": "Download",
+    "Edit": "Edit",
+    "It will appears on your homepage.": "It will appears on your homepage.",
+    "Make it Hidden": "Make it Hidden",
+    "Make it Private": "Make it Private",
+    "Make it Public": "Make it Public",
+    "New": "New",
+    "private": "private",
+    "public": "public",
+    "hidden": "hidden",
+    "There is no photos in this album": "There is no photos in this album",
+    "There is no public albums.": "There is no public albums.",
+    "This album is private": "This album is private",
+    "This album is hidden": "This album is hidden",
+    "This album is public": "This album is public",
+    "Title ...": "Title ...",
+    "View": "View",
+    "Write some more ...": "Write some more ...",
+    "Drag your photos here to upload them": "Drag your photos here to upload them\"",
+    "hidden-description": "It will not appears on your homepage.\nBut you can share it with the following url :",
+    "It cannot be accessed from the public side": "It cannot be accessed from the public side\""
+  };
+  
+});
+window.require.register("locales/fr", function(exports, require, module) {
+  module.exports = {
+    "Back": "Retour",
+    "Create a new album": "Créer un nouvel album",
+    "Delete": "Supprimer",
+    "Download": "Télécharger",
+    "Edit": "Modifier",
+    "It will appears on your homepage.": "It apparaitra votre page d'accueil",
+    "Make it Hidden": "Rendre Masqué",
+    "Make it Private": "Rendre Privé",
+    "Make it Public": "Rendre Public",
+    "New": "Nouveau",
+    "private": "privé",
+    "public": "public",
+    "hidden": "masqué",
+    "There is no photos in this album": "Pas de photos dans cet album",
+    "There is no public albums.": "Pas d'albumes publics",
+    "This album is private": "Cet album est Privé",
+    "This album is hidden": "Cet album est Masqué",
+    "This album is public": "Cet album est Public",
+    "Title ...": "Titre ...",
+    "Write some more ...": "Description ...",
+    "View": "Voir",
+    "Drag your photos here to upload them": "Droppez vos photos ici pour les uploader",
+    "hidden-description": "Il n'apparaitra pas sur votre page d'accueil,\nMais vous pouvez partager via cet url :&nbps;",
+    "It cannot be accessed from the public side": "Il ne peux pas être vu depuis le coté public"
+  };
   
 });
 window.require.register("models/album", function(exports, require, module) {
@@ -712,7 +791,7 @@ window.require.register("router", function(exports, require, module) {
           editable: editable
         }));
       }).fail(function() {
-        alert('this album does not exist');
+        alert(t('this album does not exist'));
         return _this.navigate('albums', true);
       });
     };
@@ -757,18 +836,45 @@ window.require.register("templates/album", function(exports, require, module) {
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<div class="row-fluid"><div id="about" class="span4"><div id="links" class="clearfix"><a href="#albums" class="flatbtn back"><i class="icon-arrow-left icon-white"></i><span>Back</span></a>');
+  buf.push('<div class="row-fluid"><div id="about" class="span4"><div id="links" class="clearfix"><a href="#albums" class="flatbtn back"><i class="icon-arrow-left icon-white"></i><span>');
+  var __val__ = t("Back")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a>');
   if ( 'undefined' != typeof id)
   {
   buf.push('<a');
   buf.push(attrs({ 'href':("#albums/" + (id) + "/edit"), "class": ('flatbtn') + ' ' + ('startediting') }, {"href":true}));
-  buf.push('><i class="icon-edit icon-white"></i><span>Edit</span></a><a');
+  buf.push('><i class="icon-edit icon-white"></i><span>');
+  var __val__ = t("Edit")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a><a');
   buf.push(attrs({ 'href':("albums/" + (id) + ".zip"), "class": ('flatbtn') + ' ' + ('download') }, {"href":true}));
-  buf.push('><i class="icon-download-alt icon-white"></i><span>Download</span></a><a');
+  buf.push('><i class="icon-download-alt icon-white"></i><span>');
+  var __val__ = t("Download")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a><a');
   buf.push(attrs({ 'href':("#albums/" + (id) + ""), "class": ('flatbtn') + ' ' + ('stopediting') }, {"href":true}));
-  buf.push('><i class="icon-eye-open icon-white"></i><span>View</span></a><a class="flatbtn delete"><i class="icon-remove icon-white"></i><span>Delete</span></a><a href="#clearance-modal" data-toggle="modal" class="flatbtn clearance"><i class="icon-upload icon-white"></i><span>' + escape((interp = clearance) == null ? '' : interp) + '</span></a>');
+  buf.push('><i class="icon-eye-open icon-white"></i><span>');
+  var __val__ = t("View")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a><a class="flatbtn delete"><i class="icon-remove icon-white"></i><span>');
+  var __val__ = t("Delete")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a><a href="#clearance-modal" data-toggle="modal" class="flatbtn clearance"><i class="icon-upload icon-white"></i><span>');
+  var __val__ = t(clearance)
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a>');
   }
-  buf.push('</div><h1 id="title">' + escape((interp = title) == null ? '' : interp) + '</h1><div id="description">' + escape((interp = description) == null ? '' : interp) + '</div></div><div id="photos" class="span8"></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer"><a id="changeprivate" class="btn changeclearance">Make it Private</a><a id="changehidden" class="btn changeclearance"> Make it Hidden</a><a id="changepublic" class="btn changeclearance"> Make it Public</a></div></div></div>');
+  buf.push('</div><h1 id="title">' + escape((interp = title) == null ? '' : interp) + '</h1><div id="description">' + escape((interp = description) == null ? '' : interp) + '</div></div><div id="photos" class="span8"></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer"><a id="changeprivate" class="btn changeclearance">');
+  var __val__ = t("Make it Private")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</a><a id="changehidden" class="btn changeclearance">');
+  var __val__ = t("Make it Hidden")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</a><a id="changepublic" class="btn changeclearance">');
+  var __val__ = t("Make it Public")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</a></div></div></div>');
   }
   return buf.join("");
   };
@@ -779,7 +885,16 @@ window.require.register("templates/albumlist", function(exports, require, module
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<div class="albumitem create"><a href="#albums/new"><img src="img/create.gif"/></a><div><h4>New</h4><p>Create a new album</p></div></div><p class="help">There is no public albums.</p>');
+  buf.push('<div class="albumitem create"><a href="#albums/new"><img src="img/create.gif"/></a><div><h4>');
+  var __val__ = t('New')
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</h4><p>');
+  var __val__ = t('Create a new album')
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</p></div></div><p class="help">');
+  var __val__ = t('There is no public albums.')
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</p>');
   }
   return buf.join("");
   };
@@ -805,7 +920,13 @@ window.require.register("templates/gallery", function(exports, require, module) 
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<p class="help">There is no photos in this album</p><p class="helpedit">Drag your photos here to upload them</p>');
+  buf.push('<p class="help">');
+  var __val__ = t('There is no photos in this album')
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</p><p class="helpedit">');
+  var __val__ = t('Drag your photos here to upload them')
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</p>');
   }
   return buf.join("");
   };
@@ -900,7 +1021,7 @@ window.require.register("views/album", function(exports, require, module) {
       this.$el.addClass('editing');
       this.refreshPopOver(this.model.get('clearance'));
       editable(this.$('#title'), {
-        placeholder: 'Title ...',
+        placeholder: t('Title ...'),
         onChanged: function(text) {
           return _this.saveModel({
             title: text
@@ -908,7 +1029,7 @@ window.require.register("views/album", function(exports, require, module) {
         }
       });
       return editable(this.$('#description'), {
-        placeholder: 'Write some more ...',
+        placeholder: t('Write some more ...'),
         onChanged: function(text) {
           return _this.saveModel({
             description: text
@@ -921,7 +1042,7 @@ window.require.register("views/album", function(exports, require, module) {
       if (this.model.isNew()) {
         return app.router.navigate('albums', true);
       }
-      if (confirm('Are you sure ?')) {
+      if (confirm(t('Are you sure ?'))) {
         return this.model.destroy().then(function() {
           return app.router.navigate('albums', true);
         });
@@ -981,18 +1102,18 @@ window.require.register("views/album", function(exports, require, module) {
     AlbumView.prototype.clearanceHelpers = function(clearance) {
       if (clearance === 'public') {
         return {
-          title: 'This album is public',
-          content: 'It will appears on your homepage.'
+          title: t('This album is public'),
+          content: t('It will appears on your homepage.')
         };
       } else if (clearance === 'hidden') {
         return {
-          title: 'This album is hidden',
-          content: "It will not appears on your homepage.                But you can share it with the following url :                " + (this.getPublicUrl())
+          title: t('This album is hidden'),
+          content: t("hidden-description") + this.getPublicUrl()
         };
       } else if (clearance === 'private') {
         return {
-          title: 'This album is private',
-          content: 'It cannot be accessed from the public side'
+          title: t('This album is private'),
+          content: t('It cannot be accessed from the public side')
         };
       }
     };

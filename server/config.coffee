@@ -4,6 +4,7 @@ module.exports = (app) ->
     express   = require 'express'
     http      = require 'http'
     sio       = require 'socket.io'
+    i18n      = require 'cozy-i18n-helper'
 
     # extract http server from express ...
     server = http.createServer app
@@ -23,6 +24,9 @@ module.exports = (app) ->
 
     # extend express to DRY controllers
     app.use shortcuts
+
+    # expose locale config to client
+    app.use i18n.middleware
 
     # mark public request
     app.use (req, res, next) ->

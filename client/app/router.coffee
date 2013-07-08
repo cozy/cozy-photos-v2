@@ -34,7 +34,7 @@ module.exports = class Router extends Backbone.Router
                 model: album
                 editable: editable
         .fail =>
-            alert 'this album does not exist'
+            alert t 'this album does not exist'
             @navigate 'albums', true
 
     # display the album view in edit mode
