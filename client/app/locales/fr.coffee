@@ -27,7 +27,7 @@ module.exports =
 
     "hidden-description": """
       Il n'apparaitra pas sur votre page d'accueil,
-      Mais vous pouvez partager via cet url :&nbps;
+      Mais vous pouvez partager cet url :
     """
 
     "It cannot be accessed from the public side" : """

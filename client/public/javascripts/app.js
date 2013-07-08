@@ -428,7 +428,7 @@ window.require.register("locales/fr", function(exports, require, module) {
     "Write some more ...": "Description ...",
     "View": "Voir",
     "Drag your photos here to upload them": "Droppez vos photos ici pour les uploader",
-    "hidden-description": "Il n'apparaitra pas sur votre page d'accueil,\nMais vous pouvez partager via cet url :&nbps;",
+    "hidden-description": "Il n'apparaitra pas sur votre page d'accueil,\nMais vous pouvez partager cet url :",
     "It cannot be accessed from the public side": "Il ne peux pas être vu depuis le coté public"
   };
   
@@ -1108,7 +1108,7 @@ window.require.register("views/album", function(exports, require, module) {
       } else if (clearance === 'hidden') {
         return {
           title: t('This album is hidden'),
-          content: t("hidden-description") + this.getPublicUrl()
+          content: t("hidden-description") + (" " + (this.getPublicUrl()))
         };
       } else if (clearance === 'private') {
         return {

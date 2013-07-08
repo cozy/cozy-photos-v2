@@ -94,7 +94,7 @@ module.exports = class AlbumView extends BaseView
             content: t 'It will appears on your homepage.'
         else if clearance is 'hidden'
             title: t 'This album is hidden'
-            content: t("hidden-description") + @getPublicUrl()
+            content: t("hidden-description") + " #{@getPublicUrl()}"
         else if clearance is 'private'
             title: t 'This album is private'
             content: t 'It cannot be accessed from the public side'
