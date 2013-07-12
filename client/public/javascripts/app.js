@@ -82,23 +82,10 @@
 window.require.register("application", function(exports, require, module) {
   module.exports = {
     initialize: function() {
-      var promise,
-        _this = this;
-
-      promise = $.ajax('cozy-locale.json');
-      promise.done(function(data) {
-        return _this.locale = data.locale;
-      });
-      promise.fail(function() {
-        return _this.locale = 'en';
-      });
-      return promise.always(function() {
-        return _this.initializeStep2();
-      });
-    },
-    initializeStep2: function() {
       var AlbumCollection, Router, e, locales;
 
+      console.log("INIT", window.locale);
+      this.locale = window.locale;
       this.polyglot = new Polyglot();
       try {
         locales = require('locales/' + this.locale);
@@ -113,7 +100,15 @@ window.require.register("application", function(exports, require, module) {
       this.albums = new AlbumCollection();
       this.router = new Router();
       this.mode = window.location.pathname.match(/public/) ? 'public' : 'owner';
-      return Backbone.history.start();
+      if (window.initalbums) {
+        this.albums.reset(window.initalbums);
+        delete window.initalbums;
+        return Backbone.history.start();
+      } else {
+        return this.albums.fetch().done(function() {
+          return Backbone.history.start();
+        });
+      }
     }
   };
   
@@ -755,17 +750,13 @@ window.require.register("router", function(exports, require, module) {
     };
 
     Router.prototype.albumslist = function(editable) {
-      var _this = this;
-
       if (editable == null) {
         editable = false;
       }
-      return app.albums.fetch().done(function() {
-        return _this.displayView(new AlbumsListView({
-          collection: app.albums,
-          editable: editable
-        }));
-      });
+      return this.displayView(new AlbumsListView({
+        collection: app.albums,
+        editable: editable
+      }));
     };
 
     Router.prototype.albumslistedit = function() {
