@@ -1,14 +1,8 @@
 module.exports =
 
     initialize: ->
-        promise = $.ajax('cozy-locale.json')
-        promise.done (data) => @locale = data.locale # if success
-        promise.fail     () => @locale = 'en'        # else
-        promise.always   () => @initializeStep2()    # anyway
 
-
-    initializeStep2: ->
-
+        @locale = window.locale
         @polyglot = new Polyglot()
         try
             locales = require 'locales/'+ @locale
@@ -27,4 +21,9 @@ module.exports =
         @mode = if window.location.pathname.match /public/ then 'public'
         else 'owner'
 
-        Backbone.history.start()
+        if window.initalbums
+            @albums.reset window.initalbums
+            delete window.initalbums
+            Backbone.history.start()
+        else
+            @albums.fetch().done -> Backbone.history.start()

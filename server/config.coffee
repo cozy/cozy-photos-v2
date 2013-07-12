@@ -25,8 +25,8 @@ module.exports = (app) ->
     # extend express to DRY controllers
     app.use shortcuts
 
-    # expose locale config to client
-    app.use i18n.middleware
+    # views in client directory
+    app.set 'views', __dirname + '/../client'
 
     # mark public request
     app.use (req, res, next) ->

@@ -6,6 +6,8 @@ module.exports = (app) ->
     app.param 'albumid',                                    album.fetch
     app.param 'photoid',                                    photo.fetch
 
+    app.get   '/',                                          album.index
+
     # editor routes
     app.get   '/albums/?',                                  album.list
     app.post  '/albums/?',                                  album.create

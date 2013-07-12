@@ -14,10 +14,9 @@ module.exports = class Router extends Backbone.Router
 
     # display the "home" page : list of albums
     albumslist: (editable=false)->
-        app.albums.fetch().done =>
-            @displayView new AlbumsListView
-                collection: app.albums
-                editable: editable
+        @displayView new AlbumsListView
+            collection: app.albums
+            editable: editable
 
     # display the list of albums in edit mode
     albumslistedit: ->

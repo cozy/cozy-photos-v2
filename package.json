@@ -10,6 +10,7 @@
     "async": "~0.2.6",
     "zipstream": "~0.2.1",
     "socket.io": "~0.9.14",
+    "jade": "~0.32.0",
     "cozy-i18n-helper": "0.0.1"
   },
   "devDependencies": {

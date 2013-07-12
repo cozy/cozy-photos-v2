@@ -1,11 +1,26 @@
 Album = require '../models/album'
 Photo = require '../models/photo'
+i18n  = require 'cozy-i18n-helper'
 async = require 'async'
+fs    = require 'fs'
 zipstream = require 'zipstream'
-fs = require 'fs'
 {slugify, noop} = require '../helpers/helpers'
 
 module.exports = (app) ->
+
+    index: (req, res) ->
+        Album.request 'all', (err, albums) ->
+            return res.error 500, 'An error occured', err if err
+
+            i18n.getLocale null, (err, locale) ->
+                console.log err if err
+
+                imports = """
+                    window.locale = "#{locale}";
+                    window.initalbums = #{JSON.stringify(albums)};
+                """
+
+                res.render 'index.jade', imports: imports
 
     fetch: (req, res, next, id) ->
         Album.find id, (err, album) ->
