@@ -1,4 +1,5 @@
 PhotoCollection = require 'collections/photo'
+client = require "../helpers/client"
 
 # An album
 # Properties :
@@ -26,3 +27,10 @@ module.exports = class Album extends Backbone.Model
         if attrs.thumb
             attrs.thumbsrc = "photos/thumbs/#{attrs.thumb}.jpg"
         return attrs
+
+    sendMail: (url, mails, callback) ->
+        data =
+            url: url
+            mails: mails
+        client.post "albums/share", data, (res) =>
+            callback res

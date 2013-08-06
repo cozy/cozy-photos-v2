@@ -9,6 +9,7 @@ module.exports = (app) ->
     # editor routes
     app.get   '/albums/?',                                  album.list
     app.post  '/albums/?',                                  album.create
+    app.post  '/albums/share/?',                           album.sendMail
     app.get   '/albums/:albumid.zip',                       album.zip
     app.get   '/albums/:albumid/?',                         album.read
     app.put   '/albums/:albumid/?',                         album.update

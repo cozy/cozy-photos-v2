@@ -44,3 +44,19 @@ div.row-fluid
       a#changeprivate.btn.changeclearance Make it Private
       a#changehidden.btn.changeclearance  Make it Hidden
       a#changepublic.btn.changeclearance  Make it Public
+      a.btn.sendMail(
+        href="#share-modal",
+        data-toggle="modal",
+        data-dismiss="modal")
+        span Share album by mail
+
+  #share-modal.modal.hide
+    .modal-header
+      button.close(type="button", data-dismiss="modal") &times;
+      h3 Share album
+
+    .modal-body     
+      input.input-block-level(type="text", value="", id="mails", placeholder="<example@cozycloud.cc>, <other-example@cozycloud.cc>")
+ 
+    .modal-footer
+      a#sendmail.btn.sendmail Send mail    

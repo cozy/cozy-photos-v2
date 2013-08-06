@@ -12,6 +12,8 @@ module.exports = class AlbumView extends BaseView
     events: =>
         'click   a.delete' : @destroyModel
         'click   a.changeclearance' : @changeClearance
+        'click   a.addcontact' : @addcontact
+        'click   a.sendmail' : @sendMail
 
     getRenderData: ->
         clearanceHelpers = @clearanceHelpers(@model.get 'clearance')
@@ -71,6 +73,17 @@ module.exports = class AlbumView extends BaseView
         modal.find('.modal-body').html help.content
         modal.find('.changeclearance').show()
         modal.find('#change' + clearance).hide()
+        if clearance is "hidden"
+            modal.find('.sharealbum').show()
+        else
+            modal.find('.sharealbum').hide()
+
+    sendMail: (event) ->
+        @model.sendMail @getPublicUrl(), @$('#mails').val(), (err) ->   
+            if err
+                #alert(err)
+            else
+                @$('#share-modal').hide()
 
     saveModel: (hash) ->
         promise = @model.save(hash)
