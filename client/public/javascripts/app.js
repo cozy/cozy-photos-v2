@@ -156,11 +156,7 @@ window.require.register("helpers/client", function(exports, require, module) {
   };
 
   exports.post = function(url, data, callbacks) {
-    var _this = this;
-    return exports.request("POST", url, data, function(err) {
-      console.log("end");
-      return callbacks(err);
-    });
+    return exports.request("POST", url, data, callbacks);
   };
 
   exports.put = function(url, data, callbacks) {
@@ -423,18 +419,39 @@ window.require.register("models/album", function(exports, require, module) {
     };
 
     Album.prototype.sendMail = function(url, mails, callback) {
-      var data,
-        _this = this;
+      var data;
       data = {
         url: url,
         mails: mails
       };
-      return client.post("albums/share", data, function(res) {
-        return callback(res);
-      });
+      return client.post("albums/share", data, callback);
     };
 
     return Album;
+
+  })(Backbone.Model);
+  
+});
+window.require.register("models/contact", function(exports, require, module) {
+  var Contact, client, _ref,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  client = require("../helpers/client");
+
+  module.exports = Contact = (function(_super) {
+    __extends(Contact, _super);
+
+    function Contact() {
+      _ref = Contact.__super__.constructor.apply(this, arguments);
+      return _ref;
+    }
+
+    Contact.prototype.list = function(callback) {
+      return client.get("contacts", callback);
+    };
+
+    return Contact;
 
   })(Backbone.Model);
   
@@ -742,7 +759,8 @@ window.require.register("router", function(exports, require, module) {
       return album.fetch().done(function() {
         return _this.displayView(new AlbumView({
           model: album,
-          editable: editable
+          editable: editable,
+          contacts: []
         }));
       }).fail(function() {
         alert('this album does not exist');
@@ -800,7 +818,33 @@ window.require.register("templates/album", function(exports, require, module) {
   buf.push(attrs({ 'href':("#albums/" + (id) + ""), "class": ('flatbtn') + ' ' + ('stopediting') }, {"href":true}));
   buf.push('><i class="icon-eye-open icon-white"></i><span>View</span></a><a class="flatbtn delete"><i class="icon-remove icon-white"></i><span>Delete</span></a><a href="#clearance-modal" data-toggle="modal" class="flatbtn clearance"><i class="icon-upload icon-white"></i><span>' + escape((interp = clearance) == null ? '' : interp) + '</span></a>');
   }
-  buf.push('</div><h1 id="title">' + escape((interp = title) == null ? '' : interp) + '</h1><div id="description">' + escape((interp = description) == null ? '' : interp) + '</div></div><div id="photos" class="span8"></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer"><a id="changeprivate" class="btn changeclearance">Make it Private</a><a id="changehidden" class="btn changeclearance"> Make it Hidden</a><a id="changepublic" class="btn changeclearance"> Make it Public</a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn sendMail"><span>Share album by mail</span></a></div></div><div id="share-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>Share album</h3></div><div class="modal-body">    <input type="text" value="" id="mails" placeholder="&lt;example@cozycloud.cc&gt;, &lt;other-example@cozycloud.cc&gt;" class="input-block-level"/></div><div class="modal-footer"><a id="sendmail" class="btn sendmail">Send mail    </a></div></div></div>');
+  buf.push('</div><h1 id="title">' + escape((interp = title) == null ? '' : interp) + '</h1><div id="description">' + escape((interp = description) == null ? '' : interp) + '</div></div><div id="photos" class="span8"></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer"><a id="changeprivate" class="btn changeclearance">Make it Private</a><a id="changehidden" class="btn changeclearance"> Make it Hidden</a><a id="changepublic" class="btn changeclearance"> Make it Public</a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn share"><span>Share album by mail</span></a></div></div><div id="share-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>Share album</h3></div><div class="modal-body"> <input type="text" value="" id="mails" placeholder="&lt;example@cozycloud.cc&gt;, &lt;other-example@cozycloud.cc&gt;" class="input-block-level"/></div><div class="modal-footer"> <a href="#add-contact-modal" data-dismiss="modal" class="btn addcontact"><span> Add contact</span></a><a type="button" data-dismiss="modal" class="btn sendmail"><span> Send mail    </span></a></div></div><div id="add-contact-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>Select your friends</h3></div><div class="modal-body"> <div id="contacts" class="input">');
+  // iterate contacts
+  ;(function(){
+    if ('number' == typeof contacts.length) {
+
+      for (var $index = 0, $$l = contacts.length; $index < $$l; $index++) {
+        var contact = contacts[$index];
+
+  buf.push('<input');
+  buf.push(attrs({ 'type':("checkbox"), 'name':("" + (contact.fn) + ""), 'id':("" + (contact.fn) + ""), "class": ('checkbox') }, {"type":true,"name":true,"id":true}));
+  buf.push('/><span>' + escape((interp = contact.fn) == null ? '' : interp) + '</span><br/>');
+      }
+
+    } else {
+      var $$l = 0;
+      for (var $index in contacts) {
+        $$l++;      var contact = contacts[$index];
+
+  buf.push('<input');
+  buf.push(attrs({ 'type':("checkbox"), 'name':("" + (contact.fn) + ""), 'id':("" + (contact.fn) + ""), "class": ('checkbox') }, {"type":true,"name":true,"id":true}));
+  buf.push('/><span>' + escape((interp = contact.fn) == null ? '' : interp) + '</span><br/>');
+      }
+
+    }
+  }).call(this);
+
+  buf.push('</div></div><div class="modal-footer">     <a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn add"><span>Add</span></a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn cancel"><span>Cancel</span></a></div></div></div>');
   }
   return buf.join("");
   };
@@ -858,7 +902,7 @@ window.require.register("templates/photo", function(exports, require, module) {
   };
 });
 window.require.register("views/album", function(exports, require, module) {
-  var AlbumView, BaseView, Gallery, app, editable, _ref,
+  var AlbumView, BaseView, Contact, Gallery, app, contactModel, editable, _ref,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -870,6 +914,10 @@ window.require.register("views/album", function(exports, require, module) {
   Gallery = require('views/gallery');
 
   editable = require('lib/helpers').editable;
+
+  contactModel = require('models/contact');
+
+  Contact = new contactModel();
 
   module.exports = AlbumView = (function(_super) {
     __extends(AlbumView, _super);
@@ -893,7 +941,8 @@ window.require.register("views/album", function(exports, require, module) {
         'click   a.delete': this.destroyModel,
         'click   a.changeclearance': this.changeClearance,
         'click   a.addcontact': this.addcontact,
-        'click   a.sendmail': this.sendMail
+        'click   a.sendmail': this.sendMail,
+        'click   a.add': this.prepareContact
       };
     };
 
@@ -987,12 +1036,58 @@ window.require.register("views/album", function(exports, require, module) {
       }
     };
 
-    AlbumView.prototype.sendMail = function(event) {
-      return this.model.sendMail(this.getPublicUrl(), this.$('#mails').val(), function(err) {
-        if (err) {
+    AlbumView.prototype.addcontact = function() {
+      var modal,
+        _this = this;
+      modal = this.$('#add-contact-modal');
+      this.options.contacts = [];
+      return Contact.list({
+        success: function(body) {
+          var contact, item, _i, _j, _len, _len1, _ref1;
+          for (_i = 0, _len = body.length; _i < _len; _i++) {
+            contact = body[_i];
+            _ref1 = contact.datapoints;
+            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+              item = _ref1[_j];
+              if (item.name === "email") {
+                _this.options.contacts.push(contact);
+                break;
+              }
+            }
+          }
+          _this.render(modal);
+          return _this.$('#add-contact-modal').modal('show');
+        },
+        error: function(err) {
+          return console.log(err);
+        }
+      });
+    };
 
-        } else {
-          return this.$('#share-modal').hide();
+    AlbumView.prototype.prepareContact = function(event) {
+      var contact, item, mails, modal, _i, _j, _len, _len1, _ref1, _ref2;
+      modal = this.$('#add-contact-modal');
+      mails = [];
+      _ref1 = this.options.contacts;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        contact = _ref1[_i];
+        if (this.$("#" + contact.fn).is(':checked')) {
+          _ref2 = contact.datapoints;
+          for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+            item = _ref2[_j];
+            if (item.name === "email") {
+              mails.push(item.value);
+            }
+          }
+        }
+      }
+      return this.$('#mails').val(mails);
+    };
+
+    AlbumView.prototype.sendMail = function() {
+      return this.model.sendMail(this.getPublicUrl(), this.$('#mails').val(), {
+        error: function(err) {
+          return alert(JSON.stringify(err.responseText));
         }
       });
     };

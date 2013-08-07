@@ -32,7 +32,9 @@ module.exports = class Router extends Backbone.Router
         .done =>
             @displayView new AlbumView
                 model: album
-                editable: editable
+                editable: editable                
+                contacts: []
+
         .fail =>
             alert 'this album does not exist'
             @navigate 'albums', true

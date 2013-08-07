@@ -1,6 +1,7 @@
 module.exports = (app) ->
     photo = require('./controllers/photo')(app)
     album = require('./controllers/album')(app)
+    contact = require('./controllers/contact')(app)
 
     # fetch on params
     app.param 'albumid',                                    album.fetch
@@ -9,7 +10,7 @@ module.exports = (app) ->
     # editor routes
     app.get   '/albums/?',                                  album.list
     app.post  '/albums/?',                                  album.create
-    app.post  '/albums/share/?',                           album.sendMail
+    app.post  '/albums/share/?',                            album.sendMail
     app.get   '/albums/:albumid.zip',                       album.zip
     app.get   '/albums/:albumid/?',                         album.read
     app.put   '/albums/:albumid/?',                         album.update
@@ -20,6 +21,8 @@ module.exports = (app) ->
     app.get   '/photos/thumbs/:photoid.jpg',                photo.thumb
     app.put   '/photos/:photoid/?',                         photo.update
     app.del   '/photos/:photoid/?',                         photo.delete
+
+    app.get   '/contacts',                                  contact.list
 
     # public routes
     app.get   '/public/albums/:albumid.zip',                album.zip

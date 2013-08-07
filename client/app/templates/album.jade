@@ -44,7 +44,7 @@ div.row-fluid
       a#changeprivate.btn.changeclearance Make it Private
       a#changehidden.btn.changeclearance  Make it Hidden
       a#changepublic.btn.changeclearance  Make it Public
-      a.btn.sendMail(
+      a.btn.share(
         href="#share-modal",
         data-toggle="modal",
         data-dismiss="modal")
@@ -55,8 +55,40 @@ div.row-fluid
       button.close(type="button", data-dismiss="modal") &times;
       h3 Share album
 
-    .modal-body     
+    .modal-body 
       input.input-block-level(type="text", value="", id="mails", placeholder="<example@cozycloud.cc>, <other-example@cozycloud.cc>")
- 
-    .modal-footer
-      a#sendmail.btn.sendmail Send mail    
+
+    .modal-footer 
+      a.btn.addcontact(
+        href="#add-contact-modal",
+        data-dismiss="modal")
+        span  Add contact
+      a.btn.sendmail(type="button", data-dismiss="modal")
+        span  Send mail    
+
+
+
+  #add-contact-modal.modal.hide
+    .modal-header
+      button.close(type="button", data-dismiss="modal") &times;
+      h3 Select your friends
+
+    .modal-body 
+      #contacts.input
+        each contact in contacts
+          input(type="checkbox", name="#{contact.fn}", id ="#{contact.fn}").checkbox
+          span #{contact.fn}
+          br
+
+    .modal-footer      
+      a.btn.add(
+        href="#share-modal",
+        data-toggle="modal",
+        data-dismiss="modal")
+        span Add
+
+      a.btn.cancel(
+        href="#share-modal",
+        data-toggle="modal",
+        data-dismiss="modal")
+        span Cancel

@@ -32,5 +32,4 @@ module.exports = class Album extends Backbone.Model
         data =
             url: url
             mails: mails
-        client.post "albums/share", data, (res) =>
-            callback res
+        client.post "albums/share", data, callback

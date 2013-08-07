@@ -2,6 +2,7 @@ fs = require 'fs'
 async = require 'async'
 Album = require './server/models/album'
 Photo = require './server/models/photo'
+Contact = require './server/models/contact'
 
 # MapReduce's map for "all" request
 allMap = (doc) -> emit doc._id, doc
@@ -27,6 +28,7 @@ module.exports = init = (done) ->
         (cb) -> Photo.defineRequest 'all',         allMap,             cb
         (cb) -> Photo.defineRequest 'byalbum',     byAlbumMap,         cb
         (cb) -> Photo.defineRequest 'albumphotos', albumPhotosRequest, cb
+        (cb) -> Contact.defineRequest 'all',       allMap,             cb
         (cb) -> fs.mkdir __dirname + '/server/uploads', cb
     ], (err) ->
         if err and err.code isnt 'EEXIST'

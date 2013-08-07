@@ -2,6 +2,8 @@ app = require 'application'
 BaseView = require 'lib/base_view'
 Gallery = require 'views/gallery'
 {editable} = require 'lib/helpers'
+contactModel = require 'models/contact'
+Contact = new contactModel()
 
 module.exports = class AlbumView extends BaseView
     template: require 'templates/album'
@@ -14,6 +16,7 @@ module.exports = class AlbumView extends BaseView
         'click   a.changeclearance' : @changeClearance
         'click   a.addcontact' : @addcontact
         'click   a.sendmail' : @sendMail
+        'click   a.add' : @prepareContact
 
     getRenderData: ->
         clearanceHelpers = @clearanceHelpers(@model.get 'clearance')
@@ -78,12 +81,38 @@ module.exports = class AlbumView extends BaseView
         else
             modal.find('.sharealbum').hide()
 
-    sendMail: (event) ->
-        @model.sendMail @getPublicUrl(), @$('#mails').val(), (err) ->   
-            if err
-                #alert(err)
-            else
-                @$('#share-modal').hide()
+    addcontact: () ->
+        # Initialize user's contacts
+        modal = @$('#add-contact-modal')
+        @options.contacts = []
+        Contact.list
+            success: (body) =>
+                for contact in body
+                    for item in contact.datapoints
+                        if item.name is "email"
+                            @options.contacts.push contact
+                            break
+
+                @render modal
+                @$('#add-contact-modal').modal('show')
+            error: (err) ->
+                console.log err
+
+    prepareContact: (event) ->
+        # Recover mails of selected contacts
+        modal = @$('#add-contact-modal')
+        mails = []
+        for contact in @options.contacts 
+            if @$("##{contact.fn}").is(':checked')
+                for item in contact.datapoints
+                    if item.name is "email"
+                        mails.push item.value
+        @$('#mails').val(mails)
+
+    sendMail: () ->
+        @model.sendMail @getPublicUrl(), @$('#mails').val(), 
+            error: (err) ->
+                alert JSON.stringify(err.responseText)
 
     saveModel: (hash) ->
         promise = @model.save(hash)
