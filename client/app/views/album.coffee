@@ -2,6 +2,9 @@ app = require 'application'
 BaseView = require 'lib/base_view'
 Gallery = require 'views/gallery'
 {editable} = require 'lib/helpers'
+Clipboard = require 'lib/clipboard'
+
+clipboard = new Clipboard()
 
 module.exports = class AlbumView extends BaseView
     template: require 'templates/album'
@@ -71,6 +74,10 @@ module.exports = class AlbumView extends BaseView
         modal.find('.modal-body').html help.content
         modal.find('.changeclearance').show()
         modal.find('#change' + clearance).hide()
+        if clearance is "hidden"
+            clipboard.set @getPublicUrl()
+        else
+            clipboard.set ""
 
     saveModel: (hash) ->
         promise = @model.save(hash)
@@ -96,7 +103,8 @@ module.exports = class AlbumView extends BaseView
             title: 'This album is hidden',
             content: "It will not appears on your homepage.
                 But you can share it with the following url :
-                #{ @getPublicUrl() }"
+                #{ @getPublicUrl() } " +
+                "<p>If you want to copy url in your clipboard : just press Ctrl+C </p>"
         else if clearance is 'private'
             title: 'This album is private',
             content: 'It cannot be accessed from the public side'
