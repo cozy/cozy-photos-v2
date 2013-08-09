@@ -1030,10 +1030,12 @@ window.require.register("views/album", function(exports, require, module) {
       modal.find('.modal-body').html(help.content);
       modal.find('.changeclearance').show();
       modal.find('#change' + clearance).hide();
+      console.log(clearance);
       if (clearance === "hidden") {
-        return modal.find('.sharealbum').show();
+        return modal.find('.share').show();
       } else {
-        return modal.find('.sharealbum').hide();
+        console.log("hide");
+        return modal.find('.share').hide();
       }
     };
 

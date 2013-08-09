@@ -76,10 +76,12 @@ module.exports = class AlbumView extends BaseView
         modal.find('.modal-body').html help.content
         modal.find('.changeclearance').show()
         modal.find('#change' + clearance).hide()
+        console.log clearance
         if clearance is "hidden"
-            modal.find('.sharealbum').show()
+            modal.find('.share').show()
         else
-            modal.find('.sharealbum').hide()
+            console.log "hide"
+            modal.find('.share').hide()
 
     addcontact: () ->
         # Initialize user's contacts
