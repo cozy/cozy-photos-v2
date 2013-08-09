@@ -217,6 +217,50 @@ window.require.register("lib/base_view", function(exports, require, module) {
   })(Backbone.View);
   
 });
+window.require.register("lib/clipboard", function(exports, require, module) {
+  var Clipboard,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  module.exports = Clipboard = (function() {
+    function Clipboard() {
+      this.set = __bind(this.set, this);
+      var _this = this;
+      this.value = "";
+      $(document).keydown(function(e) {
+        var _ref, _ref1;
+        if (!_this.value || !(e.ctrlKey || e.metaKey)) {
+          return;
+        }
+        if (typeof window.getSelection === "function" ? (_ref = window.getSelection()) != null ? _ref.toString() : void 0 : void 0) {
+          return;
+        }
+        if ((_ref1 = document.selection) != null ? _ref1.createRange().text : void 0) {
+          return;
+        }
+        return _.defer(function() {
+          var $clipboardContainer;
+          $clipboardContainer = $("#clipboard-container");
+          $clipboardContainer.empty().show();
+          return $("<textarea id='clipboard'></textarea>").val(_this.value).appendTo($clipboardContainer).focus().select();
+        });
+      });
+      $(document).keyup(function(e) {
+        if ($(e.target).is("#clipboard")) {
+          $("<textarea id='clipboard'></textarea>").val("");
+          return $("#clipboard-container").empty().hide();
+        }
+      });
+    }
+
+    Clipboard.prototype.set = function(value) {
+      return this.value = value;
+    };
+
+    return Clipboard;
+
+  })();
+  
+});
 window.require.register("lib/helpers", function(exports, require, module) {
   module.exports = {
     limitLength: function(string, length) {
@@ -819,7 +863,7 @@ window.require.register("templates/album", function(exports, require, module) {
   buf.push(attrs({ 'href':("#albums/" + (id) + ""), "class": ('flatbtn') + ' ' + ('stopediting') }, {"href":true}));
   buf.push('><i class="icon-eye-open icon-white"></i><span>View</span></a><a class="flatbtn delete"><i class="icon-remove icon-white"></i><span>Delete</span></a><a href="#clearance-modal" data-toggle="modal" class="flatbtn clearance"><i class="icon-upload icon-white"></i><span>' + escape((interp = clearance) == null ? '' : interp) + '</span></a>');
   }
-  buf.push('</div><h1 id="title">' + escape((interp = title) == null ? '' : interp) + '</h1><div id="description">' + escape((interp = description) == null ? '' : interp) + '</div></div><div id="photos" class="span8"></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer"><a id="changeprivate" class="btn changeclearance">Make it Private</a><a id="changehidden" class="btn changeclearance"> Make it Hidden</a><a id="changepublic" class="btn changeclearance"> Make it Public</a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn share"><span>Share album by mail</span></a></div></div><div id="share-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>Share album</h3></div><div class="modal-body"> <input type="text" value="" id="mails" placeholder="&lt;example@cozycloud.cc&gt;, &lt;other-example@cozycloud.cc&gt;" class="input-block-level"/></div><div class="modal-footer"> <a href="#add-contact-modal" data-dismiss="modal" class="btn addcontact"><span> Add contact</span></a><a type="button" data-dismiss="modal" class="btn sendmail"><span> Send mail    </span></a></div></div><div id="add-contact-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>Select your friends</h3></div><div class="modal-body"> <div id="contacts" class="input">');
+  buf.push('</div><h1 id="title">' + escape((interp = title) == null ? '' : interp) + '</h1><div id="description">' + escape((interp = description) == null ? '' : interp) + '</div></div><div id="photos" class="span8"></div><div id="clipboard-container"><textarea id="clipboard"></textarea></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer"><a id="changeprivate" class="btn changeclearance">Make it Private</a><a id="changehidden" class="btn changeclearance"> Make it Hidden</a><a id="changepublic" class="btn changeclearance"> Make it Public</a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn share"><span>Share album by mail</span></a></div></div><div id="share-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>Share album</h3></div><div class="modal-body"> <input type="text" value="" id="mails" placeholder="&lt;example@cozycloud.cc&gt;, &lt;other-example@cozycloud.cc&gt;" class="input-block-level"/></div><div class="modal-footer"> <a href="#add-contact-modal" data-dismiss="modal" class="btn addcontact"><span> Add contact</span></a><a type="button" data-dismiss="modal" class="btn sendmail"><span> Send mail    </span></a></div></div><div id="add-contact-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>Select your friends</h3></div><div class="modal-body"> <div id="contacts" class="input">');
   // iterate contacts
   ;(function(){
     if ('number' == typeof contacts.length) {
@@ -903,7 +947,7 @@ window.require.register("templates/photo", function(exports, require, module) {
   };
 });
 window.require.register("views/album", function(exports, require, module) {
-  var AlbumView, BaseView, Contact, Gallery, app, contactModel, editable, _ref,
+  var AlbumView, BaseView, Clipboard, Contact, Gallery, app, clipboard, contactModel, editable, _ref,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -916,9 +960,13 @@ window.require.register("views/album", function(exports, require, module) {
 
   editable = require('lib/helpers').editable;
 
+  Clipboard = require('lib/clipboard');
+
   contactModel = require('models/contact');
 
   Contact = new contactModel();
+
+  clipboard = new Clipboard();
 
   module.exports = AlbumView = (function(_super) {
     __extends(AlbumView, _super);
@@ -1030,12 +1078,12 @@ window.require.register("views/album", function(exports, require, module) {
       modal.find('.modal-body').html(help.content);
       modal.find('.changeclearance').show();
       modal.find('#change' + clearance).hide();
-      console.log(clearance);
       if (clearance === "hidden") {
-        return modal.find('.share').show();
+        modal.find('.share').show();
+        return clipboard.set(this.getPublicUrl());
       } else {
-        console.log("hide");
-        return modal.find('.share').hide();
+        modal.find('.share').hide();
+        return clipboard.set("");
       }
     };
 
@@ -1128,7 +1176,7 @@ window.require.register("views/album", function(exports, require, module) {
       } else if (clearance === 'hidden') {
         return {
           title: 'This album is hidden',
-          content: "It will not appears on your homepage.                But you can share it with the following url :                " + (this.getPublicUrl())
+          content: ("It will not appears on your homepage.                But you can share it with the following url :                " + (this.getPublicUrl()) + " ") + "<p>If you want to copy url in your clipboard : just press Ctrl+C </p>"
         };
       } else if (clearance === 'private') {
         return {
