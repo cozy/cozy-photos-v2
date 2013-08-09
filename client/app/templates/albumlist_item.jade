@@ -1,6 +1,6 @@
 a(href="#albums/#{id}")
     img(src="#{thumbsrc}")
 
-div
+div.text
     h4 #{title}
-    p #{description}
+    p!= description
