@@ -781,7 +781,8 @@ window.require.register("router", function(exports, require, module) {
       }
       return this.displayView(new AlbumView({
         model: new Album(),
-        editable: true
+        editable: true,
+        contacts: []
       }));
     };
 
