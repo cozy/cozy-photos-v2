@@ -199,7 +199,14 @@ window.require.register("lib/clipboard", function(exports, require, module) {
       var _this = this;
       this.value = "";
       $(document).keydown(function(e) {
+        var _ref, _ref1;
         if (!_this.value || !(e.ctrlKey || e.metaKey)) {
+          return;
+        }
+        if (typeof window.getSelection === "function" ? (_ref = window.getSelection()) != null ? _ref.toString() : void 0 : void 0) {
+          return;
+        }
+        if ((_ref1 = document.selection) != null ? _ref1.createRange().text : void 0) {
           return;
         }
         return _.defer(function() {

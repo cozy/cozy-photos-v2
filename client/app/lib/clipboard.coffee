@@ -7,7 +7,11 @@ module.exports = class Clipboard
             # Check if value exist and if user wants to copy
             if not @value or not(e.ctrlKey or e.metaKey)
                 return
+            if window.getSelection?()?.toString()
+                return
 
+            if document.selection?.createRange().text
+                return
             _.defer =>
                 $clipboardContainer = $("#clipboard-container")
                 $clipboardContainer.empty().show()
