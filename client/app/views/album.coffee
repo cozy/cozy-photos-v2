@@ -15,7 +15,11 @@ module.exports = class AlbumView extends BaseView
 
     getRenderData: ->
         clearanceHelpers = @clearanceHelpers(@model.get 'clearance')
-        _.extend {clearanceHelpers: clearanceHelpers}, @model.attributes
+        _.extend
+            clearanceHelpers: clearanceHelpers
+            photosNumber: @model.photos.length
+
+        , @model.attributes
 
     afterRender: ->
         @gallery = new Gallery

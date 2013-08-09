@@ -9,7 +9,8 @@ zipstream = require 'zipstream'
 module.exports = (app) ->
 
     index: (req, res) ->
-        Album.request 'all', (err, albums) ->
+        request = if req.public then 'public' else 'all'
+        Album.request request, (err, albums) ->
             return res.error 500, 'An error occured', err if err
 
             i18n.getLocale null, (err, locale) ->
@@ -72,6 +73,7 @@ module.exports = (app) ->
     zip: (req, res) ->
         Photo.fromAlbum req.album, (err, photos) ->
             return res.error 500, 'An error occured', err if err
+            return res.error 401, 'The album is empty' unless photos.length
 
             zip = zipstream.createZip level: 1
 

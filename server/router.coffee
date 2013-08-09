@@ -23,6 +23,7 @@ module.exports = (app) ->
     app.del   '/photos/:photoid/?',                         photo.delete
 
     # public routes
+    app.get   '/public/',                                   album.index
     app.get   '/public/albums/:albumid.zip',                album.zip
     app.get   '/public/albums/?',                           album.list
     app.get   '/public/albums/:albumid/?',                  album.read

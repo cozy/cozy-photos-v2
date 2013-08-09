@@ -10,10 +10,10 @@ div.row-fluid
           i.icon-edit.icon-white
           span= t("Edit")
 
-        a.flatbtn.download(href="albums/#{id}.zip")
-          i.icon-download-alt.icon-white
-          span= t("Download")
-
+        if photosNumber != 0
+          a.flatbtn.download(href="albums/#{id}.zip")
+            i.icon-download-alt.icon-white
+            span= t("Download")
 
         a.flatbtn.stopediting(href="#albums/#{id}")
           i.icon-eye-open.icon-white
