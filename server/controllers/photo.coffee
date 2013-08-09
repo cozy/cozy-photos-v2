@@ -1,6 +1,7 @@
 Photo = require '../models/photo'
 async = require 'async'
 fs = require 'fs'
+im = require 'imagemagick'
 
 module.exports = (app) ->
 
@@ -13,7 +14,6 @@ module.exports = (app) ->
             next()
 
     create: (req, res) =>
-
         cid = null
         lastPercent = 0
 
@@ -29,33 +29,40 @@ module.exports = (app) ->
             app.io.sockets.emit 'uploadprogress', cid: cid, p: percent
 
         req.form.on 'end', =>
-            photo = new Photo req.body
-            Photo.create photo, (err, photo) ->
-                return res.error 500, "Creation failed.", err if err
+            raw = req.files['raw']
+            im.readMetadata raw.path, (err, metadata) ->
+                console.log err if err?
+                if metadata.exif.orientation?
+                    req.body.orientation = metadata.exif.orientation
+                else
+                    req.body.orientation = 1
+                photo = new Photo req.body
+                Photo.create photo, (err, photo) ->
+                    return res.error 500, "Creation failed.", err if err
 
-                async.parallel [
-                    (cb) ->
-                        raw = req.files['raw']
-                        data = name: 'raw', type: raw.type
-                        photo.attachFile raw.path, data, cb
-                    (cb) ->
-                        screen = req.files['screen']
-                        data = name: 'screen', type: screen.type
-                        photo.attachFile screen.path, data, cb
-                    (cb) ->
-                        thumb = req.files['thumb']
-                        data = name: 'thumb', type: thumb.type
-                        photo.attachFile thumb.path, data, cb
-                ], (err) ->
-                    for name, file of req.files
-                        fs.unlink file.path, (err) ->
-                            if err
-                                console.log 'Could not delete', file.path
+                    async.parallel [
+                        (cb) ->
+                            raw = req.files['raw']
+                            data = name: 'raw', type: raw.type
+                            photo.attachFile raw.path, data, cb
+                        (cb) ->
+                            screen = req.files['screen']
+                            data = name: 'screen', type: screen.type
+                            photo.attachFile screen.path, data, cb
+                        (cb) ->
+                            thumb = req.files['thumb']
+                            data = name: 'thumb', type: thumb.type
+                            photo.attachFile thumb.path, data, cb
+                    ], (err) ->
+                        for name, file of req.files
+                            fs.unlink file.path, (err) ->
+                                if err
+                                    console.log 'Could not delete', file.path
 
-                    if err
-                        return res.error 500, "Creation failed.", err
-                    else
-                        res.send photo, 201
+                        if err
+                            return res.error 500, "Creation failed.", err
+                        else
+                            res.send photo, 201
 
     screen: (req, res) ->
         res.setHeader 'Content-Type', 'image/jpg'

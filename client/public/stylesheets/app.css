@@ -156,6 +156,7 @@ button.delete {
   transition: 0.4s ease-out;
   -webkit-transition: 0.4s ease-out;
   border: 1px solid transparent;
+  -webkit-transform: rotate(60deg);
 }
 #photos .photo a img {
   width: 100%;

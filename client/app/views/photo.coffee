@@ -1,4 +1,5 @@
 BaseView = require 'lib/base_view'
+helpers = require 'lib/helpers'
 
 transitionendEvents = [
     "transitionend", "webkitTransitionEnd", "oTransitionEnd", "MSTransitionEnd"
@@ -29,6 +30,7 @@ module.exports = class PhotoView extends BaseView
         @progressbar = @$ '.progressfill'
         @link.removeClass 'loading thumbed server error'
         @link.addClass @model.get 'state'
+        helpers.rotate @model.get('orientation'), @image
 
     onProgress: (model) ->
         p = 10 + 90*model.get('progress')
@@ -38,6 +40,7 @@ module.exports = class PhotoView extends BaseView
 
         @link.removeClass 'loading thumbed server error'
         @link.addClass @model.get 'state'
+        helpers.rotate @model.get('orientation'), @image
 
 
         if model.get('state') is 'thumbed'

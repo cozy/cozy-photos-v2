@@ -33,3 +33,21 @@ module.exports =
         sel.removeAllRanges()
         sel.addRange(range)
         el.focus()
+
+    rotate: (orientation, image) ->
+        if orientation is undefined or orientation is 1
+            return
+        else if orientation is 2     
+            image.css "transform", "scale(-1, 1)"
+        else if orientation is 3
+            image.css "transform", "rotate(" + 180 + "deg)"
+        else if orientation is 4
+            image.css "transform", "scale(1, -1)"
+        else if orientation is 5
+            image.css "transform", "rotate(" + -90 + "deg) scale(-1, 1) "
+        else if orientation is 6
+            image.css "transform", "rotate(" + 90 + "deg)"
+        else if orientation is 7
+            image.css "transform", "rotate(" + 90 + "deg) scale(-1, 1)"
+        else if orientation is 8
+            image.css "transform", "rotate(" + -90 + "deg)"
