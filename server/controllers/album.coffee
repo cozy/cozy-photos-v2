@@ -10,18 +10,27 @@ module.exports = (app) ->
 
     index: (req, res) ->
         request = if req.public then 'public' else 'all'
-        Album.request request, (err, albums) ->
-            return res.error 500, 'An error occured', err if err
 
-            i18n.getLocale null, (err, locale) ->
-                console.log err if err
+        async.parallel [
+            (cb) -> Photo.albumsThumbs cb
+            (cb) -> Album.request request, cb
+            (cb) -> i18n.getLocale null, cb
+        ], (err, results) ->
 
-                imports = """
+            [photos, albums, locale] = results
+            out = []
+            for albumModel in albums
+                album = albumModel.toObject()
+                album.thumb = photos[album.id]
+                out.push album
+
+            imports = """
                     window.locale = "#{locale}";
-                    window.initalbums = #{JSON.stringify(albums)};
+                    window.initalbums = #{JSON.stringify(out)};
                 """
 
-                res.render 'index.jade', imports: imports
+            res.render 'index.jade', imports: imports
+
 
     fetch: (req, res, next, id) ->
         Album.find id, (err, album) ->

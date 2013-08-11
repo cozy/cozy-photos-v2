@@ -22,7 +22,7 @@ module.exports =
         else 'owner'
 
         if window.initalbums
-            @albums.reset window.initalbums
+            @albums.reset window.initalbums, parse: true
             delete window.initalbums
             Backbone.history.start()
         else
