@@ -19,6 +19,7 @@ module.exports = (app) ->
     app.post  '/photos/?',                                  photo.create
     app.get   '/photos/:photoid.jpg',                       photo.screen
     app.get   '/photos/thumbs/:photoid.jpg',                photo.thumb
+    app.get   '/photos/raws/:photoid.jpg',                  photo.raw
     app.put   '/photos/:photoid/?',                         photo.update
     app.del   '/photos/:photoid/?',                         photo.delete
 
@@ -29,3 +30,4 @@ module.exports = (app) ->
     app.get   '/public/albums/:albumid/?',                  album.read
     app.get   '/public/photos/:photoid.jpg',                photo.screen
     app.get   '/public/photos/thumbs/:photoid.jpg',         photo.thumb
+    app.get   '/public/photos/raws/:photoid.jpg',           photo.raw
