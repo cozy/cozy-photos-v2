@@ -100,7 +100,9 @@ window.require.register("application", function(exports, require, module) {
       this.router = new Router();
       this.mode = window.location.pathname.match(/public/) ? 'public' : 'owner';
       if (window.initalbums) {
-        this.albums.reset(window.initalbums);
+        this.albums.reset(window.initalbums, {
+          parse: true
+        });
         delete window.initalbums;
         return Backbone.history.start();
       } else {
@@ -150,6 +152,10 @@ window.require.register("collections/photo", function(exports, require, module) 
     PhotoCollection.prototype.model = require('models/photo');
 
     PhotoCollection.prototype.url = 'photos';
+
+    PhotoCollection.prototype.comparator = function(model) {
+      return model.get('title');
+    };
 
     return PhotoCollection;
 
@@ -282,7 +288,17 @@ window.require.register("lib/view_collection", function(exports, require, module
     };
 
     ViewCollection.prototype.appendView = function(view) {
-      return this.$el.append(view.el);
+      var className, index, selector, tagName;
+
+      index = this.collection.indexOf(view.model);
+      if (index === 0) {
+        return this.$el.append(view.$el);
+      } else {
+        className = view.className != null ? "." + view.className : "";
+        tagName = view.tagName || "";
+        selector = "" + tagName + className + ":nth-of-type(" + index + ")";
+        return this.$el.find(selector).after(view.$el);
+      }
     };
 
     ViewCollection.prototype.initialize = function() {
@@ -290,6 +306,7 @@ window.require.register("lib/view_collection", function(exports, require, module
       this.views = {};
       this.listenTo(this.collection, "reset", this.onReset);
       this.listenTo(this.collection, "add", this.addItem);
+      this.listenTo(this.collection, "sort", this.render);
       this.listenTo(this.collection, "remove", this.removeItem);
       return this.onReset(this.collection);
     };
@@ -306,12 +323,10 @@ window.require.register("lib/view_collection", function(exports, require, module
     };
 
     ViewCollection.prototype.afterRender = function() {
-      var id, view, _ref1;
+      var i, _i, _ref1;
 
-      _ref1 = this.views;
-      for (id in _ref1) {
-        view = _ref1[id];
-        this.appendView(view);
+      for (i = _i = 0, _ref1 = this.collection.length - 1; 0 <= _ref1 ? _i <= _ref1 : _i >= _ref1; i = 0 <= _ref1 ? ++_i : --_i) {
+        this.appendView(this.views[this.collection.at(i).cid]);
       }
       return this.checkIfEmpty(this.views);
     };
