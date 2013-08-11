@@ -109,6 +109,9 @@ button.delete {
   -webkit-transition: 0s ease-out;
   box-shadow: 0px 0px 0px #444;
 }
+.albumitem .text {
+  margin-left: 120px;
+}
 #album {
   padding: 0;
 }
@@ -140,6 +143,18 @@ button.delete {
 }
 #photos {
   min-height: 300px;
+  box-sizing: border-box;
+}
+#photos.dragover {
+  background-color: #fe8800;
+}
+#photos #uploader {
+  opacity: 0.0001;
+  display: block;
+  height: 100%;
+  font-size: 30em;
+  line-height: 100px;
+  position: absolute;
 }
 #photos .photo {
   float: left;
@@ -191,9 +206,6 @@ button.delete {
 .editing #photos.empty {
   border: 1px solid #fe8800;
 }
-#photos.dragover {
-  background-color: #fe8800;
-}
 .modal {
   border-radius: 0px;
   border: 0px;
@@ -206,15 +218,13 @@ button.delete {
 .mode-public .flatbtn,
 .mode-public .flatbtn.startediting,
 .mode-public .create,
-.mode-owner.empty .help,
 .mode-owner .empty .help,
-.help,
-.helpedit,
 .stopediting,
 .flatbtn,
 .delete,
 .editing .flatbtn.startediting,
-.editing .flatbtn.download {
+.editing .flatbtn.download,
+.mode-owner.editing .empty .help {
   display: none;
 }
 .editing .flatbtn,
@@ -223,8 +233,21 @@ button.delete {
 .flatbtn.back,
 .flatbtn.startediting,
 .flatbtn.download,
-.empty .help,
-.editing .empty .helpedit {
+.mode-public .empty .help {
+  display: block;
+}
+#uploadblock {
+  display: none;
+  width: 100%;
+  margin: 0px;
+  overflow: hidden;
+  padding: 10px 0px;
+  margin: 5px;
+  position: relative;
+  text-align: center;
+  transition: height 1s;
+}
+.editing #uploadblock {
   display: block;
 }
 @media (max-width: 700px) {
