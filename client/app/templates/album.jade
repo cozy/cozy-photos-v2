@@ -64,6 +64,7 @@ div.row-fluid
     .modal-footer 
       a.btn.addcontact(
         href="#add-contact-modal",
+        data-toggle="modal",
         data-dismiss="modal")
         span= t("Add contact")
       a.btn.sendmail(type="button", data-dismiss="modal")
@@ -78,10 +79,13 @@ div.row-fluid
 
     .modal-body 
       #contacts.input
-        each contact in contacts
-          input(type="checkbox", name="#{contact.fn}", id ="#{contact.fn}").checkbox
-          span #{contact.fn}
-          br
+        if contacts.length === 0
+          p= t("Upload your contacts ...")
+        else
+          each contact in contacts
+            input(type="checkbox", name="#{contact.fn}", id ="#{contact.fn}").checkbox
+            span #{contact.fn}
+            br
 
     .modal-footer      
       a.btn.add(

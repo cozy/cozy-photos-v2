@@ -101,7 +101,7 @@ module.exports = class AlbumView extends BaseView
                         if item.name is "email"
                             @options.contacts.push contact
                             break
-
+                @$('#add-contact-modal').modal('hide')
                 @render modal
                 @$('#add-contact-modal').modal('show')
             error: (err) ->
