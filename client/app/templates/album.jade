@@ -3,36 +3,39 @@ div.row-fluid
     div#links.clearfix
       a.flatbtn.back(href="#albums")
         i.icon-arrow-left.icon-white
-        span Back
+        span= t("Back")
 
       if 'undefined' != typeof id
         a.flatbtn.startediting(href="#albums/#{id}/edit")
           i.icon-edit.icon-white
-          span Edit
+          span= t("Edit")
 
-        a.flatbtn.download(href="albums/#{id}.zip")
-          i.icon-download-alt.icon-white
-          span Download
-
+        if photosNumber != 0
+          a.flatbtn.download(href="albums/#{id}.zip")
+            i.icon-download-alt.icon-white
+            span= t("Download")
 
         a.flatbtn.stopediting(href="#albums/#{id}")
           i.icon-eye-open.icon-white
-          span View
+          span= t("View")
 
         a.flatbtn.delete
           i.icon-remove.icon-white
-          span Delete
+          span= t("Delete")
 
         a.flatbtn.clearance(
           href="#clearance-modal",
           data-toggle="modal")
           i.icon-upload.icon-white
-          span #{clearance}
+          span= t(clearance)
 
     h1#title #{title}
-    div#description #{description}
+    div#description!= description
   div#photos.span8
 
+  #clipboard-container
+    textarea(id="clipboard")
+    
   #clearance-modal.modal.hide
     .modal-header
       button.close(type="button", data-dismiss="modal") &times;
@@ -40,7 +43,59 @@ div.row-fluid
 
     .modal-body clearanceHelpers.content
 
-    .modal-footer
-      a#changeprivate.btn.changeclearance Make it Private
-      a#changehidden.btn.changeclearance  Make it Hidden
-      a#changepublic.btn.changeclearance  Make it Public
+    .modal-footer      
+      a#changeprivate.btn.changeclearance= t("Make it Private")
+      a#changehidden.btn.changeclearance= t("Make it Hidden")
+      a#changepublic.btn.changeclearance= t("Make it Public")
+      a.btn.share(
+        href="#share-modal",
+        data-toggle="modal",
+        data-dismiss="modal")
+        span= t("Share album by mail")
+
+  #share-modal.modal.hide
+    .modal-header
+      button.close(type="button", data-dismiss="modal") &times;
+      h3= t("Share album")
+
+    .modal-body 
+      input.input-block-level(type="text", value="", id="mails", placeholder="<example@cozycloud.cc>, <other-example@cozycloud.cc>")
+
+    .modal-footer 
+      a.btn.addcontact(
+        href="#add-contact-modal",
+        data-toggle="modal",
+        data-dismiss="modal")
+        span= t("Add contact")
+      a.btn.sendmail(type="button", data-dismiss="modal")
+        span= t("Send mail")    
+
+
+
+  #add-contact-modal.modal.hide
+    .modal-header
+      button.close(type="button", data-dismiss="modal") &times;
+      h3= t("Select your friends")
+
+    .modal-body 
+      #contacts.input
+        if contacts.length === 0
+          p= t("Upload your contacts ...")
+        else
+          each contact in contacts
+            input(type="checkbox", name="#{contact.fn}", id ="#{contact.fn}").checkbox
+            span #{contact.fn}
+            br
+
+    .modal-footer      
+      a.btn.add(
+        href="#share-modal",
+        data-toggle="modal",
+        data-dismiss="modal")
+        span= t("Add")
+
+      a.btn.cancel(
+        href="#share-modal",
+        data-toggle="modal",
+        data-dismiss="modal")
+        span= t("Cancel")
