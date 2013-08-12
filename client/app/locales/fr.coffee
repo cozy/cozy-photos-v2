@@ -20,9 +20,19 @@ module.exports =
     "Title ..." : "Titre ..."
     "Write some more ..." : "Description ..."
     "View" : "Voir"
+    "is too big (max 10Mo)":"est trop grosse (max 10Mo)"
+    "is not an image": "n'est pas une image"
+    "Share album by mail": "Partagez par mail"
+    "Upload your contacts ...": "Uploader vos contacts ..."
+    "Share album": "Partagez l'album"
+    "Add contact": "Ajouter contact"
+    "Send mail": "Envoyez mail"
+    "Select your friends": "Choisissez vos amis"
+    "Add": "Ajouter"
+    "Cancel": "Annuler"
 
-    "Drag your photos here to upload them" : """
-      Droppez vos photos ici pour les uploader
+    "Click Here or drag your photos below to upload":"""
+        Cliquez ici ou glisser-déposez vos photos ci-dessous pour les uploader
     """
 
     "hidden-description": """
