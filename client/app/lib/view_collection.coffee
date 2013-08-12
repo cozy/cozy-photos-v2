@@ -59,10 +59,11 @@ module.exports = class ViewCollection extends BaseView
 
     # after render, we reattach the views
     afterRender: ->
-        for i in [0..@collection.length-1]
-            @appendView @views[@collection.at(i).cid]
+        if @collection.length > 0 
+            for i in [0..@collection.length-1]
+                @appendView @views[@collection.at(i).cid]
 
-        @checkIfEmpty @views
+            @checkIfEmpty @views
 
     # destroy all sub views before remove
     remove: ->

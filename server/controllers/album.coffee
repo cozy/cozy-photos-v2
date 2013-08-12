@@ -1,5 +1,6 @@
 Album = require '../models/album'
 Photo = require '../models/photo'
+CozyAdapter = require 'jugglingdb-cozy-adapter'
 i18n  = require 'cozy-i18n-helper'
 async = require 'async'
 fs    = require 'fs'
@@ -63,6 +64,15 @@ module.exports = (app) ->
             return res.error 500, "Creation failed.", err if err
 
             res.send album, 201
+
+    sendMail: (req, res) ->
+        data =
+            to: req.body.mails
+            subject: "I share an album with you"
+            content: "You can access to my album via this link : #{req.body.url}"
+        CozyAdapter.sendMailFromUser data, (err) ->
+            return res.error 500, "Server couldn't send mail.", err if err
+            res.send 200
 
     read: (req, res) ->
 
