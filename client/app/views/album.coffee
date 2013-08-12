@@ -23,7 +23,11 @@ module.exports = class AlbumView extends BaseView
 
     getRenderData: ->
         clearanceHelpers = @clearanceHelpers(@model.get 'clearance')
-        _.extend {clearanceHelpers: clearanceHelpers}, @model.attributes
+        _.extend
+            clearanceHelpers: clearanceHelpers
+            photosNumber: @model.photos.length
+
+        , @model.attributes
 
     afterRender: ->
         @gallery = new Gallery
@@ -31,7 +35,7 @@ module.exports = class AlbumView extends BaseView
             editable: @options.editable
             collection: @model.photos
             beforeUpload: @beforePhotoUpload
-
+            
         @gallery.render()
 
         @makeEditable() if @options.editable
@@ -49,18 +53,18 @@ module.exports = class AlbumView extends BaseView
         @refreshPopOver @model.get 'clearance'
 
         editable @$('#title'),
-            placeholder: 'Title ...'
+            placeholder: t 'Title ...'
             onChanged: (text) => @saveModel title: text
 
         editable @$('#description'),
-            placeholder: 'Write some more ...'
+            placeholder: t 'Write some more ...'
             onChanged: (text) => @saveModel description: text
 
     destroyModel: ->
         if @model.isNew()
             return app.router.navigate 'albums', true
 
-        if confirm 'Are you sure ?'
+        if confirm t 'Are you sure ?'
             @model.destroy().then ->
                 app.router.navigate 'albums', true
 
@@ -137,14 +141,12 @@ module.exports = class AlbumView extends BaseView
 
     clearanceHelpers: (clearance) ->
         if clearance is 'public'
-            title: 'This album is public',
-            content: 'It will appears on your homepage.'
+            title: t 'This album is public'
+            content: t 'It will appears on your homepage.'
         else if clearance is 'hidden'
-            title: 'This album is hidden',
-            content: "It will not appears on your homepage.
-                But you can share it with the following url :
-                #{ @getPublicUrl() } " +
-                "<p>If you want to copy url in your clipboard : just press Ctrl+C </p>"
+            title: t 'This album is hidden'
+            content: t("hidden-description") + " #{@getPublicUrl()}" + 
+                        "<p>If you want to copy url in your clipboard : just press Ctrl+C </p>"
         else if clearance is 'private'
-            title: 'This album is private',
-            content: 'It cannot be accessed from the public side'
+            title: t 'This album is private'
+            content: t 'It cannot be accessed from the public side'

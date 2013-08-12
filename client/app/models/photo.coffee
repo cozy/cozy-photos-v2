@@ -3,18 +3,11 @@
 module.exports = class Photo extends Backbone.Model
 
     defaults: ->
-        if @id
-            thumbsrc: "photos/thumbs/#{@id}.jpg"
-            src:      "photos/#{@id}.jpg"
-            state:    'server'
-        else
-            thumbsrc: 'img/loading.gif'
-            src:      ''
-            state:    'loading'
+        thumbsrc: 'img/loading.gif'
+        src:      ''
 
     parse: (attrs) ->
-        if attrs.id
-            attrs.thumbsrc = "photos/thumbs/#{attrs.id}.jpg"
-            attrs.src = "photos/#{attrs.id}.jpg"
-            attrs.state = 'server'
-        return attrs
+        if not attrs.id then attrs
+        else _.extend attrs,
+            thumbsrc: "photos/thumbs/#{attrs.id}.jpg"
+            src:      "photos/#{attrs.id}.jpg"

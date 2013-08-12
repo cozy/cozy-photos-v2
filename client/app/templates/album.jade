@@ -3,34 +3,34 @@ div.row-fluid
     div#links.clearfix
       a.flatbtn.back(href="#albums")
         i.icon-arrow-left.icon-white
-        span Back
+        span= t("Back")
 
       if 'undefined' != typeof id
         a.flatbtn.startediting(href="#albums/#{id}/edit")
           i.icon-edit.icon-white
-          span Edit
+          span= t("Edit")
 
-        a.flatbtn.download(href="albums/#{id}.zip")
-          i.icon-download-alt.icon-white
-          span Download
-
+        if photosNumber != 0
+          a.flatbtn.download(href="albums/#{id}.zip")
+            i.icon-download-alt.icon-white
+            span= t("Download")
 
         a.flatbtn.stopediting(href="#albums/#{id}")
           i.icon-eye-open.icon-white
-          span View
+          span= t("View")
 
         a.flatbtn.delete
           i.icon-remove.icon-white
-          span Delete
+          span= t("Delete")
 
         a.flatbtn.clearance(
           href="#clearance-modal",
           data-toggle="modal")
           i.icon-upload.icon-white
-          span #{clearance}
+          span= t(clearance)
 
     h1#title #{title}
-    div#description #{description}
+    div#description!= description
   div#photos.span8
 
   #clipboard-container
@@ -43,10 +43,10 @@ div.row-fluid
 
     .modal-body clearanceHelpers.content
 
-    .modal-footer
-      a#changeprivate.btn.changeclearance Make it Private
-      a#changehidden.btn.changeclearance  Make it Hidden
-      a#changepublic.btn.changeclearance  Make it Public
+    .modal-footer      
+      a#changeprivate.btn.changeclearance= t("Make it Private")
+      a#changehidden.btn.changeclearance= t("Make it Hidden")
+      a#changepublic.btn.changeclearance= t("Make it Public")
       a.btn.share(
         href="#share-modal",
         data-toggle="modal",

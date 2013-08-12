@@ -62,7 +62,7 @@ h1, h4
 
 .flatbtn:active
 .flatbtn:focus
-    background orange 
+    background orange
     box-shadow 1px 3px 2px rgba(0, 0, 0, 0.2) inset
 
 @media (max-width: 1210px)
@@ -119,6 +119,9 @@ button.delete
         -webkit-transition 0s ease-out
         box-shadow: 0px 0px 0px darkgrey
 
+    .text
+        margin-left 120px
+
 // #### album page ###
 
 #album
@@ -153,6 +156,19 @@ button.delete
 
 #photos
     min-height 300px
+    box-sizing border-box
+
+    &.dragover
+        background-color orange
+
+    #uploader
+        opacity 0.0001
+        display block
+        // z-index -1
+        height 100%
+        font-size 30em
+        line-height 100px
+        position absolute
 
     .photo
         float left
@@ -204,10 +220,6 @@ button.delete
 .editing #photos.empty
     border 1px solid orange
 
-#photos.dragover
-    background-color orange
-
-
 .modal
     border-radius 0px
     border 0px
@@ -220,15 +232,13 @@ button.delete
 .mode-public .flatbtn
 .mode-public .flatbtn.startediting
 .mode-public .create
-.mode-owner.empty .help
 .mode-owner .empty .help
-.help
-.helpedit
 .stopediting
 .flatbtn
 .delete
 .editing .flatbtn.startediting
 .editing .flatbtn.download
+.mode-owner.editing .empty .help
     display none
 
 .editing .flatbtn
@@ -237,8 +247,22 @@ button.delete
 .flatbtn.back
 .flatbtn.startediting
 .flatbtn.download
-.empty .help
-.editing .empty .helpedit
+.mode-public .empty .help
+    display block
+
+
+#uploadblock
+    display none
+    width 100%
+    margin 0px
+    overflow hidden
+    padding 10px 0px
+    margin 5px
+    position relative
+    text-align center
+    transition height 1s
+
+.editing #uploadblock
     display block
 
 // # Remove effect from photobox //

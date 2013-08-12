@@ -14,10 +14,9 @@ module.exports = class Router extends Backbone.Router
 
     # display the "home" page : list of albums
     albumslist: (editable=false)->
-        app.albums.fetch().done =>
-            @displayView new AlbumsListView
-                collection: app.albums
-                editable: editable
+        @displayView new AlbumsListView
+            collection: app.albums
+            editable: editable
 
     # display the list of albums in edit mode
     albumslistedit: ->
@@ -36,7 +35,7 @@ module.exports = class Router extends Backbone.Router
                 contacts: []
 
         .fail =>
-            alert 'this album does not exist'
+            alert t 'this album does not exist'
             @navigate 'albums', true
 
     # display the album view in edit mode
