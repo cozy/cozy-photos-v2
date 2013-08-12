@@ -21,9 +21,19 @@ module.exports =
     "Title ..." : "Title ..."
     "View" : "View"
     "Write some more ..." : "Write some more ..."
+    "is too big (max 10Mo)":"is too big (max 10Mo)"
+    "is not an image": "is not an image"
+    "Share album by mail": "Share album by mail"
+    "Upload your contacts ...": "Upload your contacts ..."
+    "Share album": "Share album"
+    "Add contact": "Add contact"
+    "Send mail": "Send mail"
+    "Select your friends": "Select your friends"
+    "Add": "Add"
+    "Cancel": "Cancel"
 
-    "Drag your photos here to upload them" : """
-      Drag your photos here to upload them"
+    "Click Here or drag your photos below to upload":"""
+        Click Here or drag your photos below to upload
     """
 
     "hidden-description": """
