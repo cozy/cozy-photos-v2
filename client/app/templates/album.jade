@@ -51,12 +51,12 @@ div.row-fluid
         href="#share-modal",
         data-toggle="modal",
         data-dismiss="modal")
-        span Share album by mail
+        span= t("Share album by mail")
 
   #share-modal.modal.hide
     .modal-header
       button.close(type="button", data-dismiss="modal") &times;
-      h3 Share album
+      h3= t("Share album")
 
     .modal-body 
       input.input-block-level(type="text", value="", id="mails", placeholder="<example@cozycloud.cc>, <other-example@cozycloud.cc>")
@@ -65,16 +65,16 @@ div.row-fluid
       a.btn.addcontact(
         href="#add-contact-modal",
         data-dismiss="modal")
-        span  Add contact
+        span= t("Add contact")
       a.btn.sendmail(type="button", data-dismiss="modal")
-        span  Send mail    
+        span= t("Send mail")    
 
 
 
   #add-contact-modal.modal.hide
     .modal-header
       button.close(type="button", data-dismiss="modal") &times;
-      h3 Select your friends
+      h3= t("Select your friends")
 
     .modal-body 
       #contacts.input
@@ -88,10 +88,10 @@ div.row-fluid
         href="#share-modal",
         data-toggle="modal",
         data-dismiss="modal")
-        span Add
+        span= t("Add")
 
       a.btn.cancel(
         href="#share-modal",
         data-toggle="modal",
         data-dismiss="modal")
-        span Cancel
+        span= t("Cancel")
