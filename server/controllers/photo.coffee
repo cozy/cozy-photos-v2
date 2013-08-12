@@ -81,6 +81,14 @@ module.exports = (app) ->
 
         stream.pipe res
 
+    raw: (req, res) ->
+        res.set 'Content-Type', 'image/jpeg'
+        res.setHeader 'Cache-Control', 'public, max-age=31557600'
+        stream = req.photo.getFile 'raw', (err) ->
+            if err then res.error 500, "File fetching failed.", err
+
+        stream.pipe res
+
     update: (req, res) ->
         req.photo.updateAttributes req.body, (err) ->
             return res.error 500, "Update failed." if err

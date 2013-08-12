@@ -24,7 +24,7 @@ module.exports =
             if not el.text()
                 el.text placeholder
             else
-                onChanged el.text()
+                onChanged el.html()
 
     forceFocus: (el) ->
         range = document.createRange()

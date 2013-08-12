@@ -26,7 +26,21 @@ module.exports = class ViewCollection extends BaseView
 
     # can be overriden if we want to place the subviews somewhere else
     appendView: (view) ->
-        @$el.append view.el
+
+        index = @collection.indexOf view.model
+
+        if index is 0
+            @$el.append view.$el
+        else
+
+            className = if view.className? then ".#{view.className}"
+            else ""
+
+            tagName = view.tagName or ""
+
+            selector = "#{tagName}#{className}:nth-of-type(#{index})"
+            @$el.find(selector).after view.$el
+
 
     # bind listeners to the collection
     initialize: ->
@@ -34,6 +48,7 @@ module.exports = class ViewCollection extends BaseView
         @views = {}
         @listenTo @collection, "reset",   @onReset
         @listenTo @collection, "add",     @addItem
+        @listenTo @collection, "sort",    @render
         @listenTo @collection, "remove",  @removeItem
         @onReset @collection
 
@@ -44,8 +59,11 @@ module.exports = class ViewCollection extends BaseView
 
     # after render, we reattach the views
     afterRender: ->
-        @appendView view for id, view of @views
-        @checkIfEmpty @views
+        if @collection.length > 0 
+            for i in [0..@collection.length-1]
+                @appendView @views[@collection.at(i).cid]
+
+            @checkIfEmpty @views
 
     # destroy all sub views before remove
     remove: ->

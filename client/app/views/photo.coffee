@@ -13,10 +13,10 @@ module.exports = class PhotoView extends BaseView
 
     initialize: (options) ->
         super
-        @listenTo @model, 'change:progress', @onProgress
-        @listenTo @model, 'change:thumbsrc', @onSrcChanged
-        @listenTo @model, 'change:src',      @onSrcChanged
-        @listenTo @model, 'change:state',    @onStateChanged
+        @listenTo @model, 'progress',        @onProgress
+        @listenTo @model, 'thumbed',         @onThumbed
+        @listenTo @model, 'upError',         @onError
+        @listenTo @model, 'uploadComplete',  @onServer
 
     events: =>
         'click' : 'onClickListener'
@@ -28,38 +28,46 @@ module.exports = class PhotoView extends BaseView
         @link =        @$ 'a'
         @image =       @$ 'img'
         @progressbar = @$ '.progressfill'
-        @link.removeClass 'loading thumbed server error'
-        @link.addClass @model.get 'state'
         helpers.rotate @model.get('orientation'), @image
+        @link.addClass 'server' unless @model.isNew()
 
-    onProgress: (model) ->
-        p = 10 + 90*model.get('progress')
-        @progressbar.css 'height', p + '%'
+    setProgress: (percent) ->
+        @progressbar.css 'height', percent + '%'
 
-    onStateChanged: (model) ->
+    # when the upload progresses
+    onProgress: (event) ->
+        @setProgress 10 + 90 * event.loaded / event.total
 
-        @link.removeClass 'loading thumbed server error'
-        @link.addClass @model.get 'state'
-        helpers.rotate @model.get('orientation'), @image
+    # when the thumb is ready
+    onThumbed: ->
+        @setProgress 10
+        @image.attr 'src', @model.thumb_du
+        @image.attr 'orientation', @model.get('orientation')
+        @image.addClass 'thumbed'
 
+    # when the upload is complete
+    onServer: ->
+        # detach-reatach so photobox can pick up the object
+        col = @model.collection
+        col.remove @model
+        col.add @model
 
-        if model.get('state') is 'thumbed'
-            @progressbar.css 'height', '10%'
+        # @setProgress 0
+        # @link.attr 'href', "photos/#{@model.id}.jpg"
+        # @image.attr 'src', "photos/thumbs/#{@model.id}.jpg"
 
-        if model.previous('state') is 'thumbed' and
-           model.get('state')      is 'server'
+    # when an error occured
+    onError: (err) ->
+        @setProgress 0
+        @error = @model.get('title') + " " + err
+        @link.attr 'title', @error
+        @image.attr 'src', 'img/error.gif'
 
-            @progressbar.css 'height', '100%'
-            setTimeout =>
-                @progressbar.hide()
-            , 500
-
-    onSrcChanged: (model) ->
-        @link.attr 'href', model.get 'src'
-        @image.attr 'src', model.get 'thumbsrc'
-
+    # prevent openning the gallery if the photos
+    # hasn't been upload yet
     onClickListener: (evt) =>
-        unless @model.get('state') is 'server'
+        if @model.isNew()
+            alert @error if @error
             evt.stopPropagation()
             evt.preventDefault()
             return false
