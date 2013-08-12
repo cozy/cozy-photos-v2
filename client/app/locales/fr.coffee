@@ -1,0 +1,45 @@
+module.exports =
+    "Back" : "Retour"
+    "Create a new album" : "Créer un nouvel album"
+    "Delete" : "Supprimer"
+    "Download" : "Télécharger"
+    "Edit" : "Modifier"
+    "It will appears on your homepage." : "It apparaitra votre page d'accueil"
+    "Make it Hidden" : "Rendre Masqué"
+    "Make it Private" : "Rendre Privé"
+    "Make it Public" : "Rendre Public"
+    "New" : "Nouveau"
+    "private" : "privé"
+    "public" : "public"
+    "hidden" : "masqué"
+    "There is no photos in this album" : "Pas de photos dans cet album"
+    "There is no public albums." : "Pas d'albums publics"
+    "This album is private" : "Cet album est Privé"
+    "This album is hidden" : "Cet album est Masqué"
+    "This album is public" : "Cet album est Public"
+    "Title ..." : "Titre ..."
+    "Write some more ..." : "Description ..."
+    "View" : "Voir"
+    "is too big (max 10Mo)":"est trop grosse (max 10Mo)"
+    "is not an image": "n'est pas une image"
+    "Share album by mail": "Partagez par mail"
+    "Upload your contacts ...": "Uploader vos contacts ..."
+    "Share album": "Partagez l'album"
+    "Add contact": "Ajouter contact"
+    "Send mail": "Envoyez mail"
+    "Select your friends": "Choisissez vos amis"
+    "Add": "Ajouter"
+    "Cancel": "Annuler"
+
+    "Click Here or drag your photos below to upload":"""
+        Cliquez ici ou glisser-déposez vos photos ci-dessous pour les uploader
+    """
+
+    "hidden-description": """
+      Il n'apparaitra pas sur votre page d'accueil,
+      Mais vous pouvez partager cet url :
+    """
+
+    "It cannot be accessed from the public side" : """
+      Il ne peux pas être vu depuis le coté public
+    """

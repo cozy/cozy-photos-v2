@@ -1,11 +1,37 @@
 Album = require '../models/album'
 Photo = require '../models/photo'
+CozyAdapter = require 'jugglingdb-cozy-adapter'
+i18n  = require 'cozy-i18n-helper'
 async = require 'async'
+fs    = require 'fs'
 zipstream = require 'zipstream'
-fs = require 'fs'
 {slugify, noop} = require '../helpers/helpers'
 
 module.exports = (app) ->
+
+    index: (req, res) ->
+        request = if req.public then 'public' else 'all'
+
+        async.parallel [
+            (cb) -> Photo.albumsThumbs cb
+            (cb) -> Album.request request, cb
+            (cb) -> i18n.getLocale null, cb
+        ], (err, results) ->
+
+            [photos, albums, locale] = results
+            out = []
+            for albumModel in albums
+                album = albumModel.toObject()
+                album.thumb = photos[album.id]
+                out.push album
+
+            imports = """
+                    window.locale = "#{locale}";
+                    window.initalbums = #{JSON.stringify(out)};
+                """
+
+            res.render 'index.jade', imports: imports
+
 
     fetch: (req, res, next, id) ->
         Album.find id, (err, album) ->
@@ -39,6 +65,15 @@ module.exports = (app) ->
 
             res.send album, 201
 
+    sendMail: (req, res) ->
+        data =
+            to: req.body.mails
+            subject: "I share an album with you"
+            content: "You can access to my album via this link : #{req.body.url}"
+        CozyAdapter.sendMailFromUser data, (err) ->
+            return res.error 500, "Server couldn't send mail.", err if err
+            res.send 200
+
     read: (req, res) ->
 
         if req.album.clearance is 'private' and req.public
@@ -57,6 +92,7 @@ module.exports = (app) ->
     zip: (req, res) ->
         Photo.fromAlbum req.album, (err, photos) ->
             return res.error 500, 'An error occured', err if err
+            return res.error 401, 'The album is empty' unless photos.length
 
             zip = zipstream.createZip level: 1
 

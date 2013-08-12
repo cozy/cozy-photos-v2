@@ -82,16 +82,32 @@
 window.require.register("application", function(exports, require, module) {
   module.exports = {
     initialize: function() {
-      var AlbumCollection, Router;
-
+      var AlbumCollection, Router, e, locales;
+      this.locale = window.locale;
+      this.polyglot = new Polyglot();
+      try {
+        locales = require('locales/' + this.locale);
+      } catch (_error) {
+        e = _error;
+        locales = require('locales/en');
+      }
+      this.polyglot.extend(locales);
+      window.t = this.polyglot.t.bind(this.polyglot);
       AlbumCollection = require('collections/album');
       Router = require('router');
       this.albums = new AlbumCollection();
       this.router = new Router();
       this.mode = window.location.pathname.match(/public/) ? 'public' : 'owner';
-      Backbone.history.start();
-      if (typeof Object.freeze === 'function') {
-        return Object.freeze(this);
+      if (window.initalbums) {
+        this.albums.reset(window.initalbums, {
+          parse: true
+        });
+        delete window.initalbums;
+        return Backbone.history.start();
+      } else {
+        return this.albums.fetch().done(function() {
+          return Backbone.history.start();
+        });
       }
     }
   };
@@ -136,9 +152,41 @@ window.require.register("collections/photo", function(exports, require, module) 
 
     PhotoCollection.prototype.url = 'photos';
 
+    PhotoCollection.prototype.comparator = function(model) {
+      return model.get('title');
+    };
+
     return PhotoCollection;
 
   })(Backbone.Collection);
+  
+});
+window.require.register("helpers/client", function(exports, require, module) {
+  exports.request = function(type, url, data, callbacks) {
+    return $.ajax({
+      type: type,
+      url: url,
+      data: data,
+      success: callbacks.success,
+      error: callbacks.error
+    });
+  };
+
+  exports.get = function(url, callbacks) {
+    return exports.request("GET", url, null, callbacks);
+  };
+
+  exports.post = function(url, data, callbacks) {
+    return exports.request("POST", url, data, callbacks);
+  };
+
+  exports.put = function(url, data, callbacks) {
+    return exports.request("PUT", url, data, callbacks);
+  };
+
+  exports.del = function(url, callbacks) {
+    return exports.request("DELETE", url, null, callbacks);
+  };
   
 });
 window.require.register("initialize", function(exports, require, module) {
@@ -162,7 +210,8 @@ window.require.register("lib/base_view", function(exports, require, module) {
     __extends(BaseView, _super);
 
     function BaseView() {
-      this.render = __bind(this.render, this);    _ref = BaseView.__super__.constructor.apply(this, arguments);
+      this.render = __bind(this.render, this);
+      _ref = BaseView.__super__.constructor.apply(this, arguments);
       return _ref;
     }
 
@@ -176,7 +225,6 @@ window.require.register("lib/base_view", function(exports, require, module) {
 
     BaseView.prototype.render = function() {
       var data;
-
       data = _.extend({}, this.options, this.getRenderData());
       this.$el.html(this.template(data));
       this.afterRender();
@@ -190,6 +238,50 @@ window.require.register("lib/base_view", function(exports, require, module) {
   })(Backbone.View);
   
 });
+window.require.register("lib/clipboard", function(exports, require, module) {
+  var Clipboard,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  module.exports = Clipboard = (function() {
+    function Clipboard() {
+      this.set = __bind(this.set, this);
+      var _this = this;
+      this.value = "";
+      $(document).keydown(function(e) {
+        var _ref, _ref1;
+        if (!_this.value || !(e.ctrlKey || e.metaKey)) {
+          return;
+        }
+        if (typeof window.getSelection === "function" ? (_ref = window.getSelection()) != null ? _ref.toString() : void 0 : void 0) {
+          return;
+        }
+        if ((_ref1 = document.selection) != null ? _ref1.createRange().text : void 0) {
+          return;
+        }
+        return _.defer(function() {
+          var $clipboardContainer;
+          $clipboardContainer = $("#clipboard-container");
+          $clipboardContainer.empty().show();
+          return $("<textarea id='clipboard'></textarea>").val(_this.value).appendTo($clipboardContainer).focus().select();
+        });
+      });
+      $(document).keyup(function(e) {
+        if ($(e.target).is("#clipboard")) {
+          $("<textarea id='clipboard'></textarea>").val("");
+          return $("#clipboard-container").empty().hide();
+        }
+      });
+    }
+
+    Clipboard.prototype.set = function(value) {
+      return this.value = value;
+    };
+
+    return Clipboard;
+
+  })();
+  
+});
 window.require.register("lib/helpers", function(exports, require, module) {
   module.exports = {
     limitLength: function(string, length) {
@@ -201,7 +293,6 @@ window.require.register("lib/helpers", function(exports, require, module) {
     },
     editable: function(el, options) {
       var onChanged, placeholder;
-
       placeholder = options.placeholder, onChanged = options.onChanged;
       el.prop('contenteditable', true);
       if (!el.text()) {
@@ -222,13 +313,12 @@ window.require.register("lib/helpers", function(exports, require, module) {
         if (!el.text()) {
           return el.text(placeholder);
         } else {
-          return onChanged(el.text());
+          return onChanged(el.html());
         }
       });
     },
     forceFocus: function(el) {
       var range, sel;
-
       range = document.createRange();
       range.selectNodeContents(el[0]);
       sel = document.getSelection();
@@ -237,20 +327,6 @@ window.require.register("lib/helpers", function(exports, require, module) {
       return el.focus();
     }
   };
-  
-});
-window.require.register("lib/socketprogress", function(exports, require, module) {
-  var pathToSocketIO, socket, url;
-
-  url = window.location.origin;
-
-  pathToSocketIO = "" + (window.location.pathname.substring(1)) + "socket.io";
-
-  socket = io.connect(url, {
-    resource: pathToSocketIO
-  });
-
-  module.exports = socket;
   
 });
 window.require.register("lib/view_collection", function(exports, require, module) {
@@ -266,7 +342,8 @@ window.require.register("lib/view_collection", function(exports, require, module
 
     function ViewCollection() {
       this.removeItem = __bind(this.removeItem, this);
-      this.addItem = __bind(this.addItem, this);    _ref = ViewCollection.__super__.constructor.apply(this, arguments);
+      this.addItem = __bind(this.addItem, this);
+      _ref = ViewCollection.__super__.constructor.apply(this, arguments);
       return _ref;
     }
 
@@ -281,7 +358,16 @@ window.require.register("lib/view_collection", function(exports, require, module
     };
 
     ViewCollection.prototype.appendView = function(view) {
-      return this.$el.append(view.el);
+      var className, index, selector, tagName;
+      index = this.collection.indexOf(view.model);
+      if (index === 0) {
+        return this.$el.append(view.$el);
+      } else {
+        className = view.className != null ? "." + view.className : "";
+        tagName = view.tagName || "";
+        selector = "" + tagName + className + ":nth-of-type(" + index + ")";
+        return this.$el.find(selector).after(view.$el);
+      }
     };
 
     ViewCollection.prototype.initialize = function() {
@@ -289,13 +375,13 @@ window.require.register("lib/view_collection", function(exports, require, module
       this.views = {};
       this.listenTo(this.collection, "reset", this.onReset);
       this.listenTo(this.collection, "add", this.addItem);
+      this.listenTo(this.collection, "sort", this.render);
       this.listenTo(this.collection, "remove", this.removeItem);
       return this.onReset(this.collection);
     };
 
     ViewCollection.prototype.render = function() {
       var id, view, _ref1;
-
       _ref1 = this.views;
       for (id in _ref1) {
         view = _ref1[id];
@@ -305,14 +391,13 @@ window.require.register("lib/view_collection", function(exports, require, module
     };
 
     ViewCollection.prototype.afterRender = function() {
-      var id, view, _ref1;
-
-      _ref1 = this.views;
-      for (id in _ref1) {
-        view = _ref1[id];
-        this.appendView(view);
+      var i, _i, _ref1;
+      if (this.collection.length > 0) {
+        for (i = _i = 0, _ref1 = this.collection.length - 1; 0 <= _ref1 ? _i <= _ref1 : _i >= _ref1; i = 0 <= _ref1 ? ++_i : --_i) {
+          this.appendView(this.views[this.collection.at(i).cid]);
+        }
+        return this.checkIfEmpty(this.views);
       }
-      return this.checkIfEmpty(this.views);
     };
 
     ViewCollection.prototype.remove = function() {
@@ -322,7 +407,6 @@ window.require.register("lib/view_collection", function(exports, require, module
 
     ViewCollection.prototype.onReset = function(newcollection) {
       var id, view, _ref1;
-
       _ref1 = this.views;
       for (id in _ref1) {
         view = _ref1[id];
@@ -333,7 +417,6 @@ window.require.register("lib/view_collection", function(exports, require, module
 
     ViewCollection.prototype.addItem = function(model) {
       var options, view;
-
       options = _.extend({}, {
         model: model
       }, this.itemViewOptions(model));
@@ -354,12 +437,72 @@ window.require.register("lib/view_collection", function(exports, require, module
   })(BaseView);
   
 });
+window.require.register("locales/en", function(exports, require, module) {
+  module.exports = {
+    "Back": "Back",
+    "Create a new album": "Create a new album",
+    "Delete": "Delete",
+    "Download": "Download",
+    "Edit": "Edit",
+    "It will appears on your homepage.": "It will appears on your homepage.",
+    "Make it Hidden": "Make it Hidden",
+    "Make it Private": "Make it Private",
+    "Make it Public": "Make it Public",
+    "New": "New",
+    "private": "private",
+    "public": "public",
+    "hidden": "hidden",
+    "There is no photos in this album": "There is no photos in this album",
+    "There is no public albums.": "There is no public albums.",
+    "This album is private": "This album is private",
+    "This album is hidden": "This album is hidden",
+    "This album is public": "This album is public",
+    "Title ...": "Title ...",
+    "View": "View",
+    "Write some more ...": "Write some more ...",
+    "Drag your photos here to upload them": "Drag your photos here to upload them\"",
+    "hidden-description": "It will not appears on your homepage.\nBut you can share it with the following url :",
+    "It cannot be accessed from the public side": "It cannot be accessed from the public side\""
+  };
+  
+});
+window.require.register("locales/fr", function(exports, require, module) {
+  module.exports = {
+    "Back": "Retour",
+    "Create a new album": "Créer un nouvel album",
+    "Delete": "Supprimer",
+    "Download": "Télécharger",
+    "Edit": "Modifier",
+    "It will appears on your homepage.": "It apparaitra votre page d'accueil",
+    "Make it Hidden": "Rendre Masqué",
+    "Make it Private": "Rendre Privé",
+    "Make it Public": "Rendre Public",
+    "New": "Nouveau",
+    "private": "privé",
+    "public": "public",
+    "hidden": "masqué",
+    "There is no photos in this album": "Pas de photos dans cet album",
+    "There is no public albums.": "Pas d'albums publics",
+    "This album is private": "Cet album est Privé",
+    "This album is hidden": "Cet album est Masqué",
+    "This album is public": "Cet album est Public",
+    "Title ...": "Titre ...",
+    "Write some more ...": "Description ...",
+    "View": "Voir",
+    "Drag your photos here to upload them": "Droppez vos photos ici pour les uploader",
+    "hidden-description": "Il n'apparaitra pas sur votre page d'accueil,\nMais vous pouvez partager cet url :",
+    "It cannot be accessed from the public side": "Il ne peux pas être vu depuis le coté public"
+  };
+  
+});
 window.require.register("models/album", function(exports, require, module) {
-  var Album, PhotoCollection,
+  var Album, PhotoCollection, client,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   PhotoCollection = require('collections/photo');
+
+  client = require("../helpers/client");
 
   module.exports = Album = (function(_super) {
     __extends(Album, _super);
@@ -382,7 +525,6 @@ window.require.register("models/album", function(exports, require, module) {
 
     Album.prototype.parse = function(attrs) {
       var _ref;
-
       if (((_ref = attrs.photos) != null ? _ref.length : void 0) > 0) {
         this.photos.reset(attrs.photos, {
           parse: true
@@ -395,7 +537,40 @@ window.require.register("models/album", function(exports, require, module) {
       return attrs;
     };
 
+    Album.prototype.sendMail = function(url, mails, callback) {
+      var data;
+      data = {
+        url: url,
+        mails: mails
+      };
+      return client.post("albums/share", data, callback);
+    };
+
     return Album;
+
+  })(Backbone.Model);
+  
+});
+window.require.register("models/contact", function(exports, require, module) {
+  var Contact, client, _ref,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  client = require("../helpers/client");
+
+  module.exports = Contact = (function(_super) {
+    __extends(Contact, _super);
+
+    function Contact() {
+      _ref = Contact.__super__.constructor.apply(this, arguments);
+      return _ref;
+    }
+
+    Contact.prototype.list = function(callback) {
+      return client.get("contacts", callback);
+    };
+
+    return Contact;
 
   })(Backbone.Model);
   
@@ -414,28 +589,21 @@ window.require.register("models/photo", function(exports, require, module) {
     }
 
     Photo.prototype.defaults = function() {
-      if (this.id) {
-        return {
-          thumbsrc: "photos/thumbs/" + this.id + ".jpg",
-          src: "photos/" + this.id + ".jpg",
-          state: 'server'
-        };
-      } else {
-        return {
-          thumbsrc: 'img/loading.gif',
-          src: '',
-          state: 'loading'
-        };
-      }
+      return {
+        thumbsrc: 'img/loading.gif',
+        src: ''
+      };
     };
 
     Photo.prototype.parse = function(attrs) {
-      if (attrs.id) {
-        attrs.thumbsrc = "photos/thumbs/" + attrs.id + ".jpg";
-        attrs.src = "photos/" + attrs.id + ".jpg";
-        attrs.state = 'server';
+      if (!attrs.id) {
+        return attrs;
+      } else {
+        return _.extend(attrs, {
+          thumbsrc: "photos/thumbs/" + attrs.id + ".jpg",
+          src: "photos/" + attrs.id + ".jpg"
+        });
       }
-      return attrs;
     };
 
     return Photo;
@@ -444,19 +612,16 @@ window.require.register("models/photo", function(exports, require, module) {
   
 });
 window.require.register("models/photoprocessor", function(exports, require, module) {
-  var Photo, PhotoProcessor, blobify, makeScreenBlob, makeScreenDataURI, makeThumbBlob, makeThumbDataURI, makeThumbWorker, readFile, resize, upload, uploadWorker;
-
-  Photo = require('models/photo');
+  var PhotoProcessor, blobify, makeScreenBlob, makeScreenDataURI, makeThumbBlob, makeThumbDataURI, makeThumbWorker, readFile, resize, upload, uploadWorker;
 
   readFile = function(photo, next) {
     var reader,
       _this = this;
-
     if (photo.file.size > 10 * 1024 * 1024) {
-      return next('too big (max 10Mo)');
+      return next(t('is too big (max 10Mo)'));
     }
     if (!photo.file.type.match(/image\/.*/)) {
-      return next('not an image');
+      return next(t('is not an image'));
     }
     reader = new FileReader();
     photo.img = new Image();
@@ -471,7 +636,6 @@ window.require.register("models/photoprocessor", function(exports, require, modu
 
   resize = function(photo, MAX_WIDTH, MAX_HEIGHT, fill) {
     var canvas, ctx, max, newdims, ratio, ratiodim;
-
     max = {
       width: MAX_WIDTH,
       height: MAX_HEIGHT
@@ -496,7 +660,6 @@ window.require.register("models/photoprocessor", function(exports, require, modu
 
   blobify = function(dataUrl, type) {
     var array, binary, i, _i, _ref;
-
     binary = atob(dataUrl.split(',')[1]);
     array = [];
     for (i = _i = 0, _ref = binary.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
@@ -509,10 +672,6 @@ window.require.register("models/photoprocessor", function(exports, require, modu
 
   makeThumbDataURI = function(photo, next) {
     photo.thumb_du = resize(photo, 100, 100, true);
-    photo.set({
-      state: 'thumbed',
-      thumbsrc: photo.thumb_du
-    });
     return next();
   };
 
@@ -532,13 +691,13 @@ window.require.register("models/photoprocessor", function(exports, require, modu
   };
 
   upload = function(photo, next) {
-    var formdata;
-
+    var attr, formdata, _i, _len, _ref;
     formdata = new FormData();
-    formdata.append('cid', photo.cid);
-    formdata.append('title', photo.get('title'));
-    formdata.append('description', photo.get('description'));
-    formdata.append('albumid', photo.get('albumid'));
+    _ref = ['title', 'description', 'albumid'];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      attr = _ref[_i];
+      formdata.append(attr, photo.get(attr));
+    }
     formdata.append('raw', photo.file);
     formdata.append('thumb', photo.thumb, "thumb_" + photo.file.name);
     formdata.append('screen', photo.screen, "screen_" + photo.file.name);
@@ -550,12 +709,21 @@ window.require.register("models/photoprocessor", function(exports, require, modu
         return next();
       },
       error: function() {
-        photo.set({
-          state: 'error',
-          thumbsrc: 'img/error.gif',
-          title: photo.get('title') + ': upload failed'
-        });
-        return next();
+        return next(t(' : upload failled'));
+      },
+      xhr: function() {
+        var progress, xhr;
+        xhr = $.ajaxSettings.xhr();
+        progress = function(e) {
+          return photo.trigger('progress', e);
+        };
+        if (xhr instanceof window.XMLHttpRequest) {
+          xhr.addEventListener('progress', progress, false);
+        }
+        if (xhr.upload) {
+          xhr.upload.addEventListener('progress', progress, false);
+        }
+        return xhr;
       }
     });
   };
@@ -572,11 +740,9 @@ window.require.register("models/photoprocessor", function(exports, require, modu
       }
     ], function(err) {
       if (err) {
-        photo.set({
-          state: error,
-          thumbsrc: 'img/error.gif',
-          title: photo.get('title') + ' is ' + err
-        });
+        photo.trigger('upError', err);
+      } else {
+        photo.trigger('thumbed');
       }
       return done(err);
     });
@@ -605,11 +771,9 @@ window.require.register("models/photoprocessor", function(exports, require, modu
       }
     ], function(err) {
       if (err) {
-        photo.set({
-          state: error,
-          thumbsrc: 'img/error.gif',
-          title: photo.get('title') + ' is ' + err
-        });
+        photo.trigger('upError', err);
+      } else {
+        photo.trigger('uploadComplete');
       }
       return done(err);
     });
@@ -624,7 +788,6 @@ window.require.register("models/photoprocessor", function(exports, require, modu
 
     PhotoProcessor.prototype.process = function(photo) {
       var _this = this;
-
       return this.thumbsQueue.push(photo, function(err) {
         if (err) {
           return console.log(err);
@@ -662,7 +825,8 @@ window.require.register("router", function(exports, require, module) {
     __extends(Router, _super);
 
     function Router() {
-      this.displayView = __bind(this.displayView, this);    _ref = Router.__super__.constructor.apply(this, arguments);
+      this.displayView = __bind(this.displayView, this);
+      _ref = Router.__super__.constructor.apply(this, arguments);
       return _ref;
     }
 
@@ -676,17 +840,13 @@ window.require.register("router", function(exports, require, module) {
     };
 
     Router.prototype.albumslist = function(editable) {
-      var _this = this;
-
       if (editable == null) {
         editable = false;
       }
-      return app.albums.fetch().done(function() {
-        return _this.displayView(new AlbumsListView({
-          collection: app.albums,
-          editable: editable
-        }));
-      });
+      return this.displayView(new AlbumsListView({
+        collection: app.albums,
+        editable: editable
+      }));
     };
 
     Router.prototype.albumslistedit = function() {
@@ -699,7 +859,6 @@ window.require.register("router", function(exports, require, module) {
     Router.prototype.album = function(id, editable) {
       var album,
         _this = this;
-
       if (editable == null) {
         editable = false;
       }
@@ -709,10 +868,11 @@ window.require.register("router", function(exports, require, module) {
       return album.fetch().done(function() {
         return _this.displayView(new AlbumView({
           model: album,
-          editable: editable
+          editable: editable,
+          contacts: []
         }));
       }).fail(function() {
-        alert('this album does not exist');
+        alert(t('this album does not exist'));
         return _this.navigate('albums', true);
       });
     };
@@ -730,13 +890,13 @@ window.require.register("router", function(exports, require, module) {
       }
       return this.displayView(new AlbumView({
         model: new Album(),
-        editable: true
+        editable: true,
+        contacts: []
       }));
     };
 
     Router.prototype.displayView = function(view) {
       var el;
-
       if (this.mainView) {
         this.mainView.remove();
       }
@@ -757,18 +917,110 @@ window.require.register("templates/album", function(exports, require, module) {
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<div class="row-fluid"><div id="about" class="span4"><div id="links" class="clearfix"><a href="#albums" class="flatbtn back"><i class="icon-arrow-left icon-white"></i><span>Back</span></a>');
+  buf.push('<div class="row-fluid"><div id="about" class="span4"><div id="links" class="clearfix"><a href="#albums" class="flatbtn back"><i class="icon-arrow-left icon-white"></i><span>');
+  var __val__ = t("Back")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a>');
   if ( 'undefined' != typeof id)
   {
   buf.push('<a');
   buf.push(attrs({ 'href':("#albums/" + (id) + "/edit"), "class": ('flatbtn') + ' ' + ('startediting') }, {"href":true}));
-  buf.push('><i class="icon-edit icon-white"></i><span>Edit</span></a><a');
+  buf.push('><i class="icon-edit icon-white"></i><span>');
+  var __val__ = t("Edit")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a>');
+  if ( photosNumber != 0)
+  {
+  buf.push('<a');
   buf.push(attrs({ 'href':("albums/" + (id) + ".zip"), "class": ('flatbtn') + ' ' + ('download') }, {"href":true}));
-  buf.push('><i class="icon-download-alt icon-white"></i><span>Download</span></a><a');
-  buf.push(attrs({ 'href':("#albums/" + (id) + ""), "class": ('flatbtn') + ' ' + ('stopediting') }, {"href":true}));
-  buf.push('><i class="icon-eye-open icon-white"></i><span>View</span></a><a class="flatbtn delete"><i class="icon-remove icon-white"></i><span>Delete</span></a><a href="#clearance-modal" data-toggle="modal" class="flatbtn clearance"><i class="icon-upload icon-white"></i><span>' + escape((interp = clearance) == null ? '' : interp) + '</span></a>');
+  buf.push('><i class="icon-download-alt icon-white"></i><span>');
+  var __val__ = t("Download")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a>');
   }
-  buf.push('</div><h1 id="title">' + escape((interp = title) == null ? '' : interp) + '</h1><div id="description">' + escape((interp = description) == null ? '' : interp) + '</div></div><div id="photos" class="span8"></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer"><a id="changeprivate" class="btn changeclearance">Make it Private</a><a id="changehidden" class="btn changeclearance"> Make it Hidden</a><a id="changepublic" class="btn changeclearance"> Make it Public</a></div></div></div>');
+  buf.push('<a');
+  buf.push(attrs({ 'href':("#albums/" + (id) + ""), "class": ('flatbtn') + ' ' + ('stopediting') }, {"href":true}));
+  buf.push('><i class="icon-eye-open icon-white"></i><span>');
+  var __val__ = t("View")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a><a class="flatbtn delete"><i class="icon-remove icon-white"></i><span>');
+  var __val__ = t("Delete")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a><a href="#clearance-modal" data-toggle="modal" class="flatbtn clearance"><i class="icon-upload icon-white"></i><span>');
+  var __val__ = t(clearance)
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a>');
+  }
+  buf.push('</div><h1 id="title">' + escape((interp = title) == null ? '' : interp) + '</h1><div id="description">');
+  var __val__ = description
+  buf.push(null == __val__ ? "" : __val__);
+  buf.push('</div></div><div id="photos" class="span8"></div><div id="clipboard-container"><textarea id="clipboard"></textarea></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer">     <a id="changeprivate" class="btn changeclearance">');
+  var __val__ = t("Make it Private")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</a><a id="changehidden" class="btn changeclearance">');
+  var __val__ = t("Make it Hidden")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</a><a id="changepublic" class="btn changeclearance">');
+  var __val__ = t("Make it Public")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn share"><span>');
+  var __val__ = t("Share album by mail")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a></div></div><div id="share-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>');
+  var __val__ = t("Share album")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</h3></div><div class="modal-body"> <input type="text" value="" id="mails" placeholder="&lt;example@cozycloud.cc&gt;, &lt;other-example@cozycloud.cc&gt;" class="input-block-level"/></div><div class="modal-footer"> <a href="#add-contact-modal" data-toggle="modal" data-dismiss="modal" class="btn addcontact"><span>');
+  var __val__ = t("Add contact")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a><a type="button" data-dismiss="modal" class="btn sendmail"><span>');
+  var __val__ = t("Send mail")    
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a></div></div><div id="add-contact-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>');
+  var __val__ = t("Select your friends")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</h3></div><div class="modal-body"> <div id="contacts" class="input">');
+  if ( contacts.length === 0)
+  {
+  buf.push('<p>');
+  var __val__ = t("Upload your contacts ...")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</p>');
+  }
+  else
+  {
+  // iterate contacts
+  ;(function(){
+    if ('number' == typeof contacts.length) {
+
+      for (var $index = 0, $$l = contacts.length; $index < $$l; $index++) {
+        var contact = contacts[$index];
+
+  buf.push('<input');
+  buf.push(attrs({ 'type':("checkbox"), 'name':("" + (contact.fn) + ""), 'id':("" + (contact.fn) + ""), "class": ('checkbox') }, {"type":true,"name":true,"id":true}));
+  buf.push('/><span>' + escape((interp = contact.fn) == null ? '' : interp) + '</span><br/>');
+      }
+
+    } else {
+      var $$l = 0;
+      for (var $index in contacts) {
+        $$l++;      var contact = contacts[$index];
+
+  buf.push('<input');
+  buf.push(attrs({ 'type':("checkbox"), 'name':("" + (contact.fn) + ""), 'id':("" + (contact.fn) + ""), "class": ('checkbox') }, {"type":true,"name":true,"id":true}));
+  buf.push('/><span>' + escape((interp = contact.fn) == null ? '' : interp) + '</span><br/>');
+      }
+
+    }
+  }).call(this);
+
+  }
+  buf.push('</div></div><div class="modal-footer">     <a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn add"><span>');
+  var __val__ = t("Add")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn cancel"><span>');
+  var __val__ = t("Cancel")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a></div></div></div>');
   }
   return buf.join("");
   };
@@ -779,7 +1031,16 @@ window.require.register("templates/albumlist", function(exports, require, module
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<div class="albumitem create"><a href="#albums/new"><img src="img/create.gif"/></a><div><h4>New</h4><p>Create a new album</p></div></div><p class="help">There is no public albums.</p>');
+  buf.push('<div class="albumitem create"><a href="#albums/new"><img src="img/create.gif"/></a><div><h4>');
+  var __val__ = t('New')
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</h4><p>');
+  var __val__ = t('Create a new album')
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</p></div></div><p class="help">');
+  var __val__ = t('There is no public albums.')
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</p>');
   }
   return buf.join("");
   };
@@ -794,7 +1055,10 @@ window.require.register("templates/albumlist_item", function(exports, require, m
   buf.push(attrs({ 'href':("#albums/" + (id) + "") }, {"href":true}));
   buf.push('><img');
   buf.push(attrs({ 'src':("" + (thumbsrc) + "") }, {"src":true}));
-  buf.push('/></a><div><h4>' + escape((interp = title) == null ? '' : interp) + '</h4><p>' + escape((interp = description) == null ? '' : interp) + '</p></div>');
+  buf.push('/></a><div class="text"><h4>' + escape((interp = title) == null ? '' : interp) + '</h4><p>');
+  var __val__ = description
+  buf.push(null == __val__ ? "" : __val__);
+  buf.push('</p></div>');
   }
   return buf.join("");
   };
@@ -805,7 +1069,13 @@ window.require.register("templates/gallery", function(exports, require, module) 
   var buf = [];
   with (locals || {}) {
   var interp;
-  buf.push('<p class="help">There is no photos in this album</p><p class="helpedit">Drag your photos here to upload them</p>');
+  buf.push('<p class="help">');
+  var __val__ = t('There is no photos in this album')
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</p><div id="uploadblock" class="flatbtn"><input id="uploader" type="file" multiple="multiple"/>');
+  var __val__ = t('Click Here or drag your photos below to upload')
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</div>');
   }
   return buf.join("");
   };
@@ -826,7 +1096,7 @@ window.require.register("templates/photo", function(exports, require, module) {
   };
 });
 window.require.register("views/album", function(exports, require, module) {
-  var AlbumView, BaseView, Gallery, app, editable, _ref,
+  var AlbumView, BaseView, Clipboard, Contact, Gallery, app, clipboard, contactModel, editable, _ref,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -839,13 +1109,22 @@ window.require.register("views/album", function(exports, require, module) {
 
   editable = require('lib/helpers').editable;
 
+  Clipboard = require('lib/clipboard');
+
+  contactModel = require('models/contact');
+
+  Contact = new contactModel();
+
+  clipboard = new Clipboard();
+
   module.exports = AlbumView = (function(_super) {
     __extends(AlbumView, _super);
 
     function AlbumView() {
       this.makeEditable = __bind(this.makeEditable, this);
       this.beforePhotoUpload = __bind(this.beforePhotoUpload, this);
-      this.events = __bind(this.events, this);    _ref = AlbumView.__super__.constructor.apply(this, arguments);
+      this.events = __bind(this.events, this);
+      _ref = AlbumView.__super__.constructor.apply(this, arguments);
       return _ref;
     }
 
@@ -858,16 +1137,19 @@ window.require.register("views/album", function(exports, require, module) {
     AlbumView.prototype.events = function() {
       return {
         'click   a.delete': this.destroyModel,
-        'click   a.changeclearance': this.changeClearance
+        'click   a.changeclearance': this.changeClearance,
+        'click   a.addcontact': this.addcontact,
+        'click   a.sendmail': this.sendMail,
+        'click   a.add': this.prepareContact
       };
     };
 
     AlbumView.prototype.getRenderData = function() {
       var clearanceHelpers;
-
       clearanceHelpers = this.clearanceHelpers(this.model.get('clearance'));
       return _.extend({
-        clearanceHelpers: clearanceHelpers
+        clearanceHelpers: clearanceHelpers,
+        photosNumber: this.model.photos.length
       }, this.model.attributes);
     };
 
@@ -886,7 +1168,6 @@ window.require.register("views/album", function(exports, require, module) {
 
     AlbumView.prototype.beforePhotoUpload = function(callback) {
       var _this = this;
-
       return this.saveModel().then(function() {
         return callback({
           albumid: _this.model.id
@@ -896,11 +1177,10 @@ window.require.register("views/album", function(exports, require, module) {
 
     AlbumView.prototype.makeEditable = function() {
       var _this = this;
-
       this.$el.addClass('editing');
       this.refreshPopOver(this.model.get('clearance'));
       editable(this.$('#title'), {
-        placeholder: 'Title ...',
+        placeholder: t('Title ...'),
         onChanged: function(text) {
           return _this.saveModel({
             title: text
@@ -908,7 +1188,7 @@ window.require.register("views/album", function(exports, require, module) {
         }
       });
       return editable(this.$('#description'), {
-        placeholder: 'Write some more ...',
+        placeholder: t('Write some more ...'),
         onChanged: function(text) {
           return _this.saveModel({
             description: text
@@ -921,7 +1201,7 @@ window.require.register("views/album", function(exports, require, module) {
       if (this.model.isNew()) {
         return app.router.navigate('albums', true);
       }
-      if (confirm('Are you sure ?')) {
+      if (confirm(t('Are you sure ?'))) {
         return this.model.destroy().then(function() {
           return app.router.navigate('albums', true);
         });
@@ -931,7 +1211,6 @@ window.require.register("views/album", function(exports, require, module) {
     AlbumView.prototype.changeClearance = function(event) {
       var newclearance,
         _this = this;
-
       newclearance = event.target.id.replace('change', '');
       return this.saveModel({
         clearance: newclearance
@@ -942,20 +1221,82 @@ window.require.register("views/album", function(exports, require, module) {
 
     AlbumView.prototype.refreshPopOver = function(clearance) {
       var help, modal;
-
       help = this.clearanceHelpers(clearance);
       modal = this.$('#clearance-modal');
       this.$('.clearance').find('span').text(clearance);
       modal.find('h3').text(help.title);
       modal.find('.modal-body').html(help.content);
       modal.find('.changeclearance').show();
-      return modal.find('#change' + clearance).hide();
+      modal.find('#change' + clearance).hide();
+      if (clearance === "hidden") {
+        modal.find('.share').show();
+        return clipboard.set(this.getPublicUrl());
+      } else {
+        modal.find('.share').hide();
+        return clipboard.set("");
+      }
+    };
+
+    AlbumView.prototype.addcontact = function() {
+      var modal,
+        _this = this;
+      modal = this.$('#add-contact-modal');
+      this.options.contacts = [];
+      return Contact.list({
+        success: function(body) {
+          var contact, item, _i, _j, _len, _len1, _ref1;
+          for (_i = 0, _len = body.length; _i < _len; _i++) {
+            contact = body[_i];
+            _ref1 = contact.datapoints;
+            for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+              item = _ref1[_j];
+              if (item.name === "email") {
+                _this.options.contacts.push(contact);
+                break;
+              }
+            }
+          }
+          _this.$('#add-contact-modal').modal('hide');
+          _this.render(modal);
+          return _this.$('#add-contact-modal').modal('show');
+        },
+        error: function(err) {
+          return console.log(err);
+        }
+      });
+    };
+
+    AlbumView.prototype.prepareContact = function(event) {
+      var contact, item, mails, modal, _i, _j, _len, _len1, _ref1, _ref2;
+      modal = this.$('#add-contact-modal');
+      mails = [];
+      _ref1 = this.options.contacts;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        contact = _ref1[_i];
+        if (this.$("#" + contact.fn).is(':checked')) {
+          _ref2 = contact.datapoints;
+          for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+            item = _ref2[_j];
+            if (item.name === "email") {
+              mails.push(item.value);
+            }
+          }
+        }
+      }
+      return this.$('#mails').val(mails);
+    };
+
+    AlbumView.prototype.sendMail = function() {
+      return this.model.sendMail(this.getPublicUrl(), this.$('#mails').val(), {
+        error: function(err) {
+          return alert(JSON.stringify(err.responseText));
+        }
+      });
     };
 
     AlbumView.prototype.saveModel = function(hash) {
       var promise,
         _this = this;
-
       promise = this.model.save(hash);
       if (this.model.isNew()) {
         promise = promise.then(function() {
@@ -968,7 +1309,6 @@ window.require.register("views/album", function(exports, require, module) {
 
     AlbumView.prototype.getPublicUrl = function() {
       var hash, origin, path;
-
       origin = window.location.origin;
       path = window.location.pathname.replace('apps', 'public');
       if (path === '/') {
@@ -981,18 +1321,18 @@ window.require.register("views/album", function(exports, require, module) {
     AlbumView.prototype.clearanceHelpers = function(clearance) {
       if (clearance === 'public') {
         return {
-          title: 'This album is public',
-          content: 'It will appears on your homepage.'
+          title: t('This album is public'),
+          content: t('It will appears on your homepage.')
         };
       } else if (clearance === 'hidden') {
         return {
-          title: 'This album is hidden',
-          content: "It will not appears on your homepage.                But you can share it with the following url :                " + (this.getPublicUrl())
+          title: t('This album is hidden'),
+          content: t("hidden-description") + (" " + (this.getPublicUrl())) + "<p>If you want to copy url in your clipboard : just press Ctrl+C </p>"
         };
       } else if (clearance === 'private') {
         return {
-          title: 'This album is private',
-          content: 'It cannot be accessed from the public side'
+          title: t('This album is private'),
+          content: t('It cannot be accessed from the public side')
         };
       }
     };
@@ -1003,16 +1343,20 @@ window.require.register("views/album", function(exports, require, module) {
   
 });
 window.require.register("views/albumslist", function(exports, require, module) {
-  var AlbumsList, ViewCollection, _ref,
+  var AlbumsList, ViewCollection, app, _ref,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   ViewCollection = require('lib/view_collection');
 
+  app = require('application');
+
   module.exports = AlbumsList = (function(_super) {
     __extends(AlbumsList, _super);
 
     function AlbumsList() {
+      this.checkIfEmpty = __bind(this.checkIfEmpty, this);
       _ref = AlbumsList.__super__.constructor.apply(this, arguments);
       return _ref;
     }
@@ -1029,6 +1373,10 @@ window.require.register("views/albumslist", function(exports, require, module) {
 
     AlbumsList.prototype.appendView = function(view) {
       return this.$el.prepend(view.el);
+    };
+
+    AlbumsList.prototype.checkIfEmpty = function() {
+      return this.$('.help').toggle(_.size(this.views) === 0 && app.mode === 'public');
     };
 
     return AlbumsList;
@@ -1059,7 +1407,6 @@ window.require.register("views/albumslist_item", function(exports, require, modu
 
     AlbumItem.prototype.initialize = function() {
       var _this = this;
-
       return this.listenTo(this.model, 'change', function() {
         return _this.render();
       });
@@ -1067,7 +1414,6 @@ window.require.register("views/albumslist_item", function(exports, require, modu
 
     AlbumItem.prototype.getRenderData = function() {
       var out;
-
       out = _.clone(this.model.attributes);
       out.description = limitLength(out.description, 250);
       return out;
@@ -1079,7 +1425,8 @@ window.require.register("views/albumslist_item", function(exports, require, modu
   
 });
 window.require.register("views/gallery", function(exports, require, module) {
-  var Gallery, Photo, PhotoView, ViewCollection, photoprocessor, _ref,
+  var Gallery, Photo, PhotoView, ViewCollection, app, photoprocessor, _ref,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -1091,10 +1438,15 @@ window.require.register("views/gallery", function(exports, require, module) {
 
   photoprocessor = require('models/photoprocessor');
 
+  app = require('application');
+
   module.exports = Gallery = (function(_super) {
     __extends(Gallery, _super);
 
     function Gallery() {
+      this.onImageDisplayed = __bind(this.onImageDisplayed, this);
+      this.onFilesChanged = __bind(this.onFilesChanged, this);
+      this.checkIfEmpty = __bind(this.checkIfEmpty, this);
       _ref = Gallery.__super__.constructor.apply(this, arguments);
       return _ref;
     }
@@ -1103,30 +1455,29 @@ window.require.register("views/gallery", function(exports, require, module) {
 
     Gallery.prototype.template = require('templates/gallery');
 
-    Gallery.prototype.initialize = function() {
-      var _this = this;
-
-      Gallery.__super__.initialize.apply(this, arguments);
-      if (this.options.editable) {
-        return require('lib/socketprogress').on('uploadprogress', function(progress) {
-          return _this.collection.get(progress.cid).set('progress', progress.p);
-        });
-      }
-    };
-
     Gallery.prototype.afterRender = function() {
       Gallery.__super__.afterRender.apply(this, arguments);
-      return this.$el.photobox('a.server', {
+      this.$el.photobox('a.server', {
         thumbs: true,
         history: false
-      });
+      }, this.onImageDisplayed);
+      this.downloadLink = $('#pbOverlay .pbCaptionText .download-link');
+      if (!this.downloadLink.length) {
+        this.downloadLink = $('<a class="download-link" download>Download</a>').appendTo('#pbOverlay .pbCaptionText');
+      }
+      return this.uploader = this.$('#uploader');
+    };
+
+    Gallery.prototype.checkIfEmpty = function() {
+      return this.$('.help').toggle(_.size(this.views) === 0 && app.mode === 'public');
     };
 
     Gallery.prototype.events = function() {
       if (this.options.editable) {
         return {
           'drop': 'onFilesDropped',
-          'dragover': 'onDragOver'
+          'dragover': 'onDragOver',
+          'change #uploader': 'onFilesChanged'
         };
       }
     };
@@ -1146,12 +1497,25 @@ window.require.register("views/gallery", function(exports, require, module) {
       return false;
     };
 
+    Gallery.prototype.onFilesChanged = function(evt) {
+      var old;
+      this.handleFiles(this.uploader[0].files);
+      old = this.uploader;
+      this.uploader = old.clone(true);
+      return old.replaceWith(this.uploader);
+    };
+
+    Gallery.prototype.onImageDisplayed = function() {
+      var url;
+      url = $('.imageWrap img.zoomable').attr('src');
+      url = url.replace('/photos/photos', '/photos/photos/raws');
+      return this.downloadLink.attr('href', url);
+    };
+
     Gallery.prototype.handleFiles = function(files) {
       var _this = this;
-
       return this.options.beforeUpload(function(photoAttributes) {
         var file, photo, _i, _len, _results;
-
         _results = [];
         for (_i = 0, _len = files.length; _i < _len; _i++) {
           file = files[_i];
@@ -1185,7 +1549,8 @@ window.require.register("views/photo", function(exports, require, module) {
 
     function PhotoView() {
       this.onClickListener = __bind(this.onClickListener, this);
-      this.events = __bind(this.events, this);    _ref = PhotoView.__super__.constructor.apply(this, arguments);
+      this.events = __bind(this.events, this);
+      _ref = PhotoView.__super__.constructor.apply(this, arguments);
       return _ref;
     }
 
@@ -1195,10 +1560,10 @@ window.require.register("views/photo", function(exports, require, module) {
 
     PhotoView.prototype.initialize = function(options) {
       PhotoView.__super__.initialize.apply(this, arguments);
-      this.listenTo(this.model, 'change:progress', this.onProgress);
-      this.listenTo(this.model, 'change:thumbsrc', this.onSrcChanged);
-      this.listenTo(this.model, 'change:src', this.onSrcChanged);
-      return this.listenTo(this.model, 'change:state', this.onStateChanged);
+      this.listenTo(this.model, 'progress', this.onProgress);
+      this.listenTo(this.model, 'thumbed', this.onThumbed);
+      this.listenTo(this.model, 'upError', this.onError);
+      return this.listenTo(this.model, 'uploadComplete', this.onServer);
     };
 
     PhotoView.prototype.events = function() {
@@ -1216,40 +1581,44 @@ window.require.register("views/photo", function(exports, require, module) {
       this.link = this.$('a');
       this.image = this.$('img');
       this.progressbar = this.$('.progressfill');
-      this.link.removeClass('loading thumbed server error');
-      return this.link.addClass(this.model.get('state'));
-    };
-
-    PhotoView.prototype.onProgress = function(model) {
-      var p;
-
-      p = 10 + 90 * model.get('progress');
-      return this.progressbar.css('height', p + '%');
-    };
-
-    PhotoView.prototype.onStateChanged = function(model) {
-      var _this = this;
-
-      this.link.removeClass('loading thumbed server error');
-      this.link.addClass(this.model.get('state'));
-      if (model.get('state') === 'thumbed') {
-        this.progressbar.css('height', '10%');
-      }
-      if (model.previous('state') === 'thumbed' && model.get('state') === 'server') {
-        this.progressbar.css('height', '100%');
-        return setTimeout(function() {
-          return _this.progressbar.hide();
-        }, 500);
+      if (!this.model.isNew()) {
+        return this.link.addClass('server');
       }
     };
 
-    PhotoView.prototype.onSrcChanged = function(model) {
-      this.link.attr('href', model.get('src'));
-      return this.image.attr('src', model.get('thumbsrc'));
+    PhotoView.prototype.setProgress = function(percent) {
+      return this.progressbar.css('height', percent + '%');
+    };
+
+    PhotoView.prototype.onProgress = function(event) {
+      return this.setProgress(10 + 90 * event.loaded / event.total);
+    };
+
+    PhotoView.prototype.onThumbed = function() {
+      this.setProgress(10);
+      this.image.attr('src', this.model.thumb_du);
+      return this.image.addClass('thumbed');
+    };
+
+    PhotoView.prototype.onServer = function() {
+      var col;
+      col = this.model.collection;
+      col.remove(this.model);
+      return col.add(this.model);
+    };
+
+    PhotoView.prototype.onError = function(err) {
+      this.setProgress(0);
+      this.error = this.model.get('title') + " " + err;
+      this.link.attr('title', this.error);
+      return this.image.attr('src', 'img/error.gif');
     };
 
     PhotoView.prototype.onClickListener = function(evt) {
-      if (this.model.get('state') !== 'server') {
+      if (this.model.isNew()) {
+        if (this.error) {
+          alert(this.error);
+        }
         evt.stopPropagation();
         evt.preventDefault();
         return false;
