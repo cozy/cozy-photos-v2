@@ -33,6 +33,9 @@
     "Album": {
       "description": "Creates and edits your album which contains your photos."
     },
+    "Contact": {
+      "description": "Allows you to easily share an album"
+    },
     "CozyInstance": {
       "description": "Read language setting"
     }
