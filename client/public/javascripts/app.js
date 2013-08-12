@@ -963,7 +963,22 @@ window.require.register("templates/album", function(exports, require, module) {
   buf.push('</a><a id="changepublic" class="btn changeclearance">');
   var __val__ = t("Make it Public")
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn share"><span>Share album by mail</span></a></div></div><div id="share-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>Share album</h3></div><div class="modal-body"> <input type="text" value="" id="mails" placeholder="&lt;example@cozycloud.cc&gt;, &lt;other-example@cozycloud.cc&gt;" class="input-block-level"/></div><div class="modal-footer"> <a href="#add-contact-modal" data-dismiss="modal" class="btn addcontact"><span> Add contact</span></a><a type="button" data-dismiss="modal" class="btn sendmail"><span> Send mail    </span></a></div></div><div id="add-contact-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>Select your friends</h3></div><div class="modal-body"> <div id="contacts" class="input">');
+  buf.push('</a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn share"><span>');
+  var __val__ = t("Share album by mail")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a></div></div><div id="share-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>');
+  var __val__ = t("Share album")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</h3></div><div class="modal-body"> <input type="text" value="" id="mails" placeholder="&lt;example@cozycloud.cc&gt;, &lt;other-example@cozycloud.cc&gt;" class="input-block-level"/></div><div class="modal-footer"> <a href="#add-contact-modal" data-dismiss="modal" class="btn addcontact"><span>');
+  var __val__ = t("Add contact")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a><a type="button" data-dismiss="modal" class="btn sendmail"><span>');
+  var __val__ = t("Send mail")    
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a></div></div><div id="add-contact-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>');
+  var __val__ = t("Select your friends")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</h3></div><div class="modal-body"> <div id="contacts" class="input">');
   // iterate contacts
   ;(function(){
     if ('number' == typeof contacts.length) {
@@ -989,7 +1004,13 @@ window.require.register("templates/album", function(exports, require, module) {
     }
   }).call(this);
 
-  buf.push('</div></div><div class="modal-footer">     <a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn add"><span>Add</span></a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn cancel"><span>Cancel</span></a></div></div></div>');
+  buf.push('</div></div><div class="modal-footer">     <a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn add"><span>');
+  var __val__ = t("Add")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn cancel"><span>');
+  var __val__ = t("Cancel")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</span></a></div></div></div>');
   }
   return buf.join("");
   };
