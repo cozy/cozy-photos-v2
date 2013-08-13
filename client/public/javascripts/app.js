@@ -1017,7 +1017,7 @@ window.require.register("templates/album", function(exports, require, module) {
 
   buf.push('<input');
   buf.push(attrs({ 'type':("checkbox"), 'name':("" + (contact.index) + ""), 'id':("" + (contact.index) + ""), "class": ('checkbox') }, {"type":true,"name":true,"id":true}));
-  buf.push('/><span>' + escape((interp = contact.fn) == null ? '' : interp) + '</span><br/>');
+  buf.push('/><span> ' + escape((interp = contact.fn) == null ? '' : interp) + '</span><br/>');
       }
 
     } else {
@@ -1027,7 +1027,7 @@ window.require.register("templates/album", function(exports, require, module) {
 
   buf.push('<input');
   buf.push(attrs({ 'type':("checkbox"), 'name':("" + (contact.index) + ""), 'id':("" + (contact.index) + ""), "class": ('checkbox') }, {"type":true,"name":true,"id":true}));
-  buf.push('/><span>' + escape((interp = contact.fn) == null ? '' : interp) + '</span><br/>');
+  buf.push('/><span> ' + escape((interp = contact.fn) == null ? '' : interp) + '</span><br/>');
       }
 
     }
