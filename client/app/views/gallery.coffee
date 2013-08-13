@@ -60,8 +60,10 @@ module.exports = class Gallery extends ViewCollection
     onImageDisplayed: () =>
         url = $('.imageWrap img.zoomable').attr 'src'
         url = url.replace '/photos/photos', '/photos/photos/raws'
+        id = url.match(/\/([^/]+)\.([^\.]+)$/)[1]
 
         @downloadLink.attr 'href', url
+        @downloadLink.attr 'download', @collection.get(id).get 'title'
 
     handleFiles: (files) ->
         # allow parent view to set some attributes on the photo
