@@ -211,6 +211,31 @@ button.delete {
   border-radius: 0px;
   border: 0px;
 }
+.modal input,
+.modal select {
+  border: 1px solid #d3d3d3;
+  box-shadow: 0;
+  border-radius: 0px;
+  shadow: none;
+  font-family: styled, helvetica;
+}
+.modal input.disabled {
+  border: 1px solid transparent;
+}
+.modal input:hover,
+.modal select:hover {
+  border: 1px solid #fe8800;
+  border-radius: 0px;
+  shadow: inset 1px 1px 2px rgba(100,100,100,0.1);
+  color: #333;
+}
+.modal input:focus,
+.modal input:active,
+.modal select:active,
+.modal select:focus {
+  border: 1px solid #34a6ff;
+  box-shadow: none;
+}
 .modal-header {
   background-color: #34a6ff;
   color: #fff;

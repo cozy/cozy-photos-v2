@@ -479,7 +479,17 @@ window.require.register("locales/en", function(exports, require, module) {
     "Title ...": "Title ...",
     "View": "View",
     "Write some more ...": "Write some more ...",
-    "Drag your photos here to upload them": "Drag your photos here to upload them\"",
+    "is too big (max 10Mo)": "is too big (max 10Mo)",
+    "is not an image": "is not an image",
+    "Share album by mail": "Share album by mail",
+    "Upload your contacts ...": "Upload your contacts ...",
+    "Share album": "Share album",
+    "Add contact": "Add contact",
+    "Send mail": "Send mail",
+    "Select your friends": "Select your friends",
+    "Add": "Add",
+    "Cancel": "Cancel",
+    "Click Here or drag your photos below to upload": "Click Here or drag your photos below to upload",
     "hidden-description": "It will not appears on your homepage.\nBut you can share it with the following url :",
     "It cannot be accessed from the public side": "It cannot be accessed from the public side\""
   };
@@ -508,7 +518,17 @@ window.require.register("locales/fr", function(exports, require, module) {
     "Title ...": "Titre ...",
     "Write some more ...": "Description ...",
     "View": "Voir",
-    "Drag your photos here to upload them": "Droppez vos photos ici pour les uploader",
+    "is too big (max 10Mo)": "est trop grosse (max 10Mo)",
+    "is not an image": "n'est pas une image",
+    "Share album by mail": "Partagez par mail",
+    "Upload your contacts ...": "Uploader vos contacts ...",
+    "Share album": "Partagez l'album",
+    "Add contact": "Ajouter contact",
+    "Send mail": "Envoyez mail",
+    "Select your friends": "Choisissez vos amis",
+    "Add": "Ajouter",
+    "Cancel": "Annuler",
+    "Click Here or drag your photos below to upload": "Cliquez ici ou glisser-déposez vos photos ci-dessous pour les uploader",
     "hidden-description": "Il n'apparaitra pas sur votre page d'accueil,\nMais vous pouvez partager cet url :",
     "It cannot be accessed from the public side": "Il ne peux pas être vu depuis le coté public"
   };
@@ -996,7 +1016,7 @@ window.require.register("templates/album", function(exports, require, module) {
   buf.push('</span></a></div></div><div id="share-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>');
   var __val__ = t("Share album")
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</h3></div><div class="modal-body"> <input type="text" value="" id="mails" placeholder="&lt;example@cozycloud.cc&gt;, &lt;other-example@cozycloud.cc&gt;" class="input-block-level"/></div><div class="modal-footer"> <a href="#add-contact-modal" data-toggle="modal" data-dismiss="modal" class="btn addcontact"><span>');
+  buf.push('</h3></div><div class="modal-body"> <input type="text" value="" id="mails" placeholder="example@cozycloud.cc, other-example@cozycloud.cc" class="input-block-level"/></div><div class="modal-footer"> <a href="#add-contact-modal" data-toggle="modal" data-dismiss="modal" class="btn addcontact"><span>');
   var __val__ = t("Add contact")
   buf.push(escape(null == __val__ ? "" : __val__));
   buf.push('</span></a><a type="button" data-dismiss="modal" class="btn sendmail"><span>');
@@ -1023,8 +1043,8 @@ window.require.register("templates/album", function(exports, require, module) {
         var contact = contacts[$index];
 
   buf.push('<input');
-  buf.push(attrs({ 'type':("checkbox"), 'name':("" + (contact.fn) + ""), 'id':("" + (contact.fn) + ""), "class": ('checkbox') }, {"type":true,"name":true,"id":true}));
-  buf.push('/><span>' + escape((interp = contact.fn) == null ? '' : interp) + '</span><br/>');
+  buf.push(attrs({ 'type':("checkbox"), 'name':("" + (contact.index) + ""), 'id':("" + (contact.index) + ""), "class": ('checkbox') }, {"type":true,"name":true,"id":true}));
+  buf.push('/><span> ' + escape((interp = contact.fn) == null ? '' : interp) + '</span><br/>');
       }
 
     } else {
@@ -1033,8 +1053,8 @@ window.require.register("templates/album", function(exports, require, module) {
         $$l++;      var contact = contacts[$index];
 
   buf.push('<input');
-  buf.push(attrs({ 'type':("checkbox"), 'name':("" + (contact.fn) + ""), 'id':("" + (contact.fn) + ""), "class": ('checkbox') }, {"type":true,"name":true,"id":true}));
-  buf.push('/><span>' + escape((interp = contact.fn) == null ? '' : interp) + '</span><br/>');
+  buf.push(attrs({ 'type':("checkbox"), 'name':("" + (contact.index) + ""), 'id':("" + (contact.index) + ""), "class": ('checkbox') }, {"type":true,"name":true,"id":true}));
+  buf.push('/><span> ' + escape((interp = contact.fn) == null ? '' : interp) + '</span><br/>');
       }
 
     }
@@ -1278,6 +1298,7 @@ window.require.register("views/album", function(exports, require, module) {
             for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
               item = _ref1[_j];
               if (item.name === "email") {
+                contact.index = contact.fn.split(' ').join('_');
                 _this.options.contacts.push(contact);
                 break;
               }
@@ -1300,12 +1321,13 @@ window.require.register("views/album", function(exports, require, module) {
       _ref1 = this.options.contacts;
       for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
         contact = _ref1[_i];
-        if (this.$("#" + contact.fn).is(':checked')) {
+        if (this.$("#" + contact.index).is(':checked')) {
           _ref2 = contact.datapoints;
           for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
             item = _ref2[_j];
             if (item.name === "email") {
               mails.push(item.value);
+              break;
             }
           }
         }

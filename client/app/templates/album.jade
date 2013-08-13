@@ -59,7 +59,7 @@ div.row-fluid
       h3= t("Share album")
 
     .modal-body 
-      input.input-block-level(type="text", value="", id="mails", placeholder="<example@cozycloud.cc>, <other-example@cozycloud.cc>")
+      input.input-block-level(type="text", value="", id="mails", placeholder="example@cozycloud.cc, other-example@cozycloud.cc")
 
     .modal-footer 
       a.btn.addcontact(
@@ -83,8 +83,8 @@ div.row-fluid
           p= t("Upload your contacts ...")
         else
           each contact in contacts
-            input(type="checkbox", name="#{contact.fn}", id ="#{contact.fn}").checkbox
-            span #{contact.fn}
+            input(type="checkbox", name="#{contact.index}", id ="#{contact.index}").checkbox
+            span  #{contact.fn}
             br
 
     .modal-footer      
