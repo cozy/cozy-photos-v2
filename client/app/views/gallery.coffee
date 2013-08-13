@@ -1,5 +1,5 @@
 ViewCollection = require 'lib/view_collection'
-
+helpers = require 'lib/helpers'
 PhotoView = require 'views/photo'
 Photo = require 'models/photo'
 photoprocessor = require 'models/photoprocessor'
@@ -13,17 +13,15 @@ module.exports = class Gallery extends ViewCollection
 
     # launch photobox after render
     afterRender: ->
-        super
+        super 
         @$el.photobox 'a.server',
             thumbs: true
             history: false
         , @onImageDisplayed
-
         @downloadLink = $('#pbOverlay .pbCaptionText .download-link')
         unless @downloadLink.length
             @downloadLink = $('<a class="download-link" download>Download</a>')
                 .appendTo '#pbOverlay .pbCaptionText'
-
         @uploader = @$('#uploader')
 
     checkIfEmpty: =>
@@ -34,7 +32,6 @@ module.exports = class Gallery extends ViewCollection
         if @options.editable
             'drop'     : 'onFilesDropped'
             'dragover' : 'onDragOver'
-            'change #uploader': 'onFilesChanged'
 
     # event listeners for D&D events
     onFilesDropped: (evt) ->
@@ -57,7 +54,7 @@ module.exports = class Gallery extends ViewCollection
         @uploader = old.clone true
         old.replaceWith @uploader
 
-    onImageDisplayed: () =>
+    onImageDisplayed: () =>        
         url = $('.imageWrap img.zoomable').attr 'src'
         url = url.replace '/photos/photos', '/photos/photos/raws'
         @downloadLink.attr 'href', url

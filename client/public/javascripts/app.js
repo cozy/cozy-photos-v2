@@ -1460,12 +1460,14 @@ window.require.register("views/albumslist_item", function(exports, require, modu
   
 });
 window.require.register("views/gallery", function(exports, require, module) {
-  var Gallery, Photo, PhotoView, ViewCollection, app, photoprocessor, _ref,
+  var Gallery, Photo, PhotoView, ViewCollection, app, helpers, photoprocessor, _ref,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   ViewCollection = require('lib/view_collection');
+
+  helpers = require('lib/helpers');
 
   PhotoView = require('views/photo');
 
@@ -1511,8 +1513,7 @@ window.require.register("views/gallery", function(exports, require, module) {
       if (this.options.editable) {
         return {
           'drop': 'onFilesDropped',
-          'dragover': 'onDragOver',
-          'change #uploader': 'onFilesChanged'
+          'dragover': 'onDragOver'
         };
       }
     };
