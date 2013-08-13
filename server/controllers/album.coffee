@@ -19,6 +19,7 @@ module.exports = (app) ->
                 Photo.fromAlbum album.id, (err, photos) =>
                     album.thumb = photos[0].id
                     album.orientation = photos[0].orientation
+                    out.push album
                     initAlbums albums, callback
             else
                 callback()
