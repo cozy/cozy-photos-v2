@@ -989,7 +989,7 @@ window.require.register("templates/album", function(exports, require, module) {
   buf.push('</span></a></div></div><div id="share-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>');
   var __val__ = t("Share album")
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</h3></div><div class="modal-body"> <input type="text" value="" id="mails" placeholder="&lt;example@cozycloud.cc&gt;, &lt;other-example@cozycloud.cc&gt;" class="input-block-level"/></div><div class="modal-footer"> <a href="#add-contact-modal" data-toggle="modal" data-dismiss="modal" class="btn addcontact"><span>');
+  buf.push('</h3></div><div class="modal-body"> <input type="text" value="" id="mails" placeholder="example@cozycloud.cc, other-example@cozycloud.cc" class="input-block-level"/></div><div class="modal-footer"> <a href="#add-contact-modal" data-toggle="modal" data-dismiss="modal" class="btn addcontact"><span>');
   var __val__ = t("Add contact")
   buf.push(escape(null == __val__ ? "" : __val__));
   buf.push('</span></a><a type="button" data-dismiss="modal" class="btn sendmail"><span>');
@@ -1016,8 +1016,8 @@ window.require.register("templates/album", function(exports, require, module) {
         var contact = contacts[$index];
 
   buf.push('<input');
-  buf.push(attrs({ 'type':("checkbox"), 'name':("" + (contact.fn) + ""), 'id':("" + (contact.fn) + ""), "class": ('checkbox') }, {"type":true,"name":true,"id":true}));
-  buf.push('/><span>' + escape((interp = contact.fn) == null ? '' : interp) + '</span><br/>');
+  buf.push(attrs({ 'type':("checkbox"), 'name':("" + (contact.index) + ""), 'id':("" + (contact.index) + ""), "class": ('checkbox') }, {"type":true,"name":true,"id":true}));
+  buf.push('/><span> ' + escape((interp = contact.fn) == null ? '' : interp) + '</span><br/>');
       }
 
     } else {
@@ -1026,8 +1026,8 @@ window.require.register("templates/album", function(exports, require, module) {
         $$l++;      var contact = contacts[$index];
 
   buf.push('<input');
-  buf.push(attrs({ 'type':("checkbox"), 'name':("" + (contact.fn) + ""), 'id':("" + (contact.fn) + ""), "class": ('checkbox') }, {"type":true,"name":true,"id":true}));
-  buf.push('/><span>' + escape((interp = contact.fn) == null ? '' : interp) + '</span><br/>');
+  buf.push(attrs({ 'type':("checkbox"), 'name':("" + (contact.index) + ""), 'id':("" + (contact.index) + ""), "class": ('checkbox') }, {"type":true,"name":true,"id":true}));
+  buf.push('/><span> ' + escape((interp = contact.fn) == null ? '' : interp) + '</span><br/>');
       }
 
     }
@@ -1271,6 +1271,7 @@ window.require.register("views/album", function(exports, require, module) {
             for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
               item = _ref1[_j];
               if (item.name === "email") {
+                contact.index = contact.fn.split(' ').join('_');
                 _this.options.contacts.push(contact);
                 break;
               }
@@ -1293,12 +1294,13 @@ window.require.register("views/album", function(exports, require, module) {
       _ref1 = this.options.contacts;
       for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
         contact = _ref1[_i];
-        if (this.$("#" + contact.fn).is(':checked')) {
+        if (this.$("#" + contact.index).is(':checked')) {
           _ref2 = contact.datapoints;
           for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
             item = _ref2[_j];
             if (item.name === "email") {
               mails.push(item.value);
+              break;
             }
           }
         }

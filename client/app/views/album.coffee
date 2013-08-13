@@ -99,6 +99,7 @@ module.exports = class AlbumView extends BaseView
                 for contact in body
                     for item in contact.datapoints
                         if item.name is "email"
+                            contact.index = (contact.fn).split(' ').join('_')
                             @options.contacts.push contact
                             break
                 @$('#add-contact-modal').modal('hide')
@@ -112,10 +113,11 @@ module.exports = class AlbumView extends BaseView
         modal = @$('#add-contact-modal')
         mails = []
         for contact in @options.contacts 
-            if @$("##{contact.fn}").is(':checked')
+            if @$("##{contact.index}").is(':checked')
                 for item in contact.datapoints
                     if item.name is "email"
                         mails.push item.value
+                        break
         @$('#mails').val(mails)
 
     sendMail: () ->
