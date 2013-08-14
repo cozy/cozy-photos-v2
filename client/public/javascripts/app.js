@@ -1076,13 +1076,13 @@ window.require.register("templates/album", function(exports, require, module) {
   buf.push('</div><h1 id="title">' + escape((interp = title) == null ? '' : interp) + '</h1><div id="description">');
   var __val__ = description
   buf.push(null == __val__ ? "" : __val__);
-  buf.push('</div></div><div id="photos" class="span8"></div><div id="clipboard-container"><textarea id="clipboard"></textarea></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer">     <a id="changeprivate" class="btn changeclearance">');
+  buf.push('</div></div><div id="photos" class="span8"></div><div id="clipboard-container"><textarea id="clipboard"></textarea></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer">     <a id="changeprivate" class="flatbtn changeClearance">');
   var __val__ = t("Make it Private")
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</a><a id="changehidden" class="btn changeclearance">');
+  buf.push('</a><a id="changehidden" class="flatbtn changeClearance">');
   var __val__ = t("Make it Hidden")
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</a><a id="changepublic" class="btn changeclearance">');
+  buf.push('</a><a id="changepublic" class="flatbtn changeClearance">');
   var __val__ = t("Make it Public")
   buf.push(escape(null == __val__ ? "" : __val__));
   buf.push('</a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn share"><span>');
@@ -1266,13 +1266,19 @@ window.require.register("views/album", function(exports, require, module) {
     };
 
     AlbumView.prototype.getRenderData = function() {
-      var clearanceHelpers;
+      var clearance, clearanceHelpers, res;
 
-      clearanceHelpers = this.clearanceHelpers(this.model.get('clearance'));
-      return _.extend({
+      clearance = this.model.get('clearance');
+      if (clearance == null) {
+        clearance = 'private';
+      }
+      clearanceHelpers = this.clearanceHelpers(clearance);
+      res = _.extend({
         clearanceHelpers: clearanceHelpers,
         photosNumber: this.model.photos.length
       }, this.model.attributes);
+      console.log(res);
+      return res;
     };
 
     AlbumView.prototype.afterRender = function() {
@@ -1350,8 +1356,8 @@ window.require.register("views/album", function(exports, require, module) {
       help = this.clearanceHelpers(clearance);
       modal = this.$('#clearance-modal');
       this.$('.clearance').find('span').text(clearance);
-      modal.find('h3').text(help.title);
-      modal.find('.modal-body').html(help.content);
+      modal.find('h3').text(help != null ? help.title : void 0);
+      modal.find('.modal-body').html(help != null ? help.content : void 0);
       modal.find('.changeclearance').show();
       modal.find('#change' + clearance).hide();
       if (clearance === "hidden") {
@@ -1452,6 +1458,7 @@ window.require.register("views/album", function(exports, require, module) {
     };
 
     AlbumView.prototype.clearanceHelpers = function(clearance) {
+      console.log(clearance);
       if (clearance === 'public') {
         return {
           title: t('This album is public'),
@@ -1607,21 +1614,29 @@ window.require.register("views/gallery", function(exports, require, module) {
         thumbs: true,
         history: false
       }, this.onImageDisplayed);
-      this.turnLeft = $('#pbOverlay .pbCaptionText .left');
+      if ($('#pbOverlay .pbCaptionText .btn-group').length === 0) {
+        $('#pbOverlay .pbCaptionText').append('<div class="btn-group"></div>');
+      }
+      this.turnLeft = $('#pbOverlay .pbCaptionText .btn-group .left');
+      this.turnLeft.unbind('click');
       this.turnLeft.remove();
       this.turnLeft = $('<a id="left" class="btn left" type="button">\
                        <i class="icon-share-alt"\
-                        style="transform: scale(-1,1)"> </i> </a>').appendTo('#pbOverlay .pbCaptionText');
+                        style="transform: scale(-1,1)"> </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
       this.turnLeft.on('click', this.onTurnLeft);
-      this.downloadLink = $('#pbOverlay .pbCaptionText .download-link');
+      this.downloadLink = $('#pbOverlay .pbCaptionText  .btn-group .download-link');
+      this.downloadLink.unbind('click');
+      this.downloadLink.remove();
       if (!this.downloadLink.length) {
-        this.downloadLink = $('<a class="download-link" download>  Download  </a>').appendTo('#pbOverlay .pbCaptionText');
+        this.downloadLink = $('<a class="btn download-link" download>\
+                  <i class="icon-arrow-down"></i></a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
       }
       this.uploader = this.$('#uploader');
-      this.turnRight = $('#pbOverlay .pbCaptionText .right');
+      this.turnRight = $('#pbOverlay .pbCaptionText .btn-group .right');
+      this.turnRight.unbind('click');
       this.turnRight.remove();
       this.turnRight = $('<a id="right" class="btn right">\
-                       <i class="icon-share-alt" </i> </a>').appendTo('#pbOverlay .pbCaptionText');
+                       <i class="icon-share-alt" </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
       return this.turnRight.on('click', this.onTurnRight);
     };
 

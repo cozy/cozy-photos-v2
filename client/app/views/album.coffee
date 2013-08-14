@@ -22,12 +22,15 @@ module.exports = class AlbumView extends BaseView
         'click   a.add' : @prepareContact
 
     getRenderData: ->
-        clearanceHelpers = @clearanceHelpers(@model.get 'clearance')
-        _.extend
+        clearance = @model.get 'clearance'
+        clearance = 'private' unless clearance?
+        clearanceHelpers = @clearanceHelpers clearance
+        res = _.extend
             clearanceHelpers: clearanceHelpers
             photosNumber: @model.photos.length
-
         , @model.attributes
+        console.log res
+        res
 
     afterRender: ->
         @gallery = new Gallery
@@ -35,7 +38,7 @@ module.exports = class AlbumView extends BaseView
             editable: @options.editable
             collection: @model.photos
             beforeUpload: @beforePhotoUpload
-            
+
         @gallery.render()
 
         @makeEditable() if @options.editable
@@ -79,8 +82,8 @@ module.exports = class AlbumView extends BaseView
         modal = @$('#clearance-modal')
 
         @$('.clearance').find('span').text clearance
-        modal.find('h3').text help.title
-        modal.find('.modal-body').html help.content
+        modal.find('h3').text help?.title
+        modal.find('.modal-body').html help?.content
         modal.find('.changeclearance').show()
         modal.find('#change' + clearance).hide()
         if clearance is "hidden"
@@ -112,7 +115,7 @@ module.exports = class AlbumView extends BaseView
         # Recover mails of selected contacts
         modal = @$('#add-contact-modal')
         mails = []
-        for contact in @options.contacts 
+        for contact in @options.contacts
             if @$("##{contact.index}").is(':checked')
                 for item in contact.datapoints
                     if item.name is "email"
@@ -121,7 +124,7 @@ module.exports = class AlbumView extends BaseView
         @$('#mails').val(mails)
 
     sendMail: () ->
-        @model.sendMail @getPublicUrl(), @$('#mails').val(), 
+        @model.sendMail @getPublicUrl(), @$('#mails').val(),
             error: (err) ->
                 alert JSON.stringify(err.responseText)
 
@@ -142,12 +145,13 @@ module.exports = class AlbumView extends BaseView
         return origin + path + hash
 
     clearanceHelpers: (clearance) ->
+        console.log clearance
         if clearance is 'public'
             title: t 'This album is public'
             content: t 'It will appears on your homepage.'
         else if clearance is 'hidden'
             title: t 'This album is hidden'
-            content: t("hidden-description") + " #{@getPublicUrl()}" + 
+            content: t("hidden-description") + " #{@getPublicUrl()}" +
                         "<p>If you want to copy url in your clipboard: "+
                         "just press Ctrl+C </p>"
         else if clearance is 'private'

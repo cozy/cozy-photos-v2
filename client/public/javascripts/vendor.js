@@ -12480,17 +12480,17 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 /*!
 	photobox v1.7.1
 	(c) 2012 Yair Even Or <http://dropthebit.com>
-	
+
 	Uses jQuery-mousewheel Version: 3.0.6 by:
 	(c) 2009 Brandon Aaron <http://brandonaaron.net>
-	
+
 	MIT-style license.
 */
 
 (function($){
 	"use strict";
 	var doc = document, win = window, Photobox, photoboxes = [], photobox, options, images=[], imageLinks, activeImage = -1, activeURL, prevImage, nextImage, thumbsStripe, docElm, APControl,
-		transitionend = "transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd", 
+		transitionend = "transitionend webkitTransitionEnd oTransitionEnd MSTransitionEnd",
 		isOldIE = !('placeholder' in doc.createElement('input')),
 		isIe = !!win.ActiveXObject,
 		isMobile = 'ontouchend' in doc,
@@ -12502,7 +12502,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 		// Preload images
 		preload = {}, preloadPrev = new Image(), preloadNext = new Image(),
 		// DOM elements
-		closeBtn, image, prevBtn, nextBtn, caption, captionText, pbLoader, autoplayBtn, thumbs, imageWrap, 
+		closeBtn, image, prevBtn, nextBtn, caption, captionText, pbLoader, autoplayBtn, thumbs, imageWrap,
 
 		defaults = {
 			loop:			true,				// Allows to navigate between first and last images
@@ -12550,23 +12550,23 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 		thumbs.on('click', 'a', thumbsStripe.click);
 		// enable scrolling gesture on mobile
 		isMobile && thumbs.css('overflow', 'auto');
-		
+
 		// cancel prppogation up to the overlay container so it won't close
 		overlay.on('click', 'img', function(e){
 			e.stopPropagation();
 		});
 
 		$(doc.body).prepend( $(overlay) );
-		
+
 		// need this for later:
 		docElm = doc.documentElement;
 	});
-	
+
 	// @param [List of elements to work on, Custom settings, Callback when image is loaded]
 	$.fn.photobox = function(target, settings, callback){
 		if( typeof target != 'string' )
 			target = 'a';
-		
+
 		var _options = $.extend({}, defaults, settings || {}),
 			pb = new Photobox(_options, this, target);
 
@@ -12578,12 +12578,12 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 		history.load();
 		return this;
 	}
-	
+
 	Photobox = function(_options, object, target){
 		this.options = $.extend({}, _options);
 		this.target = target;
 		this.selector = $(object || doc);
-		
+
 		this.thumbsList = null;
 		// filter the links which actually HAS an image as a child
 		var filtered = this.imageLinksFilter( object.find(target) );
@@ -12598,22 +12598,22 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 			var that = this;
 			// Saves the unique Options object to the "selector" object to handle multiple galleries
 			this.selector.data('_photobox', this);
-			
+
 			// only generates the thumbStripe once, and listen for any DOM changes on the selector element, if so, re-generate
 			if( this.options.thumbs )
 				// generate gallery thumbnails every time (cause links might have been changed dynamicly)
 				this.thumbsList = thumbsStripe.generate(this.imageLinks);
-			
+
 			// Removed in favor of event delegation
 			//$(imageLinks).off('click').on('click', openPhotobox );
 			this.selector.on('click.photobox', this.target, function(e){
 				e.preventDefault();
 				that.open(this);
 			});
-			
+
 			// if any node was added or removed from the Selector of the gallery
 			this.observerTimeout = null;
-			
+
 			if( this.selector[0].nodeType == 1 ) // observe normal nodes
 				that.observeDOM( that.selector[0] ,function(){
 					// use a timeout to prevent more than one DOM change event fireing at once, and also to overcome the fact that IE's DOMNodeRemoved is fired BEFORE elements were actually removed
@@ -12635,19 +12635,19 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 			// load the right gallery selector...
 			options = this.options;
 			images = this.images;
-			
+
 			photobox = this;
-			
+
 			this.setup(1);
 
 			overlay.on(transitionend, function(){
 				overlay.off(transitionend).addClass('on'); // class 'on' is set when the initial fade-in of the overlay is done
 				changeImage(startImage, true);
 			}).addClass('show');
-				
+
 			if( isOldIE )
 				overlay.trigger('MSTransitionEnd');
-			
+
 			return false;
 		},
 
@@ -12667,7 +12667,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 		observeDOM : (function(){
 			var MutationObserver = win.MutationObserver || win.WebKitMutationObserver,
 				eventListenerSupported = win.addEventListener;
-			
+
 			return function(obj, callback){
 				if( MutationObserver ){
 					// define a new observer
@@ -12696,9 +12696,9 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 				overlay.show();
 				// Clean up if another gallery was veiwed before, which had a thumbsList
 				thumbs.html( this.thumbsList );
-				
+
 				overlay[options.thumbs ? 'addClass' : 'removeClass']('thumbs');
-				
+
 				if( options.thumbs ){
 					activeThumb.removeAttr('class');
 					$(win).on('resize.photobox', thumbsStripe.calc);
@@ -12710,7 +12710,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 					overlay.removeClass('thumbs hasArrows hasCounter hasAutoplay');
 				else{
 					overlay.addClass('hasArrows hasCounter')
-					
+
 					// check is the autoplay button should be visible (per gallery) and if so, should it autoplay or not.
 					if( options.time > 1000 ){
 						overlay.addClass('hasAutoplay');
@@ -12718,14 +12718,14 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 							APControl.progress.start();
 						else
 							APControl.pause();
-					} 
-					else 
+					}
+					else
 						overlay.removeClass('hasAutoplay');
 				}
 			} else {
 				$(win).off('resize.photobox');
 			}
-			
+
 			if( options.hideFlash ){
 				$.each(["object", "embed"], function(i, val){
 					$(val).each(function(){
@@ -12734,21 +12734,21 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 					});
 				});
 			}
-			
+
 			$(doc)[fn]({ "keydown.photobox": keyDown });
-			
+
 			if( 'ontouchstart' in document.documentElement ){
 				overlay.removeClass('hasArrows'); // no need for Arros on touch-enabled
 				imageWrap[fn]('swipe', onSwipe);
 			}
-			
+
 			if( options.zoomable ){
 				imageWrap[fn]({"mousewheel.photobox": scrollZoom });
 				if( !isOldIE) thumbs[fn]({"mousewheel.photobox": thumbsResize });
 			}
 		}
 	}
-	
+
 	// on touch-devices only
 	function onSwipe(e, Dx, Dy){
 		if( Dx == 1 ){
@@ -12759,13 +12759,13 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 			image.css({transform:'translateX(-25%)', transition:'.7s', opacity:0});
 			setTimeout(function(){ changeImage(nextImage) }, 200);
 		}
-			
+
 		if( Dy == 1 )
 			thumbs.addClass('show');
 		else if( Dy == -1 )
 			thumbs.removeClass('show');
 	}
-	
+
 	// manage the (bottom) thumbs strip
 	thumbsStripe = {
 		// returns a <ul> element which is populated with all the gallery links and thumbs
@@ -12777,21 +12777,21 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 				title = link.children[0].title || link.children[0].alt || '';
 				elements.push('<li><a href="'+ link.href +'"><img src="'+ link.children[0].src +'" alt="" title="'+ title +'" /></a></li>');
 			};
-			
+
 			thumbsList.html( elements.reverse().join('') );
 			return thumbsList;
 		},
-		
+
 		click : function(e){
 			e.preventDefault();
-		
+
 			activeThumb.removeClass('active');
 			activeThumb = $(this).parent().addClass('active');
-				
+
 			var imageIndex = $(this.parentNode).index();
 			return changeImage(imageIndex, 0, 1);
 		},
-		
+
 		changeActiveTimeout : null,
 		/**	Highlights the thumb which represents the photo and centers the thumbs viewer on it.
 		**	@thumbClick - if a user clicked on a thumbnail, don't center on it
@@ -12804,7 +12804,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 			// set the scrollLeft position of the thumbs list to show the active thumb
 			clearTimeout(this.changeActiveTimeout);
 			// give the images time to to settle on their new sizes (because of css transition) and then calculate the center...
-			this.changeActiveTimeout = setTimeout( 
+			this.changeActiveTimeout = setTimeout(
 				function(){
 					var pos = activeThumb[0].offsetLeft + activeThumb[0].clientWidth/2 - docElm.clientWidth/2;
 					delay ? thumbs.delay(800) : thumbs.stop();
@@ -12828,10 +12828,10 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 			thumbs[0].scrollLeft = e.pageX * ratio - 500;
 		}
 	};
-	
+
 	// Autoplay controller
 	APControl = {
-		autoPlayTimer : false, 
+		autoPlayTimer : false,
 		play : function(){
 			APControl.autoPlayTimer = setTimeout(function(){ changeImage(nextImage) }, options.time);
 			APControl.progress.start();
@@ -12868,7 +12868,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 			APControl[ options.autoplay ? 'pause' : 'play']();
 		}
 	}
-	
+
 	function getPrefixed(prop){
 		var i, s = doc.createElement('p').style, v = ['ms','O','Moz','Webkit'];
 		if( s[prop] == '' ) return prop;
@@ -12877,7 +12877,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 			if( s[v[i] + prop] == '' )
 				return (v[i] + prop);
 	}
-	
+
 	function keyDown(event){
 		var code = event.keyCode, ok = options.keys, result;
 		// Prevent default keyboard action (like navigating inside the page)
@@ -12885,40 +12885,40 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
                ok.next.indexOf(code) >= 0 && changeImage(nextImage) ||
                ok.prev.indexOf(code) >= 0 && changeImage(prevImage) || true;
 	}
-	
+
 	// serves as a callback for pbPrevBtn / pbNextBtn buttons but also is called on keypress events
 	function next_prev(){
 		// don't get crazy when user clicks next or prev buttons rapidly
 		//if( !image.hasClass('zoomable') )
 		//	return false;
-			
+
 		var img = (this.id == 'pbPrevBtn') ? prevImage : nextImage;
 		//	mouseOverThumbs = thumbs.css('clear') == 'both';
 
 		changeImage(img);
 		return false;
 	}
-	
+
 	function changeImage(imageIndex, firstTime, thumbClick){
-		if( !imageIndex || imageIndex < 0 ) 
+		if( !imageIndex || imageIndex < 0 )
 			imageIndex = 0;
-			
+
 		overlay.addClass( imageIndex > activeImage ? 'next' : 'prev' );
-		
+
 		activeImage = imageIndex;
 		activeURL = images[imageIndex][0];
 		prevImage = (activeImage || (options.loop ? images.length : 0)) - 1;
 		nextImage = ((activeImage + 1) % images.length) || (options.loop ? 0 : -1);
 
 		stop();
-		
+
 		overlay.removeClass('error');
 		// give a tiny delay to the preloader, so it won't be showed when images are already cached
 		var loaderTimeout = setTimeout(function(){ overlay.addClass('pbLoading'); },50);
 
 		!options.loop && imageIndex == images.length-1 ? nextBtn.addClass('hide') : nextBtn.removeClass('hide');
 		!options.loop && imageIndex == 0 ? prevBtn.addClass('hide') : prevBtn.removeClass('hide');
-		
+
 		captionText.on(transitionend, captionTextChange).addClass('change');
 
 		function captionTextChange(){
@@ -12928,27 +12928,27 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 			options.title && caption.find('.title').text( images[activeImage][1] );
 		}
 		if( firstTime || isOldIE ) captionTextChange();
-		
+
 		if( options.thumbs )
 			thumbsStripe.changeActive(imageIndex, firstTime, thumbClick);
-		
-		if( prevImage >= 0 ) preloadPrev.src = images[prevImage][0]; 
-		if( nextImage >= 0 ) preloadNext.src = images[nextImage][0]; 
+
+		if( prevImage >= 0 ) preloadPrev.src = images[prevImage][0];
+		if( nextImage >= 0 ) preloadNext.src = images[nextImage][0];
 
 		if( isOldIE ) overlay.addClass('hide'); // should wait for the image onload. just hide the image while old ie display the preloader
 		// reset zoom value
 		image.data('zoom', 1);
-		
+
 		options.autoplay && APControl.progress.reset();
 		preload = new Image();
 		preload.onload = function(){ clearTimeout(loaderTimeout); showImage(firstTime); };
-		preload.onerror = function(){ imageError() }; 
+		preload.onerror = function(){ imageError() };
 		preload.src = activeURL;
-		
+
 		// Save url hash for current image
 		history.save();
 	}
-	
+
 	// Handles the history states when changing images
 	var history = {
 		save : function(){
@@ -12986,18 +12986,18 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 				history.load();
 		}
 	})();
-	
+
 	// handles all image loading error (if image is dead)
 	function imageError(){
 		overlay.removeClass("pbLoading").addClass('error');
 		image[0].src = blankImg; // set the source to a blank image
 		preload.onerror = null;
 	}
-	
+
 	function showImage(firstTime){
 		overlay.removeClass("pbLoading").addClass('hide');
 		image.removeAttr('style').removeClass('zoomable'); // while transitioning an image, do not apply the 'zoomable' class
-		
+
 		if( firstTime || isOldIE )
 			show();
 		else
@@ -13021,7 +13021,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 				},50);
 		}
 	}
-	
+
 	function showImageEnd(){
 		image.off(transitionend);
 		image.addClass('zoomable');
@@ -13031,18 +13031,18 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 		if( typeof photobox.callback == 'function' )
 			photobox.callback();
 	}
-	
+
 	function scrollZoom(e, delta){
 		var zoomLevel = image.data('zoom') || 1,
 			getSize = image[0].getBoundingClientRect();
-		
+
 		zoomLevel += (delta / 10);
 
 		if( zoomLevel < 0.1 )
 			zoomLevel = 0.1;
-		
+
 		image.data('zoom', zoomLevel).css({'transform':'scale('+ zoomLevel +')'});
-		
+
 		// check if dragging should take effect (if image is larger than the window
 		if( getSize.height > docElm.clientHeight || getSize.width > docElm.clientWidth ){
 			$(doc).on('mousemove.photobox', imageReposition);
@@ -13051,10 +13051,10 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 			$(doc).off('mousemove.photobox');
 			image[0].style[transformOrigin] = '50% 50%';
 		}
-		
+
 		return false;
 	}
-	
+
 	function thumbsResize(e, delta){
 		e.preventDefault();
 		var thumbList = photobox.thumbsList;
@@ -13064,7 +13064,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 		thumbs.hide().show(0);
 		thumbsStripe.calc();
 	}
-	
+
 	// moves the image around during zoom mode on mousemove event
 	function imageReposition(e){
 		var y = (e.clientY / docElm.clientHeight) * (docElm.clientHeight + 200) - 100, // extend the range of the Y axis by 100 each side
@@ -13148,32 +13148,32 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 		var orgEvent = event || win.event, args = [].slice.call( arguments, 1 ), delta = 0, returnValue = true, deltaX = 0, deltaY = 0;
 		event = $.event.fix(orgEvent);
 		event.type = "mousewheel";
-		
+
 		// Old school scrollwheel delta
 		if( orgEvent.wheelDelta ){ delta = orgEvent.wheelDelta/120; }
 		if( orgEvent.detail     ){ delta = -orgEvent.detail/3; }
-		
+
 		// New school multidimensional scroll (touchpads) deltas
 		deltaY = delta;
-		
+
 		// Gecko
 		if( orgEvent.axis !== undefined && orgEvent.axis === orgEvent.HORIZONTAL_AXIS ){
 			deltaY = 0;
 			deltaX = -1*delta;
 		}
-		
+
 		// Webkit
 		if( orgEvent.wheelDeltaY !== undefined ){ deltaY = orgEvent.wheelDeltaY/120; }
 		if( orgEvent.wheelDeltaX !== undefined ){ deltaX = -1*orgEvent.wheelDeltaX/120; }
-		
+
 		// Add event and delta to the front of the arguments
 		args.unshift(event, delta, deltaX, deltaY);
 		return ($.event.dispatch || $.event.handle).apply(this, args);
 	}
-	
+
 	/**
 	 * jQuery Plugin to add basic "swipe" support on touch-enabled devices
-	 * 
+	 *
 	 * @author Yair Even Or
 	 * @version 1.0.0 (March 20, 2013)
 	 */
@@ -13200,12 +13200,12 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 				startY = touches[0].pageY;
 				this.addEventListener('touchmove', onTouchMove, false);
 			}
-				
+
 			function cancelTouch(){
 				that.removeEventListener('touchmove', onTouchMove);
 				startX = startY = null;
-			}	
-			 
+			}
+
 			function onTouchMove(e){
 				e.preventDefault();
 
@@ -13220,14 +13220,15 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 					cancelTouch();
 					deltaY = (Dy > 0) ? 1 : -1;
 				}
-				
+
 				event.type = 'swipe';
 				args.unshift(event, deltaX, deltaY); // add back the new event to the front of the arguments with the delatas
 				return ($.event.dispatch || $.event.handle).apply(that, args);
 			}
 		}
 	};
-})(jQuery);;
+})(jQuery);
+;
 /*global setImmediate: false, setTimeout: false, console: false */
 (function () {
 
