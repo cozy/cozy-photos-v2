@@ -5,6 +5,7 @@ module.exports = db.define 'Album',
     title         : String
     description   : String
     clearance     : String
+    orientation   : Number
 
 # clearance can be one of
 # - public : in public list of album

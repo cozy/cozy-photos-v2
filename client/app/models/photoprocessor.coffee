@@ -9,9 +9,11 @@ readFile = (photo, next) ->
 
     reader = new FileReader()
     photo.img = new Image()
+
     reader.readAsDataURL photo.file
     reader.onloadend = =>
         photo.img.src = reader.result
+        photo.img.orientation = photo.attributes.orientation
         photo.img.onload = ->
             next()
 
@@ -73,13 +75,12 @@ makeThumbBlob = (photo, next) ->
 # save the model with these files
 upload = (photo, next) ->
     formdata = new FormData()
-    for attr in ['title', 'description', 'albumid']
+    for attr in ['title', 'description', 'albumid', 'orientation']
         formdata.append attr, photo.get attr
 
     formdata.append 'raw', photo.file
     formdata.append 'thumb', photo.thumb, "thumb_#{photo.file.name}"
     formdata.append 'screen', photo.screen, "screen_#{photo.file.name}"
-
     # need to call sync directly so we can change the data
     Backbone.sync 'create', photo,
         contentType: false # Prevent $.ajax from being smart

@@ -1,4 +1,5 @@
 BaseView = require 'lib/base_view'
+helpers = require 'lib/helpers'
 
 transitionendEvents = [
     "transitionend", "webkitTransitionEnd", "oTransitionEnd", "MSTransitionEnd"
@@ -16,6 +17,7 @@ module.exports = class PhotoView extends BaseView
         @listenTo @model, 'thumbed',         @onThumbed
         @listenTo @model, 'upError',         @onError
         @listenTo @model, 'uploadComplete',  @onServer
+        @listenTo @model, 'change',          => @render()
 
     events: =>
         'click' : 'onClickListener'
@@ -27,6 +29,7 @@ module.exports = class PhotoView extends BaseView
         @link =        @$ 'a'
         @image =       @$ 'img'
         @progressbar = @$ '.progressfill'
+        helpers.rotate @model.get('orientation'), @image
         @link.addClass 'server' unless @model.isNew()
 
     setProgress: (percent) ->
@@ -40,6 +43,7 @@ module.exports = class PhotoView extends BaseView
     onThumbed: ->
         @setProgress 10
         @image.attr 'src', @model.thumb_du
+        @image.attr 'orientation', @model.get('orientation')
         @image.addClass 'thumbed'
 
     # when the upload is complete

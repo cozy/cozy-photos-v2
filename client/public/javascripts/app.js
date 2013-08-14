@@ -325,6 +325,82 @@ window.require.register("lib/helpers", function(exports, require, module) {
       sel.removeAllRanges();
       sel.addRange(range);
       return el.focus();
+    },
+    rotate: function(orientation, image) {
+      if (orientation === void 0 || orientation === 1) {
+        image.css("transform", "rotate(" + 0 + "deg)");
+      } else if (orientation === 2) {
+        return image.css("transform", "scale(-1, 1)");
+      } else if (orientation === 3) {
+        return image.css("transform", "rotate(" + 180 + "deg)");
+      } else if (orientation === 4) {
+        return image.css("transform", "scale(1, -1)");
+      } else if (orientation === 5) {
+        return image.css("transform", "rotate(" + -90 + "deg) scale(-1, 1) ");
+      } else if (orientation === 6) {
+        return image.css("transform", "rotate(" + 90 + "deg)");
+      } else if (orientation === 7) {
+        return image.css("transform", "rotate(" + 90 + "deg) scale(-1, 1)");
+      } else if (orientation === 8) {
+        return image.css("transform", "rotate(" + -90 + "deg)");
+      }
+    },
+    getRotate: function(orientation, image) {
+      if (orientation === void 0 || orientation === 1) {
+        return "transform: rotate(" + 0 + "deg)";
+      } else if (orientation === 2) {
+        return "transform: scale(-1, 1)";
+      } else if (orientation === 3) {
+        return "transform: rotate(" + 180 + "deg)";
+      } else if (orientation === 4) {
+        return "transform: scale(1, -1)";
+      } else if (orientation === 5) {
+        return "transform: rotate(" + -90 + "deg) scale(-1, 1) ";
+      } else if (orientation === 6) {
+        return "transform: rotate(" + 90 + "deg)";
+      } else if (orientation === 7) {
+        return "transform: rotate(" + 90 + "deg) scale(-1, 1)";
+      } else if (orientation === 8) {
+        return "transform: rotate(" + -90 + "deg)";
+      }
+    },
+    rotateLeft: function(orientation, image) {
+      if (orientation === void 0 || orientation === 1) {
+        return 8;
+      } else if (orientation === 2) {
+        return 5;
+      } else if (orientation === 3) {
+        return 6;
+      } else if (orientation === 4) {
+        return 7;
+      } else if (orientation === 5) {
+        return 4;
+      } else if (orientation === 6) {
+        return 1;
+      } else if (orientation === 7) {
+        return 2;
+      } else if (orientation === 8) {
+        return 3;
+      }
+    },
+    rotateRight: function(orientation, image) {
+      if (orientation === void 0 || orientation === 1) {
+        return 6;
+      } else if (orientation === 2) {
+        return 7;
+      } else if (orientation === 3) {
+        return 8;
+      } else if (orientation === 4) {
+        return 5;
+      } else if (orientation === 5) {
+        return 2;
+      } else if (orientation === 6) {
+        return 3;
+      } else if (orientation === 7) {
+        return 4;
+      } else if (orientation === 8) {
+        return 1;
+      }
     }
   };
   
@@ -534,7 +610,8 @@ window.require.register("models/album", function(exports, require, module) {
         title: '',
         description: '',
         clearance: 'private',
-        thumbsrc: 'img/nophotos.gif'
+        thumbsrc: 'img/nophotos.gif',
+        orientation: 1
       };
     };
 
@@ -544,7 +621,7 @@ window.require.register("models/album", function(exports, require, module) {
     }
 
     Album.prototype.parse = function(attrs) {
-      var _ref;
+      var _ref, _ref1, _ref2;
       if (((_ref = attrs.photos) != null ? _ref.length : void 0) > 0) {
         this.photos.reset(attrs.photos, {
           parse: true
@@ -553,6 +630,9 @@ window.require.register("models/album", function(exports, require, module) {
       delete attrs.photos;
       if (attrs.thumb) {
         attrs.thumbsrc = "photos/thumbs/" + attrs.thumb + ".jpg";
+        if (((_ref1 = this.photos.get(attrs.thumb)) != null ? (_ref2 = _ref1.attributes) != null ? _ref2.orientation : void 0 : void 0) != null) {
+          attrs.orientation = this.photos._byId[attrs.thumb].attributes.orientation;
+        }
       }
       return attrs;
     };
@@ -611,7 +691,8 @@ window.require.register("models/photo", function(exports, require, module) {
     Photo.prototype.defaults = function() {
       return {
         thumbsrc: 'img/loading.gif',
-        src: ''
+        src: '',
+        orientation: 1
       };
     };
 
@@ -621,7 +702,8 @@ window.require.register("models/photo", function(exports, require, module) {
       } else {
         return _.extend(attrs, {
           thumbsrc: "photos/thumbs/" + attrs.id + ".jpg",
-          src: "photos/" + attrs.id + ".jpg"
+          src: "photos/" + attrs.id + ".jpg",
+          orientation: attrs.orientation
         });
       }
     };
@@ -648,6 +730,7 @@ window.require.register("models/photoprocessor", function(exports, require, modu
     reader.readAsDataURL(photo.file);
     return reader.onloadend = function() {
       photo.img.src = reader.result;
+      photo.img.orientation = photo.attributes.orientation;
       return photo.img.onload = function() {
         return next();
       };
@@ -713,7 +796,7 @@ window.require.register("models/photoprocessor", function(exports, require, modu
   upload = function(photo, next) {
     var attr, formdata, _i, _len, _ref;
     formdata = new FormData();
-    _ref = ['title', 'description', 'albumid'];
+    _ref = ['title', 'description', 'albumid', 'orientation'];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       attr = _ref[_i];
       formdata.append(attr, photo.get(attr));
@@ -1349,7 +1432,7 @@ window.require.register("views/album", function(exports, require, module) {
       } else if (clearance === 'hidden') {
         return {
           title: t('This album is hidden'),
-          content: t("hidden-description") + (" " + (this.getPublicUrl())) + "<p>If you want to copy url in your clipboard : just press Ctrl+C </p>"
+          content: t("hidden-description") + (" " + (this.getPublicUrl())) + "<p>If you want to copy url in your clipboard: " + "just press Ctrl+C </p>"
         };
       } else if (clearance === 'private') {
         return {
@@ -1407,13 +1490,15 @@ window.require.register("views/albumslist", function(exports, require, module) {
   
 });
 window.require.register("views/albumslist_item", function(exports, require, module) {
-  var AlbumItem, BaseView, limitLength, _ref,
+  var AlbumItem, BaseView, helpers, limitLength, _ref,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   BaseView = require('lib/base_view');
 
   limitLength = require('lib/helpers').limitLength;
+
+  helpers = require('lib/helpers');
 
   module.exports = AlbumItem = (function(_super) {
     __extends(AlbumItem, _super);
@@ -1441,18 +1526,26 @@ window.require.register("views/albumslist_item", function(exports, require, modu
       return out;
     };
 
+    AlbumItem.prototype.afterRender = function() {
+      this.image = this.$('img');
+      this.image.attr('src', this.model.attributes.thumbsrc);
+      return helpers.rotate(this.model.attributes.orientation, this.image);
+    };
+
     return AlbumItem;
 
   })(BaseView);
   
 });
 window.require.register("views/gallery", function(exports, require, module) {
-  var Gallery, Photo, PhotoView, ViewCollection, app, photoprocessor, _ref,
+  var Gallery, Photo, PhotoView, ViewCollection, app, helpers, photoprocessor, _ref,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   ViewCollection = require('lib/view_collection');
+
+  helpers = require('lib/helpers');
 
   PhotoView = require('views/photo');
 
@@ -1468,6 +1561,9 @@ window.require.register("views/gallery", function(exports, require, module) {
     function Gallery() {
       this.onImageDisplayed = __bind(this.onImageDisplayed, this);
       this.onFilesChanged = __bind(this.onFilesChanged, this);
+      this.onTurnRight = __bind(this.onTurnRight, this);
+      this.onTurnLeft = __bind(this.onTurnLeft, this);
+      this.getIdPhoto = __bind(this.getIdPhoto, this);
       this.checkIfEmpty = __bind(this.checkIfEmpty, this);
       _ref = Gallery.__super__.constructor.apply(this, arguments);
       return _ref;
@@ -1483,11 +1579,22 @@ window.require.register("views/gallery", function(exports, require, module) {
         thumbs: true,
         history: false
       }, this.onImageDisplayed);
+      this.turnLeft = $('#pbOverlay .pbCaptionText .left');
+      this.turnLeft.remove();
+      this.turnLeft = $('<a id="left" class="btn left" type="button">\
+                       <i class="icon-share-alt"\
+                        style="transform: scale(-1,1)"> </i> </a>').appendTo('#pbOverlay .pbCaptionText');
+      this.turnLeft.on('click', this.onTurnLeft);
       this.downloadLink = $('#pbOverlay .pbCaptionText .download-link');
       if (!this.downloadLink.length) {
-        this.downloadLink = $('<a class="download-link" download>Download</a>').appendTo('#pbOverlay .pbCaptionText');
+        this.downloadLink = $('<a class="download-link" download>  Download  </a>').appendTo('#pbOverlay .pbCaptionText');
       }
-      return this.uploader = this.$('#uploader');
+      this.uploader = this.$('#uploader');
+      this.turnRight = $('#pbOverlay .pbCaptionText .right');
+      this.turnRight.remove();
+      this.turnRight = $('<a id="right" class="btn right">\
+                       <i class="icon-share-alt" </i> </a>').appendTo('#pbOverlay .pbCaptionText');
+      return this.turnRight.on('click', this.onTurnRight);
     };
 
     Gallery.prototype.checkIfEmpty = function() {
@@ -1519,6 +1626,68 @@ window.require.register("views/gallery", function(exports, require, module) {
       return false;
     };
 
+    Gallery.prototype.getIdPhoto = function() {
+      var id, url;
+      url = $('.imageWrap img.zoomable').attr('src');
+      id = url.split('/')[4];
+      id = id.split('.')[0];
+      return id;
+    };
+
+    Gallery.prototype.onTurnLeft = function() {
+      var id, idThumb, newOrientation, orientation, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
+      id = this.getIdPhoto();
+      orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
+      newOrientation = helpers.rotateLeft(orientation, $('.imageWrap img.zoomable'));
+      helpers.rotate(newOrientation, $('.imageWrap img.zoomable'));
+      if ((_ref2 = this.collection.get(id)) != null) {
+        _ref2.save({
+          orientation: newOrientation
+        });
+      }
+      thumbs = $('#pbOverlay .pbThumbs img');
+      _results = [];
+      for (_i = 0, _len = thumbs.length; _i < _len; _i++) {
+        thumb = thumbs[_i];
+        url = thumb.src;
+        idThumb = url.split('/')[5];
+        idThumb = idThumb.split('.')[0];
+        if (idThumb === id) {
+          _results.push(thumb.style = helpers.getRotate(newOrientation));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Gallery.prototype.onTurnRight = function() {
+      var id, idThumb, newOrientation, orientation, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
+      id = this.getIdPhoto();
+      orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
+      newOrientation = helpers.rotateRight(orientation, $('.imageWrap img.zoomable'));
+      helpers.rotate(newOrientation, $('.imageWrap img.zoomable'));
+      if ((_ref2 = this.collection.get(id)) != null) {
+        _ref2.save({
+          orientation: newOrientation
+        });
+      }
+      thumbs = $('#pbOverlay .pbThumbs img');
+      _results = [];
+      for (_i = 0, _len = thumbs.length; _i < _len; _i++) {
+        thumb = thumbs[_i];
+        url = thumb.src;
+        idThumb = url.split('/')[5];
+        idThumb = idThumb.split('.')[0];
+        if (idThumb === id) {
+          _results.push(thumb.style = helpers.getRotate(newOrientation));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
     Gallery.prototype.onFilesChanged = function(evt) {
       var old;
       this.handleFiles(this.uploader[0].files);
@@ -1528,10 +1697,24 @@ window.require.register("views/gallery", function(exports, require, module) {
     };
 
     Gallery.prototype.onImageDisplayed = function() {
-      var url;
+      var id, orientation, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
       url = $('.imageWrap img.zoomable').attr('src');
       url = url.replace('/photos/photos', '/photos/photos/raws');
-      return this.downloadLink.attr('href', url);
+      this.downloadLink.attr('href', url);
+      id = this.getIdPhoto();
+      orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
+      helpers.rotate(orientation, $('.imageWrap img.zoomable'));
+      thumbs = $('#pbOverlay .pbThumbs img');
+      _results = [];
+      for (_i = 0, _len = thumbs.length; _i < _len; _i++) {
+        thumb = thumbs[_i];
+        url = thumb.src;
+        id = url.split('/')[5];
+        id = id.split('.')[0];
+        orientation = (_ref2 = this.collection.get(id)) != null ? _ref2.attributes.orientation : void 0;
+        _results.push(thumb.style = helpers.getRotate(orientation));
+      }
+      return _results;
     };
 
     Gallery.prototype.handleFiles = function(files) {
@@ -1557,12 +1740,14 @@ window.require.register("views/gallery", function(exports, require, module) {
   
 });
 window.require.register("views/photo", function(exports, require, module) {
-  var BaseView, PhotoView, transitionendEvents, _ref,
+  var BaseView, PhotoView, helpers, transitionendEvents, _ref,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   BaseView = require('lib/base_view');
+
+  helpers = require('lib/helpers');
 
   transitionendEvents = ["transitionend", "webkitTransitionEnd", "oTransitionEnd", "MSTransitionEnd"].join(" ");
 
@@ -1581,11 +1766,15 @@ window.require.register("views/photo", function(exports, require, module) {
     PhotoView.prototype.className = 'photo';
 
     PhotoView.prototype.initialize = function(options) {
+      var _this = this;
       PhotoView.__super__.initialize.apply(this, arguments);
       this.listenTo(this.model, 'progress', this.onProgress);
       this.listenTo(this.model, 'thumbed', this.onThumbed);
       this.listenTo(this.model, 'upError', this.onError);
-      return this.listenTo(this.model, 'uploadComplete', this.onServer);
+      this.listenTo(this.model, 'uploadComplete', this.onServer);
+      return this.listenTo(this.model, 'change', function() {
+        return _this.render();
+      });
     };
 
     PhotoView.prototype.events = function() {
@@ -1603,6 +1792,7 @@ window.require.register("views/photo", function(exports, require, module) {
       this.link = this.$('a');
       this.image = this.$('img');
       this.progressbar = this.$('.progressfill');
+      helpers.rotate(this.model.get('orientation'), this.image);
       if (!this.model.isNew()) {
         return this.link.addClass('server');
       }
@@ -1619,6 +1809,7 @@ window.require.register("views/photo", function(exports, require, module) {
     PhotoView.prototype.onThumbed = function() {
       this.setProgress(10);
       this.image.attr('src', this.model.thumb_du);
+      this.image.attr('orientation', this.model.get('orientation'));
       return this.image.addClass('thumbed');
     };
 
