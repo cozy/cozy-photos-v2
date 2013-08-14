@@ -10,27 +10,34 @@ zipstream = require 'zipstream'
 module.exports = (app) ->
 
     index: (req, res) ->
+
+        out = []
+        initAlbums = (albums, callback) =>
+            if albums.length > 0
+                albumModel = albums.pop()
+                album = albumModel.toObject()
+                Photo.fromAlbum album, (err, photos) =>
+                    album.thumb = photos[0].id
+                    album.orientation = photos[0].orientation
+                    out.push album
+                    initAlbums albums, callback
+            else
+                callback()
+
         request = if req.public then 'public' else 'all'
 
         async.parallel [
-            (cb) -> Photo.albumsThumbs cb
             (cb) -> Album.request request, cb
             (cb) -> i18n.getLocale null, cb
         ], (err, results) ->
 
-            [photos, albums, locale] = results
-            out = []
-            for albumModel in albums
-                album = albumModel.toObject()
-                album.thumb = photos[album.id]
-                out.push album
-
-            imports = """
-                    window.locale = "#{locale}";
-                    window.initalbums = #{JSON.stringify(out)};
-                """
-
-            res.render 'index.jade', imports: imports
+            [albums, locale] = results
+            initAlbums albums, () =>
+                imports = """
+                        window.locale = "#{locale}";
+                        window.initalbums = #{JSON.stringify(out)};
+                    """
+                res.render 'index.jade', imports: imports
 
 
     fetch: (req, res, next, id) ->
@@ -69,7 +76,7 @@ module.exports = (app) ->
         data =
             to: req.body.mails
             subject: "I share an album with you"
-            content: "You can access to my album via this link : #{req.body.url}"
+            content: "You can access to my album via this link: #{req.body.url}"
         CozyAdapter.sendMailFromUser data, (err) ->
             return res.error 500, "Server couldn't send mail.", err if err
             res.send 200

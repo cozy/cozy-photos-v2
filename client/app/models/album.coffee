@@ -15,6 +15,7 @@ module.exports = class Album extends Backbone.Model
         description: ''
         clearance: 'private'
         thumbsrc: 'img/nophotos.gif'
+        orientation: 1
 
     constructor: ->
         @photos = new PhotoCollection()
@@ -26,6 +27,9 @@ module.exports = class Album extends Backbone.Model
         delete attrs.photos
         if attrs.thumb
             attrs.thumbsrc = "photos/thumbs/#{attrs.thumb}.jpg"
+            if @photos.get(attrs.thumb)?.attributes?.orientation?
+                attrs.orientation = 
+                    @photos._byId[attrs.thumb].attributes.orientation
         return attrs
 
     sendMail: (url, mails, callback) ->

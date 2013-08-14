@@ -4,8 +4,9 @@ module.exports = Photo = db.define 'Photo',
     id           : String
     title        : String
     description  : String
-    albumid      : String
+    orientation  : Number
     _attachments : Object
+    albumid      : String
 
 Photo.fromAlbum = (album, callback) ->
     params =
