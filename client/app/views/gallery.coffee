@@ -31,7 +31,8 @@ module.exports = class Gallery extends ViewCollection
         # Add link to download photo
         @downloadLink = $('#pbOverlay .pbCaptionText .download-link')
         unless @downloadLink.length
-            @downloadLink = $('<a class="download-link" download>  Download  </a>')
+            @downloadLink = 
+                $('<a class="download-link" download>  Download  </a>')
                 .appendTo '#pbOverlay .pbCaptionText'
 
         @uploader = @$('#uploader')
@@ -78,7 +79,8 @@ module.exports = class Gallery extends ViewCollection
     onTurnLeft: () =>
         id = @getIdPhoto()
         orientation = @collection.get(id)?.attributes.orientation
-        newOrientation = helpers.rotateLeft orientation, $('.imageWrap img.zoomable')
+        newOrientation = 
+            helpers.rotateLeft orientation, $('.imageWrap img.zoomable')
         helpers.rotate newOrientation, $('.imageWrap img.zoomable')
         @collection.get(id)?.save orientation: newOrientation
         # Update thumb
@@ -93,7 +95,8 @@ module.exports = class Gallery extends ViewCollection
     onTurnRight: () =>
         id = @getIdPhoto()
         orientation = @collection.get(id)?.attributes.orientation
-        newOrientation = helpers.rotateRight orientation, $('.imageWrap img.zoomable')
+        newOrientation = 
+            helpers.rotateRight orientation, $('.imageWrap img.zoomable')
         helpers.rotate newOrientation, $('.imageWrap img.zoomable')
         @collection.get(id)?.save orientation: newOrientation
         # Update thumb

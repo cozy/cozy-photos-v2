@@ -1432,7 +1432,7 @@ window.require.register("views/album", function(exports, require, module) {
       } else if (clearance === 'hidden') {
         return {
           title: t('This album is hidden'),
-          content: t("hidden-description") + (" " + (this.getPublicUrl())) + "<p>If you want to copy url in your clipboard : just press Ctrl+C </p>"
+          content: t("hidden-description") + (" " + (this.getPublicUrl())) + "<p>If you want to copy url in your clipboard: " + "just press Ctrl+C </p>"
         };
       } else if (clearance === 'private') {
         return {

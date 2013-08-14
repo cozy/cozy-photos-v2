@@ -28,7 +28,8 @@ module.exports = class Album extends Backbone.Model
         if attrs.thumb
             attrs.thumbsrc = "photos/thumbs/#{attrs.thumb}.jpg"
             if @photos.get(attrs.thumb)?.attributes?.orientation?
-                attrs.orientation = @photos._byId[attrs.thumb].attributes.orientation
+                attrs.orientation = 
+                    @photos._byId[attrs.thumb].attributes.orientation
         return attrs
 
     sendMail: (url, mails, callback) ->

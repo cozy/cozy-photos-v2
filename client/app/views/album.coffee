@@ -148,7 +148,8 @@ module.exports = class AlbumView extends BaseView
         else if clearance is 'hidden'
             title: t 'This album is hidden'
             content: t("hidden-description") + " #{@getPublicUrl()}" + 
-                        "<p>If you want to copy url in your clipboard : just press Ctrl+C </p>"
+                        "<p>If you want to copy url in your clipboard: "+
+                        "just press Ctrl+C </p>"
         else if clearance is 'private'
             title: t 'This album is private'
             content: t 'It cannot be accessed from the public side'

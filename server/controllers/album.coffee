@@ -76,7 +76,7 @@ module.exports = (app) ->
         data =
             to: req.body.mails
             subject: "I share an album with you"
-            content: "You can access to my album via this link : #{req.body.url}"
+            content: "You can access to my album via this link: #{req.body.url}"
         CozyAdapter.sendMailFromUser data, (err) ->
             return res.error 500, "Server couldn't send mail.", err if err
             res.send 200
