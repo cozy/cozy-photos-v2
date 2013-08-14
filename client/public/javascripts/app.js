@@ -360,13 +360,12 @@ window.require.register("lib/helpers", function(exports, require, module) {
       }
       el.click(function() {
         if (el.text() === placeholder) {
-          el.empty();
+          return el.text(' ');
         }
-        return module.exports.forceFocus(el);
       });
       el.focus(function() {
         if (el.text() === placeholder) {
-          return el.empty();
+          return el.text(' ');
         }
       });
       return el.blur(function() {
@@ -650,7 +649,7 @@ window.require.register("locales/fr", function(exports, require, module) {
     "Select your friends": "Choisissez vos amis",
     "Add": "Ajouter",
     "Cancel": "Annuler",
-    "Click Here or drag your photos below to upload": "Cliquez ici ou glisser-déposez vos photos ci-dessous pour les uploader",
+    "Click Here or drag your photos below to upload": "Cliquez ici pour ajouter des photos ou déposer vos fichiers",
     "hidden-description": "Il n'apparaitra pas sur votre page d'accueil,\nMais vous pouvez partager cet url :",
     "It cannot be accessed from the public side": "Il ne peut pas être vu depuis le coté public"
   };
@@ -1249,7 +1248,7 @@ window.require.register("templates/gallery", function(exports, require, module) 
   buf.push('<p class="help">');
   var __val__ = t('There is no photos in this album')
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</p><div id="uploadblock" class="flatbtn"><input id="uploader" type="file" multiple="multiple"/>');
+  buf.push('</p><div id="uploadblock" class="flatbtn photo"><input id="uploader" type="file" multiple="multiple"/>');
   var __val__ = t('Click Here or drag your photos below to upload')
   buf.push(escape(null == __val__ ? "" : __val__));
   buf.push('</div>');
@@ -1368,7 +1367,7 @@ window.require.register("views/album", function(exports, require, module) {
         placeholder: t('Title ...'),
         onChanged: function(text) {
           return _this.saveModel({
-            title: text
+            title: text.trim()
           });
         }
       });
@@ -1376,7 +1375,7 @@ window.require.register("views/album", function(exports, require, module) {
         placeholder: t('Write some more ...'),
         onChanged: function(text) {
           return _this.saveModel({
-            description: text
+            description: text.trim()
           });
         }
       });

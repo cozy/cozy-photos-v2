@@ -142,6 +142,11 @@ button.delete
         padding 1px
         border 0px
 
+    #title
+    #description
+        font-weight: normal
+        padding: 8px
+
     #title:active
     #description:active
         outline 0
@@ -321,15 +326,22 @@ button.delete
 
 
 #uploadblock
+    width: 130px
+    height: 130px
     display none
-    width 100%
     margin 0px
     overflow hidden
-    padding 10px 0px
+    padding: 10px
     margin 5px
     position relative
     text-align center
     transition height 1s
+    text-transform: lowercase
+
+#uploadblock.photo:hover
+    transform scale(1)
+    -webkit-transform scale(1)
+    cursor: pointer
 
 .editing #uploadblock
     display block

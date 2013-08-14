@@ -32,7 +32,7 @@ module.exports =
     "Cancel": "Annuler"
 
     "Click Here or drag your photos below to upload":"""
-        Cliquez ici ou glisser-déposez vos photos ci-dessous pour les uploader
+        Cliquez ici pour ajouter des photos ou déposer vos fichiers
     """
 
     "hidden-description": """

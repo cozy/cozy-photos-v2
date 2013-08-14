@@ -57,11 +57,11 @@ module.exports = class AlbumView extends BaseView
 
         editable @$('#title'),
             placeholder: t 'Title ...'
-            onChanged: (text) => @saveModel title: text
+            onChanged: (text) => @saveModel title: text.trim()
 
         editable @$('#description'),
             placeholder: t 'Write some more ...'
-            onChanged: (text) => @saveModel description: text
+            onChanged: (text) => @saveModel description: text.trim()
 
     destroyModel: ->
         if @model.isNew()
