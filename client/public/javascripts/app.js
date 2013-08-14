@@ -844,7 +844,7 @@ window.require.register("models/photoprocessor", function(exports, require, modu
   };
 
   makeThumbDataURI = function(photo, next) {
-    photo.thumb_du = resize(photo, 100, 100, true);
+    photo.thumb_du = resize(photo, 180, 180, true);
     return next();
   };
 
@@ -1972,6 +1972,7 @@ window.require.register("views/photo", function(exports, require, module) {
     };
 
     PhotoView.prototype.destroyModel = function() {
+      this.$('.delete').spin();
       return this.model.destroy();
     };
 
