@@ -328,7 +328,7 @@ window.require.register("lib/helpers", function(exports, require, module) {
     },
     rotate: function(orientation, image) {
       if (orientation === void 0 || orientation === 1) {
-
+        image.css("transform", "rotate(" + 0 + "deg)");
       } else if (orientation === 2) {
         return image.css("transform", "scale(-1, 1)");
       } else if (orientation === 3) {
@@ -343,6 +343,63 @@ window.require.register("lib/helpers", function(exports, require, module) {
         return image.css("transform", "rotate(" + 90 + "deg) scale(-1, 1)");
       } else if (orientation === 8) {
         return image.css("transform", "rotate(" + -90 + "deg)");
+      }
+    },
+    getRotate: function(orientation, image) {
+      if (orientation === void 0 || orientation === 1) {
+        return "transform: rotate(" + 0 + "deg)";
+      } else if (orientation === 2) {
+        return "transform: scale(-1, 1)";
+      } else if (orientation === 3) {
+        return "transform: rotate(" + 180 + "deg)";
+      } else if (orientation === 4) {
+        return "transform: scale(1, -1)";
+      } else if (orientation === 5) {
+        return "transform: rotate(" + -90 + "deg) scale(-1, 1) ";
+      } else if (orientation === 6) {
+        return "transform: rotate(" + 90 + "deg)";
+      } else if (orientation === 7) {
+        return "transform: rotate(" + 90 + "deg) scale(-1, 1)";
+      } else if (orientation === 8) {
+        return "transform: rotate(" + -90 + "deg)";
+      }
+    },
+    rotateLeft: function(orientation, image) {
+      if (orientation === void 0 || orientation === 1) {
+        return 8;
+      } else if (orientation === 2) {
+        return 5;
+      } else if (orientation === 3) {
+        return 6;
+      } else if (orientation === 4) {
+        return 7;
+      } else if (orientation === 5) {
+        return 4;
+      } else if (orientation === 6) {
+        return 1;
+      } else if (orientation === 7) {
+        return 2;
+      } else if (orientation === 8) {
+        return 3;
+      }
+    },
+    rotateRight: function(orientation, image) {
+      if (orientation === void 0 || orientation === 1) {
+        return 6;
+      } else if (orientation === 2) {
+        return 7;
+      } else if (orientation === 3) {
+        return 8;
+      } else if (orientation === 4) {
+        return 5;
+      } else if (orientation === 5) {
+        return 2;
+      } else if (orientation === 6) {
+        return 3;
+      } else if (orientation === 7) {
+        return 4;
+      } else if (orientation === 8) {
+        return 1;
       }
     }
   };
@@ -1505,6 +1562,9 @@ window.require.register("views/gallery", function(exports, require, module) {
     function Gallery() {
       this.onImageDisplayed = __bind(this.onImageDisplayed, this);
       this.onFilesChanged = __bind(this.onFilesChanged, this);
+      this.onTurnRight = __bind(this.onTurnRight, this);
+      this.onTurnLeft = __bind(this.onTurnLeft, this);
+      this.getIdPhoto = __bind(this.getIdPhoto, this);
       this.checkIfEmpty = __bind(this.checkIfEmpty, this);
       _ref = Gallery.__super__.constructor.apply(this, arguments);
       return _ref;
@@ -1520,11 +1580,22 @@ window.require.register("views/gallery", function(exports, require, module) {
         thumbs: true,
         history: false
       }, this.onImageDisplayed);
+      this.turnLeft = $('#pbOverlay .pbCaptionText .left');
+      this.turnLeft.remove();
+      this.turnLeft = $('<a id="left" class="btn left" type="button">\
+                       <i class="icon-share-alt"\
+                        style="transform: scale(-1,1)"> </i> </a>').appendTo('#pbOverlay .pbCaptionText');
+      this.turnLeft.on('click', this.onTurnLeft);
       this.downloadLink = $('#pbOverlay .pbCaptionText .download-link');
       if (!this.downloadLink.length) {
-        this.downloadLink = $('<a class="download-link" download>Download</a>').appendTo('#pbOverlay .pbCaptionText');
+        this.downloadLink = $('<a class="download-link" download>  Download  </a>').appendTo('#pbOverlay .pbCaptionText');
       }
-      return this.uploader = this.$('#uploader');
+      this.uploader = this.$('#uploader');
+      this.turnRight = $('#pbOverlay .pbCaptionText .right');
+      this.turnRight.remove();
+      this.turnRight = $('<a id="right" class="btn right">\
+                       <i class="icon-share-alt" </i> </a>').appendTo('#pbOverlay .pbCaptionText');
+      return this.turnRight.on('click', this.onTurnRight);
     };
 
     Gallery.prototype.checkIfEmpty = function() {
@@ -1555,6 +1626,68 @@ window.require.register("views/gallery", function(exports, require, module) {
       return false;
     };
 
+    Gallery.prototype.getIdPhoto = function() {
+      var id, url;
+      url = $('.imageWrap img.zoomable').attr('src');
+      id = url.split('/')[4];
+      id = id.split('.')[0];
+      return id;
+    };
+
+    Gallery.prototype.onTurnLeft = function() {
+      var id, idThumb, newOrientation, orientation, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
+      id = this.getIdPhoto();
+      orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
+      newOrientation = helpers.rotateLeft(orientation, $('.imageWrap img.zoomable'));
+      helpers.rotate(newOrientation, $('.imageWrap img.zoomable'));
+      if ((_ref2 = this.collection.get(id)) != null) {
+        _ref2.save({
+          orientation: newOrientation
+        });
+      }
+      thumbs = $('#pbOverlay .pbThumbs img');
+      _results = [];
+      for (_i = 0, _len = thumbs.length; _i < _len; _i++) {
+        thumb = thumbs[_i];
+        url = thumb.src;
+        idThumb = url.split('/')[5];
+        idThumb = idThumb.split('.')[0];
+        if (idThumb === id) {
+          _results.push(thumb.style = helpers.getRotate(newOrientation));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
+    Gallery.prototype.onTurnRight = function() {
+      var id, idThumb, newOrientation, orientation, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
+      id = this.getIdPhoto();
+      orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
+      newOrientation = helpers.rotateRight(orientation, $('.imageWrap img.zoomable'));
+      helpers.rotate(newOrientation, $('.imageWrap img.zoomable'));
+      if ((_ref2 = this.collection.get(id)) != null) {
+        _ref2.save({
+          orientation: newOrientation
+        });
+      }
+      thumbs = $('#pbOverlay .pbThumbs img');
+      _results = [];
+      for (_i = 0, _len = thumbs.length; _i < _len; _i++) {
+        thumb = thumbs[_i];
+        url = thumb.src;
+        idThumb = url.split('/')[5];
+        idThumb = idThumb.split('.')[0];
+        if (idThumb === id) {
+          _results.push(thumb.style = helpers.getRotate(newOrientation));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    };
+
     Gallery.prototype.onFilesChanged = function(evt) {
       var old;
       this.handleFiles(this.uploader[0].files);
@@ -1564,13 +1697,24 @@ window.require.register("views/gallery", function(exports, require, module) {
     };
 
     Gallery.prototype.onImageDisplayed = function() {
-      var id, orientation, url;
+      var id, orientation, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
       url = $('.imageWrap img.zoomable').attr('src');
       url = url.replace('/photos/photos', '/photos/photos/raws');
       this.downloadLink.attr('href', url);
-      id = url.substring(29, 61);
-      orientation = this.collection._byId[id].attributes.orientation;
-      return helpers.rotate(orientation, $('.imageWrap img.zoomable'));
+      id = this.getIdPhoto();
+      orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
+      helpers.rotate(orientation, $('.imageWrap img.zoomable'));
+      thumbs = $('#pbOverlay .pbThumbs img');
+      _results = [];
+      for (_i = 0, _len = thumbs.length; _i < _len; _i++) {
+        thumb = thumbs[_i];
+        url = thumb.src;
+        id = url.split('/')[5];
+        id = id.split('.')[0];
+        orientation = (_ref2 = this.collection.get(id)) != null ? _ref2.attributes.orientation : void 0;
+        _results.push(thumb.style = helpers.getRotate(orientation));
+      }
+      return _results;
     };
 
     Gallery.prototype.handleFiles = function(files) {
@@ -1622,11 +1766,15 @@ window.require.register("views/photo", function(exports, require, module) {
     PhotoView.prototype.className = 'photo';
 
     PhotoView.prototype.initialize = function(options) {
+      var _this = this;
       PhotoView.__super__.initialize.apply(this, arguments);
       this.listenTo(this.model, 'progress', this.onProgress);
       this.listenTo(this.model, 'thumbed', this.onThumbed);
       this.listenTo(this.model, 'upError', this.onError);
-      return this.listenTo(this.model, 'uploadComplete', this.onServer);
+      this.listenTo(this.model, 'uploadComplete', this.onServer);
+      return this.listenTo(this.model, 'change', function() {
+        return _this.render();
+      });
     };
 
     PhotoView.prototype.events = function() {

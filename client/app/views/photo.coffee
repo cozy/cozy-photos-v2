@@ -17,6 +17,7 @@ module.exports = class PhotoView extends BaseView
         @listenTo @model, 'thumbed',         @onThumbed
         @listenTo @model, 'upError',         @onError
         @listenTo @model, 'uploadComplete',  @onServer
+        @listenTo @model, 'change',          => @render()
 
     events: =>
         'click' : 'onClickListener'
