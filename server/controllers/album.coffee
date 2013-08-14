@@ -17,8 +17,9 @@ module.exports = (app) ->
                 albumModel = albums.pop()
                 album = albumModel.toObject()
                 Photo.fromAlbum album, (err, photos) =>
-                    album.thumb = photos[0].id
-                    album.orientation = photos[0].orientation
+                    if photos.length > 0
+                        album.thumb = photos[0].id
+                        album.orientation = photos[0].orientation
                     out.push album
                     initAlbums albums, callback
             else
