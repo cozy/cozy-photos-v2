@@ -15,11 +15,12 @@ module.exports = class AlbumView extends BaseView
     className: 'container-fluid'
 
     events: =>
-        'click   a.delete' : @destroyModel
-        'click   a.changeclearance' : @changeClearance
-        'click   a.addcontact' : @addcontact
-        'click   a.sendmail' : @sendMail
-        'click   a.add' : @prepareContact
+        'click a.delete': @destroyModel
+        'click a.changeclearance': @changeClearance
+        'click a.addcontact': @addcontact
+        'click a.sendmail': @sendMail
+        'click a.add': @prepareContact
+        'keyup #mails': @onKeyUpMails
 
     getRenderData: ->
         clearance = @model.get 'clearance'
@@ -29,7 +30,6 @@ module.exports = class AlbumView extends BaseView
             clearanceHelpers: clearanceHelpers
             photosNumber: @model.photos.length
         , @model.attributes
-        console.log res
         res
 
     afterRender: ->
@@ -73,8 +73,13 @@ module.exports = class AlbumView extends BaseView
 
     changeClearance: (event) ->
         newclearance = event.target.id.replace 'change', ''
+        id = event.target.id
 
+        @$("##{id}").spin 'tiny'
+        @$("##{id}").css 'color', 'transparent'
         @saveModel(clearance: newclearance).then =>
+            @$("##{id}").spin()
+            @$("##{id}").css 'color', 'white'
             @refreshPopOver newclearance
 
     refreshPopOver: (clearance) ->
@@ -84,8 +89,8 @@ module.exports = class AlbumView extends BaseView
         @$('.clearance').find('span').text clearance
         modal.find('h3').text help?.title
         modal.find('.modal-body').html help?.content
-        modal.find('.changeclearance').show()
-        modal.find('#change' + clearance).hide()
+        modal.find('.changeclearance').removeClass 'active'
+        modal.find('#change' + clearance).addClass 'active'
         if clearance is "hidden"
             modal.find('.share').show()
             clipboard.set @getPublicUrl()
@@ -123,10 +128,25 @@ module.exports = class AlbumView extends BaseView
                         break
         @$('#mails').val(mails)
 
-    sendMail: () ->
-        @model.sendMail @getPublicUrl(), @$('#mails').val(),
-            error: (err) ->
-                alert JSON.stringify(err.responseText)
+    onKeyUpMails: (event) ->
+        if event.which is 13 or event.keyCode is 13
+            @sendMail()
+
+    sendMail: (event) ->
+        mails = @$('#mails').val()
+        if mails.length is 0
+            alert "Please enter an email."
+        else
+            @$("a.sendmail").spin 'tiny'
+            @$("a.sendmail").css 'color', 'transparent'
+            @model.sendMail @getPublicUrl(), mails,
+                success: =>
+                    @$("a.sendmail").spin()
+                    @$("a.sendmail").css 'color', 'white'
+                error: (err) =>
+                    @$("a.sendmail").spin()
+                    @$("a.sendmail").css 'color', 'white'
+                    alert JSON.parse(err.responseText).error
 
     saveModel: (hash) ->
         promise = @model.save(hash)
@@ -145,7 +165,6 @@ module.exports = class AlbumView extends BaseView
         return origin + path + hash
 
     clearanceHelpers: (clearance) ->
-        console.log clearance
         if clearance is 'public'
             title: t 'This album is public'
             content: t 'It will appears on your homepage.'

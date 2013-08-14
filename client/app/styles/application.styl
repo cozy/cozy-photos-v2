@@ -13,6 +13,7 @@ darkgrey = #444
 basecolor = lightgrey
 orange = #fe8800
 blue = #34a6ff
+bluegreen = #34A6BB
 
 
 body
@@ -250,9 +251,45 @@ button.delete
         box-shadow: none
 
 .modal-header
-    background-color blue
+    background-color bluegreen
     color white
     font-family styled
+    border-top-left-radius: 5px
+    border-top-right-radius: 5px
+
+    h3
+        font-weight: normal
+
+#clearance-modal
+#share-modal
+#add-contact-modal
+    border-radius: 5px
+
+    a.flatbtn
+        float: right
+
+        span
+            margin: 0
+
+.modal-footer
+    padding: 8px
+    border: 0
+    background: transparent
+
+    a.flatbtn
+        float: right
+        text-align: left
+        width: auto
+        padding: 8px
+        line-height: 16px
+        font-size:  16px
+        text-transform: lowercase
+
+        span
+            text-align: left
+
+    a.flatbtn.active
+        background-color: blue - 20%
 
 // ### Logic ###
 .mode-public .flatbtn

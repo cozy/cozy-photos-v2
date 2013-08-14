@@ -237,9 +237,49 @@ button.delete {
   box-shadow: none;
 }
 .modal-header {
-  background-color: #34a6ff;
+  background-color: #34a6bb;
   color: #fff;
   font-family: styled;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.modal-header h3 {
+  font-weight: normal;
+}
+#clearance-modal,
+#share-modal,
+#add-contact-modal {
+  border-radius: 5px;
+}
+#clearance-modal a.flatbtn,
+#share-modal a.flatbtn,
+#add-contact-modal a.flatbtn {
+  float: right;
+}
+#clearance-modal a.flatbtn span,
+#share-modal a.flatbtn span,
+#add-contact-modal a.flatbtn span {
+  margin: 0;
+}
+.modal-footer {
+  padding: 8px;
+  border: 0;
+  background: transparent;
+}
+.modal-footer a.flatbtn {
+  float: right;
+  text-align: left;
+  width: auto;
+  padding: 8px;
+  line-height: 16px;
+  font-size: 16px;
+  text-transform: lowercase;
+}
+.modal-footer a.flatbtn span {
+  text-align: left;
+}
+.modal-footer a.flatbtn.active {
+  background-color: #008af6;
 }
 .mode-public .flatbtn,
 .mode-public .flatbtn.startediting,

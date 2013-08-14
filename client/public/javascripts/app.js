@@ -197,7 +197,62 @@ window.require.register("initialize", function(exports, require, module) {
 
   $(function() {
     jQuery.event.props.push('dataTransfer');
-    return app.initialize();
+    app.initialize();
+    return $.fn.spin = function(opts, color) {
+      var presets;
+
+      presets = {
+        tiny: {
+          lines: 8,
+          length: 2,
+          width: 2,
+          radius: 3
+        },
+        small: {
+          lines: 8,
+          length: 1,
+          width: 2,
+          radius: 5
+        },
+        large: {
+          lines: 10,
+          length: 8,
+          width: 4,
+          radius: 8
+        }
+      };
+      if (Spinner) {
+        return this.each(function() {
+          var $this, spinner;
+
+          $this = $(this);
+          spinner = $this.data("spinner");
+          if (spinner != null) {
+            spinner.stop();
+            return $this.data("spinner", null);
+          } else if (opts !== false) {
+            if (typeof opts === "string") {
+              if (opts in presets) {
+                opts = presets[opts];
+              } else {
+                opts = {};
+              }
+              if (color) {
+                opts.color = color;
+              }
+            }
+            spinner = new Spinner($.extend({
+              color: $this.css("color")
+            }, opts));
+            spinner.spin(this);
+            return $this.data("spinner", spinner);
+          }
+        });
+      } else {
+        console.log("Spinner class not available.");
+        return null;
+      }
+    };
   });
   
 });
@@ -531,9 +586,9 @@ window.require.register("locales/en", function(exports, require, module) {
     "Download": "Download",
     "Edit": "Edit",
     "It will appears on your homepage.": "It will appears on your homepage.",
-    "Make it Hidden": "Make it Hidden",
-    "Make it Private": "Make it Private",
-    "Make it Public": "Make it Public",
+    "Make it Hidden": "hidden",
+    "Make it Private": "private",
+    "Make it Public": "public",
     "New": "New",
     "private": "private",
     "public": "public",
@@ -570,9 +625,9 @@ window.require.register("locales/fr", function(exports, require, module) {
     "Download": "Télécharger",
     "Edit": "Modifier",
     "It will appears on your homepage.": "It apparaitra votre page d'accueil",
-    "Make it Hidden": "Rendre Masqué",
-    "Make it Private": "Rendre Privé",
-    "Make it Public": "Rendre Public",
+    "Make it Hidden": "masqué",
+    "Make it Private": "privé",
+    "Make it Public": "public",
     "New": "Nouveau",
     "private": "privé",
     "public": "public",
@@ -597,7 +652,7 @@ window.require.register("locales/fr", function(exports, require, module) {
     "Cancel": "Annuler",
     "Click Here or drag your photos below to upload": "Cliquez ici ou glisser-déposez vos photos ci-dessous pour les uploader",
     "hidden-description": "Il n'apparaitra pas sur votre page d'accueil,\nMais vous pouvez partager cet url :",
-    "It cannot be accessed from the public side": "Il ne peux pas être vu depuis le coté public"
+    "It cannot be accessed from the public side": "Il ne peut pas être vu depuis le coté public"
   };
   
 });
@@ -1076,25 +1131,25 @@ window.require.register("templates/album", function(exports, require, module) {
   buf.push('</div><h1 id="title">' + escape((interp = title) == null ? '' : interp) + '</h1><div id="description">');
   var __val__ = description
   buf.push(null == __val__ ? "" : __val__);
-  buf.push('</div></div><div id="photos" class="span8"></div><div id="clipboard-container"><textarea id="clipboard"></textarea></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer">     <a id="changeprivate" class="flatbtn changeClearance">');
+  buf.push('</div></div><div id="photos" class="span8"></div><div id="clipboard-container"><textarea id="clipboard"></textarea></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer">     <a id="changeprivate" class="flatbtn changeclearance">');
   var __val__ = t("Make it Private")
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</a><a id="changehidden" class="flatbtn changeClearance">');
+  buf.push('</a><a id="changehidden" class="flatbtn changeclearance">');
   var __val__ = t("Make it Hidden")
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</a><a id="changepublic" class="flatbtn changeClearance">');
+  buf.push('</a><a id="changepublic" class="flatbtn changeclearance">');
   var __val__ = t("Make it Public")
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn share"><span>');
+  buf.push('</a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="flatbtn share"><span>');
   var __val__ = t("Share album by mail")
   buf.push(escape(null == __val__ ? "" : __val__));
   buf.push('</span></a></div></div><div id="share-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>');
   var __val__ = t("Share album")
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</h3></div><div class="modal-body"> <input type="text" value="" id="mails" placeholder="example@cozycloud.cc, other-example@cozycloud.cc" class="input-block-level"/></div><div class="modal-footer"> <a href="#add-contact-modal" data-toggle="modal" data-dismiss="modal" class="btn addcontact"><span>');
+  buf.push('</h3></div><div class="modal-body"> <input type="text" value="" id="mails" placeholder="example@cozycloud.cc, other-example@cozycloud.cc" class="input-block-level"/></div><div class="modal-footer"> <a href="#add-contact-modal" data-toggle="modal" data-dismiss="modal" class="flatbtn addcontact"><span>');
   var __val__ = t("Add contact")
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</span></a><a type="button" data-dismiss="modal" class="btn sendmail"><span>');
+  buf.push('</span></a><a type="button" data-dismiss="modal" class="flatbtn sendmail"><span>');
   var __val__ = t("Send mail")    
   buf.push(escape(null == __val__ ? "" : __val__));
   buf.push('</span></a></div></div><div id="add-contact-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>');
@@ -1136,10 +1191,10 @@ window.require.register("templates/album", function(exports, require, module) {
   }).call(this);
 
   }
-  buf.push('</div></div><div class="modal-footer">     <a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn add"><span>');
+  buf.push('</div></div><div class="modal-footer">     <a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="flatbtn add"><span>');
   var __val__ = t("Add")
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</span></a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn cancel"><span>');
+  buf.push('</span></a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="flatbtn cancel"><span>');
   var __val__ = t("Cancel")
   buf.push(escape(null == __val__ ? "" : __val__));
   buf.push('</span></a></div></div></div>');
@@ -1257,11 +1312,12 @@ window.require.register("views/album", function(exports, require, module) {
 
     AlbumView.prototype.events = function() {
       return {
-        'click   a.delete': this.destroyModel,
-        'click   a.changeclearance': this.changeClearance,
-        'click   a.addcontact': this.addcontact,
-        'click   a.sendmail': this.sendMail,
-        'click   a.add': this.prepareContact
+        'click a.delete': this.destroyModel,
+        'click a.changeclearance': this.changeClearance,
+        'click a.addcontact': this.addcontact,
+        'click a.sendmail': this.sendMail,
+        'click a.add': this.prepareContact,
+        'keyup #mails': this.onKeyUpMails
       };
     };
 
@@ -1277,7 +1333,6 @@ window.require.register("views/album", function(exports, require, module) {
         clearanceHelpers: clearanceHelpers,
         photosNumber: this.model.photos.length
       }, this.model.attributes);
-      console.log(res);
       return res;
     };
 
@@ -1339,13 +1394,18 @@ window.require.register("views/album", function(exports, require, module) {
     };
 
     AlbumView.prototype.changeClearance = function(event) {
-      var newclearance,
+      var id, newclearance,
         _this = this;
 
       newclearance = event.target.id.replace('change', '');
+      id = event.target.id;
+      this.$("#" + id).spin('tiny');
+      this.$("#" + id).css('color', 'transparent');
       return this.saveModel({
         clearance: newclearance
       }).then(function() {
+        _this.$("#" + id).spin();
+        _this.$("#" + id).css('color', 'white');
         return _this.refreshPopOver(newclearance);
       });
     };
@@ -1358,8 +1418,8 @@ window.require.register("views/album", function(exports, require, module) {
       this.$('.clearance').find('span').text(clearance);
       modal.find('h3').text(help != null ? help.title : void 0);
       modal.find('.modal-body').html(help != null ? help.content : void 0);
-      modal.find('.changeclearance').show();
-      modal.find('#change' + clearance).hide();
+      modal.find('.changeclearance').removeClass('active');
+      modal.find('#change' + clearance).addClass('active');
       if (clearance === "hidden") {
         modal.find('.share').show();
         return clipboard.set(this.getPublicUrl());
@@ -1423,12 +1483,34 @@ window.require.register("views/album", function(exports, require, module) {
       return this.$('#mails').val(mails);
     };
 
-    AlbumView.prototype.sendMail = function() {
-      return this.model.sendMail(this.getPublicUrl(), this.$('#mails').val(), {
-        error: function(err) {
-          return alert(JSON.stringify(err.responseText));
-        }
-      });
+    AlbumView.prototype.onKeyUpMails = function(event) {
+      if (event.which === 13 || event.keyCode === 13) {
+        return this.sendMail();
+      }
+    };
+
+    AlbumView.prototype.sendMail = function(event) {
+      var mails,
+        _this = this;
+
+      mails = this.$('#mails').val();
+      if (mails.length === 0) {
+        return alert("Please enter an email.");
+      } else {
+        this.$("a.sendmail").spin('tiny');
+        this.$("a.sendmail").css('color', 'transparent');
+        return this.model.sendMail(this.getPublicUrl(), mails, {
+          success: function() {
+            _this.$("a.sendmail").spin();
+            return _this.$("a.sendmail").css('color', 'white');
+          },
+          error: function(err) {
+            _this.$("a.sendmail").spin();
+            _this.$("a.sendmail").css('color', 'white');
+            return alert(JSON.parse(err.responseText).error);
+          }
+        });
+      }
     };
 
     AlbumView.prototype.saveModel = function(hash) {
@@ -1458,7 +1540,6 @@ window.require.register("views/album", function(exports, require, module) {
     };
 
     AlbumView.prototype.clearanceHelpers = function(clearance) {
-      console.log(clearance);
       if (clearance === 'public') {
         return {
           title: t('This album is public'),
@@ -1672,7 +1753,8 @@ window.require.register("views/gallery", function(exports, require, module) {
     Gallery.prototype.getIdPhoto = function() {
       var id, url;
 
-      url = $('.imageWrap img.zoomable').attr('src');
+      url = $('.imageWrap img').attr('src');
+      console.log(url);
       id = url.split('/')[4];
       id = id.split('.')[0];
       return id;
@@ -1683,8 +1765,8 @@ window.require.register("views/gallery", function(exports, require, module) {
 
       id = this.getIdPhoto();
       orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
-      newOrientation = helpers.rotateLeft(orientation, $('.imageWrap img.zoomable'));
-      helpers.rotate(newOrientation, $('.imageWrap img.zoomable'));
+      newOrientation = helpers.rotateLeft(orientation, $('.imageWrap img'));
+      helpers.rotate(newOrientation, $('.imageWrap img'));
       if ((_ref2 = this.collection.get(id)) != null) {
         _ref2.save({
           orientation: newOrientation
@@ -1711,8 +1793,8 @@ window.require.register("views/gallery", function(exports, require, module) {
 
       id = this.getIdPhoto();
       orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
-      newOrientation = helpers.rotateRight(orientation, $('.imageWrap img.zoomable'));
-      helpers.rotate(newOrientation, $('.imageWrap img.zoomable'));
+      newOrientation = helpers.rotateRight(orientation, $('.imageWrap img'));
+      helpers.rotate(newOrientation, $('.imageWrap img'));
       if ((_ref2 = this.collection.get(id)) != null) {
         _ref2.save({
           orientation: newOrientation
@@ -1746,12 +1828,12 @@ window.require.register("views/gallery", function(exports, require, module) {
     Gallery.prototype.onImageDisplayed = function() {
       var id, orientation, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
 
-      url = $('.imageWrap img.zoomable').attr('src');
+      url = $('.imageWrap img').attr('src');
       url = url.replace('/photos/photos', '/photos/photos/raws');
       this.downloadLink.attr('href', url);
       id = this.getIdPhoto();
       orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
-      helpers.rotate(orientation, $('.imageWrap img.zoomable'));
+      helpers.rotate(orientation, $('.imageWrap img'));
       thumbs = $('#pbOverlay .pbThumbs img');
       _results = [];
       for (_i = 0, _len = thumbs.length; _i < _len; _i++) {

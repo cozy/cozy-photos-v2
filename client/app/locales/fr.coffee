@@ -5,9 +5,9 @@ module.exports =
     "Download" : "Télécharger"
     "Edit" : "Modifier"
     "It will appears on your homepage." : "It apparaitra votre page d'accueil"
-    "Make it Hidden" : "Rendre Masqué"
-    "Make it Private" : "Rendre Privé"
-    "Make it Public" : "Rendre Public"
+    "Make it Hidden" : "masqué"
+    "Make it Private" : "privé"
+    "Make it Public" : "public"
     "New" : "Nouveau"
     "private" : "privé"
     "public" : "public"
@@ -41,5 +41,5 @@ module.exports =
     """
 
     "It cannot be accessed from the public side" : """
-      Il ne peux pas être vu depuis le coté public
+      Il ne peut pas être vu depuis le coté public
     """

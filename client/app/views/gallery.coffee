@@ -80,7 +80,8 @@ module.exports = class Gallery extends ViewCollection
         return false
 
     getIdPhoto: () =>
-        url = $('.imageWrap img.zoomable').attr 'src'
+        url = $('.imageWrap img').attr 'src'
+        console.log url
         id = url.split('/')[4]
         id = id.split('.')[0]
         return id
@@ -89,8 +90,8 @@ module.exports = class Gallery extends ViewCollection
         id = @getIdPhoto()
         orientation = @collection.get(id)?.attributes.orientation
         newOrientation =
-            helpers.rotateLeft orientation, $('.imageWrap img.zoomable')
-        helpers.rotate newOrientation, $('.imageWrap img.zoomable')
+            helpers.rotateLeft orientation, $('.imageWrap img')
+        helpers.rotate newOrientation, $('.imageWrap img')
         @collection.get(id)?.save orientation: newOrientation
         # Update thumb
         thumbs = $('#pbOverlay .pbThumbs img')
@@ -105,8 +106,8 @@ module.exports = class Gallery extends ViewCollection
         id = @getIdPhoto()
         orientation = @collection.get(id)?.attributes.orientation
         newOrientation =
-            helpers.rotateRight orientation, $('.imageWrap img.zoomable')
-        helpers.rotate newOrientation, $('.imageWrap img.zoomable')
+            helpers.rotateRight orientation, $('.imageWrap img')
+        helpers.rotate newOrientation, $('.imageWrap img')
         @collection.get(id)?.save orientation: newOrientation
         # Update thumb
         thumbs = $('#pbOverlay .pbThumbs img')
@@ -127,13 +128,13 @@ module.exports = class Gallery extends ViewCollection
 
     onImageDisplayed: () =>
         # Initialize download link
-        url = $('.imageWrap img.zoomable').attr 'src'
+        url = $('.imageWrap img').attr 'src'
         url = url.replace '/photos/photos', '/photos/photos/raws'
         @downloadLink.attr 'href', url
         # Rotate image displayed
         id = @getIdPhoto()
         orientation = @collection.get(id)?.attributes.orientation
-        helpers.rotate orientation, $('.imageWrap img.zoomable')
+        helpers.rotate orientation, $('.imageWrap img')
         # Rotate thumbs
         thumbs = $('#pbOverlay .pbThumbs img')
         for thumb in thumbs
