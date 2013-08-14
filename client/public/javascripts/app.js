@@ -621,17 +621,16 @@ window.require.register("models/album", function(exports, require, module) {
     }
 
     Album.prototype.parse = function(attrs) {
-      var _ref, _ref1, _ref2, _ref3;
+      var _ref, _ref1, _ref2;
       if (((_ref = attrs.photos) != null ? _ref.length : void 0) > 0) {
         this.photos.reset(attrs.photos, {
           parse: true
         });
-        attrs.orientation = attrs.photos[attrs.photos.length - 1].orientation;
       }
       delete attrs.photos;
       if (attrs.thumb) {
         attrs.thumbsrc = "photos/thumbs/" + attrs.thumb + ".jpg";
-        if (((_ref1 = this.photos._byId) != null ? (_ref2 = _ref1[attrs.thumb]) != null ? (_ref3 = _ref2.attributes) != null ? _ref3.orientation : void 0 : void 0 : void 0) != null) {
+        if (((_ref1 = this.photos.get(attrs.thumb)) != null ? (_ref2 = _ref1.attributes) != null ? _ref2.orientation : void 0 : void 0) != null) {
           attrs.orientation = this.photos._byId[attrs.thumb].attributes.orientation;
         }
       }
@@ -1606,7 +1605,8 @@ window.require.register("views/gallery", function(exports, require, module) {
       if (this.options.editable) {
         return {
           'drop': 'onFilesDropped',
-          'dragover': 'onDragOver'
+          'dragover': 'onDragOver',
+          'change #uploader': 'onFilesChanged'
         };
       }
     };

@@ -13,7 +13,7 @@ module.exports = class Gallery extends ViewCollection
 
     # launch photobox after render
     afterRender: ->
-        super 
+        super
         @$el.photobox 'a.server',
             thumbs: true
             history: false
@@ -53,6 +53,7 @@ module.exports = class Gallery extends ViewCollection
         if @options.editable
             'drop'     : 'onFilesDropped'
             'dragover' : 'onDragOver'
+            'change #uploader': 'onFilesChanged' 
 
     # event listeners for D&D events
     onFilesDropped: (evt) ->
@@ -64,7 +65,6 @@ module.exports = class Gallery extends ViewCollection
 
     onDragOver: (evt) ->
         @$el.addClass 'dragover'
-        #@handleFiles evt.dataTransfer.files
         evt.preventDefault()
         evt.stopPropagation()
         return false
