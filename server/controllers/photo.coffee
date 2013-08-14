@@ -32,7 +32,7 @@ module.exports = (app) ->
             raw = req.files['raw']
             im.readMetadata raw.path, (err, metadata) ->
                 console.log err if err?
-                if metadata.exif.orientation?
+                if metadata?.exif?.orientation?
                     req.body.orientation = metadata.exif.orientation
                 else
                     req.body.orientation = 1
