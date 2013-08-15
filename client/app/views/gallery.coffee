@@ -80,9 +80,8 @@ module.exports = class Gallery extends ViewCollection
         return false
 
     getIdPhoto: () =>
-        url = $('.imageWrap img').attr 'src'
-        url = $('.pbThumbs .active img').attr 'src'
-        id = url.split('/')[5]
+        url = $('.wrapper img').attr 'src'
+        id = url.split('/')[4]
         id = id.split('.')[0]
         return id
 
@@ -90,8 +89,8 @@ module.exports = class Gallery extends ViewCollection
         id = @getIdPhoto()
         orientation = @collection.get(id)?.attributes.orientation
         newOrientation =
-            helpers.rotateLeft orientation, $('.imageWrap img')
-        helpers.rotate newOrientation, $('.imageWrap img')
+            helpers.rotateLeft orientation, $('.wrapper img')
+        helpers.rotate newOrientation, $('.wrapper img')
         @collection.get(id)?.save orientation: newOrientation
         # Update thumb
         thumbs = $('#pbOverlay .pbThumbs img')
@@ -106,8 +105,8 @@ module.exports = class Gallery extends ViewCollection
         id = @getIdPhoto()
         orientation = @collection.get(id)?.attributes.orientation
         newOrientation =
-            helpers.rotateRight orientation, $('.imageWrap img')
-        helpers.rotate newOrientation, $('.imageWrap img')
+            helpers.rotateRight orientation, $('.wrapper img')
+        helpers.rotate newOrientation, $('.wrapper img')
         @collection.get(id)?.save orientation: newOrientation
         # Update thumb
         thumbs = $('#pbOverlay .pbThumbs img')

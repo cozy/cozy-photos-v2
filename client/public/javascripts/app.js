@@ -1746,9 +1746,8 @@ window.require.register("views/gallery", function(exports, require, module) {
     Gallery.prototype.getIdPhoto = function() {
       var id, url;
 
-      url = $('.imageWrap img').attr('src');
-      url = $('.pbThumbs .active img').attr('src');
-      id = url.split('/')[5];
+      url = $('.wrapper img').attr('src');
+      id = url.split('/')[4];
       id = id.split('.')[0];
       return id;
     };
@@ -1758,8 +1757,8 @@ window.require.register("views/gallery", function(exports, require, module) {
 
       id = this.getIdPhoto();
       orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
-      newOrientation = helpers.rotateLeft(orientation, $('.imageWrap img'));
-      helpers.rotate(newOrientation, $('.imageWrap img'));
+      newOrientation = helpers.rotateLeft(orientation, $('.wrapper img'));
+      helpers.rotate(newOrientation, $('.wrapper img'));
       if ((_ref2 = this.collection.get(id)) != null) {
         _ref2.save({
           orientation: newOrientation
@@ -1786,8 +1785,8 @@ window.require.register("views/gallery", function(exports, require, module) {
 
       id = this.getIdPhoto();
       orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
-      newOrientation = helpers.rotateRight(orientation, $('.imageWrap img'));
-      helpers.rotate(newOrientation, $('.imageWrap img'));
+      newOrientation = helpers.rotateRight(orientation, $('.wrapper img'));
+      helpers.rotate(newOrientation, $('.wrapper img'));
       if ((_ref2 = this.collection.get(id)) != null) {
         _ref2.save({
           orientation: newOrientation
