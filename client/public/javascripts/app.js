@@ -1757,8 +1757,8 @@ window.require.register("views/gallery", function(exports, require, module) {
 
       id = this.getIdPhoto();
       orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
-      newOrientation = helpers.rotateLeft(orientation, $('.wrapper img'));
-      helpers.rotate(newOrientation, $('.wrapper img'));
+      newOrientation = helpers.rotateLeft(orientation, $('.wrapper img.zoomable'));
+      helpers.rotate(newOrientation, $('.wrapper img.zoomable'));
       if ((_ref2 = this.collection.get(id)) != null) {
         _ref2.save({
           orientation: newOrientation
@@ -1785,8 +1785,9 @@ window.require.register("views/gallery", function(exports, require, module) {
 
       id = this.getIdPhoto();
       orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
-      newOrientation = helpers.rotateRight(orientation, $('.wrapper img'));
-      helpers.rotate(newOrientation, $('.wrapper img'));
+      newOrientation = helpers.rotateRight(orientation, $('.wrapper img.zoomable'));
+      helpers.rotate(newOrientation, $('.wrapper img.zoomable'));
+      console.log(newOrientation);
       if ((_ref2 = this.collection.get(id)) != null) {
         _ref2.save({
           orientation: newOrientation
@@ -1824,7 +1825,6 @@ window.require.register("views/gallery", function(exports, require, module) {
       id = this.getIdPhoto();
       this.downloadLink.attr('href', url.replace('thumbs', 'raws'));
       orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
-      console.log(orientation);
       helpers.rotate(orientation, $('#pbOverlay .wrapper img.zoomable'));
       thumbs = $('#pbOverlay .pbThumbs img');
       _results = [];
