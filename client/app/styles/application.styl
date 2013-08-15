@@ -86,34 +86,35 @@ button.delete
 // #### album list page ###
 
 .albumitem
-    width 30%
-    min-width 450px
-    height 120px
+    height 220px
     float left
     padding 10px
-    position relative
 
     a
         display block
-        float left
         margin-right 10px
         box-sizing border-box
         border-radius 2px
-        border 2px solid blue
+        border 1px solid blue
         box-shadow 3px 3px 3px darkgrey
-        margin-right 20px
-        width 100px
-        height 100px
         transition .2s ease-out
         -webkit-transition .2s ease-out
         overflow hidden
+        width 180px
+        height 180px
 
         img
-            width 100px
-            height 100px
+            width 180px
+            height 180px
+
+    h4
+        width: 180px
+        margin: 0
+        padding: 10px 0
+        font-weight: normal
 
     a:hover
-        border 2px solid orange
+        border 1px solid orange
 
     a:active
         transition 0s ease-out
@@ -121,7 +122,7 @@ button.delete
         box-shadow: 0px 0px 0px darkgrey
 
     .text
-        margin-left 120px
+        margin-left 180px
 
 // #### album page ###
 
@@ -302,29 +303,6 @@ button.delete
     a.flatbtn.active
         background-color: blue - 20%
 
-// ### Logic ###
-.mode-public .flatbtn
-.mode-public .flatbtn.startediting
-.mode-public .create
-.mode-owner .empty .help
-.stopediting
-.flatbtn
-.delete
-.editing .flatbtn.startediting
-.editing .flatbtn.download
-.mode-owner.editing .empty .help
-    display none
-
-.editing .flatbtn
-.editing .delete
-.mode-public .flatbtn.back
-.flatbtn.back
-.flatbtn.startediting
-.flatbtn.download
-.mode-public .empty .help
-    display block
-
-
 #uploadblock
     width: 130px
     height: 130px
@@ -350,6 +328,28 @@ button.delete
      .btn-group
          margin-left: 30px
 
+// ### Logic ###
+.mode-public .flatbtn
+.mode-public .flatbtn.startediting
+.mode-public .create
+.mode-owner .empty .help
+.stopediting
+.flatbtn
+.delete
+.editing .flatbtn.startediting
+.editing .flatbtn.download
+.mode-owner.editing .empty .help
+    display none
+
+.editing .flatbtn
+.editing .delete
+.mode-public .flatbtn.back
+.flatbtn.back
+.flatbtn.startediting
+.flatbtn.download
+.mode-public .empty .help
+    display block
+
 // # Remove effect from photobox //
 
 #pbOverlay.show .imageWrap img,
@@ -374,6 +374,7 @@ button.delete
     .flatbtn
         width: auto
 
+// Clipboard Trick
 
 #clipboard-container 
   position: fixed

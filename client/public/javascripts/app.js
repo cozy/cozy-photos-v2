@@ -1208,12 +1208,9 @@ window.require.register("templates/albumlist", function(exports, require, module
   with (locals || {}) {
   var interp;
   buf.push('<div class="albumitem create"><a href="#albums/new"><img src="img/create.gif"/></a><div><h4>');
-  var __val__ = t('New')
-  buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</h4><p>');
   var __val__ = t('Create a new album')
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</p></div></div><p class="help">');
+  buf.push('</h4></div></div><p class="help">');
   var __val__ = t('There is no public albums.')
   buf.push(escape(null == __val__ ? "" : __val__));
   buf.push('</p>');
@@ -1231,10 +1228,7 @@ window.require.register("templates/albumlist_item", function(exports, require, m
   buf.push(attrs({ 'href':("#albums/" + (id) + "") }, {"href":true}));
   buf.push('><img');
   buf.push(attrs({ 'src':("" + (thumbsrc) + "") }, {"src":true}));
-  buf.push('/></a><div class="text"><h4>' + escape((interp = title) == null ? '' : interp) + '</h4><p>');
-  var __val__ = description
-  buf.push(null == __val__ ? "" : __val__);
-  buf.push('</p></div>');
+  buf.push('/></a><h4>' + escape((interp = title) == null ? '' : interp) + '</h4>');
   }
   return buf.join("");
   };
@@ -1591,7 +1585,7 @@ window.require.register("views/albumslist", function(exports, require, module) {
     };
 
     AlbumsList.prototype.appendView = function(view) {
-      return this.$el.prepend(view.el);
+      return this.$el.append(view.el);
     };
 
     AlbumsList.prototype.checkIfEmpty = function() {
@@ -1753,7 +1747,6 @@ window.require.register("views/gallery", function(exports, require, module) {
       var id, url;
 
       url = $('.imageWrap img').attr('src');
-      console.log(url);
       id = url.split('/')[4];
       id = id.split('.')[0];
       return id;
@@ -1825,25 +1818,22 @@ window.require.register("views/gallery", function(exports, require, module) {
     };
 
     Gallery.prototype.onImageDisplayed = function() {
-      var id, orientation, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
+      var url,
+        _this = this;
 
-      url = $('.imageWrap img').attr('src');
-      url = url.replace('/photos/photos', '/photos/photos/raws');
-      this.downloadLink.attr('href', url);
-      id = this.getIdPhoto();
-      orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
-      helpers.rotate(orientation, $('.imageWrap img'));
-      thumbs = $('#pbOverlay .pbThumbs img');
-      _results = [];
-      for (_i = 0, _len = thumbs.length; _i < _len; _i++) {
-        thumb = thumbs[_i];
-        url = thumb.src;
-        id = url.split('/')[5];
-        id = id.split('.')[0];
-        orientation = (_ref2 = this.collection.get(id)) != null ? _ref2.attributes.orientation : void 0;
-        _results.push(thumb.style = helpers.getRotate(orientation));
-      }
-      return _results;
+      console.log("hello");
+      url = $('.pbThumbs .active img').attr('src');
+      console.log(url);
+      return setTimeout(function() {
+        var id, orientation, _ref1;
+
+        url = $('.imageWrap img').attr('src');
+        id = _this.getIdPhoto();
+        url = "photos/raws/" + id;
+        _this.downloadLink.attr('href', url);
+        orientation = (_ref1 = _this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
+        return helpers.rotate(orientation, $('.imageWrap img'));
+      }, 2000);
     };
 
     Gallery.prototype.handleFiles = function(files) {

@@ -75,34 +75,35 @@ button.delete {
   width: auto;
 }
 .albumitem {
-  width: 30%;
-  min-width: 450px;
-  height: 120px;
+  height: 220px;
   float: left;
   padding: 10px;
-  position: relative;
 }
 .albumitem a {
   display: block;
-  float: left;
   margin-right: 10px;
   box-sizing: border-box;
   border-radius: 2px;
-  border: 2px solid #34a6ff;
+  border: 1px solid #34a6ff;
   box-shadow: 3px 3px 3px #444;
-  margin-right: 20px;
-  width: 100px;
-  height: 100px;
   transition: 0.2s ease-out;
   -webkit-transition: 0.2s ease-out;
   overflow: hidden;
+  width: 180px;
+  height: 180px;
 }
 .albumitem a img {
-  width: 100px;
-  height: 100px;
+  width: 180px;
+  height: 180px;
+}
+.albumitem h4 {
+  width: 180px;
+  margin: 0;
+  padding: 10px 0;
+  font-weight: normal;
 }
 .albumitem a:hover {
-  border: 2px solid #fe8800;
+  border: 1px solid #fe8800;
 }
 .albumitem a:active {
   transition: 0s ease-out;
@@ -110,7 +111,7 @@ button.delete {
   box-shadow: 0px 0px 0px #444;
 }
 .albumitem .text {
-  margin-left: 120px;
+  margin-left: 180px;
 }
 #album {
   padding: 0;
@@ -292,27 +293,6 @@ button.delete {
 .modal-footer a.flatbtn.active {
   background-color: #008af6;
 }
-.mode-public .flatbtn,
-.mode-public .flatbtn.startediting,
-.mode-public .create,
-.mode-owner .empty .help,
-.stopediting,
-.flatbtn,
-.delete,
-.editing .flatbtn.startediting,
-.editing .flatbtn.download,
-.mode-owner.editing .empty .help {
-  display: none;
-}
-.editing .flatbtn,
-.editing .delete,
-.mode-public .flatbtn.back,
-.flatbtn.back,
-.flatbtn.startediting,
-.flatbtn.download,
-.mode-public .empty .help {
-  display: block;
-}
 #uploadblock {
   width: 130px;
   height: 130px;
@@ -336,6 +316,27 @@ button.delete {
 }
 .pbCaptionText .btn-group {
   margin-left: 30px;
+}
+.mode-public .flatbtn,
+.mode-public .flatbtn.startediting,
+.mode-public .create,
+.mode-owner .empty .help,
+.stopediting,
+.flatbtn,
+.delete,
+.editing .flatbtn.startediting,
+.editing .flatbtn.download,
+.mode-owner.editing .empty .help {
+  display: none;
+}
+.editing .flatbtn,
+.editing .delete,
+.mode-public .flatbtn.back,
+.flatbtn.back,
+.flatbtn.startediting,
+.flatbtn.download,
+.mode-public .empty .help {
+  display: block;
 }
 #pbOverlay.show .imageWrap img,
 #pbOverlay.show .imageWrap img,

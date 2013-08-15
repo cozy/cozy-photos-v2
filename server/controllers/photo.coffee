@@ -11,7 +11,6 @@ module.exports = (app) ->
             return res.error 404, 'Photo not found' if not photo
 
             req.photo = photo
-            console.log req.photo.title
             next()
 
     create: (req, res) =>
@@ -68,7 +67,7 @@ module.exports = (app) ->
     screen: (req, res) ->
         res.setHeader 'Content-Type', 'image/jpg'
         res.setHeader 'Cache-Control', 'public, max-age=31557600'
-        console.log req.photo.title
+        res.setHeader 'Content-disposition', 'attachment; filename=' + req.photo.title
         which = if req.photo._attachments.screen then 'screen' else 'raw'
         stream = req.photo.getFile which, (err) ->
             if err then res.error 500, "File fetching failed.", err
