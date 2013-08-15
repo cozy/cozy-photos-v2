@@ -1747,9 +1747,7 @@ window.require.register("views/gallery", function(exports, require, module) {
       var id, parts, url;
 
       url = $('#pbOverlay .wrapper img.zoomable').attr('src');
-      console.log('url: ' + url);
       parts = url.split('/');
-      console.log(parts);
       id = parts[parts.length - 1];
       id = id.split('.')[0];
       return id;
@@ -1785,16 +1783,13 @@ window.require.register("views/gallery", function(exports, require, module) {
     };
 
     Gallery.prototype.onTurnRight = function() {
-      var id, idThumb, newOrientation, orientation, thumb, thumbs, url, _i, _len, _ref1, _ref2, _ref3, _results;
+      var id, idThumb, newOrientation, orientation, parts, thumb, thumbs, url, _i, _len, _ref1, _ref2, _ref3, _results;
 
       id = this.getIdPhoto();
-      console.log('id: ' + id);
       orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
-      console.log('orientation: ' + orientation);
       orientation = (_ref2 = this.collection.get(id)) != null ? _ref2.attributes.orientation : void 0;
       newOrientation = helpers.rotateRight(orientation, $('.wrapper img.zoomable'));
       helpers.rotate(newOrientation, $('.wrapper img.zoomable'));
-      console.log(newOrientation);
       if ((_ref3 = this.collection.get(id)) != null) {
         _ref3.save({
           orientation: newOrientation
@@ -1805,7 +1800,8 @@ window.require.register("views/gallery", function(exports, require, module) {
       for (_i = 0, _len = thumbs.length; _i < _len; _i++) {
         thumb = thumbs[_i];
         url = thumb.src;
-        idThumb = url.split('/')[5];
+        parts = url.split('/');
+        idThumb = parts[parts.length - 1];
         idThumb = idThumb.split('.')[0];
         if (idThumb === id) {
           _results.push(thumb.style = helpers.getRotate(newOrientation));
@@ -1826,7 +1822,7 @@ window.require.register("views/gallery", function(exports, require, module) {
     };
 
     Gallery.prototype.onImageDisplayed = function(args) {
-      var id, orientation, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
+      var id, idThumb, orientation, parts, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
 
       url = $('.pbThumbs .active img').attr('src');
       id = this.getIdPhoto();
@@ -1838,7 +1834,8 @@ window.require.register("views/gallery", function(exports, require, module) {
       for (_i = 0, _len = thumbs.length; _i < _len; _i++) {
         thumb = thumbs[_i];
         url = thumb.src;
-        id = url.split('/')[5];
+        parts = url.split('/');
+        idThumb = parts[parts.length - 1];
         id = id.split('.')[0];
         orientation = (_ref2 = this.collection.get(id)) != null ? _ref2.attributes.orientation : void 0;
         _results.push(thumb.style = helpers.getRotate(orientation));

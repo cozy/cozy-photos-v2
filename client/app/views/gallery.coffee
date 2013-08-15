@@ -81,9 +81,7 @@ module.exports = class Gallery extends ViewCollection
 
     getIdPhoto: () =>
         url = $('#pbOverlay .wrapper img.zoomable').attr 'src'
-        console.log 'url: ' + url
         parts = url.split('/')
-        console.log parts
         id = parts[parts.length - 1]
         id = id.split('.')[0]
         return id
@@ -107,20 +105,18 @@ module.exports = class Gallery extends ViewCollection
 
     onTurnRight: () =>
         id = @getIdPhoto()
-        console.log 'id: ' + id
         orientation = @collection.get(id)?.attributes.orientation
-        console.log 'orientation: ' + orientation
         orientation = @collection.get(id)?.attributes.orientation
         newOrientation =
             helpers.rotateRight orientation, $('.wrapper img.zoomable')
         helpers.rotate newOrientation, $('.wrapper img.zoomable')
-        console.log newOrientation
         @collection.get(id)?.save orientation: newOrientation
         # Update thumb
         thumbs = $('#pbOverlay .pbThumbs img')
         for thumb in thumbs
             url = thumb.src
-            idThumb = url.split('/')[5]
+            parts = url.split('/')
+            idThumb = parts[parts.length - 1]
             idThumb = idThumb.split('.')[0]
             if idThumb is id
                 thumb.style = helpers.getRotate newOrientation
@@ -147,7 +143,8 @@ module.exports = class Gallery extends ViewCollection
         thumbs = $('#pbOverlay .pbThumbs img')
         for thumb in thumbs
             url = thumb.src
-            id = url.split('/')[5]
+            parts = url.split('/')
+            idThumb = parts[parts.length - 1]
             id = id.split('.')[0]
             orientation = @collection.get(id)?.attributes.orientation
             thumb.style = helpers.getRotate orientation
