@@ -1746,7 +1746,8 @@ window.require.register("views/gallery", function(exports, require, module) {
     Gallery.prototype.getIdPhoto = function() {
       var id, url;
 
-      url = $('.wrapper img').attr('src');
+      url = $('#pbOverlay .wrapper img.zoomable').attr('src');
+      console.log('url: ' + url);
       id = url.split('/')[4];
       id = id.split('.')[0];
       return id;
@@ -1781,15 +1782,18 @@ window.require.register("views/gallery", function(exports, require, module) {
     };
 
     Gallery.prototype.onTurnRight = function() {
-      var id, idThumb, newOrientation, orientation, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
+      var id, idThumb, newOrientation, orientation, thumb, thumbs, url, _i, _len, _ref1, _ref2, _ref3, _results;
 
       id = this.getIdPhoto();
+      console.log('id: ' + id);
       orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
+      console.log('orientation: ' + orientation);
+      orientation = (_ref2 = this.collection.get(id)) != null ? _ref2.attributes.orientation : void 0;
       newOrientation = helpers.rotateRight(orientation, $('.wrapper img.zoomable'));
       helpers.rotate(newOrientation, $('.wrapper img.zoomable'));
       console.log(newOrientation);
-      if ((_ref2 = this.collection.get(id)) != null) {
-        _ref2.save({
+      if ((_ref3 = this.collection.get(id)) != null) {
+        _ref3.save({
           orientation: newOrientation
         });
       }

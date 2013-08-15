@@ -80,7 +80,8 @@ module.exports = class Gallery extends ViewCollection
         return false
 
     getIdPhoto: () =>
-        url = $('.wrapper img').attr 'src'
+        url = $('#pbOverlay .wrapper img.zoomable').attr 'src'
+        console.log 'url: ' + url
         id = url.split('/')[4]
         id = id.split('.')[0]
         return id
@@ -103,6 +104,9 @@ module.exports = class Gallery extends ViewCollection
 
     onTurnRight: () =>
         id = @getIdPhoto()
+        console.log 'id: ' + id
+        orientation = @collection.get(id)?.attributes.orientation
+        console.log 'orientation: ' + orientation
         orientation = @collection.get(id)?.attributes.orientation
         newOrientation =
             helpers.rotateRight orientation, $('.wrapper img.zoomable')
