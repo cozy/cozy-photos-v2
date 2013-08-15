@@ -82,7 +82,8 @@ module.exports = class Gallery extends ViewCollection
     getIdPhoto: () =>
         url = $('#pbOverlay .wrapper img.zoomable').attr 'src'
         console.log 'url: ' + url
-        id = url.split('/')[4]
+        parts = url.split('/')
+        id = parts[parts.length - 1]
         id = id.split('.')[0]
         return id
 
