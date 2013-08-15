@@ -81,7 +81,8 @@ module.exports = class Gallery extends ViewCollection
 
     getIdPhoto: () =>
         url = $('.imageWrap img').attr 'src'
-        id = url.split('/')[4]
+        url = $('.pbThumbs .active img').attr 'src'
+        id = url.split('/')[5]
         id = id.split('.')[0]
         return id
 
@@ -125,30 +126,25 @@ module.exports = class Gallery extends ViewCollection
         @uploader = old.clone true
         old.replaceWith @uploader
 
-    onImageDisplayed: =>
-        console.log "hello"
+    onImageDisplayed: (args) =>
+        # Initialize download link
         url = $('.pbThumbs .active img').attr 'src'
-        console.log url
-        setTimeout =>
-            # Initialize download link
-            url = $('.imageWrap img').attr 'src'
-            id = @getIdPhoto()
-            url = "photos/raws/#{id}"
-            @downloadLink.attr 'href', url
+        id = @getIdPhoto()
+        @downloadLink.attr 'href', url.replace 'thumbs', 'raws'
 
-            # Rotate image displayed
+        # Rotate image displayed
+        orientation = @collection.get(id)?.attributes.orientation
+        console.log orientation
+        helpers.rotate orientation, $('#pbOverlay .wrapper img.zoomable')
+
+        # Rotate thumbs
+        thumbs = $('#pbOverlay .pbThumbs img')
+        for thumb in thumbs
+            url = thumb.src
+            id = url.split('/')[5]
+            id = id.split('.')[0]
             orientation = @collection.get(id)?.attributes.orientation
-            helpers.rotate orientation, $('.imageWrap img')
-
-            # Rotate thumbs
-            #thumbs = $('#pbOverlay .pbThumbs img')
-            #for thumb in thumbs
-                #url = thumb.src
-                #id = url.split('/')[5]
-                #id = id.split('.')[0]
-                #orientation = @collection.get(id)?.attributes.orientation
-                #thumb.style = helpers.getRotate orientation
-        , 2000
+            thumb.style = helpers.getRotate orientation
 
 
     handleFiles: (files) ->

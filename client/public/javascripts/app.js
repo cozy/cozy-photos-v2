@@ -1747,7 +1747,8 @@ window.require.register("views/gallery", function(exports, require, module) {
       var id, url;
 
       url = $('.imageWrap img').attr('src');
-      id = url.split('/')[4];
+      url = $('.pbThumbs .active img').attr('src');
+      id = url.split('/')[5];
       id = id.split('.')[0];
       return id;
     };
@@ -1817,23 +1818,26 @@ window.require.register("views/gallery", function(exports, require, module) {
       return old.replaceWith(this.uploader);
     };
 
-    Gallery.prototype.onImageDisplayed = function() {
-      var url,
-        _this = this;
+    Gallery.prototype.onImageDisplayed = function(args) {
+      var id, orientation, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
 
-      console.log("hello");
       url = $('.pbThumbs .active img').attr('src');
-      console.log(url);
-      return setTimeout(function() {
-        var id, orientation, _ref1;
-
-        url = $('.imageWrap img').attr('src');
-        id = _this.getIdPhoto();
-        url = "photos/raws/" + id;
-        _this.downloadLink.attr('href', url);
-        orientation = (_ref1 = _this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
-        return helpers.rotate(orientation, $('.imageWrap img'));
-      }, 2000);
+      id = this.getIdPhoto();
+      this.downloadLink.attr('href', url.replace('thumbs', 'raws'));
+      orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
+      console.log(orientation);
+      helpers.rotate(orientation, $('#pbOverlay .wrapper img.zoomable'));
+      thumbs = $('#pbOverlay .pbThumbs img');
+      _results = [];
+      for (_i = 0, _len = thumbs.length; _i < _len; _i++) {
+        thumb = thumbs[_i];
+        url = thumb.src;
+        id = url.split('/')[5];
+        id = id.split('.')[0];
+        orientation = (_ref2 = this.collection.get(id)) != null ? _ref2.attributes.orientation : void 0;
+        _results.push(thumb.style = helpers.getRotate(orientation));
+      }
+      return _results;
     };
 
     Gallery.prototype.handleFiles = function(files) {
