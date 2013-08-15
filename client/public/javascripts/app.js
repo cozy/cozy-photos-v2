@@ -1744,17 +1744,19 @@ window.require.register("views/gallery", function(exports, require, module) {
     };
 
     Gallery.prototype.getIdPhoto = function() {
-      var id, url;
+      var id, parts, url;
 
       url = $('#pbOverlay .wrapper img.zoomable').attr('src');
       console.log('url: ' + url);
-      id = url.split('/')[4];
+      parts = url.split('/');
+      console.log(parts);
+      id = parts[parts.length - 1];
       id = id.split('.')[0];
       return id;
     };
 
     Gallery.prototype.onTurnLeft = function() {
-      var id, idThumb, newOrientation, orientation, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
+      var id, idThumb, newOrientation, orientation, parts, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
 
       id = this.getIdPhoto();
       orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
@@ -1770,7 +1772,8 @@ window.require.register("views/gallery", function(exports, require, module) {
       for (_i = 0, _len = thumbs.length; _i < _len; _i++) {
         thumb = thumbs[_i];
         url = thumb.src;
-        idThumb = url.split('/')[5];
+        parts = url.split('/');
+        idThumb = parts[parts.length - 1];
         idThumb = idThumb.split('.')[0];
         if (idThumb === id) {
           _results.push(thumb.style = helpers.getRotate(newOrientation));

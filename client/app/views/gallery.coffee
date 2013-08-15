@@ -83,6 +83,7 @@ module.exports = class Gallery extends ViewCollection
         url = $('#pbOverlay .wrapper img.zoomable').attr 'src'
         console.log 'url: ' + url
         parts = url.split('/')
+        console.log parts
         id = parts[parts.length - 1]
         id = id.split('.')[0]
         return id
@@ -98,7 +99,8 @@ module.exports = class Gallery extends ViewCollection
         thumbs = $('#pbOverlay .pbThumbs img')
         for thumb in thumbs
             url = thumb.src
-            idThumb = url.split('/')[5]
+            parts = url.split('/')
+            idThumb = parts[parts.length - 1]
             idThumb = idThumb.split('.')[0]
             if idThumb is id
                 thumb.style = helpers.getRotate newOrientation
