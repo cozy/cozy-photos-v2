@@ -44,10 +44,10 @@ div.row-fluid
     .modal-body clearanceHelpers.content
 
     .modal-footer      
-      a#changeprivate.btn.changeclearance= t("Make it Private")
-      a#changehidden.btn.changeclearance= t("Make it Hidden")
-      a#changepublic.btn.changeclearance= t("Make it Public")
-      a.btn.share(
+      a#changeprivate.flatbtn.changeclearance= t("Make it Private")
+      a#changehidden.flatbtn.changeclearance= t("Make it Hidden")
+      a#changepublic.flatbtn.changeclearance= t("Make it Public")
+      a.flatbtn.share(
         href="#share-modal",
         data-toggle="modal",
         data-dismiss="modal")
@@ -62,12 +62,12 @@ div.row-fluid
       input.input-block-level(type="text", value="", id="mails", placeholder="example@cozycloud.cc, other-example@cozycloud.cc")
 
     .modal-footer 
-      a.btn.addcontact(
+      a.flatbtn.addcontact(
         href="#add-contact-modal",
         data-toggle="modal",
         data-dismiss="modal")
         span= t("Add contact")
-      a.btn.sendmail(type="button", data-dismiss="modal")
+      a.flatbtn.sendmail(type="button", data-dismiss="modal")
         span= t("Send mail")    
 
 
@@ -88,13 +88,13 @@ div.row-fluid
             br
 
     .modal-footer      
-      a.btn.add(
+      a.flatbtn.add(
         href="#share-modal",
         data-toggle="modal",
         data-dismiss="modal")
         span= t("Add")
 
-      a.btn.cancel(
+      a.flatbtn.cancel(
         href="#share-modal",
         data-toggle="modal",
         data-dismiss="modal")

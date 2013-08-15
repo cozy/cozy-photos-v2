@@ -20,29 +20,38 @@ module.exports = class Gallery extends ViewCollection
         , @onImageDisplayed
 
         # Add button to return photo to left
-        @turnLeft = $('#pbOverlay .pbCaptionText .left')
+        if $('#pbOverlay .pbCaptionText .btn-group').length is 0
+            $('#pbOverlay .pbCaptionText')
+                .append('<div class="btn-group"></div>')
+        @turnLeft = $('#pbOverlay .pbCaptionText .btn-group .left')
+        @turnLeft.unbind 'click'
         @turnLeft.remove()
         @turnLeft = $('<a id="left" class="btn left" type="button">
                        <i class="icon-share-alt"
                         style="transform: scale(-1,1)"> </i> </a>')
-            .appendTo '#pbOverlay .pbCaptionText'
+            .appendTo '#pbOverlay .pbCaptionText .btn-group'
         @turnLeft.on 'click', @onTurnLeft
 
         # Add link to download photo
-        @downloadLink = $('#pbOverlay .pbCaptionText .download-link')
+
+        @downloadLink = $('#pbOverlay .pbCaptionText  .btn-group .download-link')
+        @downloadLink.unbind 'click'
+        @downloadLink.remove()
         unless @downloadLink.length
-            @downloadLink = 
-                $('<a class="download-link" download>  Download  </a>')
-                .appendTo '#pbOverlay .pbCaptionText'
+            @downloadLink =
+                $('<a class="btn download-link" download>
+                  <i class="icon-arrow-down"></i></a>')
+                .appendTo '#pbOverlay .pbCaptionText .btn-group'
 
         @uploader = @$('#uploader')
 
         # Add button to return photo to right
-        @turnRight = $('#pbOverlay .pbCaptionText .right')
+        @turnRight = $('#pbOverlay .pbCaptionText .btn-group .right')
+        @turnRight.unbind 'click'
         @turnRight.remove()
         @turnRight = $('<a id="right" class="btn right">
                        <i class="icon-share-alt" </i> </a>')
-            .appendTo '#pbOverlay .pbCaptionText'
+            .appendTo '#pbOverlay .pbCaptionText .btn-group'
         @turnRight.on 'click', @onTurnRight
 
 
@@ -54,7 +63,7 @@ module.exports = class Gallery extends ViewCollection
         if @options.editable
             'drop'     : 'onFilesDropped'
             'dragover' : 'onDragOver'
-            'change #uploader': 'onFilesChanged' 
+            'change #uploader': 'onFilesChanged'
 
     # event listeners for D&D events
     onFilesDropped: (evt) ->
@@ -71,42 +80,46 @@ module.exports = class Gallery extends ViewCollection
         return false
 
     getIdPhoto: () =>
-        url = $('.imageWrap img.zoomable').attr 'src'
-        id = url.split('/')[4]
+        url = $('#pbOverlay .wrapper img.zoomable').attr 'src'
+        parts = url.split('/')
+        id = parts[parts.length - 1]
         id = id.split('.')[0]
         return id
 
     onTurnLeft: () =>
         id = @getIdPhoto()
         orientation = @collection.get(id)?.attributes.orientation
-        newOrientation = 
-            helpers.rotateLeft orientation, $('.imageWrap img.zoomable')
-        helpers.rotate newOrientation, $('.imageWrap img.zoomable')
+        newOrientation =
+            helpers.rotateLeft orientation, $('.wrapper img.zoomable')
+        helpers.rotate newOrientation, $('.wrapper img.zoomable')
         @collection.get(id)?.save orientation: newOrientation
         # Update thumb
         thumbs = $('#pbOverlay .pbThumbs img')
         for thumb in thumbs
             url = thumb.src
-            idThumb = url.split('/')[5]
+            parts = url.split('/')
+            idThumb = parts[parts.length - 1]
             idThumb = idThumb.split('.')[0]
             if idThumb is id
-                thumb.style = helpers.getRotate newOrientation 
+                thumb.style = helpers.getRotate newOrientation
 
     onTurnRight: () =>
         id = @getIdPhoto()
         orientation = @collection.get(id)?.attributes.orientation
-        newOrientation = 
-            helpers.rotateRight orientation, $('.imageWrap img.zoomable')
-        helpers.rotate newOrientation, $('.imageWrap img.zoomable')
+        orientation = @collection.get(id)?.attributes.orientation
+        newOrientation =
+            helpers.rotateRight orientation, $('.wrapper img.zoomable')
+        helpers.rotate newOrientation, $('.wrapper img.zoomable')
         @collection.get(id)?.save orientation: newOrientation
         # Update thumb
         thumbs = $('#pbOverlay .pbThumbs img')
         for thumb in thumbs
             url = thumb.src
-            idThumb = url.split('/')[5]
+            parts = url.split('/')
+            idThumb = parts[parts.length - 1]
             idThumb = idThumb.split('.')[0]
             if idThumb is id
-                thumb.style = helpers.getRotate newOrientation 
+                thumb.style = helpers.getRotate newOrientation
 
 
     onFilesChanged: (evt) =>
@@ -116,24 +129,26 @@ module.exports = class Gallery extends ViewCollection
         @uploader = old.clone true
         old.replaceWith @uploader
 
-    onImageDisplayed: () =>
-        # Initialize download link       
-        url = $('.imageWrap img.zoomable').attr 'src'
-        url = url.replace '/photos/photos', '/photos/photos/raws'
-        @downloadLink.attr 'href', url
-        # Rotate image displayed
+    onImageDisplayed: (args) =>
+        # Initialize download link
+        url = $('.pbThumbs .active img').attr 'src'
         id = @getIdPhoto()
+        @downloadLink.attr 'href', url.replace 'thumbs', 'raws'
+
+        # Rotate image displayed
         orientation = @collection.get(id)?.attributes.orientation
-        helpers.rotate orientation, $('.imageWrap img.zoomable')
+        helpers.rotate orientation, $('#pbOverlay .wrapper img.zoomable')
+
         # Rotate thumbs
         thumbs = $('#pbOverlay .pbThumbs img')
         for thumb in thumbs
             url = thumb.src
-            id = url.split('/')[5]
+            parts = url.split('/')
+            id = parts[parts.length - 1]
             id = id.split('.')[0]
             orientation = @collection.get(id)?.attributes.orientation
-            thumb.style = helpers.getRotate orientation 
-            
+            thumb.style = helpers.getRotate orientation
+
 
     handleFiles: (files) ->
         # allow parent view to set some attributes on the photo

@@ -74,5 +74,5 @@ module.exports = class PhotoView extends BaseView
             return false
 
     destroyModel: ->
+        @$('.delete').spin()
         @model.destroy()
-

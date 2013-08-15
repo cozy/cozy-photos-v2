@@ -197,7 +197,62 @@ window.require.register("initialize", function(exports, require, module) {
 
   $(function() {
     jQuery.event.props.push('dataTransfer');
-    return app.initialize();
+    app.initialize();
+    return $.fn.spin = function(opts, color) {
+      var presets;
+
+      presets = {
+        tiny: {
+          lines: 8,
+          length: 2,
+          width: 2,
+          radius: 3
+        },
+        small: {
+          lines: 8,
+          length: 1,
+          width: 2,
+          radius: 5
+        },
+        large: {
+          lines: 10,
+          length: 8,
+          width: 4,
+          radius: 8
+        }
+      };
+      if (Spinner) {
+        return this.each(function() {
+          var $this, spinner;
+
+          $this = $(this);
+          spinner = $this.data("spinner");
+          if (spinner != null) {
+            spinner.stop();
+            return $this.data("spinner", null);
+          } else if (opts !== false) {
+            if (typeof opts === "string") {
+              if (opts in presets) {
+                opts = presets[opts];
+              } else {
+                opts = {};
+              }
+              if (color) {
+                opts.color = color;
+              }
+            }
+            spinner = new Spinner($.extend({
+              color: $this.css("color")
+            }, opts));
+            spinner.spin(this);
+            return $this.data("spinner", spinner);
+          }
+        });
+      } else {
+        console.log("Spinner class not available.");
+        return null;
+      }
+    };
   });
   
 });
@@ -305,13 +360,12 @@ window.require.register("lib/helpers", function(exports, require, module) {
       }
       el.click(function() {
         if (el.text() === placeholder) {
-          el.empty();
+          return el.text(' ');
         }
-        return module.exports.forceFocus(el);
       });
       el.focus(function() {
         if (el.text() === placeholder) {
-          return el.empty();
+          return el.text(' ');
         }
       });
       return el.blur(function() {
@@ -531,9 +585,9 @@ window.require.register("locales/en", function(exports, require, module) {
     "Download": "Download",
     "Edit": "Edit",
     "It will appears on your homepage.": "It will appears on your homepage.",
-    "Make it Hidden": "Make it Hidden",
-    "Make it Private": "Make it Private",
-    "Make it Public": "Make it Public",
+    "Make it Hidden": "hidden",
+    "Make it Private": "private",
+    "Make it Public": "public",
     "New": "New",
     "private": "private",
     "public": "public",
@@ -570,9 +624,9 @@ window.require.register("locales/fr", function(exports, require, module) {
     "Download": "Télécharger",
     "Edit": "Modifier",
     "It will appears on your homepage.": "It apparaitra votre page d'accueil",
-    "Make it Hidden": "Rendre Masqué",
-    "Make it Private": "Rendre Privé",
-    "Make it Public": "Rendre Public",
+    "Make it Hidden": "masqué",
+    "Make it Private": "privé",
+    "Make it Public": "public",
     "New": "Nouveau",
     "private": "privé",
     "public": "public",
@@ -595,9 +649,9 @@ window.require.register("locales/fr", function(exports, require, module) {
     "Select your friends": "Choisissez vos amis",
     "Add": "Ajouter",
     "Cancel": "Annuler",
-    "Click Here or drag your photos below to upload": "Cliquez ici ou glisser-déposez vos photos ci-dessous pour les uploader",
+    "Click Here or drag your photos below to upload": "Cliquez ici pour ajouter des photos ou déposer vos fichiers",
     "hidden-description": "Il n'apparaitra pas sur votre page d'accueil,\nMais vous pouvez partager cet url :",
-    "It cannot be accessed from the public side": "Il ne peux pas être vu depuis le coté public"
+    "It cannot be accessed from the public side": "Il ne peut pas être vu depuis le coté public"
   };
   
 });
@@ -789,7 +843,7 @@ window.require.register("models/photoprocessor", function(exports, require, modu
   };
 
   makeThumbDataURI = function(photo, next) {
-    photo.thumb_du = resize(photo, 100, 100, true);
+    photo.thumb_du = resize(photo, 180, 180, true);
     return next();
   };
 
@@ -1076,25 +1130,25 @@ window.require.register("templates/album", function(exports, require, module) {
   buf.push('</div><h1 id="title">' + escape((interp = title) == null ? '' : interp) + '</h1><div id="description">');
   var __val__ = description
   buf.push(null == __val__ ? "" : __val__);
-  buf.push('</div></div><div id="photos" class="span8"></div><div id="clipboard-container"><textarea id="clipboard"></textarea></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer">     <a id="changeprivate" class="btn changeclearance">');
+  buf.push('</div></div><div id="photos" class="span8"></div><div id="clipboard-container"><textarea id="clipboard"></textarea></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer">     <a id="changeprivate" class="flatbtn changeclearance">');
   var __val__ = t("Make it Private")
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</a><a id="changehidden" class="btn changeclearance">');
+  buf.push('</a><a id="changehidden" class="flatbtn changeclearance">');
   var __val__ = t("Make it Hidden")
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</a><a id="changepublic" class="btn changeclearance">');
+  buf.push('</a><a id="changepublic" class="flatbtn changeclearance">');
   var __val__ = t("Make it Public")
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn share"><span>');
+  buf.push('</a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="flatbtn share"><span>');
   var __val__ = t("Share album by mail")
   buf.push(escape(null == __val__ ? "" : __val__));
   buf.push('</span></a></div></div><div id="share-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>');
   var __val__ = t("Share album")
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</h3></div><div class="modal-body"> <input type="text" value="" id="mails" placeholder="example@cozycloud.cc, other-example@cozycloud.cc" class="input-block-level"/></div><div class="modal-footer"> <a href="#add-contact-modal" data-toggle="modal" data-dismiss="modal" class="btn addcontact"><span>');
+  buf.push('</h3></div><div class="modal-body"> <input type="text" value="" id="mails" placeholder="example@cozycloud.cc, other-example@cozycloud.cc" class="input-block-level"/></div><div class="modal-footer"> <a href="#add-contact-modal" data-toggle="modal" data-dismiss="modal" class="flatbtn addcontact"><span>');
   var __val__ = t("Add contact")
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</span></a><a type="button" data-dismiss="modal" class="btn sendmail"><span>');
+  buf.push('</span></a><a type="button" data-dismiss="modal" class="flatbtn sendmail"><span>');
   var __val__ = t("Send mail")    
   buf.push(escape(null == __val__ ? "" : __val__));
   buf.push('</span></a></div></div><div id="add-contact-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>');
@@ -1136,10 +1190,10 @@ window.require.register("templates/album", function(exports, require, module) {
   }).call(this);
 
   }
-  buf.push('</div></div><div class="modal-footer">     <a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn add"><span>');
+  buf.push('</div></div><div class="modal-footer">     <a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="flatbtn add"><span>');
   var __val__ = t("Add")
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</span></a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="btn cancel"><span>');
+  buf.push('</span></a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="flatbtn cancel"><span>');
   var __val__ = t("Cancel")
   buf.push(escape(null == __val__ ? "" : __val__));
   buf.push('</span></a></div></div></div>');
@@ -1154,12 +1208,9 @@ window.require.register("templates/albumlist", function(exports, require, module
   with (locals || {}) {
   var interp;
   buf.push('<div class="albumitem create"><a href="#albums/new"><img src="img/create.gif"/></a><div><h4>');
-  var __val__ = t('New')
-  buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</h4><p>');
   var __val__ = t('Create a new album')
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</p></div></div><p class="help">');
+  buf.push('</h4></div></div><p class="help">');
   var __val__ = t('There is no public albums.')
   buf.push(escape(null == __val__ ? "" : __val__));
   buf.push('</p>');
@@ -1177,10 +1228,7 @@ window.require.register("templates/albumlist_item", function(exports, require, m
   buf.push(attrs({ 'href':("#albums/" + (id) + "") }, {"href":true}));
   buf.push('><img');
   buf.push(attrs({ 'src':("" + (thumbsrc) + "") }, {"src":true}));
-  buf.push('/></a><div class="text"><h4>' + escape((interp = title) == null ? '' : interp) + '</h4><p>');
-  var __val__ = description
-  buf.push(null == __val__ ? "" : __val__);
-  buf.push('</p></div>');
+  buf.push('/></a><h4>' + escape((interp = title) == null ? '' : interp) + '</h4>');
   }
   return buf.join("");
   };
@@ -1194,7 +1242,7 @@ window.require.register("templates/gallery", function(exports, require, module) 
   buf.push('<p class="help">');
   var __val__ = t('There is no photos in this album')
   buf.push(escape(null == __val__ ? "" : __val__));
-  buf.push('</p><div id="uploadblock" class="flatbtn"><input id="uploader" type="file" multiple="multiple"/>');
+  buf.push('</p><div id="uploadblock" class="flatbtn photo"><input id="uploader" type="file" multiple="multiple"/>');
   var __val__ = t('Click Here or drag your photos below to upload')
   buf.push(escape(null == __val__ ? "" : __val__));
   buf.push('</div>');
@@ -1257,22 +1305,28 @@ window.require.register("views/album", function(exports, require, module) {
 
     AlbumView.prototype.events = function() {
       return {
-        'click   a.delete': this.destroyModel,
-        'click   a.changeclearance': this.changeClearance,
-        'click   a.addcontact': this.addcontact,
-        'click   a.sendmail': this.sendMail,
-        'click   a.add': this.prepareContact
+        'click a.delete': this.destroyModel,
+        'click a.changeclearance': this.changeClearance,
+        'click a.addcontact': this.addcontact,
+        'click a.sendmail': this.sendMail,
+        'click a.add': this.prepareContact,
+        'keyup #mails': this.onKeyUpMails
       };
     };
 
     AlbumView.prototype.getRenderData = function() {
-      var clearanceHelpers;
+      var clearance, clearanceHelpers, res;
 
-      clearanceHelpers = this.clearanceHelpers(this.model.get('clearance'));
-      return _.extend({
+      clearance = this.model.get('clearance');
+      if (clearance == null) {
+        clearance = 'private';
+      }
+      clearanceHelpers = this.clearanceHelpers(clearance);
+      res = _.extend({
         clearanceHelpers: clearanceHelpers,
         photosNumber: this.model.photos.length
       }, this.model.attributes);
+      return res;
     };
 
     AlbumView.prototype.afterRender = function() {
@@ -1307,7 +1361,7 @@ window.require.register("views/album", function(exports, require, module) {
         placeholder: t('Title ...'),
         onChanged: function(text) {
           return _this.saveModel({
-            title: text
+            title: text.trim()
           });
         }
       });
@@ -1315,7 +1369,7 @@ window.require.register("views/album", function(exports, require, module) {
         placeholder: t('Write some more ...'),
         onChanged: function(text) {
           return _this.saveModel({
-            description: text
+            description: text.trim()
           });
         }
       });
@@ -1333,13 +1387,18 @@ window.require.register("views/album", function(exports, require, module) {
     };
 
     AlbumView.prototype.changeClearance = function(event) {
-      var newclearance,
+      var id, newclearance,
         _this = this;
 
       newclearance = event.target.id.replace('change', '');
+      id = event.target.id;
+      this.$("#" + id).spin('tiny');
+      this.$("#" + id).css('color', 'transparent');
       return this.saveModel({
         clearance: newclearance
       }).then(function() {
+        _this.$("#" + id).spin();
+        _this.$("#" + id).css('color', 'white');
         return _this.refreshPopOver(newclearance);
       });
     };
@@ -1350,10 +1409,10 @@ window.require.register("views/album", function(exports, require, module) {
       help = this.clearanceHelpers(clearance);
       modal = this.$('#clearance-modal');
       this.$('.clearance').find('span').text(clearance);
-      modal.find('h3').text(help.title);
-      modal.find('.modal-body').html(help.content);
-      modal.find('.changeclearance').show();
-      modal.find('#change' + clearance).hide();
+      modal.find('h3').text(help != null ? help.title : void 0);
+      modal.find('.modal-body').html(help != null ? help.content : void 0);
+      modal.find('.changeclearance').removeClass('active');
+      modal.find('#change' + clearance).addClass('active');
       if (clearance === "hidden") {
         modal.find('.share').show();
         return clipboard.set(this.getPublicUrl());
@@ -1417,12 +1476,34 @@ window.require.register("views/album", function(exports, require, module) {
       return this.$('#mails').val(mails);
     };
 
-    AlbumView.prototype.sendMail = function() {
-      return this.model.sendMail(this.getPublicUrl(), this.$('#mails').val(), {
-        error: function(err) {
-          return alert(JSON.stringify(err.responseText));
-        }
-      });
+    AlbumView.prototype.onKeyUpMails = function(event) {
+      if (event.which === 13 || event.keyCode === 13) {
+        return this.sendMail();
+      }
+    };
+
+    AlbumView.prototype.sendMail = function(event) {
+      var mails,
+        _this = this;
+
+      mails = this.$('#mails').val();
+      if (mails.length === 0) {
+        return alert("Please enter an email.");
+      } else {
+        this.$("a.sendmail").spin('tiny');
+        this.$("a.sendmail").css('color', 'transparent');
+        return this.model.sendMail(this.getPublicUrl(), mails, {
+          success: function() {
+            _this.$("a.sendmail").spin();
+            return _this.$("a.sendmail").css('color', 'white');
+          },
+          error: function(err) {
+            _this.$("a.sendmail").spin();
+            _this.$("a.sendmail").css('color', 'white');
+            return alert(JSON.parse(err.responseText).error);
+          }
+        });
+      }
     };
 
     AlbumView.prototype.saveModel = function(hash) {
@@ -1504,7 +1585,7 @@ window.require.register("views/albumslist", function(exports, require, module) {
     };
 
     AlbumsList.prototype.appendView = function(view) {
-      return this.$el.prepend(view.el);
+      return this.$el.append(view.el);
     };
 
     AlbumsList.prototype.checkIfEmpty = function() {
@@ -1607,21 +1688,29 @@ window.require.register("views/gallery", function(exports, require, module) {
         thumbs: true,
         history: false
       }, this.onImageDisplayed);
-      this.turnLeft = $('#pbOverlay .pbCaptionText .left');
+      if ($('#pbOverlay .pbCaptionText .btn-group').length === 0) {
+        $('#pbOverlay .pbCaptionText').append('<div class="btn-group"></div>');
+      }
+      this.turnLeft = $('#pbOverlay .pbCaptionText .btn-group .left');
+      this.turnLeft.unbind('click');
       this.turnLeft.remove();
       this.turnLeft = $('<a id="left" class="btn left" type="button">\
                        <i class="icon-share-alt"\
-                        style="transform: scale(-1,1)"> </i> </a>').appendTo('#pbOverlay .pbCaptionText');
+                        style="transform: scale(-1,1)"> </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
       this.turnLeft.on('click', this.onTurnLeft);
-      this.downloadLink = $('#pbOverlay .pbCaptionText .download-link');
+      this.downloadLink = $('#pbOverlay .pbCaptionText  .btn-group .download-link');
+      this.downloadLink.unbind('click');
+      this.downloadLink.remove();
       if (!this.downloadLink.length) {
-        this.downloadLink = $('<a class="download-link" download>  Download  </a>').appendTo('#pbOverlay .pbCaptionText');
+        this.downloadLink = $('<a class="btn download-link" download>\
+                  <i class="icon-arrow-down"></i></a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
       }
       this.uploader = this.$('#uploader');
-      this.turnRight = $('#pbOverlay .pbCaptionText .right');
+      this.turnRight = $('#pbOverlay .pbCaptionText .btn-group .right');
+      this.turnRight.unbind('click');
       this.turnRight.remove();
       this.turnRight = $('<a id="right" class="btn right">\
-                       <i class="icon-share-alt" </i> </a>').appendTo('#pbOverlay .pbCaptionText');
+                       <i class="icon-share-alt" </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
       return this.turnRight.on('click', this.onTurnRight);
     };
 
@@ -1655,21 +1744,22 @@ window.require.register("views/gallery", function(exports, require, module) {
     };
 
     Gallery.prototype.getIdPhoto = function() {
-      var id, url;
+      var id, parts, url;
 
-      url = $('.imageWrap img.zoomable').attr('src');
-      id = url.split('/')[4];
+      url = $('#pbOverlay .wrapper img.zoomable').attr('src');
+      parts = url.split('/');
+      id = parts[parts.length - 1];
       id = id.split('.')[0];
       return id;
     };
 
     Gallery.prototype.onTurnLeft = function() {
-      var id, idThumb, newOrientation, orientation, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
+      var id, idThumb, newOrientation, orientation, parts, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
 
       id = this.getIdPhoto();
       orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
-      newOrientation = helpers.rotateLeft(orientation, $('.imageWrap img.zoomable'));
-      helpers.rotate(newOrientation, $('.imageWrap img.zoomable'));
+      newOrientation = helpers.rotateLeft(orientation, $('.wrapper img.zoomable'));
+      helpers.rotate(newOrientation, $('.wrapper img.zoomable'));
       if ((_ref2 = this.collection.get(id)) != null) {
         _ref2.save({
           orientation: newOrientation
@@ -1680,7 +1770,8 @@ window.require.register("views/gallery", function(exports, require, module) {
       for (_i = 0, _len = thumbs.length; _i < _len; _i++) {
         thumb = thumbs[_i];
         url = thumb.src;
-        idThumb = url.split('/')[5];
+        parts = url.split('/');
+        idThumb = parts[parts.length - 1];
         idThumb = idThumb.split('.')[0];
         if (idThumb === id) {
           _results.push(thumb.style = helpers.getRotate(newOrientation));
@@ -1692,14 +1783,15 @@ window.require.register("views/gallery", function(exports, require, module) {
     };
 
     Gallery.prototype.onTurnRight = function() {
-      var id, idThumb, newOrientation, orientation, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
+      var id, idThumb, newOrientation, orientation, parts, thumb, thumbs, url, _i, _len, _ref1, _ref2, _ref3, _results;
 
       id = this.getIdPhoto();
       orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
-      newOrientation = helpers.rotateRight(orientation, $('.imageWrap img.zoomable'));
-      helpers.rotate(newOrientation, $('.imageWrap img.zoomable'));
-      if ((_ref2 = this.collection.get(id)) != null) {
-        _ref2.save({
+      orientation = (_ref2 = this.collection.get(id)) != null ? _ref2.attributes.orientation : void 0;
+      newOrientation = helpers.rotateRight(orientation, $('.wrapper img.zoomable'));
+      helpers.rotate(newOrientation, $('.wrapper img.zoomable'));
+      if ((_ref3 = this.collection.get(id)) != null) {
+        _ref3.save({
           orientation: newOrientation
         });
       }
@@ -1708,7 +1800,8 @@ window.require.register("views/gallery", function(exports, require, module) {
       for (_i = 0, _len = thumbs.length; _i < _len; _i++) {
         thumb = thumbs[_i];
         url = thumb.src;
-        idThumb = url.split('/')[5];
+        parts = url.split('/');
+        idThumb = parts[parts.length - 1];
         idThumb = idThumb.split('.')[0];
         if (idThumb === id) {
           _results.push(thumb.style = helpers.getRotate(newOrientation));
@@ -1728,21 +1821,21 @@ window.require.register("views/gallery", function(exports, require, module) {
       return old.replaceWith(this.uploader);
     };
 
-    Gallery.prototype.onImageDisplayed = function() {
-      var id, orientation, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
+    Gallery.prototype.onImageDisplayed = function(args) {
+      var id, orientation, parts, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
 
-      url = $('.imageWrap img.zoomable').attr('src');
-      url = url.replace('/photos/photos', '/photos/photos/raws');
-      this.downloadLink.attr('href', url);
+      url = $('.pbThumbs .active img').attr('src');
       id = this.getIdPhoto();
+      this.downloadLink.attr('href', url.replace('thumbs', 'raws'));
       orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
-      helpers.rotate(orientation, $('.imageWrap img.zoomable'));
+      helpers.rotate(orientation, $('#pbOverlay .wrapper img.zoomable'));
       thumbs = $('#pbOverlay .pbThumbs img');
       _results = [];
       for (_i = 0, _len = thumbs.length; _i < _len; _i++) {
         thumb = thumbs[_i];
         url = thumb.src;
-        id = url.split('/')[5];
+        parts = url.split('/');
+        id = parts[parts.length - 1];
         id = id.split('.')[0];
         orientation = (_ref2 = this.collection.get(id)) != null ? _ref2.attributes.orientation : void 0;
         _results.push(thumb.style = helpers.getRotate(orientation));
@@ -1875,6 +1968,7 @@ window.require.register("views/photo", function(exports, require, module) {
     };
 
     PhotoView.prototype.destroyModel = function() {
+      this.$('.delete').spin();
       return this.model.destroy();
     };
 
