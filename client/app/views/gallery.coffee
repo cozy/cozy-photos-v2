@@ -144,7 +144,7 @@ module.exports = class Gallery extends ViewCollection
         for thumb in thumbs
             url = thumb.src
             parts = url.split('/')
-            idThumb = parts[parts.length - 1]
+            id = parts[parts.length - 1]
             id = id.split('.')[0]
             orientation = @collection.get(id)?.attributes.orientation
             thumb.style = helpers.getRotate orientation

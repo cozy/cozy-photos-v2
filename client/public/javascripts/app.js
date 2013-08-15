@@ -1822,7 +1822,7 @@ window.require.register("views/gallery", function(exports, require, module) {
     };
 
     Gallery.prototype.onImageDisplayed = function(args) {
-      var id, idThumb, orientation, parts, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
+      var id, orientation, parts, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
 
       url = $('.pbThumbs .active img').attr('src');
       id = this.getIdPhoto();
@@ -1835,7 +1835,7 @@ window.require.register("views/gallery", function(exports, require, module) {
         thumb = thumbs[_i];
         url = thumb.src;
         parts = url.split('/');
-        idThumb = parts[parts.length - 1];
+        id = parts[parts.length - 1];
         id = id.split('.')[0];
         orientation = (_ref2 = this.collection.get(id)) != null ? _ref2.attributes.orientation : void 0;
         _results.push(thumb.style = helpers.getRotate(orientation));
