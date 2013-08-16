@@ -36,8 +36,8 @@ module.exports = (app) ->
                     req.body.orientation = metadata.exif.orientation
                 else
                     req.body.orientation = 1
-
-                req.body.date = metadata.exif.dateTime
+                if metadata.exif?.dateTime?
+                    req.body.date = metadata.exif.dateTime
                 photo = new Photo req.body
                 Photo.create photo, (err, photo) ->
                     return res.error 500, "Creation failed.", err if err
