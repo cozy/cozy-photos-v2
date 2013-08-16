@@ -379,41 +379,53 @@ window.require.register("lib/helpers", function(exports, require, module) {
       return el.focus();
     },
     rotate: function(orientation, image) {
+      var transform;
+      if (navigator.userAgent.search("Firefox") !== -1) {
+        transform = "transform";
+      } else {
+        transform = "-webkit-transform";
+      }
       if (orientation === void 0 || orientation === 1) {
-        image.css("transform", "rotate(" + 0 + "deg)");
+        image.css(transform, "rotate(" + 0 + "deg)");
       } else if (orientation === 2) {
-        return image.css("transform", "scale(-1, 1)");
+        return image.css(transform, "scale(-1, 1)");
       } else if (orientation === 3) {
-        return image.css("transform", "rotate(" + 180 + "deg)");
+        return image.css(transform, "rotate(" + 180 + "deg)");
       } else if (orientation === 4) {
-        return image.css("transform", "scale(1, -1)");
+        return image.css(transform, "scale(1, -1)");
       } else if (orientation === 5) {
-        return image.css("transform", "rotate(" + -90 + "deg) scale(-1, 1) ");
+        return image.css(transform, "rotate(" + -90 + "deg) scale(-1, 1) ");
       } else if (orientation === 6) {
-        return image.css("transform", "rotate(" + 90 + "deg)");
+        return image.css(transform, "rotate(" + 90 + "deg)");
       } else if (orientation === 7) {
-        return image.css("transform", "rotate(" + 90 + "deg) scale(-1, 1)");
+        return image.css(transform, "rotate(" + 90 + "deg) scale(-1, 1)");
       } else if (orientation === 8) {
-        return image.css("transform", "rotate(" + -90 + "deg)");
+        return image.css(transform, "rotate(" + -90 + "deg)");
       }
     },
     getRotate: function(orientation, image) {
+      var transform;
+      if (navigator.userAgent.search("Firefox") !== -1) {
+        transform = "transform";
+      } else {
+        transform = "-webkit-transform";
+      }
       if (orientation === void 0 || orientation === 1) {
-        return "transform: rotate(" + 0 + "deg)";
+        return transform + ": rotate(" + 0 + "deg)";
       } else if (orientation === 2) {
-        return "transform: scale(-1, 1)";
+        return transform + ": scale(-1, 1)";
       } else if (orientation === 3) {
-        return "transform: rotate(" + 180 + "deg)";
+        return transform + ": rotate(" + 180 + "deg)";
       } else if (orientation === 4) {
-        return "transform: scale(1, -1)";
+        return transform + ": scale(1, -1)";
       } else if (orientation === 5) {
-        return "transform: rotate(" + -90 + "deg) scale(-1, 1) ";
+        return transform + ": rotate(" + -90 + "deg) scale(-1, 1) ";
       } else if (orientation === 6) {
-        return "transform: rotate(" + 90 + "deg)";
+        return transform + ": rotate(" + 90 + "deg)";
       } else if (orientation === 7) {
-        return "transform: rotate(" + 90 + "deg) scale(-1, 1)";
+        return transform + ": rotate(" + 90 + "deg) scale(-1, 1)";
       } else if (orientation === 8) {
-        return "transform: rotate(" + -90 + "deg)";
+        return transform + ": rotate(" + -90 + "deg)";
       }
     },
     rotateLeft: function(orientation, image) {
@@ -1663,6 +1675,7 @@ window.require.register("views/gallery", function(exports, require, module) {
     Gallery.prototype.template = require('templates/gallery');
 
     Gallery.prototype.afterRender = function() {
+      var transform;
       Gallery.__super__.afterRender.apply(this, arguments);
       this.$el.photobox('a.server', {
         thumbs: true,
@@ -1674,9 +1687,14 @@ window.require.register("views/gallery", function(exports, require, module) {
       this.turnLeft = $('#pbOverlay .pbCaptionText .btn-group .left');
       this.turnLeft.unbind('click');
       this.turnLeft.remove();
+      if (navigator.userAgent.search("Firefox") !== -1) {
+        transform = "transform";
+      } else {
+        transform = "-webkit-transform";
+      }
       this.turnLeft = $('<a id="left" class="btn left" type="button">\
                        <i class="icon-share-alt"\
-                        style="transform: scale(-1,1)"> </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
+                        style="' + transform + ': scale(-1,1)"> </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
       this.turnLeft.on('click', this.onTurnLeft);
       this.downloadLink = $('#pbOverlay .pbCaptionText  .btn-group .download-link');
       this.downloadLink.unbind('click');

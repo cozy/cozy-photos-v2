@@ -177,7 +177,6 @@ button.delete {
   transition: 0.4s ease-out;
   -webkit-transition: 0.4s ease-out;
   border: 1px solid transparent;
-  -webkit-transform: rotate(60deg);
   border: 0;
   padding: 0;
   outline: 0;

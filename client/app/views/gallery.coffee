@@ -26,9 +26,13 @@ module.exports = class Gallery extends ViewCollection
         @turnLeft = $('#pbOverlay .pbCaptionText .btn-group .left')
         @turnLeft.unbind 'click'
         @turnLeft.remove()
+        if navigator.userAgent.search("Firefox") isnt -1
+            transform = "transform"
+        else
+            transform = "-webkit-transform"
         @turnLeft = $('<a id="left" class="btn left" type="button">
                        <i class="icon-share-alt"
-                        style="transform: scale(-1,1)"> </i> </a>')
+                        style="' + transform + ': scale(-1,1)"> </i> </a>')
             .appendTo '#pbOverlay .pbCaptionText .btn-group'
         @turnLeft.on 'click', @onTurnLeft
 
