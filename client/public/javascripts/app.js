@@ -1751,60 +1751,35 @@ window.require.register("views/gallery", function(exports, require, module) {
     };
 
     Gallery.prototype.onTurnLeft = function() {
-      var id, idThumb, newOrientation, orientation, parts, thumb, thumbs, url, _i, _len, _ref1, _ref2, _results;
+      var id, newOrientation, orientation, _ref1, _ref2,
+        _this = this;
       id = this.getIdPhoto();
       orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
       newOrientation = helpers.rotateLeft(orientation, $('.wrapper img.zoomable'));
       helpers.rotate(newOrientation, $('.wrapper img.zoomable'));
-      if ((_ref2 = this.collection.get(id)) != null) {
-        _ref2.save({
-          orientation: newOrientation
-        });
-      }
-      thumbs = $('#pbOverlay .pbThumbs img');
-      _results = [];
-      for (_i = 0, _len = thumbs.length; _i < _len; _i++) {
-        thumb = thumbs[_i];
-        url = thumb.src;
-        parts = url.split('/');
-        idThumb = parts[parts.length - 1];
-        idThumb = idThumb.split('.')[0];
-        if (idThumb === id) {
-          _results.push(thumb.style = helpers.getRotate(newOrientation));
-        } else {
-          _results.push(void 0);
+      return (_ref2 = this.collection.get(id)) != null ? _ref2.save({
+        orientation: newOrientation
+      }, {
+        success: function() {
+          return helpers.rotate(newOrientation, $('.pbThumbs .active img'));
         }
-      }
-      return _results;
+      }) : void 0;
     };
 
     Gallery.prototype.onTurnRight = function() {
-      var id, idThumb, newOrientation, orientation, parts, thumb, thumbs, url, _i, _len, _ref1, _ref2, _ref3, _results;
+      var id, newOrientation, orientation, _ref1, _ref2,
+        _this = this;
       id = this.getIdPhoto();
       orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
-      orientation = (_ref2 = this.collection.get(id)) != null ? _ref2.attributes.orientation : void 0;
       newOrientation = helpers.rotateRight(orientation, $('.wrapper img.zoomable'));
       helpers.rotate(newOrientation, $('.wrapper img.zoomable'));
-      if ((_ref3 = this.collection.get(id)) != null) {
-        _ref3.save({
-          orientation: newOrientation
-        });
-      }
-      thumbs = $('#pbOverlay .pbThumbs img');
-      _results = [];
-      for (_i = 0, _len = thumbs.length; _i < _len; _i++) {
-        thumb = thumbs[_i];
-        url = thumb.src;
-        parts = url.split('/');
-        idThumb = parts[parts.length - 1];
-        idThumb = idThumb.split('.')[0];
-        if (idThumb === id) {
-          _results.push(thumb.style = helpers.getRotate(newOrientation));
-        } else {
-          _results.push(void 0);
+      return (_ref2 = this.collection.get(id)) != null ? _ref2.save({
+        orientation: newOrientation
+      }, {
+        success: function() {
+          return helpers.rotate(newOrientation, $('.pbThumbs .active img'));
         }
-      }
-      return _results;
+      }) : void 0;
     };
 
     Gallery.prototype.onFilesChanged = function(evt) {
