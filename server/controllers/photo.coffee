@@ -67,6 +67,7 @@ module.exports = (app) ->
     screen: (req, res) ->
         res.setHeader 'Content-Type', 'image/jpg'
         res.setHeader 'Cache-Control', 'public, max-age=31557600'
+        res.setHeader 'Content-disposition', 'attachment; filename=' + req.photo.title
         which = if req.photo._attachments.screen then 'screen' else 'raw'
         stream = req.photo.getFile which, (err) ->
             if err then res.error 500, "File fetching failed.", err
@@ -84,6 +85,7 @@ module.exports = (app) ->
     raw: (req, res) ->
         res.set 'Content-Type', 'image/jpeg'
         res.setHeader 'Cache-Control', 'public, max-age=31557600'
+        res.setHeader 'Content-disposition', 'attachment; filename=' + req.photo.title
         stream = req.photo.getFile 'raw', (err) ->
             if err then res.error 500, "File fetching failed.", err
 

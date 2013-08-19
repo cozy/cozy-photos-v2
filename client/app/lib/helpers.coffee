@@ -17,9 +17,9 @@ module.exports =
         el.prop 'contenteditable', true
         el.text placeholder if not el.text()
         el.click ->
-            el.empty() if el.text() is placeholder
-            module.exports.forceFocus el
-        el.focus -> el.empty() if el.text() is placeholder
+            el.text ' ' if el.text() is placeholder
+            #module.exports.forceFocus el
+        el.focus -> el.text ' ' if el.text() is placeholder
         el.blur  ->
             if not el.text()
                 el.text placeholder
@@ -40,7 +40,7 @@ module.exports =
         if orientation is undefined or orientation is 1
             image.css "transform", "rotate(" + 0 + "deg)"
             return
-        else if orientation is 2     
+        else if orientation is 2
             image.css "transform", "scale(-1, 1)"
         else if orientation is 3
             image.css "transform", "rotate(" + 180 + "deg)"
@@ -58,7 +58,7 @@ module.exports =
     getRotate: (orientation, image) ->
         if orientation is undefined or orientation is 1
             return "transform: rotate(" + 0 + "deg)"
-        else if orientation is 2     
+        else if orientation is 2
             return "transform: scale(-1, 1)"
         else if orientation is 3
             return "transform: rotate(" + 180 + "deg)"
@@ -76,7 +76,7 @@ module.exports =
     rotateLeft: (orientation, image) ->
         if orientation is undefined or orientation is 1
             return 8
-        else if orientation is 2     
+        else if orientation is 2
             return 5
         else if orientation is 3
             return 6
@@ -89,12 +89,12 @@ module.exports =
         else if orientation is 7
             return 2
         else if orientation is 8
-            return 3 
+            return 3
 
     rotateRight: (orientation, image) ->
         if orientation is undefined or orientation is 1
             return 6
-        else if orientation is 2     
+        else if orientation is 2
             return 7
         else if orientation is 3
             return 8

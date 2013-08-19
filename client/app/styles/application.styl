@@ -13,6 +13,7 @@ darkgrey = #444
 basecolor = lightgrey
 orange = #fe8800
 blue = #34a6ff
+bluegreen = #34A6BB
 
 
 body
@@ -85,34 +86,35 @@ button.delete
 // #### album list page ###
 
 .albumitem
-    width 30%
-    min-width 450px
-    height 120px
+    height 220px
     float left
     padding 10px
-    position relative
 
     a
         display block
-        float left
         margin-right 10px
         box-sizing border-box
         border-radius 2px
-        border 2px solid blue
+        border 1px solid blue
         box-shadow 3px 3px 3px darkgrey
-        margin-right 20px
-        width 100px
-        height 100px
         transition .2s ease-out
         -webkit-transition .2s ease-out
         overflow hidden
+        width 180px
+        height 180px
 
         img
-            width 100px
-            height 100px
+            width 180px
+            height 180px
+
+    h4
+        width: 180px
+        margin: 0
+        padding: 10px 0
+        font-weight: normal
 
     a:hover
-        border 2px solid orange
+        border 1px solid orange
 
     a:active
         transition 0s ease-out
@@ -120,7 +122,7 @@ button.delete
         box-shadow: 0px 0px 0px darkgrey
 
     .text
-        margin-left 120px
+        margin-left 180px
 
 // #### album page ###
 
@@ -140,6 +142,11 @@ button.delete
         text-align justify
         padding 1px
         border 0px
+
+    #title
+    #description
+        font-weight: normal
+        padding: 8px
 
     #title:active
     #description:active
@@ -177,8 +184,8 @@ button.delete
 
         a
             display block
-            width 75px
-            height 68px
+            width 150px
+            height 150px
             vertical-align bottom
             overflow hidden
             background rgba(0,0,0,0.1)
@@ -186,6 +193,9 @@ button.delete
             -webkit-transition .4s ease-out
             border 1px solid transparent
             -webkit-transform: rotate(60deg)
+            border: 0
+            padding: 0
+            outline: 0
 
             img
                 width 100%
@@ -209,12 +219,15 @@ button.delete
         z-index 3
 
         a
-            border 1px solid white
-            box-shadow 0 0 0 2px #FFF, 0 0 20px 5px #000
+            border: 0
+            padding: 0
+            outline: 0
+            box-shadow 0 0 0 2px #FFF, 2px 2px 2px 2px #BBB
             transition .1s
             -webkit-transition:0.1s
 
         img
+            border: 0
             transform scale(1.2)
             -webkit-transform scale(1.2)
 
@@ -250,9 +263,70 @@ button.delete
         box-shadow: none
 
 .modal-header
-    background-color blue
+    background-color bluegreen
     color white
     font-family styled
+    border-top-left-radius: 5px
+    border-top-right-radius: 5px
+
+    h3
+        font-weight: normal
+
+#clearance-modal
+#share-modal
+#add-contact-modal
+    border-radius: 5px
+
+    a.flatbtn
+        float: right
+
+        span
+            margin: 0
+
+.modal-footer
+    padding: 8px
+    border: 0
+    background: transparent
+
+    a.flatbtn
+        float: right
+        text-align: left
+        width: auto
+        padding: 8px
+        line-height: 16px
+        font-size:  16px
+        text-transform: lowercase
+
+        span
+            text-align: left
+
+    a.flatbtn.active
+        background-color: blue - 20%
+
+#uploadblock
+    width: 130px
+    height: 130px
+    display none
+    margin 0px
+    overflow hidden
+    padding: 10px
+    margin 5px
+    position relative
+    text-align center
+    transition height 1s
+    text-transform: lowercase
+
+#uploadblock.photo:hover
+    transform scale(1)
+    -webkit-transform scale(1)
+    cursor: pointer
+
+.editing #uploadblock
+    display block
+
+ .pbCaptionText
+     .btn-group
+         margin-left: 30px
 
 // ### Logic ###
 .mode-public .flatbtn
@@ -276,46 +350,31 @@ button.delete
 .mode-public .empty .help
     display block
 
-
-#uploadblock
-    display none
-    width 100%
-    margin 0px
-    overflow hidden
-    padding 10px 0px
-    margin 5px
-    position relative
-    text-align center
-    transition height 1s
-
-.editing #uploadblock
-    display block
-
 // # Remove effect from photobox //
 
-// #pbOverlay.show .imageWrap img,
-// #pbOverlay.show .imageWrap img,
-// #pbOverlay.on .imageWrap img,
-// #pbOverlay .imageWrap img,
-// #pbOverlay .imageWrap img.prepare,
-// #pbOverlay.hide .imageWrap img,
-// #pbOverlay.hide .imageWrap img.prepare, 
-// #pbOverlay .imageWrap img.zoomable
-//     transform none
-//     -webkit-transform none
-//     -ms-transform none
-//     transition 0.01s
-//     -webkit-transition 0.01s
-//     -ms-transition 0.01s
-//     transition-delay 0s
-//     -webkit-transition-delay 0s
-//     -ms-transition-delay 0s
-
+#pbOverlay.show .imageWrap img,
+#pbOverlay.show .imageWrap img,
+#pbOverlay.on .imageWrap img,
+#pbOverlay .imageWrap img,
+#pbOverlay .imageWrap img.prepare,
+#pbOverlay.hide .imageWrap img,
+#pbOverlay.hide .imageWrap img.prepare, 
+#pbOverlay .imageWrap img.zoomable
+     transform none
+     -webkit-transform none
+     -ms-transform none
+     transition 0.01s
+     -webkit-transition 0.01s
+     -ms-transition 0.01s
+     transition-delay 0s
+     -webkit-transition-delay 0s
+     -ms-transition-delay 0s
 
 @media (max-width: 700px)
     .flatbtn
         width: auto
 
+// Clipboard Trick
 
 #clipboard-container 
   position: fixed

@@ -75,34 +75,35 @@ button.delete {
   width: auto;
 }
 .albumitem {
-  width: 30%;
-  min-width: 450px;
-  height: 120px;
+  height: 220px;
   float: left;
   padding: 10px;
-  position: relative;
 }
 .albumitem a {
   display: block;
-  float: left;
   margin-right: 10px;
   box-sizing: border-box;
   border-radius: 2px;
-  border: 2px solid #34a6ff;
+  border: 1px solid #34a6ff;
   box-shadow: 3px 3px 3px #444;
-  margin-right: 20px;
-  width: 100px;
-  height: 100px;
   transition: 0.2s ease-out;
   -webkit-transition: 0.2s ease-out;
   overflow: hidden;
+  width: 180px;
+  height: 180px;
 }
 .albumitem a img {
-  width: 100px;
-  height: 100px;
+  width: 180px;
+  height: 180px;
+}
+.albumitem h4 {
+  width: 180px;
+  margin: 0;
+  padding: 10px 0;
+  font-weight: normal;
 }
 .albumitem a:hover {
-  border: 2px solid #fe8800;
+  border: 1px solid #fe8800;
 }
 .albumitem a:active {
   transition: 0s ease-out;
@@ -110,7 +111,7 @@ button.delete {
   box-shadow: 0px 0px 0px #444;
 }
 .albumitem .text {
-  margin-left: 120px;
+  margin-left: 180px;
 }
 #album {
   padding: 0;
@@ -128,6 +129,11 @@ button.delete {
   text-align: justify;
   padding: 1px;
   border: 0px;
+}
+#about #title,
+#about #description {
+  font-weight: normal;
+  padding: 8px;
 }
 #about #title:active,
 #about #description:active {
@@ -163,8 +169,8 @@ button.delete {
 }
 #photos .photo a {
   display: block;
-  width: 75px;
-  height: 68px;
+  width: 150px;
+  height: 150px;
   vertical-align: bottom;
   overflow: hidden;
   background: rgba(0,0,0,0.1);
@@ -172,6 +178,9 @@ button.delete {
   -webkit-transition: 0.4s ease-out;
   border: 1px solid transparent;
   -webkit-transform: rotate(60deg);
+  border: 0;
+  padding: 0;
+  outline: 0;
 }
 #photos .photo a img {
   width: 100%;
@@ -195,12 +204,15 @@ button.delete {
   z-index: 3;
 }
 #photos .photo:hover a {
-  border: 1px solid #fff;
-  box-shadow: 0 0 0 2px #fff, 0 0 20px 5px #000;
+  border: 0;
+  padding: 0;
+  outline: 0;
+  box-shadow: 0 0 0 2px #fff, 2px 2px 2px 2px #bbb;
   transition: 0.1s;
   -webkit-transition: 0.1s;
 }
 #photos .photo:hover img {
+  border: 0;
   transform: scale(1.2);
   -webkit-transform: scale(1.2);
 }
@@ -237,9 +249,73 @@ button.delete {
   box-shadow: none;
 }
 .modal-header {
-  background-color: #34a6ff;
+  background-color: #34a6bb;
   color: #fff;
   font-family: styled;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.modal-header h3 {
+  font-weight: normal;
+}
+#clearance-modal,
+#share-modal,
+#add-contact-modal {
+  border-radius: 5px;
+}
+#clearance-modal a.flatbtn,
+#share-modal a.flatbtn,
+#add-contact-modal a.flatbtn {
+  float: right;
+}
+#clearance-modal a.flatbtn span,
+#share-modal a.flatbtn span,
+#add-contact-modal a.flatbtn span {
+  margin: 0;
+}
+.modal-footer {
+  padding: 8px;
+  border: 0;
+  background: transparent;
+}
+.modal-footer a.flatbtn {
+  float: right;
+  text-align: left;
+  width: auto;
+  padding: 8px;
+  line-height: 16px;
+  font-size: 16px;
+  text-transform: lowercase;
+}
+.modal-footer a.flatbtn span {
+  text-align: left;
+}
+.modal-footer a.flatbtn.active {
+  background-color: #008af6;
+}
+#uploadblock {
+  width: 130px;
+  height: 130px;
+  display: none;
+  margin: 0px;
+  overflow: hidden;
+  padding: 10px;
+  margin: 5px;
+  position: relative;
+  text-align: center;
+  transition: height 1s;
+  text-transform: lowercase;
+}
+#uploadblock.photo:hover {
+  transform: scale(1);
+  -webkit-transform: scale(1);
+  cursor: pointer;
+}
+.editing #uploadblock {
+  display: block;
+}
+.pbCaptionText .btn-group {
+  margin-left: 30px;
 }
 .mode-public .flatbtn,
 .mode-public .flatbtn.startediting,
@@ -262,19 +338,23 @@ button.delete {
 .mode-public .empty .help {
   display: block;
 }
-#uploadblock {
-  display: none;
-  width: 100%;
-  margin: 0px;
-  overflow: hidden;
-  padding: 10px 0px;
-  margin: 5px;
-  position: relative;
-  text-align: center;
-  transition: height 1s;
-}
-.editing #uploadblock {
-  display: block;
+#pbOverlay.show .imageWrap img,
+#pbOverlay.show .imageWrap img,
+#pbOverlay.on .imageWrap img,
+#pbOverlay .imageWrap img,
+#pbOverlay .imageWrap img.prepare,
+#pbOverlay.hide .imageWrap img,
+#pbOverlay.hide .imageWrap img.prepare,
+#pbOverlay .imageWrap img.zoomable {
+  transform: none;
+  -webkit-transform: none;
+  -ms-transform: none;
+  transition: 0.01s;
+  -webkit-transition: 0.01s;
+  -ms-transition: 0.01s;
+  transition-delay: 0s;
+  -webkit-transition-delay: 0s;
+  -ms-transition-delay: 0s;
 }
 @media (max-width: 700px) {
   .flatbtn {

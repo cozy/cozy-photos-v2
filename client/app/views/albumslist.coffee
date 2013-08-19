@@ -16,7 +16,7 @@ module.exports = class AlbumsList extends ViewCollection
     # place the items before the create buttona
     # in reverse creation order
     appendView: (view) ->
-        @$el.prepend view.el
+        @$el.append view.el
 
     checkIfEmpty: =>
         @$('.help').toggle _.size(@views) is 0 and app.mode is 'public'
