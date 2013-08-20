@@ -108,6 +108,9 @@ module.exports = class AlbumView extends BaseView
                     for item in contact.datapoints
                         if item.name is "email"
                             contact.index = (contact.fn).split(' ').join('_')
+                            contact.index = (contact.index).split("'").join('_')
+                            contact.index = (contact.index).split("/").join('_')
+                            contact.index = (contact.index).split("*").join('_')
                             @options.contacts.push contact
                             break
                 @$('#add-contact-modal').modal('hide')
@@ -124,7 +127,7 @@ module.exports = class AlbumView extends BaseView
             if @$("##{contact.index}").is(':checked')
                 for item in contact.datapoints
                     if item.name is "email"
-                        mails.push item.value
+                        mails.push ' ' + item.value
                         break
         @$('#mails').val(mails)
 
@@ -143,6 +146,11 @@ module.exports = class AlbumView extends BaseView
                 success: =>
                     @$("a.sendmail").spin()
                     @$("a.sendmail").css 'color', 'white'
+                    msg = "Mail was successfully sent to : \n"
+                    mails = mails.split(',')
+                    for mail in mails
+                        msg = msg + "\n" + mail
+                    alert msg
                 error: (err) =>
                     @$("a.sendmail").spin()
                     @$("a.sendmail").css 'color', 'white'
