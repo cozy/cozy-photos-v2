@@ -177,7 +177,6 @@ button.delete {
   transition: 0.4s ease-out;
   -webkit-transition: 0.4s ease-out;
   border: 1px solid transparent;
-  -webkit-transform: rotate(60deg);
   border: 0;
   padding: 0;
   outline: 0;
@@ -349,9 +348,386 @@ button.delete {
   transform: none;
   -webkit-transform: none;
   -ms-transform: none;
-  transition: 0.01s;
-  -webkit-transition: 0.01s;
+  transition: 0s;
+  -webkit-transition: 0s;
   -ms-transition: 0.01s;
+  transition-delay: 0s;
+  -webkit-transition-delay: 0s;
+  -ms-transition-delay: 0s;
+}
+@media (max-width: 700px) {
+  .flatbtn {
+    width: auto;
+  }
+}
+#clipboard-container {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 0px;
+  height: 0px;
+  z-index: 100;
+  display: none;
+  opacity: 0;
+}
+#clipboard {
+  width: 1px;
+  height: 1px;
+  padding: 0px;
+}
+@font-face {
+  font-family: styled;
+  src: url("/fonts/maven-pro-light-300.otf");
+}
+@font-face {
+  font-family: main;
+  src: url("/fonts/signika-regular.ttf");
+}
+body {
+  height: 96%;
+  padding: 1%;
+  background-color: #fcfcfc;
+}
+#album,
+#album-list {
+  font-family: main;
+}
+h1,
+h4 {
+  font-family: styled;
+}
+.flatbtn {
+  margin-bottom: 20px;
+  display: block;
+  line-height: 20px;
+  font-size: 18px;
+  margin: 2px 1%;
+  padding: 10px 2%;
+  background-color: #34a6ff;
+  color: #fff;
+  cursor: pointer;
+  text-transform: capitalize;
+  width: 30%;
+  float: left;
+  border: 0;
+}
+.flatbtn span {
+  text-align: center;
+  margin-left: 10px;
+}
+.flatbtn i {
+  vertical-align: baseline;
+}
+.flatbtn:hover {
+  background-color: #fe8800;
+  color: #fff;
+  text-decoration: none;
+}
+.flatbtn:focus {
+  background-color: #34a6ff;
+  color: #fff;
+  text-decoration: none;
+}
+.flatbtn:active,
+.flatbtn:focus {
+  background: #fe8800;
+  box-shadow: 1px 3px 2px rgba(0,0,0,0.2) inset;
+}
+@media (max-width: 1210px) {
+  .flatbtn {
+    width: 36%;
+  }
+}
+@media (max-width: 767px) {
+  .flatbtn {
+    width: 19%;
+  }
+}
+button.delete {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  z-index: 2;
+  padding: 5px;
+  width: auto;
+}
+.albumitem {
+  height: 220px;
+  float: left;
+  padding: 10px;
+}
+.albumitem a {
+  display: block;
+  margin-right: 10px;
+  box-sizing: border-box;
+  border-radius: 2px;
+  border: 1px solid #34a6ff;
+  box-shadow: 3px 3px 3px #444;
+  transition: 0.2s ease-out;
+  -webkit-transition: 0.2s ease-out;
+  overflow: hidden;
+  width: 180px;
+  height: 180px;
+}
+.albumitem a img {
+  width: 180px;
+  height: 180px;
+}
+.albumitem h4 {
+  width: 180px;
+  margin: 0;
+  padding: 10px 0;
+  font-weight: normal;
+}
+.albumitem a:hover {
+  border: 1px solid #fe8800;
+}
+.albumitem a:active {
+  transition: 0s ease-out;
+  -webkit-transition: 0s ease-out;
+  box-shadow: 0px 0px 0px #444;
+}
+.albumitem .text {
+  margin-left: 180px;
+}
+#album {
+  padding: 0;
+}
+#links {
+  margin-bottom: 20px;
+}
+#links a {
+  margin: 0 10px 10px 0;
+}
+#about {
+  height: 90%;
+}
+#about #description {
+  text-align: justify;
+  padding: 1px;
+  border: 0px;
+}
+#about #title,
+#about #description {
+  font-weight: normal;
+  padding: 8px;
+}
+#about #title:active,
+#about #description:active {
+  outline: 0;
+}
+#album.editing #title:focus,
+#album.editing #description:focus {
+  outline: 1px solid #34a6ff;
+}
+#album.editing #title:hover,
+#album.editing #description:hover {
+  outline: 1px solid #fe8800;
+}
+#photos {
+  min-height: 300px;
+  box-sizing: border-box;
+}
+#photos.dragover {
+  background-color: #fe8800;
+}
+#photos #uploader {
+  opacity: 0.0001;
+  display: block;
+  height: 100%;
+  font-size: 30em;
+  line-height: 100px;
+  position: absolute;
+}
+#photos .photo {
+  float: left;
+  margin: 5px;
+  position: relative;
+}
+#photos .photo a {
+  display: block;
+  width: 150px;
+  height: 150px;
+  vertical-align: bottom;
+  overflow: hidden;
+  background: rgba(0,0,0,0.1);
+  transition: 0.4s ease-out;
+  -webkit-transition: 0.4s ease-out;
+  border: 1px solid transparent;
+  border: 0;
+  padding: 0;
+  outline: 0;
+}
+#photos .photo a img {
+  width: 100%;
+  height: 100%;
+}
+#photos .photo .progressfill {
+  width: 100%;
+  height: 0%;
+  position: absolute;
+  bottom: 0px;
+  background-color: #34a6ff;
+  transition: 0.3s;
+  -webkit-transition: 0.3s;
+}
+#photos .photo a.thumbed {
+  border: 1px solid #34a6ff;
+}
+#photos .photo:hover {
+  transform: scale(1.5);
+  -webkit-transform: scale(1.5);
+  z-index: 3;
+}
+#photos .photo:hover a {
+  border: 0;
+  padding: 0;
+  outline: 0;
+  box-shadow: 0 0 0 2px #fff, 2px 2px 2px 2px #bbb;
+  transition: 0.1s;
+  -webkit-transition: 0.1s;
+}
+#photos .photo:hover img {
+  border: 0;
+  transform: scale(1.2);
+  -webkit-transform: scale(1.2);
+}
+.editing #photos.empty {
+  border: 1px solid #fe8800;
+}
+.modal {
+  border-radius: 0px;
+  border: 0px;
+}
+.modal input,
+.modal select {
+  border: 1px solid #d3d3d3;
+  box-shadow: 0;
+  border-radius: 0px;
+  shadow: none;
+  font-family: styled, helvetica;
+}
+.modal input.disabled {
+  border: 1px solid transparent;
+}
+.modal input:hover,
+.modal select:hover {
+  border: 1px solid #fe8800;
+  border-radius: 0px;
+  shadow: inset 1px 1px 2px rgba(100,100,100,0.1);
+  color: #333;
+}
+.modal input:focus,
+.modal input:active,
+.modal select:active,
+.modal select:focus {
+  border: 1px solid #34a6ff;
+  box-shadow: none;
+}
+.modal-header {
+  background-color: #34a6bb;
+  color: #fff;
+  font-family: styled;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.modal-header h3 {
+  font-weight: normal;
+}
+#clearance-modal,
+#share-modal,
+#add-contact-modal {
+  border-radius: 5px;
+}
+#clearance-modal a.flatbtn,
+#share-modal a.flatbtn,
+#add-contact-modal a.flatbtn {
+  float: right;
+}
+#clearance-modal a.flatbtn span,
+#share-modal a.flatbtn span,
+#add-contact-modal a.flatbtn span {
+  margin: 0;
+}
+.modal-footer {
+  padding: 8px;
+  border: 0;
+  background: transparent;
+}
+.modal-footer a.flatbtn {
+  float: right;
+  text-align: left;
+  width: auto;
+  padding: 8px;
+  line-height: 16px;
+  font-size: 16px;
+  text-transform: lowercase;
+}
+.modal-footer a.flatbtn span {
+  text-align: left;
+}
+.modal-footer a.flatbtn.active {
+  background-color: #008af6;
+}
+#uploadblock {
+  width: 130px;
+  height: 130px;
+  display: none;
+  margin: 0px;
+  overflow: hidden;
+  padding: 10px;
+  margin: 5px;
+  position: relative;
+  text-align: center;
+  transition: height 1s;
+  text-transform: lowercase;
+}
+#uploadblock.photo:hover {
+  transform: scale(1);
+  -webkit-transform: scale(1);
+  cursor: pointer;
+}
+.editing #uploadblock {
+  display: block;
+}
+.pbCaptionText .btn-group {
+  margin-left: 30px;
+}
+.mode-public .flatbtn,
+.mode-public .flatbtn.startediting,
+.mode-public .create,
+.mode-owner .empty .help,
+.stopediting,
+.flatbtn,
+.delete,
+.editing .flatbtn.startediting,
+.editing .flatbtn.download,
+.mode-owner.editing .empty .help {
+  display: none;
+}
+.editing .flatbtn,
+.editing .delete,
+.mode-public .flatbtn.back,
+.flatbtn.back,
+.flatbtn.startediting,
+.flatbtn.download,
+.mode-public .empty .help {
+  display: block;
+}
+#pbOverlay.show .imageWrap img,
+#pbOverlay.show .imageWrap img,
+#pbOverlay.on .imageWrap img,
+#pbOverlay .imageWrap img,
+#pbOverlay .imageWrap img.prepare,
+#pbOverlay.hide .imageWrap img,
+#pbOverlay.hide .imageWrap img.prepare,
+#pbOverlay .imageWrap img.zoomable {
+  transform: none;
+  -webkit-transform: none;
+  -ms-transform: none;
+  transition: 0s;
+  -webkit-transition: 0s;
+  -ms-transition: 0s;
   transition-delay: 0s;
   -webkit-transition-delay: 0s;
   -ms-transition-delay: 0s;

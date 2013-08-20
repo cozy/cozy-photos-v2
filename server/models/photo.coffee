@@ -7,6 +7,7 @@ module.exports = Photo = db.define 'Photo',
     orientation  : Number
     _attachments : Object
     albumid      : String
+    date         : String
 
 Photo.fromAlbum = (album, callback) ->
     params =

@@ -37,41 +37,49 @@ module.exports =
     ## Helpers to rotate photos
 
     rotate: (orientation, image) ->
+        if navigator.userAgent.search("Firefox") isnt -1
+            transform = "transform"
+        else
+            transform = "-webkit-transform"
         if orientation is undefined or orientation is 1
-            image.css "transform", "rotate(" + 0 + "deg)"
+            image.css transform, "rotate(" + 0 + "deg)"
             return
         else if orientation is 2
-            image.css "transform", "scale(-1, 1)"
+            image.css transform, "scale(-1, 1)"
         else if orientation is 3
-            image.css "transform", "rotate(" + 180 + "deg)"
+            image.css transform, "rotate(" + 180 + "deg)"
         else if orientation is 4
-            image.css "transform", "scale(1, -1)"
+            image.css transform, "scale(1, -1)"
         else if orientation is 5
-            image.css "transform", "rotate(" + -90 + "deg) scale(-1, 1) "
+            image.css transform, "rotate(" + -90 + "deg) scale(-1, 1) "
         else if orientation is 6
-            image.css "transform", "rotate(" + 90 + "deg)"
+            image.css transform, "rotate(" + 90 + "deg)"
         else if orientation is 7
-            image.css "transform", "rotate(" + 90 + "deg) scale(-1, 1)"
+            image.css transform, "rotate(" + 90 + "deg) scale(-1, 1)"
         else if orientation is 8
-            image.css "transform", "rotate(" + -90 + "deg)"
+            image.css transform, "rotate(" + -90 + "deg)"
 
     getRotate: (orientation, image) ->
+        if navigator.userAgent.search("Firefox") isnt -1
+            transform = "transform"
+        else
+            transform = "-webkit-transform"
         if orientation is undefined or orientation is 1
-            return "transform: rotate(" + 0 + "deg)"
+            return transform + ": rotate(" + 0 + "deg)"
         else if orientation is 2
-            return "transform: scale(-1, 1)"
+            return transform + ": scale(-1, 1)"
         else if orientation is 3
-            return "transform: rotate(" + 180 + "deg)"
+            return transform + ": rotate(" + 180 + "deg)"
         else if orientation is 4
-            return "transform: scale(1, -1)"
+            return transform + ": scale(1, -1)"
         else if orientation is 5
-            return "transform: rotate(" + -90 + "deg) scale(-1, 1) "
+            return transform + ": rotate(" + -90 + "deg) scale(-1, 1) "
         else if orientation is 6
-            return "transform: rotate(" + 90 + "deg)"
+            return transform + ": rotate(" + 90 + "deg)"
         else if orientation is 7
-            return "transform: rotate(" + 90 + "deg) scale(-1, 1)"
+            return transform + ": rotate(" + 90 + "deg) scale(-1, 1)"
         else if orientation is 8
-            return "transform: rotate(" + -90 + "deg)"
+            return transform + ": rotate(" + -90 + "deg)"
 
     rotateLeft: (orientation, image) ->
         if orientation is undefined or orientation is 1
