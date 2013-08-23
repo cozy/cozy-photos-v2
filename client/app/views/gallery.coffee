@@ -96,35 +96,19 @@ module.exports = class Gallery extends ViewCollection
         newOrientation =
             helpers.rotateLeft orientation, $('.wrapper img.zoomable')
         helpers.rotate newOrientation, $('.wrapper img.zoomable')
-        @collection.get(id)?.save orientation: newOrientation
-        # Update thumb
-        thumbs = $('#pbOverlay .pbThumbs img')
-        for thumb in thumbs
-            url = thumb.src
-            parts = url.split('/')
-            idThumb = parts[parts.length - 1]
-            idThumb = idThumb.split('.')[0]
-            if idThumb is id
-                thumb.style = helpers.getRotate newOrientation
-
+        @collection.get(id)?.save orientation: newOrientation, 
+            success : () =>
+                helpers.rotate newOrientation, $('.pbThumbs .active img')
+                
     onTurnRight: () =>
         id = @getIdPhoto()
-        orientation = @collection.get(id)?.attributes.orientation
         orientation = @collection.get(id)?.attributes.orientation
         newOrientation =
             helpers.rotateRight orientation, $('.wrapper img.zoomable')
         helpers.rotate newOrientation, $('.wrapper img.zoomable')
-        @collection.get(id)?.save orientation: newOrientation
-        # Update thumb
-        thumbs = $('#pbOverlay .pbThumbs img')
-        for thumb in thumbs
-            url = thumb.src
-            parts = url.split('/')
-            idThumb = parts[parts.length - 1]
-            idThumb = idThumb.split('.')[0]
-            if idThumb is id
-                thumb.style = helpers.getRotate newOrientation
-
+        @collection.get(id)?.save orientation: newOrientation, 
+            success : () =>
+                helpers.rotate newOrientation, $('.pbThumbs .active img')
 
     onFilesChanged: (evt) =>
         @handleFiles @uploader[0].files
