@@ -29,42 +29,48 @@ module.exports = (app) ->
             app.io.sockets.emit 'uploadprogress', cid: cid, p: percent
 
         req.form.on 'end', =>
-            raw = req.files['raw']
-            im.readMetadata raw.path, (err, metadata) ->
-                console.log err if err?
-                if metadata?.exif?.orientation?
-                    req.body.orientation = metadata.exif.orientation
-                else
-                    req.body.orientation = 1
-                if metadata.exif?.dateTime?
-                    req.body.date = metadata.exif.dateTime
-                photo = new Photo req.body
-                Photo.create photo, (err, photo) ->
-                    return res.error 500, "Creation failed.", err if err
+            photo = new Photo req.body
+            Photo.create photo, (err, photo) ->
+                return res.error 500, "Creation failed.", err if err
 
-                    async.parallel [
-                        (cb) ->
-                            raw = req.files['raw']
-                            data = name: 'raw', type: raw.type
-                            photo.attachFile raw.path, data, cb
-                        (cb) ->
-                            screen = req.files['screen']
-                            data = name: 'screen', type: screen.type
-                            photo.attachFile screen.path, data, cb
-                        (cb) ->
-                            thumb = req.files['thumb']
-                            data = name: 'thumb', type: thumb.type
-                            photo.attachFile thumb.path, data, cb
-                    ], (err) ->
-                        for name, file of req.files
-                            fs.unlink file.path, (err) ->
-                                if err
-                                    console.log 'Could not delete', file.path
-
-                        if err
-                            return res.error 500, "Creation failed.", err
+                async.parallel [
+                    (cb) ->
+                        raw = req.files['raw']
+                        data = name: 'raw', type: raw.type
+                        photo.attachFile raw.path, data, cb
+                    (cb) ->
+                        screen = req.files['screen']
+                        data = name: 'screen', type: screen.type
+                        photo.attachFile screen.path, data, cb
+                    (cb) ->
+                        thumb = req.files['thumb']
+                        data = name: 'thumb', type: thumb.type
+                        photo.attachFile thumb.path, data, cb
+                ], (err) ->
+                    raw = req.files['raw']
+                    im.readMetadata raw.path, (err, metadata) ->
+                        console.log err if err?
+                        if metadata?.exif?.orientation?
+                            orientation = metadata.exif.orientation
                         else
-                            res.send photo, 201
+                            orientation = 1
+                        if metadata.exif?.dateTime?
+                            date = metadata.exif.dateTime
+                        data =
+                            orientation: orientation
+                            date: date
+                        photo.updateAttributes data, (err) =>
+                            photo.orientation = orientation
+                            photo.date = date
+                            for name, file of req.files
+                                fs.unlink file.path, (err) ->
+                                    if err
+                                        console.log 'Could not delete', file.path
+
+                            if err
+                                return res.error 500, "Creation failed.", err
+                            else
+                                res.send photo, 201
 
     screen: (req, res) ->
         res.setHeader 'Content-Type', 'image/jpg'
