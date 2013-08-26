@@ -81,6 +81,8 @@ div.row-fluid
       #contacts.input
         if contacts.length === 0
           p= t("Upload your contacts ...")
+        else if contacts === "No contacts found"
+          p= t("No contacts found")
         else
           each contact in contacts
             input(type="checkbox", name="#{contact.index}", id ="#{contact.index}").checkbox
