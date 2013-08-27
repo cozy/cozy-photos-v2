@@ -31,13 +31,17 @@ module.exports = (app) ->
         req.form.on 'end', =>
             raw = req.files['raw']
             im.readMetadata raw.path, (err, metadata) ->
-                console.log err if err?
-                if metadata?.exif?.orientation?
-                    req.body.orientation = metadata.exif.orientation
-                else
-                    req.body.orientation = 1
-                if metadata?.exif?.dateTime?
-                    req.body.date = metadata.exif.dateTime
+                if err?
+                    console.log "[Create photo - Exif metadata extraction]"
+                    console.log err
+                    console.log "Are you sure imagemagick is installed ?"
+                else 
+                    if metadata?.exif?.orientation?
+                        req.body.orientation = metadata.exif.orientation
+                    else
+                        req.body.orientation = 1
+                    if metadata?.exif?.dateTime?
+                        req.body.date = metadata.exif.dateTime
                 photo = new Photo req.body
                 Photo.create photo, (err, photo) ->
                     return res.error 500, "Creation failed.", err if err
