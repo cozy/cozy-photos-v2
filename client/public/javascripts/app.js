@@ -1153,6 +1153,13 @@ window.require.register("templates/album", function(exports, require, module) {
   buf.push(escape(null == __val__ ? "" : __val__));
   buf.push('</p>');
   }
+  else if ( contacts === "No contacts found")
+  {
+  buf.push('<p>');
+  var __val__ = t("No contacts found")
+  buf.push(escape(null == __val__ ? "" : __val__));
+  buf.push('</p>');
+  }
   else
   {
   // iterate contacts
@@ -1416,7 +1423,7 @@ window.require.register("views/album", function(exports, require, module) {
       this.options.contacts = [];
       return Contact.list({
         success: function(body) {
-          var contact, item, _i, _j, _len, _len1, _ref1;
+          var contact, item, n, _i, _j, _len, _len1, _ref1;
           for (_i = 0, _len = body.length; _i < _len; _i++) {
             contact = body[_i];
             _ref1 = contact.datapoints;
@@ -1427,10 +1434,17 @@ window.require.register("views/album", function(exports, require, module) {
                 contact.index = contact.index.split("'").join('_');
                 contact.index = contact.index.split("/").join('_');
                 contact.index = contact.index.split("*").join('_');
-                _this.options.contacts.push(contact);
+                n = 0;
+                while ((_this.options.contacts[n] != null) && _this.options.contacts[n].fn < contact.fn) {
+                  n++;
+                }
+                _this.options.contacts.splice(n, 0, contact);
                 break;
               }
             }
+          }
+          if (_this.options.contacts.length === 0) {
+            _this.options.contacts = "No contacts found";
           }
           _this.$('#add-contact-modal').modal('hide');
           _this.render(modal);
