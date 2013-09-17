@@ -39,6 +39,9 @@
     },
     "CozyInstance": {
       "description": "Read language setting"
+    },
+    "Send mail from user": {
+      "description": "Share album with your friends"
     }
   }
 }

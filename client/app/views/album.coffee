@@ -107,12 +107,19 @@ module.exports = class AlbumView extends BaseView
                 for contact in body
                     for item in contact.datapoints
                         if item.name is "email"
+                            # Contact.index is used to identify checkbox
                             contact.index = (contact.fn).split(' ').join('_')
                             contact.index = (contact.index).split("'").join('_')
                             contact.index = (contact.index).split("/").join('_')
                             contact.index = (contact.index).split("*").join('_')
-                            @options.contacts.push contact
+                            # Sort contacts alphabetically
+                            n = 0
+                            while @options.contacts[n]? and @options.contacts[n].fn < contact.fn
+                                n++
+                            @options.contacts.splice(n, 0, contact)
                             break
+                if @options.contacts.length is 0
+                    @options.contacts = "No contacts found"
                 @$('#add-contact-modal').modal('hide')
                 @render modal
                 @$('#add-contact-modal').modal('show')
