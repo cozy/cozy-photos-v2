@@ -1118,7 +1118,10 @@ window.require.register("templates/album", function(exports, require, module) {
   buf.push(escape(null == __val__ ? "" : __val__));
   buf.push('</span></a>');
   }
-  buf.push('</div><h1 id="title">' + escape((interp = title) == null ? '' : interp) + '</h1><div id="description">');
+  buf.push('</div><h1 id="title">');
+  var __val__ = title
+  buf.push(null == __val__ ? "" : __val__);
+  buf.push('</h1><div id="description">');
   var __val__ = description
   buf.push(null == __val__ ? "" : __val__);
   buf.push('</div></div><div id="photos" class="span8"></div><div id="clipboard-container"><textarea id="clipboard"></textarea></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer">     <a id="changeprivate" class="flatbtn changeclearance">');
