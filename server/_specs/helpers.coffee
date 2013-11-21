@@ -2,11 +2,11 @@ TESTPORT = 8013
 Photo = require '../models/photo'
 Album = require '../models/album'
 Client = require('request-json').JsonClient
-eyes = require 'eyes'
 
 module.exports =
 
   startServer: (done) ->
+      @timeout 5000
       @app = require '../../server.coffee'
       @app.init()
 
@@ -18,6 +18,7 @@ module.exports =
       @server.close()
 
   clearDb: (done) ->
+      @timeout 5000
       Photo.requestDestroy "all", (err) ->
           done err if err
           Album.requestDestroy "all", done

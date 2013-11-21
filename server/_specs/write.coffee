@@ -5,6 +5,7 @@ expect = require('chai').expect
 
 describe 'Write operations', ->
 
+    before require '../../init'
     before helpers.clearDb
 
     before helpers.startServer

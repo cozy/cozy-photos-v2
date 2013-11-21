@@ -57,3 +57,5 @@ runTests = (fileList) ->
         if err
             console.log "Running mocha caught exception: \n" + err
         console.log stdout
+
+        process.exit if err then 1 else 0

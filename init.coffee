@@ -36,10 +36,10 @@ module.exports = init = (done) ->
             console.log err
             console.log '-----'
             console.log err.stack
+            done? err
         else
             console.log "Requests have been created"
-
-        done(err) if done
+            done? null
 
 # so we can do "coffee init"
 init() if not module.parent
