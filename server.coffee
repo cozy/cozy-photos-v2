@@ -1,4 +1,5 @@
 americano = require 'americano'
+fs = require 'fs'
 
 module.exports = start = (options, cb) ->
     options.name = 'cozy-files'
@@ -18,6 +19,7 @@ module.exports = start = (options, cb) ->
         try fs.mkdirSync __dirname + '/server/uploads'
         catch err then if err.code isnt 'EEXIST'
             console.log "Something went wrong while creating uploads folder"
+            console.log err
 
         cb?(null, app, server)
 
