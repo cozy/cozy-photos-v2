@@ -7,9 +7,7 @@ fs    = require 'fs'
 zipstream = require 'zipstream'
 {slugify, noop} = require '../helpers/helpers'
 
-module.exports = (app) ->
-
-    index: (req, res) ->
+module.exports.index = (req, res) ->
 
         out = []
         initAlbums = (albums, callback) =>
@@ -41,7 +39,7 @@ module.exports = (app) ->
                 res.render 'index.jade', imports: imports
 
 
-    fetch: (req, res, next, id) ->
+module.exports.fetch = (req, res, next, id) ->
         Album.find id, (err, album) ->
             return res.error 500, 'An error occured', err if err
             return res.error 404, 'Album not found' if not album
@@ -49,7 +47,7 @@ module.exports = (app) ->
             req.album = album
             next()
 
-    list: (req, res) ->
+module.exports.list = (req, res) ->
 
         request = if req.public then 'public' else 'all'
 
@@ -66,14 +64,14 @@ module.exports = (app) ->
 
             res.send out
 
-    create: (req, res) ->
+module.exports.create = (req, res) ->
         album = new Album req.body
         Album.create album, (err, album) ->
             return res.error 500, "Creation failed.", err if err
 
             res.send album, 201
 
-    sendMail: (req, res) ->
+module.exports.sendMail = (req, res) ->
         data =
             to: req.body.mails
             subject: "I share an album with you"
@@ -82,7 +80,7 @@ module.exports = (app) ->
             return res.error 500, "Server couldn't send mail.", err if err
             res.send 200
 
-    read: (req, res) ->
+module.exports.read = (req, res) ->
 
         if req.album.clearance is 'private' and req.public
             return res.error 401, "You are not allowed to view this album."
@@ -97,7 +95,7 @@ module.exports = (app) ->
 
             res.send out
 
-    zip: (req, res) ->
+module.exports.zip = (req, res) ->
         Photo.fromAlbum req.album, (err, photos) ->
             return res.error 500, 'An error occured', err if err
             return res.error 401, 'The album is empty' unless photos.length
@@ -122,13 +120,13 @@ module.exports = (app) ->
 
 
 
-    update: (req, res) ->
+module.exports.update = (req, res) ->
         req.album.updateAttributes req.body, (err) ->
             return res.error 500, "Update failed.", err if err
 
             res.send req.album
 
-    delete: (req, res) ->
+module.exports.delete = (req, res) ->
         req.album.destroy (err) ->
             return res.error 500, "Deletion failed.", err if err
 

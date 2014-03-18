@@ -1,11 +1,13 @@
 Photo = require '../models/photo'
 async = require 'async'
 fs = require 'fs'
+qs = require 'qs'
 im = require 'imagemagick'
 
-module.exports = (app) ->
+app = null
+module.exports.setApp = (ref) -> app = ref
 
-    fetch: (req, res, next, id) ->
+module.exports.fetch = (req, res, next, id) ->
         Photo.find id, (err, photo) =>
             return res.error 500, 'An error occured', err if err
             return res.error 404, 'Photo not found' if not photo
@@ -13,12 +15,18 @@ module.exports = (app) ->
             req.photo = photo
             next()
 
-    create: (req, res) =>
+module.exports.create = (req, res) =>
         cid = null
         lastPercent = 0
+        files = {}
 
         req.form.on 'field', (name, value) ->
             cid = value if name is 'cid'
+
+        req.form.on 'file', (name, val) ->
+            val.name = val.originalFilename
+            val.type = val.headers['content-type'] or null
+            files[name] = val
 
         req.form.on 'progress', (bytesReceived, bytesExpected) ->
             return unless cid?
@@ -28,14 +36,15 @@ module.exports = (app) ->
             lastPercent = percent
             app.io.sockets.emit 'uploadprogress', cid: cid, p: percent
 
-        req.form.on 'end', =>
+        req.form.on 'close', =>
+            req.files = qs.parse files
             raw = req.files['raw']
             im.readMetadata raw.path, (err, metadata) ->
                 if err?
                     console.log "[Create photo - Exif metadata extraction]"
                     console.log err
                     console.log "Are you sure imagemagick is installed ?"
-                else 
+                else
                     if metadata?.exif?.orientation?
                         req.body.orientation = metadata.exif.orientation
                     else
@@ -70,7 +79,7 @@ module.exports = (app) ->
                         else
                             res.send photo, 201
 
-    screen: (req, res) ->
+module.exports.screen = (req, res) ->
         res.setHeader 'Content-Type', 'image/jpg'
         res.setHeader 'Cache-Control', 'public, max-age=31557600'
         res.setHeader 'Content-disposition', 'attachment; filename=' + req.photo.title
@@ -80,7 +89,7 @@ module.exports = (app) ->
 
         stream.pipe res
 
-    thumb: (req, res) ->
+module.exports.thumb = (req, res) ->
         res.set 'Content-Type', 'image/jpeg'
         res.setHeader 'Cache-Control', 'public, max-age=31557600'
         stream = req.photo.getFile 'thumb', (err) ->
@@ -88,7 +97,7 @@ module.exports = (app) ->
 
         stream.pipe res
 
-    raw: (req, res) ->
+module.exports.raw = (req, res) ->
         res.set 'Content-Type', 'image/jpeg'
         res.setHeader 'Cache-Control', 'public, max-age=31557600'
         res.setHeader 'Content-disposition', 'attachment; filename=' + req.photo.title
@@ -97,13 +106,13 @@ module.exports = (app) ->
 
         stream.pipe res
 
-    update: (req, res) ->
+module.exports.update = (req, res) ->
         req.photo.updateAttributes req.body, (err) ->
             return res.error 500, "Update failed." if err
 
             res.send req.photo
 
-    delete: (req, res) ->
+module.exports.delete = (req, res) ->
         req.photo.destroy (err) ->
             return res.error 500, "Deletion failed." if err
 
