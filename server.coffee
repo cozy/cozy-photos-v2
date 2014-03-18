@@ -1,17 +1,27 @@
-express = require 'express'
-init = require './init'
-router = require './server/router'
-configure = require './server/config'
+americano = require 'americano'
 
-module.exports = app = express()
-configure(app)
-router(app)
+module.exports = start = (options, cb) ->
+    options.name = 'cozy-files'
+    options.port ?= 9119
+    options.host ?= '127.0.0.1'
+    americano.start options, (app, server) ->
+        app.server = server
+
+        # notification events should be proxied to client
+        # RealtimeAdapter = require 'cozy-realtime-adapter'
+        # realtime = RealtimeAdapter app, ['album.*', 'photo.*', 'contact.*']
+
+        # pass reference to photo controller for socket.io upload progress
+        require('./server/controllers/photo').setApp app
+
+        # create the uploads folder
+        try fs.mkdirSync __dirname + '/server/uploads'
+        catch err then if err.code isnt 'EEXIST'
+            console.log "Something went wrong while creating uploads folder"
+
+        cb?(null, app, server)
 
 if not module.parent
-    init -> # ./init.coffee
-        port = process.env.PORT or 9113
-        host = process.env.HOST or "127.0.0.1"
-
-        app.listen port, host, ->
-            console.log "Server listening on %s:%d within %s environment",
-                host, port, app.get('env')
+    start
+        port: process.env.PORT
+        host: process.env.HOST

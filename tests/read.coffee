@@ -5,7 +5,6 @@ expect = require('chai').expect
 
 describe 'Read operations', ->
 
-    before require '../../init'
     before helpers.clearDb
     before helpers.createAlbum fixtures.baseAlbum
     before helpers.createPhoto fixtures.basePhoto1

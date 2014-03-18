@@ -5,7 +5,6 @@ expect = require('chai').expect
 
 describe 'Write operations', ->
 
-    before require '../../init'
     before helpers.clearDb
 
     before helpers.startServer
@@ -30,11 +29,12 @@ describe 'Write operations', ->
 
     describe 'Create Photo - POST /photos', ->
 
-        raw = "./server/_specs/fixtures/test.jpg"
-        screen = "./server/_specs/fixtures/screen.jpg"
-        thumb = "./server/_specs/fixtures/thumb.jpg"
+        raw = "./tests/fixtures/test.jpg"
+        screen = "./tests/fixtures/screen.jpg"
+        thumb = "./tests/fixtures/thumb.jpg"
 
         it "should allow request", (done) ->
+            @timeout 6000
             req = @client.post "photos", null, done
             form = req.form()
             form.append 'title', 'phototitle'

@@ -36,13 +36,14 @@ task 'tests', 'run server tests, ./test is parsed by default, otherwise use -f o
     if options.file
         testFiles  = testFiles.concat(options.file)
     if not(options.dir or options.file)
-        testFiles = walk("server/_specs", [])
+        testFiles = walk("tests", [])
     runTests testFiles
 
 task 'tests:client', 'run client tests through mocha', (opts) ->
     exec "mocha-phantomjs client/_specs/index.html", (err, stdout, stderr) ->
         if err
             console.log "Running mocha caught exception: \n" + err
+            console.log stderr
         console.log stdout
 
 
@@ -52,7 +53,7 @@ runTests = (fileList) ->
         command += "--debug-brk --forward-io --profile "
     if options.debug
         command += "--debug --forward-io --profile "
-    command += " --reporter spec --compilers coffee:coffee-script --colors"
+    command += " --reporter spec --compilers coffee:coffee-script/register --colors"
     exec command, (err, stdout, stderr) ->
         if err
             console.log "Running mocha caught exception: \n" + err

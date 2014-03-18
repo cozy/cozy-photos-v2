@@ -1,27 +1,29 @@
 TESTPORT = 8013
-Photo = require '../models/photo'
-Album = require '../models/album'
+Photo = require '../server/models/photo'
+Album = require '../server/models/album'
 Client = require('request-json').JsonClient
+intializeApp = require '../server.coffee'
 
 module.exports =
 
   startServer: (done) ->
       @timeout 5000
-      @app = require '../../server.coffee'
-      @app.init()
-
-      port = process.env.PORT or TESTPORT
-      host = process.env.HOST or "127.0.0.1"
-      @server = @app.listen port, host, done
+      intializeApp port: TESTPORT, (err, app, server) =>
+          app.server = server
+          @app = app
+          done()
 
   killServer: ->
-      @server.close()
+      @app.server.close()
 
   clearDb: (done) ->
       @timeout 5000
-      Photo.requestDestroy "all", (err) ->
-          done err if err
-          Album.requestDestroy "all", done
+      root = require('path').join __dirname, '..'
+      require('americano-cozy').configure root, null, (err) ->
+        return done err if err
+        Photo.requestDestroy "all", (err) ->
+            return done err if err
+            Album.requestDestroy "all", done
 
   createAlbum: (data) -> (done) ->
       baseAlbum = new Album(data)
