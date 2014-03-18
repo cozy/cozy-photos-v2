@@ -79,41 +79,42 @@ module.exports.create = (req, res) =>
                         else
                             res.send photo, 201
 
-module.exports.screen = (req, res) ->
-        res.setHeader 'Content-Type', 'image/jpg'
-        res.setHeader 'Cache-Control', 'public, max-age=31557600'
-        res.setHeader 'Content-disposition', 'attachment; filename=' + req.photo.title
-        which = if req.photo._attachments.screen then 'screen' else 'raw'
-        stream = req.photo.getFile which, (err) ->
-            if err then res.error 500, "File fetching failed.", err
+doPipe = (req, which, download, res) ->
 
-        stream.pipe res
+    if download
+        disposition = 'attachment; filename=' + req.photo.title
+        res.setHeader 'Content-disposition', disposition
+
+    request = req.photo.getFile which, (err) ->
+        if err then res.error 500, "File fetching failed.", err
+
+    # This is a temporary hack to allow caching
+    # ideally, we would do as follow :
+    # request.headers['If-None-Match'] = req.headers['if-none-match']
+    # but couchdb goes 500 (COUCHDB-1697 ?)
+    request.pipefilter = (couchres, myres) ->
+        if couchres.headers.etag is req.headers['if-none-match']
+            myres.send 304
+
+    request.pipe res
+
+
+module.exports.screen = (req, res) ->
+    which = if req.photo._attachments.screen then 'screen' else 'raw'
+    doPipe req, which, false, res
 
 module.exports.thumb = (req, res) ->
-        res.set 'Content-Type', 'image/jpeg'
-        res.setHeader 'Cache-Control', 'public, max-age=31557600'
-        stream = req.photo.getFile 'thumb', (err) ->
-            if err then res.error 500, "File fetching failed.", err
-
-        stream.pipe res
+    doPipe req, 'thumb', false, res
 
 module.exports.raw = (req, res) ->
-        res.set 'Content-Type', 'image/jpeg'
-        res.setHeader 'Cache-Control', 'public, max-age=31557600'
-        res.setHeader 'Content-disposition', 'attachment; filename=' + req.photo.title
-        stream = req.photo.getFile 'raw', (err) ->
-            if err then res.error 500, "File fetching failed.", err
-
-        stream.pipe res
+    doPipe req, 'raw', true, res
 
 module.exports.update = (req, res) ->
-        req.photo.updateAttributes req.body, (err) ->
-            return res.error 500, "Update failed." if err
-
-            res.send req.photo
+    req.photo.updateAttributes req.body, (err) ->
+        return res.error 500, "Update failed." if err
+        res.send req.photo
 
 module.exports.delete = (req, res) ->
-        req.photo.destroy (err) ->
-            return res.error 500, "Deletion failed." if err
-
-            res.success "Deletion succeded."
+    req.photo.destroy (err) ->
+        return res.error 500, "Deletion failed." if err
+        res.success "Deletion succeded."
