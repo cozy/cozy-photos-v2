@@ -25,3 +25,5 @@ module.exports =
         'albumphotos': albumPhotosRequest
     'contact':
         'all': allMap
+    'cozy_instance':
+        'all': allMap

@@ -1,11 +1,14 @@
 Album = require '../models/album'
 Photo = require '../models/photo'
-CozyAdapter = require 'jugglingdb-cozy-adapter'
-i18n  = require 'cozy-i18n-helper'
+CozyInstance = require '../models/cozy_instance'
 async = require 'async'
 fs    = require 'fs'
 zipstream = require 'zipstream'
 {slugify, noop} = require '../helpers/helpers'
+
+try CozyAdapter = require 'americano-cozy/node_modules/jugglingdb-cozy-adapter'
+catch e then CozyAdapter = require 'jugglingdb-cozy-adapter'
+
 
 module.exports.index = (req, res) ->
 
@@ -27,7 +30,7 @@ module.exports.index = (req, res) ->
 
         async.parallel [
             (cb) -> Album.request request, cb
-            (cb) -> i18n.getLocale null, cb
+            (cb) -> CozyInstance.getLocale cb
         ], (err, results) ->
 
             [albums, locale] = results
