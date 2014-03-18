@@ -1,6 +1,6 @@
-db = require '../db/cozy-adapter'
+americano = require 'americano-cozy'
 
-module.exports = Photo = db.define 'Photo',
+module.exports = Photo = americano.getModel 'Photo',
     id           : String
     title        : String
     description  : String

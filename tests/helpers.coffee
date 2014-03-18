@@ -1,6 +1,5 @@
 TESTPORT = 8013
-Photo = require '../server/models/photo'
-Album = require '../server/models/album'
+Photo = Album = null
 Client = require('request-json').JsonClient
 intializeApp = require '../server.coffee'
 
@@ -21,6 +20,8 @@ module.exports =
       root = require('path').join __dirname, '..'
       require('americano-cozy').configure root, null, (err) ->
         return done err if err
+        Photo = require '../server/models/photo'
+        Album = require '../server/models/album'
         Photo.requestDestroy "all", (err) ->
             return done err if err
             Album.requestDestroy "all", done
