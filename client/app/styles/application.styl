@@ -6,6 +6,7 @@
     font-family: main
     src: url('/fonts/signika-regular.ttf');
 
+@import "./_mixins"
 
 bgcolor = #fcfcfc
 uploadcolor = #34a6ff
@@ -351,23 +352,44 @@ button.delete
 
 // # Remove effect from photobox //
 
-#pbOverlay.show .imageWrap img,
-#pbOverlay.show .imageWrap img,
-#pbOverlay.on .imageWrap img,
-#pbOverlay .imageWrap img,
-#pbOverlay .imageWrap img.prepare,
-#pbOverlay.hide .imageWrap img,
-#pbOverlay.hide .imageWrap img.prepare,
-#pbOverlay .imageWrap img.zoomable
-     transform none
-     -webkit-transform none
-     -ms-transform none
-     transition 0s
-     -webkit-transition 0s
-     -ms-transition 0s
-     transition-delay 0s
-     -webkit-transition-delay 0s
-     -ms-transition-delay 0s
+
+
+
+exifTransforms = (1 rotateZ(0deg)) (2 scale(-1, 1)) (3 rotateZ(180deg)) (4 scale(1,-1)) \
+(5 rotateZ(-90deg) scale(-1, 1)) (6 rotateZ(90deg)) (7 rotateZ(90deg) scale(-1, 1)) (8 rotateZ(-90deg))
+
+pbtransition()
+    transition .3s cubic-bezier(0.1, 0.87, 0.48, 1)
+    transition-delay 0s
+    opacity 1
+    // -ms-transition .3s .5s ease-out
+
+for t in exifTransforms
+  id = t[0]
+
+  #pbOverlay
+    .wrapper img{'[data-orientation="' + id + '"]'}
+      pbtransition true
+      transform t[1] t[2]
+
+    &.next .wrapper img{'[data-orientation="' + id + '"]'}
+      pbtransition true
+      transform translate(3000px, 0px) t[1] t[2]
+
+      &.prepare
+        transform translate(-3000px, 0px) t[1] t[2]
+
+    &.prev .wrapper img{'[data-orientation="' + id + '"]'}
+      pbtransition true
+      transform translate(-3000px, 0px) t[1] t[2]
+
+      &.prepare
+        transform translate(3000px, 0px) t[1] t[2]
+
+    .wrapper img.prepare{'[data-orientation="' + id + '"]'}
+      pbtransition true
+      transform translate(0px, 0px) t[1] t[2]
+
 
 @media (max-width: 700px)
     .flatbtn
@@ -375,7 +397,7 @@ button.delete
 
 // Clipboard Trick
 
-#clipboard-container 
+#clipboard-container
   position: fixed
   left: 0px
   top: 0px
@@ -385,7 +407,7 @@ button.delete
   display: none
   opacity: 0
 
-#clipboard 
+#clipboard
   width: 1px
-  height: 1px     
+  height: 1px
   padding: 0px
