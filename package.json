@@ -1,7 +1,7 @@
 {
   "name": "cozy-photos",
-  "version": "0.0.1",
-  "author": "Cozy Cloud <contact@cozycloud.cc> (http://cozycloud.cc)",
+  "version": "1.0.0",
+  "author": "",
   "licenses": [
     {
       "type": "AGPL v3",
@@ -31,7 +31,6 @@
     "test": "cake tests"
   },
   "repository": "",
-  "author": "",
   "readmeFilename": "README.md",
   "cozy-permissions": {
     "Photo": {
