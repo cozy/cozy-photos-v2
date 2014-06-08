@@ -1,11 +1,13 @@
 Photo = require '../models/photo'
 async = require 'async'
 fs = require 'fs'
+qs = require 'qs'
 im = require 'imagemagick'
 
-module.exports = (app) ->
+app = null
+module.exports.setApp = (ref) -> app = ref
 
-    fetch: (req, res, next, id) ->
+module.exports.fetch = (req, res, next, id) ->
         Photo.find id, (err, photo) =>
             return res.error 500, 'An error occured', err if err
             return res.error 404, 'Photo not found' if not photo
@@ -13,12 +15,18 @@ module.exports = (app) ->
             req.photo = photo
             next()
 
-    create: (req, res) =>
+module.exports.create = (req, res) =>
         cid = null
         lastPercent = 0
+        files = {}
 
         req.form.on 'field', (name, value) ->
             cid = value if name is 'cid'
+
+        req.form.on 'file', (name, val) ->
+            val.name = val.originalFilename
+            val.type = val.headers['content-type'] or null
+            files[name] = val
 
         req.form.on 'progress', (bytesReceived, bytesExpected) ->
             return unless cid?
@@ -28,14 +36,15 @@ module.exports = (app) ->
             lastPercent = percent
             app.io.sockets.emit 'uploadprogress', cid: cid, p: percent
 
-        req.form.on 'end', =>
+        req.form.on 'close', =>
+            req.files = qs.parse files
             raw = req.files['raw']
             im.readMetadata raw.path, (err, metadata) ->
                 if err?
                     console.log "[Create photo - Exif metadata extraction]"
                     console.log err
                     console.log "Are you sure imagemagick is installed ?"
-                else 
+                else
                     if metadata?.exif?.orientation?
                         req.body.orientation = metadata.exif.orientation
                     else
@@ -70,41 +79,42 @@ module.exports = (app) ->
                         else
                             res.send photo, 201
 
-    screen: (req, res) ->
-        res.setHeader 'Content-Type', 'image/jpg'
-        res.setHeader 'Cache-Control', 'public, max-age=31557600'
-        res.setHeader 'Content-disposition', 'attachment; filename=' + req.photo.title
-        which = if req.photo._attachments.screen then 'screen' else 'raw'
-        stream = req.photo.getFile which, (err) ->
-            if err then res.error 500, "File fetching failed.", err
+doPipe = (req, which, download, res) ->
 
-        stream.pipe res
+    if download
+        disposition = 'attachment; filename=' + req.photo.title
+        res.setHeader 'Content-disposition', disposition
 
-    thumb: (req, res) ->
-        res.set 'Content-Type', 'image/jpeg'
-        res.setHeader 'Cache-Control', 'public, max-age=31557600'
-        stream = req.photo.getFile 'thumb', (err) ->
-            if err then res.error 500, "File fetching failed.", err
+    request = req.photo.getFile which, (err) ->
+        if err then res.error 500, "File fetching failed.", err
 
-        stream.pipe res
+    # This is a temporary hack to allow caching
+    # ideally, we would do as follow :
+    # request.headers['If-None-Match'] = req.headers['if-none-match']
+    # but couchdb goes 500 (COUCHDB-1697 ?)
+    request.pipefilter = (couchres, myres) ->
+        if couchres.headers.etag is req.headers['if-none-match']
+            myres.send 304
 
-    raw: (req, res) ->
-        res.set 'Content-Type', 'image/jpeg'
-        res.setHeader 'Cache-Control', 'public, max-age=31557600'
-        res.setHeader 'Content-disposition', 'attachment; filename=' + req.photo.title
-        stream = req.photo.getFile 'raw', (err) ->
-            if err then res.error 500, "File fetching failed.", err
+    request.pipe res
 
-        stream.pipe res
 
-    update: (req, res) ->
-        req.photo.updateAttributes req.body, (err) ->
-            return res.error 500, "Update failed." if err
+module.exports.screen = (req, res) ->
+    which = if req.photo._attachments.screen then 'screen' else 'raw'
+    doPipe req, which, false, res
 
-            res.send req.photo
+module.exports.thumb = (req, res) ->
+    doPipe req, 'thumb', false, res
 
-    delete: (req, res) ->
-        req.photo.destroy (err) ->
-            return res.error 500, "Deletion failed." if err
+module.exports.raw = (req, res) ->
+    doPipe req, 'raw', true, res
 
-            res.success "Deletion succeded."
+module.exports.update = (req, res) ->
+    req.photo.updateAttributes req.body, (err) ->
+        return res.error 500, "Update failed." if err
+        res.send req.photo
+
+module.exports.delete = (req, res) ->
+    req.photo.destroy (err) ->
+        return res.error 500, "Deletion failed." if err
+        res.success "Deletion succeded."

@@ -17,6 +17,7 @@ module.exports = class Gallery extends ViewCollection
         @$el.photobox 'a.server',
             thumbs: true
             history: false
+            beforeShow: @beforeImageDisplayed
         , @onImageDisplayed
 
         # Add button to return photo to left
@@ -83,8 +84,8 @@ module.exports = class Gallery extends ViewCollection
         evt.stopPropagation()
         return false
 
-    getIdPhoto: () =>
-        url = $('#pbOverlay .wrapper img.zoomable').attr 'src'
+    getIdPhoto: (url) =>
+        url ?= $('#pbOverlay .wrapper img.zoomable').attr 'src'
         parts = url.split('/')
         id = parts[parts.length - 1]
         id = id.split('.')[0]
@@ -96,17 +97,17 @@ module.exports = class Gallery extends ViewCollection
         newOrientation =
             helpers.rotateLeft orientation, $('.wrapper img.zoomable')
         helpers.rotate newOrientation, $('.wrapper img.zoomable')
-        @collection.get(id)?.save orientation: newOrientation, 
+        @collection.get(id)?.save orientation: newOrientation,
             success : () =>
                 helpers.rotate newOrientation, $('.pbThumbs .active img')
-                
+
     onTurnRight: () =>
         id = @getIdPhoto()
         orientation = @collection.get(id)?.attributes.orientation
         newOrientation =
             helpers.rotateRight orientation, $('.wrapper img.zoomable')
         helpers.rotate newOrientation, $('.wrapper img.zoomable')
-        @collection.get(id)?.save orientation: newOrientation, 
+        @collection.get(id)?.save orientation: newOrientation,
             success : () =>
                 helpers.rotate newOrientation, $('.pbThumbs .active img')
 
@@ -117,15 +118,16 @@ module.exports = class Gallery extends ViewCollection
         @uploader = old.clone true
         old.replaceWith @uploader
 
+    beforeImageDisplayed: (link) =>
+        id = @getIdPhoto link.href
+        orientation = @collection.get(id)?.attributes.orientation
+        $('#pbOverlay .wrapper img')[0].dataset.orientation = orientation
+
     onImageDisplayed: (args) =>
         # Initialize download link
         url = $('.pbThumbs .active img').attr 'src'
         id = @getIdPhoto()
         @downloadLink.attr 'href', url.replace 'thumbs', 'raws'
-
-        # Rotate image displayed
-        orientation = @collection.get(id)?.attributes.orientation
-        helpers.rotate orientation, $('#pbOverlay .wrapper img.zoomable')
 
         # Rotate thumbs
         thumbs = $('#pbOverlay .pbThumbs img')
@@ -135,7 +137,7 @@ module.exports = class Gallery extends ViewCollection
             id = parts[parts.length - 1]
             id = id.split('.')[0]
             orientation = @collection.get(id)?.attributes.orientation
-            thumb.style = helpers.getRotate orientation
+            helpers.rotate orientation, $(thumb)
 
 
     handleFiles: (files) ->
