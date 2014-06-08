@@ -14,7 +14,7 @@ module.exports =
     "public" : "public"
     "hidden" : "hidden"
     "There is no photos in this album" : "There are no photos in this album"
-    "There is no public albums." : "There are no public albums."
+    "There is no public albums." : "There are no albums."
     "This album is private" : "This album is private"
     "This album is hidden" : "This album is hidden"
     "This album is public" : "This album is public"

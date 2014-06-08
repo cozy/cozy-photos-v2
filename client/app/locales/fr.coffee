@@ -13,7 +13,7 @@ module.exports =
     "public" : "public"
     "hidden" : "masqué"
     "There is no photos in this album" : "Pas de photos dans cet album"
-    "There is no public albums." : "Pas d'albums publics"
+    "There is no public albums." : "Il n'y a aucun album"
     "This album is private" : "Cet album est Privé"
     "This album is hidden" : "Cet album est Masqué"
     "This album is public" : "Cet album est Public"
