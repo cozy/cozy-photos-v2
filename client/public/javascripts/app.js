@@ -861,7 +861,7 @@ blobify = function(dataUrl, type) {
 };
 
 makeThumbDataURI = function(photo, next) {
-  photo.thumb_du = resize(photo, 180, 180, true);
+  photo.thumb_du = resize(photo, 300, 300, true);
   return next();
 };
 

@@ -52,7 +52,7 @@ blobify = (dataUrl, type) ->
 
 # create photo.thumb_du : a DataURL encoded thumbnail of photo.img
 makeThumbDataURI = (photo, next) ->
-    photo.thumb_du = resize photo, 180, 180, true
+    photo.thumb_du = resize photo, 300, 300, true
     next()
 
 # create photo.screen_du : a DataURL encoded thumbnail of photo.img
