@@ -18,7 +18,9 @@ albumPhotosRequest =
 module.exports =
     'album':
         'all': allMap
+        'byTitle': (doc) -> emit doc.title, doc
         'public': publicMap
+        'byTitlePublic': (doc) -> emit doc.title, doc
     'photo':
         'all': allMap
         'byalbum': byAlbumMap

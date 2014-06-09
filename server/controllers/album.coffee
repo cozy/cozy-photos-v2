@@ -26,7 +26,7 @@ module.exports.index = (req, res) ->
             else
                 callback()
 
-        request = if req.public then 'public' else 'all'
+        request = if req.public then 'byTitlePublic' else 'byTitle'
 
         async.parallel [
             (cb) -> Album.request request, cb
@@ -37,35 +37,35 @@ module.exports.index = (req, res) ->
             initAlbums albums, () =>
                 imports = """
                         window.locale = "#{locale}";
-                        window.initalbums = #{JSON.stringify(out)};
+                        window.initalbums = #{JSON.stringify(out.reverse())};
                     """
                 res.render 'index.jade', imports: imports
 
 
 module.exports.fetch = (req, res, next, id) ->
-        Album.find id, (err, album) ->
-            return res.error 500, 'An error occured', err if err
-            return res.error 404, 'Album not found' if not album
+    Album.find id, (err, album) ->
+        return res.error 500, 'An error occured', err if err
+        return res.error 404, 'Album not found' if not album
 
-            req.album = album
-            next()
+        req.album = album
+        next()
 
 module.exports.list = (req, res) ->
 
-        request = if req.public then 'public' else 'all'
+    request = if req.public then 'byTitlePublic' else 'byTitle'
 
-        async.parallel [
-            (cb) -> Photo.albumsThumbs cb
-            (cb) -> Album.request request, cb
-        ], (err, results) ->
-            [photos, albums] = results
-            out = []
-            for albumModel in albums
-                album = albumModel.toObject()
-                album.thumb = photos[album.id]
-                out.push album
+    async.parallel [
+        (cb) -> Photo.albumsThumbs cb
+        (cb) -> Album.request request, cb
+    ], (err, results) ->
+        [photos, albums] = results
+        out = []
+        for albumModel in albums
+            album = albumModel.toObject()
+            album.thumb = photos[album.id]
+            out.push album
 
-            res.send out
+        res.send out
 
 module.exports.create = (req, res) ->
         album = new Album req.body

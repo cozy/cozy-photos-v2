@@ -4,6 +4,7 @@ module.exports = americano.getModel 'Album',
     id            : String
     title         : String
     description   : String
+    date          : Date
     clearance     : String
     orientation   : Number
 
