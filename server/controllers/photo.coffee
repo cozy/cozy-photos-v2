@@ -134,3 +134,30 @@ module.exports.delete = (req, res) ->
     req.photo.destroy (err) ->
         return res.error 500, "Deletion failed." if err
         res.success "Deletion succeded."
+
+module.exports.updateThumb = (req, res, next) ->
+    files = {}
+    form = new multiparty.Form
+        uploadDir: __dirname + '../../uploads'
+        defer: true # don't wait for full form. Needed for progress events
+        keepExtensions: true
+        maxFieldsSize: 10 * 1024 * 1024
+
+    form.parse req
+
+    form.on 'file', (name, val) ->
+        val.name = val.originalFilename
+        val.type = val.headers['content-type'] or null
+        files[name] = val
+
+    form.on 'error', (err) ->
+        next err
+
+    form.on 'close', ->
+        req.files = qs.parse files
+        thumb = req.files['thumb']
+        data = name: 'thumb', type: thumb.type
+        console.log req.photo
+        req.photo.attachFile thumb.path, data, ->
+            res.send success: true
+

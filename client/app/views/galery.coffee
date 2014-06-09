@@ -38,7 +38,6 @@ module.exports = class Galery extends ViewCollection
         @turnLeft.on 'click', @onTurnLeft
 
         # Add link to download photo
-
         @downloadLink = $('#pbOverlay .pbCaptionText  .btn-group .download-link')
         @downloadLink.unbind 'click'
         @downloadLink.remove()

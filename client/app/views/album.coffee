@@ -3,6 +3,7 @@ BaseView = require 'lib/base_view'
 Galery = require 'views/galery'
 {editable} = require 'lib/helpers'
 Clipboard = require 'lib/clipboard'
+thProcessor = require 'models/thumbprocessor'
 contactModel = require 'models/contact'
 
 Contact = new contactModel()
@@ -20,6 +21,7 @@ module.exports = class AlbumView extends BaseView
         'click a.addcontact': @addcontact
         'click a.sendmail': @sendMail
         'click a.add': @prepareContact
+        'click a#rebuild-th-btn': @rebuildThumbs
         'keyup #mails': @onKeyUpMails
 
     getRenderData: ->
@@ -138,6 +140,13 @@ module.exports = class AlbumView extends BaseView
                         mails.push ' ' + item.value
                         break
         @$('#mails').val(mails)
+
+    # Temporary tool to allow people to rebuild the thumbnails with size
+    # set recently. New size is larger, so older thumbs looks blurry.
+    # This function recalculate them with the right size
+    rebuildThumbs: (event) ->
+        for model in @model.photos.models
+            thProcessor.process model
 
     onKeyUpMails: (event) ->
         if event.which is 13 or event.keyCode is 13

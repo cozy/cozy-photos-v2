@@ -68,58 +68,58 @@ module.exports.list = (req, res) ->
         res.send out
 
 module.exports.create = (req, res) ->
-        album = new Album req.body
-        Album.create album, (err, album) ->
-            return res.error 500, "Creation failed.", err if err
+    album = new Album req.body
+    Album.create album, (err, album) ->
+        return res.error 500, "Creation failed.", err if err
 
-            res.send album, 201
+        res.send album, 201
 
 module.exports.sendMail = (req, res) ->
-        data =
-            to: req.body.mails
+    data =
+        to: req.body.mails
             subject: "I share an album with you"
             content: "You can access to my album via this link: #{req.body.url}"
-        CozyAdapter.sendMailFromUser data, (err) ->
-            return res.error 500, "Server couldn't send mail.", err if err
-            res.send 200
+    CozyAdapter.sendMailFromUser data, (err) ->
+        return res.error 500, "Server couldn't send mail.", err if err
+        res.send 200
 
 module.exports.read = (req, res) ->
 
-        if req.album.clearance is 'private' and req.public
-            return res.error 401, "You are not allowed to view this album."
+    if req.album.clearance is 'private' and req.public
+        return res.error 401, "You are not allowed to view this album."
 
-        Photo.fromAlbum req.album, (err, photos) ->
-            return res.error 500, 'An error occured', err if err
+    Photo.fromAlbum req.album, (err, photos) ->
+        return res.error 500, 'An error occured', err if err
 
-            # JugglingDb doesn't let you add attributes to the model
-            out = req.album.toObject()
-            out.photos = photos
-            out.thumb = photos[0].id if photos.length
+        # JugglingDb doesn't let you add attributes to the model
+        out = req.album.toObject()
+        out.photos = photos
+        out.thumb = photos[0].id if photos.length
 
-            res.send out
+        res.send out
 
 module.exports.zip = (req, res) ->
-        Photo.fromAlbum req.album, (err, photos) ->
-            return res.error 500, 'An error occured', err if err
-            return res.error 401, 'The album is empty' unless photos.length
+    Photo.fromAlbum req.album, (err, photos) ->
+        return res.error 500, 'An error occured', err if err
+        return res.error 401, 'The album is empty' unless photos.length
 
-            zip = zipstream.createZip level: 1
+        zip = zipstream.createZip level: 1
 
-            addToZip = (photo, cb) ->
-                stream = photo.getFile 'raw', noop
-                extension = photo.title.substr photo.title.lastIndexOf '.'
-                photoname = photo.title.substr 0, photo.title.lastIndexOf '.'
-                photoname = slugify(photoname) + extension
-                zip.addFile stream, name: photoname, cb
+        addToZip = (photo, cb) ->
+            stream = photo.getFile 'raw', noop
+            extension = photo.title.substr photo.title.lastIndexOf '.'
+            photoname = photo.title.substr 0, photo.title.lastIndexOf '.'
+            photoname = slugify(photoname) + extension
+            zip.addFile stream, name: photoname, cb
 
-            async.eachSeries photos, addToZip, (err) ->
-                zip.finalize noop
+        async.eachSeries photos, addToZip, (err) ->
+            zip.finalize noop
 
-            zipname = slugify(req.album.title)
-            disposition = "attachment; filename=\"#{zipname}.zip\""
-            res.setHeader 'Content-Disposition', disposition
-            res.setHeader 'Content-Type', 'application/zip'
-            zip.pipe res
+        zipname = slugify(req.album.title)
+        disposition = "attachment; filename=\"#{zipname}.zip\""
+        res.setHeader 'Content-Disposition', disposition
+        res.setHeader 'Content-Type', 'application/zip'
+        zip.pipe res
 
 
 

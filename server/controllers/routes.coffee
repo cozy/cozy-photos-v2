@@ -34,7 +34,9 @@ module.exports =
         delete: photo.delete
 
     'photos/:photoid.jpg'        : get : photo.screen
-    'photos/thumbs/:photoid.jpg' : get : photo.thumb
+    'photos/thumbs/:photoid.jpg':
+        get : photo.thumb
+        put : photo.updateThumb
     'photos/raws/:photoid.jpg'   : get : photo.raw
 
     'public/?'                          : get : album.index

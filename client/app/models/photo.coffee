@@ -13,3 +13,6 @@ module.exports = class Photo extends Backbone.Model
             thumbsrc: "photos/thumbs/#{attrs.id}.jpg"
             src: "photos/#{attrs.id}.jpg"
             orientation: attrs.orientation
+
+    getPrevSrc: ->
+        "photos/#{@get 'id'}.jpg"

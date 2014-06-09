@@ -629,6 +629,8 @@ module.exports = {
   "Select your friends": "Select your friends",
   "Add": "Add",
   "Cancel": "Cancel",
+  'photo successfully set as cover': 'The picture has been successfully set as album cover',
+  'problem occured while setting cover': 'A problem occured while setting picture as cover',
   "Click Here or drag your photos below to upload": "Click Here or drag your photos below to upload",
   "hidden-description": "It will not appears on your homepage.\nBut you can share it with the following url :",
   "It cannot be accessed from the public side": "It cannot be accessed from the public side\""
@@ -669,6 +671,8 @@ module.exports = {
   "Select your friends": "Choisissez vos amis",
   "Add": "Ajouter",
   "Cancel": "Annuler",
+  'photo successfully set as cover': 'L\'image est maintenant la couverture de l\'album.',
+  'problem occured while setting cover': 'Un problème est survenu en positionnant l\'image comme couverture de\nl\'album.',
   "Click Here or drag your photos below to upload": "Cliquez ici pour ajouter des photos ou déposer vos fichiers",
   "hidden-description": "Il n'apparaitra pas sur votre page d'accueil,\nMais vous pouvez partager cet url :",
   "It cannot be accessed from the public side": "Il ne peut pas être vu depuis le coté public"
@@ -795,6 +799,10 @@ module.exports = Photo = (function(_super) {
         orientation: attrs.orientation
       });
     }
+  };
+
+  Photo.prototype.getPrevSrc = function() {
+    return "photos/" + (this.get('id')) + ".jpg";
   };
 
   return Photo;
@@ -1003,6 +1011,149 @@ module.exports = new PhotoProcessor();
 
 });
 
+;require.register("models/thumbprocessor", function(exports, require, module) {
+var ThumbProcessor, blobify, makeThumbBlob, makeThumbDataURI, makeThumbWorker, readFile, resize, upload, uploadWorker;
+
+readFile = function(photo, next) {
+  photo.img = new Image();
+  photo.img.onload = function() {
+    return next();
+  };
+  return photo.img.src = photo.url;
+};
+
+resize = function(photo, MAX_WIDTH, MAX_HEIGHT, fill) {
+  var canvas, ctx, max, newdims, ratio, ratiodim;
+  max = {
+    width: MAX_WIDTH,
+    height: MAX_HEIGHT
+  };
+  if ((photo.img.width > photo.img.height) === fill) {
+    ratiodim = 'height';
+  } else {
+    ratiodim = 'width';
+  }
+  ratio = max[ratiodim] / photo.img[ratiodim];
+  newdims = {
+    height: ratio * photo.img.height,
+    width: ratio * photo.img.width
+  };
+  canvas = document.createElement('canvas');
+  canvas.width = fill ? MAX_WIDTH : newdims.width;
+  canvas.height = fill ? MAX_HEIGHT : newdims.height;
+  ctx = canvas.getContext('2d');
+  ctx.drawImage(photo.img, 0, 0, newdims.width, newdims.height);
+  return canvas.toDataURL(photo.file.type);
+};
+
+blobify = function(dataUrl, type) {
+  var array, binary, i, _i, _ref;
+  binary = atob(dataUrl.split(',')[1]);
+  array = [];
+  for (i = _i = 0, _ref = binary.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+    array.push(binary.charCodeAt(i));
+  }
+  return new Blob([new Uint8Array(array)], {
+    type: type
+  });
+};
+
+makeThumbDataURI = function(photo, next) {
+  photo.thumb_du = resize(photo, 300, 300, true);
+  return next();
+};
+
+makeThumbBlob = function(photo, next) {
+  console.log(photo);
+  photo.thumb = blobify(photo.thumb_du, photo.file.type);
+  return next();
+};
+
+upload = function(photo, next) {
+  var formdata;
+  formdata = new FormData();
+  formdata.append('thumb', photo.thumb, "thumb_" + photo.file.name);
+  return $.ajax({
+    url: "photos/thumbs/" + photo.id + ".jpg",
+    data: formdata,
+    cache: false,
+    contentType: false,
+    processData: false,
+    type: 'PUT',
+    success: function(data) {
+      return console.log(data);
+    }
+  });
+};
+
+makeThumbWorker = function(photo, done) {
+  return async.waterfall([
+    function(cb) {
+      return readFile(photo, cb);
+    }, function(cb) {
+      delete photo.img;
+      return cb();
+    }
+  ], function(err) {
+    return done(err);
+  });
+};
+
+uploadWorker = function(photo, done) {
+  return async.waterfall([
+    function(cb) {
+      return readFile(photo, cb);
+    }, function(cb) {
+      return makeThumbDataURI(photo, cb);
+    }, function(cb) {
+      return makeThumbBlob(photo, cb);
+    }, function(cb) {
+      return upload(photo, cb);
+    }, function(cb) {
+      delete photo.img;
+      delete photo.thumb;
+      delete photo.thumb_du;
+      return cb();
+    }
+  ], function(err) {
+    return done(err);
+  });
+};
+
+ThumbProcessor = (function() {
+  function ThumbProcessor() {}
+
+  ThumbProcessor.prototype.thumbsQueue = async.queue(makeThumbWorker, 3);
+
+  ThumbProcessor.prototype.uploadQueue = async.queue(uploadWorker, 2);
+
+  ThumbProcessor.prototype.process = function(model) {
+    var photo;
+    photo = {
+      url: model.getPrevSrc(),
+      id: model.get('id'),
+      file: {
+        type: 'image/jpeg',
+        name: model.get('title')
+      }
+    };
+    return this.uploadQueue.push(photo, (function(_this) {
+      return function(err) {
+        if (err) {
+          return console.log(err);
+        }
+      };
+    })(this));
+  };
+
+  return ThumbProcessor;
+
+})();
+
+module.exports = new ThumbProcessor();
+
+});
+
 ;require.register("router", function(exports, require, module) {
 var Album, AlbumView, AlbumsListView, Router, app,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
@@ -1156,7 +1307,10 @@ buf.push(null == __val__ ? "" : __val__);
 buf.push('</h1><div id="description">');
 var __val__ = description
 buf.push(null == __val__ ? "" : __val__);
-buf.push('</div></div><div id="photos" class="span8"></div><div id="clipboard-container"><textarea id="clipboard"></textarea></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer">     <a id="changeprivate" class="flatbtn changeclearance">');
+buf.push('</div></div><div id="photos" class="span8"></div><div id="rebuild-th"><a id="rebuild-th-btn">');
+var __val__ = t("rebuild thumbnails")
+buf.push(escape(null == __val__ ? "" : __val__));
+buf.push('</a></div><div id="clipboard-container"><textarea id="clipboard"></textarea></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer">     <a id="changeprivate" class="flatbtn changeclearance">');
 var __val__ = t("Make it Private")
 buf.push(escape(null == __val__ ? "" : __val__));
 buf.push('</a><a id="changehidden" class="flatbtn changeclearance">');
@@ -1302,7 +1456,7 @@ return buf.join("");
 });
 
 ;require.register("views/album", function(exports, require, module) {
-var AlbumView, BaseView, Clipboard, Contact, Galery, app, clipboard, contactModel, editable,
+var AlbumView, BaseView, Clipboard, Contact, Galery, app, clipboard, contactModel, editable, thProcessor,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1316,6 +1470,8 @@ Galery = require('views/galery');
 editable = require('lib/helpers').editable;
 
 Clipboard = require('lib/clipboard');
+
+thProcessor = require('models/thumbprocessor');
 
 contactModel = require('models/contact');
 
@@ -1346,6 +1502,7 @@ module.exports = AlbumView = (function(_super) {
       'click a.addcontact': this.addcontact,
       'click a.sendmail': this.sendMail,
       'click a.add': this.prepareContact,
+      'click a#rebuild-th-btn': this.rebuildThumbs,
       'keyup #mails': this.onKeyUpMails
     };
   };
@@ -1519,6 +1676,17 @@ module.exports = AlbumView = (function(_super) {
       }
     }
     return this.$('#mails').val(mails);
+  };
+
+  AlbumView.prototype.rebuildThumbs = function(event) {
+    var model, _i, _len, _ref, _results;
+    _ref = this.model.photos.models;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      model = _ref[_i];
+      _results.push(thProcessor.process(model));
+    }
+    return _results;
   };
 
   AlbumView.prototype.onKeyUpMails = function(event) {
