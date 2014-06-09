@@ -1,3 +1,20 @@
+// Helpers
+
+transform()
+    -webkit-transform arguments
+    -moz-transform arguments
+    -ms-transform arguments
+    transform arguments
+
+transition-delay()
+    -webkit-transition-delay arguments
+    -moz-transition-delay arguments
+    -ms-transition-delay arguments
+    transition-delay arguments
+
+
+// Fonts
+
 @font-face
     font-family: styled
     src: url('/fonts/maven-pro-light-300.otf');
@@ -6,21 +23,23 @@
     font-family: main
     src: url('/fonts/signika-regular.ttf');
 
-@import "./_mixins"
+
+// Colors
 
 bgcolor = #fcfcfc
+//bgcolor = black
 uploadcolor = #34a6ff
 darkgrey = #444
 basecolor = lightgrey
 orange = #fe8800
 blue = #34a6ff
 bluegreen = #34A6BB
+green = #5C5
 
 
 body
-    height 96%
-    padding 1%
     background-color bgcolor
+    padding: 20px
 
 // # commons
 
@@ -87,43 +106,68 @@ button.delete
 // #### album list page ###
 
 .albumitem
-    height 220px
     float left
-    padding 10px
 
     a
-        display block
-        margin-right 10px
-        box-sizing border-box
-        border-radius 2px
-        border 1px solid blue
-        box-shadow 3px 3px 3px darkgrey
+        display: block
+        border-radius: 2px
+        overflow: hidden
+        width 300px
+        height 300px
+        color: white
+        text-decoration: none
+        border-radius: 0
+        box-sizing: border-box
         transition .2s ease-out
         -webkit-transition .2s ease-out
-        overflow hidden
-        width 180px
-        height 180px
+        background-repeat: no-repeat
+        background-size: 100%
 
-        img
-            width 180px
-            height 180px
+    .title
+        z-index: 100
+        border-radius: 0
+        width: 300px
+        height: 300px
+        display: block
+        opacity: 0
 
-    h4
-        width: 180px
-        margin: 0
-        padding: 10px 0
-        font-weight: normal
+        padding-top: 135px
+        font-size: 25px
+        line-height: 25px
+        text-align: center
+        font-variant: small-caps
+        color: white
+        background-color: rgba(0,0,0,0.7)
 
-    a:hover
-        border 1px solid orange
+        transition: all .2s ease-out
+
+    &:hover
+        .title
+            opacity: 1
 
     a:active
         transition 0s ease-out
         -webkit-transition 0s ease-out
-        box-shadow: 0px 0px 0px darkgrey
+        box-shadow: 1px 3px 2px rgba(0, 0, 0, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.0)
 
-    .text
-        margin-left 180px
+//a:hover
+//border 1px solid orange
+
+.albumitem.create
+    background: green
+    text-align: center
+    transition: all .2s ease-out
+
+    a
+        font-size: 20px
+
+    img
+        width: auto
+        margin-top: 100px
+        margin-bottom: 10px
+
+    &:hover
+        background: orange 
 
 // #### album page ###
 
@@ -411,3 +455,4 @@ for t in exifTransforms
   width: 1px
   height: 1px
   padding: 0px
+

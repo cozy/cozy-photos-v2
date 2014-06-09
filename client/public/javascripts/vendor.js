@@ -20116,4 +20116,4 @@ if (typeof define === "function" && define.amd) {
 })(window, document);
 
 ;
-//@ sourceMappingURL=vendor.js.map
+//# sourceMappingURL=vendor.js.map

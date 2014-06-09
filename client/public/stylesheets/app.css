@@ -7,9 +7,8 @@
   src: url("/fonts/signika-regular.ttf");
 }
 body {
-  height: 96%;
-  padding: 1%;
   background-color: #fcfcfc;
+  padding: 20px;
 }
 #album,
 #album-list {
@@ -75,43 +74,62 @@ button.delete {
   width: auto;
 }
 .albumitem {
-  height: 220px;
   float: left;
-  padding: 10px;
 }
 .albumitem a {
   display: block;
-  margin-right: 10px;
-  box-sizing: border-box;
   border-radius: 2px;
-  border: 1px solid #34a6ff;
-  box-shadow: 3px 3px 3px #444;
+  overflow: hidden;
+  width: 300px;
+  height: 300px;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 0;
+  box-sizing: border-box;
   transition: 0.2s ease-out;
   -webkit-transition: 0.2s ease-out;
-  overflow: hidden;
-  width: 180px;
-  height: 180px;
+  background-repeat: no-repeat;
+  background-size: 100%;
 }
-.albumitem a img {
-  width: 180px;
-  height: 180px;
+.albumitem .title {
+  z-index: 100;
+  border-radius: 0;
+  width: 300px;
+  height: 300px;
+  display: block;
+  opacity: 0;
+  padding-top: 135px;
+  font-size: 25px;
+  line-height: 25px;
+  text-align: center;
+  font-variant: small-caps;
+  color: #fff;
+  background-color: rgba(0,0,0,0.7);
+  transition: all 0.2s ease-out;
 }
-.albumitem h4 {
-  width: 180px;
-  margin: 0;
-  padding: 10px 0;
-  font-weight: normal;
-}
-.albumitem a:hover {
-  border: 1px solid #fe8800;
+.albumitem:hover .title {
+  opacity: 1;
 }
 .albumitem a:active {
   transition: 0s ease-out;
   -webkit-transition: 0s ease-out;
-  box-shadow: 0px 0px 0px #444;
+  box-shadow: 1px 3px 2px rgba(0,0,0,0.2) inset, 0 1px 2px rgba(0,0,0,0);
 }
-.albumitem .text {
-  margin-left: 180px;
+.albumitem.create {
+  background: #5c5;
+  text-align: center;
+  transition: all 0.2s ease-out;
+}
+.albumitem.create a {
+  font-size: 20px;
+}
+.albumitem.create img {
+  width: auto;
+  margin-top: 100px;
+  margin-bottom: 10px;
+}
+.albumitem.create:hover {
+  background: #fe8800;
 }
 #album {
   padding: 0;
@@ -848,4 +866,4 @@ button.delete {
 }
 
 
-/*@ sourceMappingURL=app.css.map*/
+/*# sourceMappingURL=app.css.map*/

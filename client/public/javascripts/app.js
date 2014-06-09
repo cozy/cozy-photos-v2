@@ -94,7 +94,6 @@ require.register("application", function(exports, require, module) {
 module.exports = {
   initialize: function() {
     var AlbumCollection, Router, e, locales;
-
     this.locale = window.locale;
     this.polyglot = new Polyglot();
     try {
@@ -127,7 +126,7 @@ module.exports = {
 });
 
 ;require.register("collections/album", function(exports, require, module) {
-var AlbumCollection, _ref,
+var AlbumCollection,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -135,8 +134,7 @@ module.exports = AlbumCollection = (function(_super) {
   __extends(AlbumCollection, _super);
 
   function AlbumCollection() {
-    _ref = AlbumCollection.__super__.constructor.apply(this, arguments);
-    return _ref;
+    return AlbumCollection.__super__.constructor.apply(this, arguments);
   }
 
   AlbumCollection.prototype.model = require('models/album');
@@ -150,7 +148,7 @@ module.exports = AlbumCollection = (function(_super) {
 });
 
 ;require.register("collections/photo", function(exports, require, module) {
-var PhotoCollection, _ref,
+var PhotoCollection,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -158,8 +156,7 @@ module.exports = PhotoCollection = (function(_super) {
   __extends(PhotoCollection, _super);
 
   function PhotoCollection() {
-    _ref = PhotoCollection.__super__.constructor.apply(this, arguments);
-    return _ref;
+    return PhotoCollection.__super__.constructor.apply(this, arguments);
   }
 
   PhotoCollection.prototype.model = require('models/photo');
@@ -215,7 +212,6 @@ $(function() {
   app.initialize();
   return $.fn.spin = function(opts, color) {
     var presets;
-
     presets = {
       tiny: {
         lines: 8,
@@ -239,7 +235,6 @@ $(function() {
     if (Spinner) {
       return this.each(function() {
         var $this, spinner;
-
         $this = $(this);
         spinner = $this.data("spinner");
         if (spinner != null) {
@@ -273,7 +268,7 @@ $(function() {
 });
 
 ;require.register("lib/base_view", function(exports, require, module) {
-var BaseView, _ref,
+var BaseView,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -282,8 +277,8 @@ module.exports = BaseView = (function(_super) {
   __extends(BaseView, _super);
 
   function BaseView() {
-    this.render = __bind(this.render, this);    _ref = BaseView.__super__.constructor.apply(this, arguments);
-    return _ref;
+    this.render = __bind(this.render, this);
+    return BaseView.__super__.constructor.apply(this, arguments);
   }
 
   BaseView.prototype.initialize = function(options) {
@@ -296,7 +291,6 @@ module.exports = BaseView = (function(_super) {
 
   BaseView.prototype.render = function() {
     var data;
-
     data = _.extend({}, this.options, this.getRenderData());
     this.$el.html(this.template(data));
     this.afterRender();
@@ -318,35 +312,35 @@ var Clipboard,
 module.exports = Clipboard = (function() {
   function Clipboard() {
     this.set = __bind(this.set, this);
-    var _this = this;
-
     this.value = "";
-    $(document).keydown(function(e) {
-      var _ref, _ref1;
-
-      if (!_this.value || !(e.ctrlKey || e.metaKey)) {
-        return;
-      }
-      if (typeof window.getSelection === "function" ? (_ref = window.getSelection()) != null ? _ref.toString() : void 0 : void 0) {
-        return;
-      }
-      if ((_ref1 = document.selection) != null ? _ref1.createRange().text : void 0) {
-        return;
-      }
-      return _.defer(function() {
-        var $clipboardContainer;
-
-        $clipboardContainer = $("#clipboard-container");
-        $clipboardContainer.empty().show();
-        return $("<textarea id='clipboard'></textarea>").val(_this.value).appendTo($clipboardContainer).focus().select();
-      });
-    });
-    $(document).keyup(function(e) {
-      if ($(e.target).is("#clipboard")) {
-        $("<textarea id='clipboard'></textarea>").val("");
-        return $("#clipboard-container").empty().hide();
-      }
-    });
+    $(document).keydown((function(_this) {
+      return function(e) {
+        var _ref, _ref1;
+        if (!_this.value || !(e.ctrlKey || e.metaKey)) {
+          return;
+        }
+        if (typeof window.getSelection === "function" ? (_ref = window.getSelection()) != null ? _ref.toString() : void 0 : void 0) {
+          return;
+        }
+        if ((_ref1 = document.selection) != null ? _ref1.createRange().text : void 0) {
+          return;
+        }
+        return _.defer(function() {
+          var $clipboardContainer;
+          $clipboardContainer = $("#clipboard-container");
+          $clipboardContainer.empty().show();
+          return $("<textarea id='clipboard'></textarea>").val(_this.value).appendTo($clipboardContainer).focus().select();
+        });
+      };
+    })(this));
+    $(document).keyup((function(_this) {
+      return function(e) {
+        if ($(e.target).is("#clipboard")) {
+          $("<textarea id='clipboard'></textarea>").val("");
+          return $("#clipboard-container").empty().hide();
+        }
+      };
+    })(this));
   }
 
   Clipboard.prototype.set = function(value) {
@@ -370,7 +364,6 @@ module.exports = {
   },
   editable: function(el, options) {
     var onChanged, placeholder;
-
     placeholder = options.placeholder, onChanged = options.onChanged;
     el.prop('contenteditable', true);
     if (!el.text()) {
@@ -396,7 +389,6 @@ module.exports = {
   },
   forceFocus: function(el) {
     var range, sel;
-
     range = document.createRange();
     range.selectNodeContents(el[0]);
     sel = document.getSelection();
@@ -406,7 +398,6 @@ module.exports = {
   },
   rotate: function(orientation, image) {
     var transform;
-
     if (navigator.userAgent.search("Firefox") !== -1) {
       transform = "transform";
     } else {
@@ -432,7 +423,6 @@ module.exports = {
   },
   getRotate: function(orientation, image) {
     var transform;
-
     if (navigator.userAgent.search("Firefox") !== -1) {
       transform = "transform";
     } else {
@@ -499,7 +489,7 @@ module.exports = {
 });
 
 ;require.register("lib/view_collection", function(exports, require, module) {
-var BaseView, ViewCollection, _ref,
+var BaseView, ViewCollection,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -511,8 +501,8 @@ module.exports = ViewCollection = (function(_super) {
 
   function ViewCollection() {
     this.removeItem = __bind(this.removeItem, this);
-    this.addItem = __bind(this.addItem, this);    _ref = ViewCollection.__super__.constructor.apply(this, arguments);
-    return _ref;
+    this.addItem = __bind(this.addItem, this);
+    return ViewCollection.__super__.constructor.apply(this, arguments);
   }
 
   ViewCollection.prototype.views = {};
@@ -527,7 +517,6 @@ module.exports = ViewCollection = (function(_super) {
 
   ViewCollection.prototype.appendView = function(view) {
     var className, index, selector, tagName;
-
     index = this.collection.indexOf(view.model);
     if (index === 0) {
       return this.$el.append(view.$el);
@@ -550,21 +539,19 @@ module.exports = ViewCollection = (function(_super) {
   };
 
   ViewCollection.prototype.render = function() {
-    var id, view, _ref1;
-
-    _ref1 = this.views;
-    for (id in _ref1) {
-      view = _ref1[id];
+    var id, view, _ref;
+    _ref = this.views;
+    for (id in _ref) {
+      view = _ref[id];
       view.$el.detach();
     }
     return ViewCollection.__super__.render.apply(this, arguments);
   };
 
   ViewCollection.prototype.afterRender = function() {
-    var i, _i, _ref1;
-
+    var i, _i, _ref;
     if (this.collection.length > 0) {
-      for (i = _i = 0, _ref1 = this.collection.length - 1; 0 <= _ref1 ? _i <= _ref1 : _i >= _ref1; i = 0 <= _ref1 ? ++_i : --_i) {
+      for (i = _i = 0, _ref = this.collection.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
         this.appendView(this.views[this.collection.at(i).cid]);
       }
       return this.checkIfEmpty(this.views);
@@ -577,11 +564,10 @@ module.exports = ViewCollection = (function(_super) {
   };
 
   ViewCollection.prototype.onReset = function(newcollection) {
-    var id, view, _ref1;
-
-    _ref1 = this.views;
-    for (id in _ref1) {
-      view = _ref1[id];
+    var id, view, _ref;
+    _ref = this.views;
+    for (id in _ref) {
+      view = _ref[id];
       view.remove();
     }
     return newcollection.forEach(this.addItem);
@@ -589,7 +575,6 @@ module.exports = ViewCollection = (function(_super) {
 
   ViewCollection.prototype.addItem = function(model) {
     var options, view;
-
     options = _.extend({}, {
       model: model
     }, this.itemViewOptions(model));
@@ -627,7 +612,7 @@ module.exports = {
   "public": "public",
   "hidden": "hidden",
   "There is no photos in this album": "There are no photos in this album",
-  "There is no public albums.": "There are no public albums.",
+  "There is no public albums.": "There are no albums.",
   "This album is private": "This album is private",
   "This album is hidden": "This album is hidden",
   "This album is public": "This album is public",
@@ -667,7 +652,7 @@ module.exports = {
   "public": "public",
   "hidden": "masqué",
   "There is no photos in this album": "Pas de photos dans cet album",
-  "There is no public albums.": "Pas d'albums publics",
+  "There is no public albums.": "Il n'y a aucun album",
   "This album is private": "Cet album est Privé",
   "This album is hidden": "Cet album est Masqué",
   "This album is public": "Cet album est Public",
@@ -722,7 +707,6 @@ module.exports = Album = (function(_super) {
 
   Album.prototype.parse = function(attrs) {
     var _ref, _ref1, _ref2;
-
     if (((_ref = attrs.photos) != null ? _ref.length : void 0) > 0) {
       this.photos.reset(attrs.photos, {
         parse: true
@@ -740,7 +724,6 @@ module.exports = Album = (function(_super) {
 
   Album.prototype.sendMail = function(url, mails, callback) {
     var data;
-
     data = {
       url: url,
       mails: mails
@@ -755,7 +738,7 @@ module.exports = Album = (function(_super) {
 });
 
 ;require.register("models/contact", function(exports, require, module) {
-var Contact, client, _ref,
+var Contact, client,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -765,8 +748,7 @@ module.exports = Contact = (function(_super) {
   __extends(Contact, _super);
 
   function Contact() {
-    _ref = Contact.__super__.constructor.apply(this, arguments);
-    return _ref;
+    return Contact.__super__.constructor.apply(this, arguments);
   }
 
   Contact.prototype.list = function(callback) {
@@ -780,7 +762,7 @@ module.exports = Contact = (function(_super) {
 });
 
 ;require.register("models/photo", function(exports, require, module) {
-var Photo, _ref,
+var Photo,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -788,8 +770,7 @@ module.exports = Photo = (function(_super) {
   __extends(Photo, _super);
 
   function Photo() {
-    _ref = Photo.__super__.constructor.apply(this, arguments);
-    return _ref;
+    return Photo.__super__.constructor.apply(this, arguments);
   }
 
   Photo.prototype.defaults = function() {
@@ -822,9 +803,7 @@ module.exports = Photo = (function(_super) {
 var PhotoProcessor, blobify, makeScreenBlob, makeScreenDataURI, makeThumbBlob, makeThumbDataURI, makeThumbWorker, readFile, resize, upload, uploadWorker;
 
 readFile = function(photo, next) {
-  var reader,
-    _this = this;
-
+  var reader;
   if (photo.file.size > 10 * 1024 * 1024) {
     return next(t('is too big (max 10Mo)'));
   }
@@ -834,18 +813,19 @@ readFile = function(photo, next) {
   reader = new FileReader();
   photo.img = new Image();
   reader.readAsDataURL(photo.file);
-  return reader.onloadend = function() {
-    photo.img.src = reader.result;
-    photo.img.orientation = photo.attributes.orientation;
-    return photo.img.onload = function() {
-      return next();
+  return reader.onloadend = (function(_this) {
+    return function() {
+      photo.img.src = reader.result;
+      photo.img.orientation = photo.attributes.orientation;
+      return photo.img.onload = function() {
+        return next();
+      };
     };
-  };
+  })(this);
 };
 
 resize = function(photo, MAX_WIDTH, MAX_HEIGHT, fill) {
   var canvas, ctx, max, newdims, ratio, ratiodim;
-
   max = {
     width: MAX_WIDTH,
     height: MAX_HEIGHT
@@ -870,7 +850,6 @@ resize = function(photo, MAX_WIDTH, MAX_HEIGHT, fill) {
 
 blobify = function(dataUrl, type) {
   var array, binary, i, _i, _ref;
-
   binary = atob(dataUrl.split(',')[1]);
   array = [];
   for (i = _i = 0, _ref = binary.length; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
@@ -903,7 +882,6 @@ makeThumbBlob = function(photo, next) {
 
 upload = function(photo, next) {
   var attr, formdata, _i, _len, _ref;
-
   formdata = new FormData();
   _ref = ['title', 'description', 'albumid', 'orientation'];
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -925,7 +903,6 @@ upload = function(photo, next) {
     },
     xhr: function() {
       var progress, xhr;
-
       xhr = $.ajaxSettings.xhr();
       progress = function(e) {
         return photo.trigger('progress', e);
@@ -1000,18 +977,18 @@ PhotoProcessor = (function() {
   PhotoProcessor.prototype.uploadQueue = async.queue(uploadWorker, 2);
 
   PhotoProcessor.prototype.process = function(photo) {
-    var _this = this;
-
-    return this.thumbsQueue.push(photo, function(err) {
-      if (err) {
-        return console.log(err);
-      }
-      return _this.uploadQueue.push(photo, function(err) {
+    return this.thumbsQueue.push(photo, (function(_this) {
+      return function(err) {
         if (err) {
           return console.log(err);
         }
-      });
-    });
+        return _this.uploadQueue.push(photo, function(err) {
+          if (err) {
+            return console.log(err);
+          }
+        });
+      };
+    })(this));
   };
 
   return PhotoProcessor;
@@ -1023,7 +1000,7 @@ module.exports = new PhotoProcessor();
 });
 
 ;require.register("router", function(exports, require, module) {
-var Album, AlbumView, AlbumsListView, Router, app, _ref,
+var Album, AlbumView, AlbumsListView, Router, app,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1040,8 +1017,8 @@ module.exports = Router = (function(_super) {
   __extends(Router, _super);
 
   function Router() {
-    this.displayView = __bind(this.displayView, this);    _ref = Router.__super__.constructor.apply(this, arguments);
-    return _ref;
+    this.displayView = __bind(this.displayView, this);
+    return Router.__super__.constructor.apply(this, arguments);
   }
 
   Router.prototype.routes = {
@@ -1071,25 +1048,27 @@ module.exports = Router = (function(_super) {
   };
 
   Router.prototype.album = function(id, editable) {
-    var album,
-      _this = this;
-
+    var album;
     if (editable == null) {
       editable = false;
     }
     album = app.albums.get(id) || new Album({
       id: id
     });
-    return album.fetch().done(function() {
-      return _this.displayView(new AlbumView({
-        model: album,
-        editable: editable,
-        contacts: []
-      }));
-    }).fail(function() {
-      alert(t('this album does not exist'));
-      return _this.navigate('albums', true);
-    });
+    return album.fetch().done((function(_this) {
+      return function() {
+        return _this.displayView(new AlbumView({
+          model: album,
+          editable: editable,
+          contacts: []
+        }));
+      };
+    })(this)).fail((function(_this) {
+      return function() {
+        alert(t('this album does not exist'));
+        return _this.navigate('albums', true);
+      };
+    })(this));
   };
 
   Router.prototype.albumedit = function(id) {
@@ -1112,7 +1091,6 @@ module.exports = Router = (function(_super) {
 
   Router.prototype.displayView = function(view) {
     var el;
-
     if (this.mainView) {
       this.mainView.remove();
     }
@@ -1259,10 +1237,10 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div class="albumitem create"><a href="#albums/new"><img src="img/create.gif"/></a><div><h4>');
+buf.push('<div class="albumitem create"><a href="#albums/new"><img src="img/new-galery.png"/><br/><span>');
 var __val__ = t('Create a new album')
 buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</h4></div></div><p class="help">');
+buf.push('</span></a></div><p class="help">');
 var __val__ = t('There is no public albums.')
 buf.push(escape(null == __val__ ? "" : __val__));
 buf.push('</p>');
@@ -1278,10 +1256,8 @@ var buf = [];
 with (locals || {}) {
 var interp;
 buf.push('<a');
-buf.push(attrs({ 'href':("#albums/" + (id) + "") }, {"href":true}));
-buf.push('><img');
-buf.push(attrs({ 'src':("" + (thumbsrc) + "") }, {"src":true}));
-buf.push('/></a><h4>' + escape((interp = title) == null ? '' : interp) + '</h4>');
+buf.push(attrs({ 'href':("#albums/" + (id) + ""), 'style':("background-image: url(" + (thumbsrc) + ")") }, {"href":true,"style":true}));
+buf.push('><span class="title">' + escape((interp = title) == null ? '' : interp) + '</span></a>');
 }
 return buf.join("");
 };
@@ -1322,7 +1298,7 @@ return buf.join("");
 });
 
 ;require.register("views/album", function(exports, require, module) {
-var AlbumView, BaseView, Clipboard, Contact, Gallery, app, clipboard, contactModel, editable, _ref,
+var AlbumView, BaseView, Clipboard, Contact, Gallery, app, clipboard, contactModel, editable,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1349,8 +1325,8 @@ module.exports = AlbumView = (function(_super) {
   function AlbumView() {
     this.makeEditable = __bind(this.makeEditable, this);
     this.beforePhotoUpload = __bind(this.beforePhotoUpload, this);
-    this.events = __bind(this.events, this);    _ref = AlbumView.__super__.constructor.apply(this, arguments);
-    return _ref;
+    this.events = __bind(this.events, this);
+    return AlbumView.__super__.constructor.apply(this, arguments);
   }
 
   AlbumView.prototype.template = require('templates/album');
@@ -1372,7 +1348,6 @@ module.exports = AlbumView = (function(_super) {
 
   AlbumView.prototype.getRenderData = function() {
     var clearance, clearanceHelpers, res;
-
     clearance = this.model.get('clearance');
     if (clearance == null) {
       clearance = 'private';
@@ -1399,35 +1374,37 @@ module.exports = AlbumView = (function(_super) {
   };
 
   AlbumView.prototype.beforePhotoUpload = function(callback) {
-    var _this = this;
-
-    return this.saveModel().then(function() {
-      return callback({
-        albumid: _this.model.id
-      });
-    });
+    return this.saveModel().then((function(_this) {
+      return function() {
+        return callback({
+          albumid: _this.model.id
+        });
+      };
+    })(this));
   };
 
   AlbumView.prototype.makeEditable = function() {
-    var _this = this;
-
     this.$el.addClass('editing');
     this.refreshPopOver(this.model.get('clearance'));
     editable(this.$('#title'), {
       placeholder: t('Title ...'),
-      onChanged: function(text) {
-        return _this.saveModel({
-          title: text.trim()
-        });
-      }
+      onChanged: (function(_this) {
+        return function(text) {
+          return _this.saveModel({
+            title: text.trim()
+          });
+        };
+      })(this)
     });
     return editable(this.$('#description'), {
       placeholder: t('Write some more ...'),
-      onChanged: function(text) {
-        return _this.saveModel({
-          description: text.trim()
-        });
-      }
+      onChanged: (function(_this) {
+        return function(text) {
+          return _this.saveModel({
+            description: text.trim()
+          });
+        };
+      })(this)
     });
   };
 
@@ -1443,25 +1420,24 @@ module.exports = AlbumView = (function(_super) {
   };
 
   AlbumView.prototype.changeClearance = function(event) {
-    var id, newclearance,
-      _this = this;
-
+    var id, newclearance;
     newclearance = event.target.id.replace('change', '');
     id = event.target.id;
     this.$("#" + id).spin('tiny');
     this.$("#" + id).css('color', 'transparent');
     return this.saveModel({
       clearance: newclearance
-    }).then(function() {
-      _this.$("#" + id).spin();
-      _this.$("#" + id).css('color', 'white');
-      return _this.refreshPopOver(newclearance);
-    });
+    }).then((function(_this) {
+      return function() {
+        _this.$("#" + id).spin();
+        _this.$("#" + id).css('color', 'white');
+        return _this.refreshPopOver(newclearance);
+      };
+    })(this));
   };
 
   AlbumView.prototype.refreshPopOver = function(clearance) {
     var help, modal;
-
     help = this.clearanceHelpers(clearance);
     modal = this.$('#clearance-modal');
     this.$('.clearance').find('span').text(clearance);
@@ -1479,41 +1455,40 @@ module.exports = AlbumView = (function(_super) {
   };
 
   AlbumView.prototype.addcontact = function() {
-    var modal,
-      _this = this;
-
+    var modal;
     modal = this.$('#add-contact-modal');
     this.options.contacts = [];
     return Contact.list({
-      success: function(body) {
-        var contact, item, n, _i, _j, _len, _len1, _ref1;
-
-        for (_i = 0, _len = body.length; _i < _len; _i++) {
-          contact = body[_i];
-          _ref1 = contact.datapoints;
-          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-            item = _ref1[_j];
-            if (item.name === "email") {
-              contact.index = contact.fn.split(' ').join('_');
-              contact.index = contact.index.split("'").join('_');
-              contact.index = contact.index.split("/").join('_');
-              contact.index = contact.index.split("*").join('_');
-              n = 0;
-              while ((_this.options.contacts[n] != null) && _this.options.contacts[n].fn < contact.fn) {
-                n++;
+      success: (function(_this) {
+        return function(body) {
+          var contact, item, n, _i, _j, _len, _len1, _ref;
+          for (_i = 0, _len = body.length; _i < _len; _i++) {
+            contact = body[_i];
+            _ref = contact.datapoints;
+            for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+              item = _ref[_j];
+              if (item.name === "email") {
+                contact.index = contact.fn.split(' ').join('_');
+                contact.index = contact.index.split("'").join('_');
+                contact.index = contact.index.split("/").join('_');
+                contact.index = contact.index.split("*").join('_');
+                n = 0;
+                while ((_this.options.contacts[n] != null) && _this.options.contacts[n].fn < contact.fn) {
+                  n++;
+                }
+                _this.options.contacts.splice(n, 0, contact);
+                break;
               }
-              _this.options.contacts.splice(n, 0, contact);
-              break;
             }
           }
-        }
-        if (_this.options.contacts.length === 0) {
-          _this.options.contacts = "No contacts found";
-        }
-        _this.$('#add-contact-modal').modal('hide');
-        _this.render(modal);
-        return _this.$('#add-contact-modal').modal('show');
-      },
+          if (_this.options.contacts.length === 0) {
+            _this.options.contacts = "No contacts found";
+          }
+          _this.$('#add-contact-modal').modal('hide');
+          _this.render(modal);
+          return _this.$('#add-contact-modal').modal('show');
+        };
+      })(this),
       error: function(err) {
         return console.log(err);
       }
@@ -1521,17 +1496,16 @@ module.exports = AlbumView = (function(_super) {
   };
 
   AlbumView.prototype.prepareContact = function(event) {
-    var contact, item, mails, modal, _i, _j, _len, _len1, _ref1, _ref2;
-
+    var contact, item, mails, modal, _i, _j, _len, _len1, _ref, _ref1;
     modal = this.$('#add-contact-modal');
     mails = [];
-    _ref1 = this.options.contacts;
-    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-      contact = _ref1[_i];
+    _ref = this.options.contacts;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      contact = _ref[_i];
       if (this.$("#" + contact.index).is(':checked')) {
-        _ref2 = contact.datapoints;
-        for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-          item = _ref2[_j];
+        _ref1 = contact.datapoints;
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          item = _ref1[_j];
           if (item.name === "email") {
             mails.push(' ' + item.value);
             break;
@@ -1549,9 +1523,7 @@ module.exports = AlbumView = (function(_super) {
   };
 
   AlbumView.prototype.sendMail = function(event) {
-    var mails,
-      _this = this;
-
+    var mails;
     mails = this.$('#mails').val();
     if (mails.length === 0) {
       return alert("Please enter an email.");
@@ -1559,45 +1531,47 @@ module.exports = AlbumView = (function(_super) {
       this.$("a.sendmail").spin('tiny');
       this.$("a.sendmail").css('color', 'transparent');
       return this.model.sendMail(this.getPublicUrl(), mails, {
-        success: function() {
-          var mail, msg, _i, _len;
-
-          _this.$("a.sendmail").spin();
-          _this.$("a.sendmail").css('color', 'white');
-          msg = "Mail was successfully sent to : \n";
-          mails = mails.split(',');
-          for (_i = 0, _len = mails.length; _i < _len; _i++) {
-            mail = mails[_i];
-            msg = msg + "\n" + mail;
-          }
-          return alert(msg);
-        },
-        error: function(err) {
-          _this.$("a.sendmail").spin();
-          _this.$("a.sendmail").css('color', 'white');
-          return alert(JSON.parse(err.responseText).error);
-        }
+        success: (function(_this) {
+          return function() {
+            var mail, msg, _i, _len;
+            _this.$("a.sendmail").spin();
+            _this.$("a.sendmail").css('color', 'white');
+            msg = "Mail was successfully sent to : \n";
+            mails = mails.split(',');
+            for (_i = 0, _len = mails.length; _i < _len; _i++) {
+              mail = mails[_i];
+              msg = msg + "\n" + mail;
+            }
+            return alert(msg);
+          };
+        })(this),
+        error: (function(_this) {
+          return function(err) {
+            _this.$("a.sendmail").spin();
+            _this.$("a.sendmail").css('color', 'white');
+            return alert(JSON.parse(err.responseText).error);
+          };
+        })(this)
       });
     }
   };
 
   AlbumView.prototype.saveModel = function(hash) {
-    var promise,
-      _this = this;
-
+    var promise;
     promise = this.model.save(hash);
     if (this.model.isNew()) {
-      promise = promise.then(function() {
-        app.albums.add(_this.model);
-        return app.router.navigate("albums/" + _this.model.id + "/edit");
-      });
+      promise = promise.then((function(_this) {
+        return function() {
+          app.albums.add(_this.model);
+          return app.router.navigate("albums/" + _this.model.id + "/edit");
+        };
+      })(this));
     }
     return promise;
   };
 
   AlbumView.prototype.getPublicUrl = function() {
     var hash, origin, path;
-
     origin = window.location.origin;
     path = window.location.pathname.replace('apps', 'public');
     if (path === '/') {
@@ -1633,7 +1607,7 @@ module.exports = AlbumView = (function(_super) {
 });
 
 ;require.register("views/albumslist", function(exports, require, module) {
-var AlbumsList, ViewCollection, app, _ref,
+var AlbumsList, ViewCollection, app,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1646,8 +1620,8 @@ module.exports = AlbumsList = (function(_super) {
   __extends(AlbumsList, _super);
 
   function AlbumsList() {
-    this.checkIfEmpty = __bind(this.checkIfEmpty, this);    _ref = AlbumsList.__super__.constructor.apply(this, arguments);
-    return _ref;
+    this.checkIfEmpty = __bind(this.checkIfEmpty, this);
+    return AlbumsList.__super__.constructor.apply(this, arguments);
   }
 
   AlbumsList.prototype.id = 'album-list';
@@ -1675,7 +1649,7 @@ module.exports = AlbumsList = (function(_super) {
 });
 
 ;require.register("views/albumslist_item", function(exports, require, module) {
-var AlbumItem, BaseView, helpers, limitLength, _ref,
+var AlbumItem, BaseView, helpers, limitLength,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -1689,8 +1663,7 @@ module.exports = AlbumItem = (function(_super) {
   __extends(AlbumItem, _super);
 
   function AlbumItem() {
-    _ref = AlbumItem.__super__.constructor.apply(this, arguments);
-    return _ref;
+    return AlbumItem.__super__.constructor.apply(this, arguments);
   }
 
   AlbumItem.prototype.className = 'albumitem';
@@ -1698,16 +1671,15 @@ module.exports = AlbumItem = (function(_super) {
   AlbumItem.prototype.template = require('templates/albumlist_item');
 
   AlbumItem.prototype.initialize = function() {
-    var _this = this;
-
-    return this.listenTo(this.model, 'change', function() {
-      return _this.render();
-    });
+    return this.listenTo(this.model, 'change', (function(_this) {
+      return function() {
+        return _this.render();
+      };
+    })(this));
   };
 
   AlbumItem.prototype.getRenderData = function() {
     var out;
-
     out = _.clone(this.model.attributes);
     out.description = limitLength(out.description, 250);
     return out;
@@ -1726,7 +1698,7 @@ module.exports = AlbumItem = (function(_super) {
 });
 
 ;require.register("views/gallery", function(exports, require, module) {
-var Gallery, Photo, PhotoView, ViewCollection, app, helpers, photoprocessor, _ref,
+var Gallery, Photo, PhotoView, ViewCollection, app, helpers, photoprocessor,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1753,8 +1725,8 @@ module.exports = Gallery = (function(_super) {
     this.onTurnRight = __bind(this.onTurnRight, this);
     this.onTurnLeft = __bind(this.onTurnLeft, this);
     this.getIdPhoto = __bind(this.getIdPhoto, this);
-    this.checkIfEmpty = __bind(this.checkIfEmpty, this);    _ref = Gallery.__super__.constructor.apply(this, arguments);
-    return _ref;
+    this.checkIfEmpty = __bind(this.checkIfEmpty, this);
+    return Gallery.__super__.constructor.apply(this, arguments);
   }
 
   Gallery.prototype.itemView = PhotoView;
@@ -1763,7 +1735,6 @@ module.exports = Gallery = (function(_super) {
 
   Gallery.prototype.afterRender = function() {
     var transform;
-
     Gallery.__super__.afterRender.apply(this, arguments);
     this.$el.photobox('a.server', {
       thumbs: true,
@@ -1781,23 +1752,19 @@ module.exports = Gallery = (function(_super) {
     } else {
       transform = "-webkit-transform";
     }
-    this.turnLeft = $('<a id="left" class="btn left" type="button">\
-                       <i class="icon-share-alt"\
-                        style="' + transform + ': scale(-1,1)"> </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
+    this.turnLeft = $('<a id="left" class="btn left" type="button"> <i class="icon-share-alt" style="' + transform + ': scale(-1,1)"> </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
     this.turnLeft.on('click', this.onTurnLeft);
     this.downloadLink = $('#pbOverlay .pbCaptionText  .btn-group .download-link');
     this.downloadLink.unbind('click');
     this.downloadLink.remove();
     if (!this.downloadLink.length) {
-      this.downloadLink = $('<a class="btn download-link" download>\
-                  <i class="icon-arrow-down"></i></a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
+      this.downloadLink = $('<a class="btn download-link" download> <i class="icon-arrow-down"></i></a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
     }
     this.uploader = this.$('#uploader');
     this.turnRight = $('#pbOverlay .pbCaptionText .btn-group .right');
     this.turnRight.unbind('click');
     this.turnRight.remove();
-    this.turnRight = $('<a id="right" class="btn right">\
-                       <i class="icon-share-alt" </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
+    this.turnRight = $('<a id="right" class="btn right"> <i class="icon-share-alt" </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
     return this.turnRight.on('click', this.onTurnRight);
   };
 
@@ -1832,7 +1799,6 @@ module.exports = Gallery = (function(_super) {
 
   Gallery.prototype.getIdPhoto = function(url) {
     var id, parts;
-
     if (url == null) {
       url = $('#pbOverlay .wrapper img.zoomable').attr('src');
     }
@@ -1843,42 +1809,41 @@ module.exports = Gallery = (function(_super) {
   };
 
   Gallery.prototype.onTurnLeft = function() {
-    var id, newOrientation, orientation, _ref1, _ref2,
-      _this = this;
-
+    var id, newOrientation, orientation, _ref, _ref1;
     id = this.getIdPhoto();
-    orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
+    orientation = (_ref = this.collection.get(id)) != null ? _ref.attributes.orientation : void 0;
     newOrientation = helpers.rotateLeft(orientation, $('.wrapper img.zoomable'));
     helpers.rotate(newOrientation, $('.wrapper img.zoomable'));
-    return (_ref2 = this.collection.get(id)) != null ? _ref2.save({
+    return (_ref1 = this.collection.get(id)) != null ? _ref1.save({
       orientation: newOrientation
     }, {
-      success: function() {
-        return helpers.rotate(newOrientation, $('.pbThumbs .active img'));
-      }
+      success: (function(_this) {
+        return function() {
+          return helpers.rotate(newOrientation, $('.pbThumbs .active img'));
+        };
+      })(this)
     }) : void 0;
   };
 
   Gallery.prototype.onTurnRight = function() {
-    var id, newOrientation, orientation, _ref1, _ref2,
-      _this = this;
-
+    var id, newOrientation, orientation, _ref, _ref1;
     id = this.getIdPhoto();
-    orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
+    orientation = (_ref = this.collection.get(id)) != null ? _ref.attributes.orientation : void 0;
     newOrientation = helpers.rotateRight(orientation, $('.wrapper img.zoomable'));
     helpers.rotate(newOrientation, $('.wrapper img.zoomable'));
-    return (_ref2 = this.collection.get(id)) != null ? _ref2.save({
+    return (_ref1 = this.collection.get(id)) != null ? _ref1.save({
       orientation: newOrientation
     }, {
-      success: function() {
-        return helpers.rotate(newOrientation, $('.pbThumbs .active img'));
-      }
+      success: (function(_this) {
+        return function() {
+          return helpers.rotate(newOrientation, $('.pbThumbs .active img'));
+        };
+      })(this)
     }) : void 0;
   };
 
   Gallery.prototype.onFilesChanged = function(evt) {
     var old;
-
     this.handleFiles(this.uploader[0].files);
     old = this.uploader;
     this.uploader = old.clone(true);
@@ -1886,16 +1851,14 @@ module.exports = Gallery = (function(_super) {
   };
 
   Gallery.prototype.beforeImageDisplayed = function(link) {
-    var id, orientation, _ref1;
-
+    var id, orientation, _ref;
     id = this.getIdPhoto(link.href);
-    orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
+    orientation = (_ref = this.collection.get(id)) != null ? _ref.attributes.orientation : void 0;
     return $('#pbOverlay .wrapper img')[0].dataset.orientation = orientation;
   };
 
   Gallery.prototype.onImageDisplayed = function(args) {
-    var id, orientation, parts, thumb, thumbs, url, _i, _len, _ref1, _results;
-
+    var id, orientation, parts, thumb, thumbs, url, _i, _len, _ref, _results;
     url = $('.pbThumbs .active img').attr('src');
     id = this.getIdPhoto();
     this.downloadLink.attr('href', url.replace('thumbs', 'raws'));
@@ -1907,29 +1870,28 @@ module.exports = Gallery = (function(_super) {
       parts = url.split('/');
       id = parts[parts.length - 1];
       id = id.split('.')[0];
-      orientation = (_ref1 = this.collection.get(id)) != null ? _ref1.attributes.orientation : void 0;
+      orientation = (_ref = this.collection.get(id)) != null ? _ref.attributes.orientation : void 0;
       _results.push(helpers.rotate(orientation, $(thumb)));
     }
     return _results;
   };
 
   Gallery.prototype.handleFiles = function(files) {
-    var _this = this;
-
-    return this.options.beforeUpload(function(photoAttributes) {
-      var file, photo, _i, _len, _results;
-
-      _results = [];
-      for (_i = 0, _len = files.length; _i < _len; _i++) {
-        file = files[_i];
-        photoAttributes.title = file.name;
-        photo = new Photo(photoAttributes);
-        photo.file = file;
-        _this.collection.add(photo);
-        _results.push(photoprocessor.process(photo));
-      }
-      return _results;
-    });
+    return this.options.beforeUpload((function(_this) {
+      return function(photoAttributes) {
+        var file, photo, _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = files.length; _i < _len; _i++) {
+          file = files[_i];
+          photoAttributes.title = file.name;
+          photo = new Photo(photoAttributes);
+          photo.file = file;
+          _this.collection.add(photo);
+          _results.push(photoprocessor.process(photo));
+        }
+        return _results;
+      };
+    })(this));
   };
 
   return Gallery;
@@ -1939,7 +1901,7 @@ module.exports = Gallery = (function(_super) {
 });
 
 ;require.register("views/photo", function(exports, require, module) {
-var BaseView, PhotoView, helpers, transitionendEvents, _ref,
+var BaseView, PhotoView, helpers, transitionendEvents,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1955,8 +1917,8 @@ module.exports = PhotoView = (function(_super) {
 
   function PhotoView() {
     this.onClickListener = __bind(this.onClickListener, this);
-    this.events = __bind(this.events, this);    _ref = PhotoView.__super__.constructor.apply(this, arguments);
-    return _ref;
+    this.events = __bind(this.events, this);
+    return PhotoView.__super__.constructor.apply(this, arguments);
   }
 
   PhotoView.prototype.template = require('templates/photo');
@@ -1964,16 +1926,16 @@ module.exports = PhotoView = (function(_super) {
   PhotoView.prototype.className = 'photo';
 
   PhotoView.prototype.initialize = function(options) {
-    var _this = this;
-
     PhotoView.__super__.initialize.apply(this, arguments);
     this.listenTo(this.model, 'progress', this.onProgress);
     this.listenTo(this.model, 'thumbed', this.onThumbed);
     this.listenTo(this.model, 'upError', this.onError);
     this.listenTo(this.model, 'uploadComplete', this.onServer);
-    return this.listenTo(this.model, 'change', function() {
-      return _this.render();
-    });
+    return this.listenTo(this.model, 'change', (function(_this) {
+      return function() {
+        return _this.render();
+      };
+    })(this));
   };
 
   PhotoView.prototype.events = function() {
@@ -2014,7 +1976,6 @@ module.exports = PhotoView = (function(_super) {
 
   PhotoView.prototype.onServer = function() {
     var col;
-
     col = this.model.collection;
     col.remove(this.model);
     return col.add(this.model);
@@ -2050,4 +2011,4 @@ module.exports = PhotoView = (function(_super) {
 });
 
 ;
-//@ sourceMappingURL=app.js.map
+//# sourceMappingURL=app.js.map
