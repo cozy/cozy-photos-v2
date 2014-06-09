@@ -21,7 +21,7 @@ module.exports =
     'albums/:albumid/?':
         get: album.read
         put: album.update
-        del: album.delete
+        delete: album.delete
 
     'albums/:albumid.zip':
         get: album.zip
@@ -31,7 +31,7 @@ module.exports =
 
     'photos/:photoid/?':
         put: photo.update
-        del: photo.delete
+        delete: photo.delete
 
     'photos/:photoid.jpg'        : get : photo.screen
     'photos/thumbs/:photoid.jpg' : get : photo.thumb
