@@ -5,11 +5,11 @@ Photo = require 'models/photo'
 photoprocessor = require 'models/photoprocessor'
 app = require 'application'
 
-# gallery : collection of PhotoViews
-module.exports = class Gallery extends ViewCollection
+# galery : collection of PhotoViews
+module.exports = class Galery extends ViewCollection
     itemView: PhotoView
 
-    template: require 'templates/gallery'
+    template: require 'templates/galery'
 
     # launch photobox after render
     afterRender: ->

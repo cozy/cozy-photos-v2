@@ -1,6 +1,6 @@
 app = require 'application'
 BaseView = require 'lib/base_view'
-Gallery = require 'views/gallery'
+Galery = require 'views/galery'
 {editable} = require 'lib/helpers'
 Clipboard = require 'lib/clipboard'
 contactModel = require 'models/contact'
@@ -33,14 +33,14 @@ module.exports = class AlbumView extends BaseView
         res
 
     afterRender: ->
-        @gallery = new Gallery
+        @galery = new Galery
             el: @$ '#photos'
             editable: @options.editable
             collection: @model.photos
             beforeUpload: @beforePhotoUpload
 
-        @gallery.album = @model
-        @gallery.render()
+        @galery.album = @model
+        @galery.render()
 
         @makeEditable() if @options.editable
 
