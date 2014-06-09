@@ -28,11 +28,10 @@ module.exports.create = (req, res, next) =>
         keepExtensions: true
         maxFieldsSize: 10 * 1024 * 1024
 
-    console.log req.body
-
     form.parse req
 
     form.on 'field', (name, value) ->
+        req.body[name] = value
         cid = value if name is 'cid'
 
     form.on 'file', (name, val) ->
@@ -54,7 +53,6 @@ module.exports.create = (req, res, next) =>
     form.on 'close', ->
         req.files = qs.parse files
         raw = req.files['raw']
-        console.log req.files
         im.readMetadata raw.path, (err, metadata) ->
             if err?
                 console.log "[Create photo - Exif metadata extraction]"
@@ -68,6 +66,7 @@ module.exports.create = (req, res, next) =>
                 if metadata?.exif?.dateTime?
                     req.body.date = metadata.exif.dateTime
             photo = new Photo req.body
+            console.log req.body
             Photo.create photo, (err, photo) ->
                 return next err if err
 
