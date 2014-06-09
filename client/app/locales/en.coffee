@@ -31,6 +31,11 @@ module.exports =
     "Select your friends": "Select your friends"
     "Add": "Add"
     "Cancel": "Cancel"
+    'photo successfully set as cover': '''
+        The picture has been successfully set as album cover'''
+    'problem occured while setting cover': '''
+        A problem occured while setting picture as cover'''
+
 
     "Click Here or drag your photos below to upload":"""
         Click Here or drag your photos below to upload
