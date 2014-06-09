@@ -3,81 +3,98 @@ async = require 'async'
 fs = require 'fs'
 qs = require 'qs'
 im = require 'imagemagick'
+multiparty = require 'multiparty'
 
 app = null
 module.exports.setApp = (ref) -> app = ref
 
 module.exports.fetch = (req, res, next, id) ->
-        Photo.find id, (err, photo) =>
-            return res.error 500, 'An error occured', err if err
-            return res.error 404, 'Photo not found' if not photo
+    id = id.substring 0, id.length - 4 if id.indexOf('.jpg') > 0
+    Photo.find id, (err, photo) =>
+        return res.error 500, 'An error occured', err if err
+        return res.error 404, 'Photo not found' if not photo
 
-            req.photo = photo
-            next()
+        req.photo = photo
+        next()
 
-module.exports.create = (req, res) =>
-        cid = null
-        lastPercent = 0
-        files = {}
+module.exports.create = (req, res, next) =>
+    cid = null
+    lastPercent = 0
+    files = {}
 
-        req.form.on 'field', (name, value) ->
-            cid = value if name is 'cid'
+    form = new multiparty.Form
+        uploadDir: __dirname + '../../uploads'
+        defer: true # don't wait for full form. Needed for progress events
+        keepExtensions: true
+        maxFieldsSize: 10 * 1024 * 1024
 
-        req.form.on 'file', (name, val) ->
-            val.name = val.originalFilename
-            val.type = val.headers['content-type'] or null
-            files[name] = val
+    console.log req.body
 
-        req.form.on 'progress', (bytesReceived, bytesExpected) ->
-            return unless cid?
-            percent = bytesReceived/bytesExpected
-            return unless percent - lastPercent > 0.05
+    form.parse req
 
-            lastPercent = percent
-            app.io.sockets.emit 'uploadprogress', cid: cid, p: percent
+    form.on 'field', (name, value) ->
+        cid = value if name is 'cid'
 
-        req.form.on 'close', =>
-            req.files = qs.parse files
-            raw = req.files['raw']
-            im.readMetadata raw.path, (err, metadata) ->
-                if err?
-                    console.log "[Create photo - Exif metadata extraction]"
-                    console.log err
-                    console.log "Are you sure imagemagick is installed ?"
+    form.on 'file', (name, val) ->
+        val.name = val.originalFilename
+        val.type = val.headers['content-type'] or null
+        files[name] = val
+
+    form.on 'progress', (bytesReceived, bytesExpected) ->
+        return unless cid?
+        percent = bytesReceived/bytesExpected
+        return unless percent - lastPercent > 0.05
+
+        lastPercent = percent
+        app.io.sockets.emit 'uploadprogress', cid: cid, p: percent
+
+    form.on 'error', (err) ->
+        next err
+
+    form.on 'close', ->
+        req.files = qs.parse files
+        raw = req.files['raw']
+        console.log req.files
+        im.readMetadata raw.path, (err, metadata) ->
+            if err?
+                console.log "[Create photo - Exif metadata extraction]"
+                console.log "Are you sure imagemagick is installed ?"
+                next err
+            else
+                if metadata?.exif?.orientation?
+                    req.body.orientation = metadata.exif.orientation
                 else
-                    if metadata?.exif?.orientation?
-                        req.body.orientation = metadata.exif.orientation
+                    req.body.orientation = 1
+                if metadata?.exif?.dateTime?
+                    req.body.date = metadata.exif.dateTime
+            photo = new Photo req.body
+            Photo.create photo, (err, photo) ->
+                return next err if err
+
+                async.parallel [
+                    (cb) ->
+                        raw = req.files['raw']
+                        data = name: 'raw', type: raw.type
+                        photo.attachFile raw.path, data, cb
+                    (cb) ->
+                        screen = req.files['screen']
+                        data = name: 'screen', type: screen.type
+                        photo.attachFile screen.path, data, cb
+                    (cb) ->
+                        thumb = req.files['thumb']
+                        data = name: 'thumb', type: thumb.type
+                        photo.attachFile thumb.path, data, cb
+                ], (err) ->
+                    for name, file of req.files
+                        fs.unlink file.path, (err) ->
+                            if err
+                                console.log 'Could not delete %s', file.path
+
+                    if err
+                        return next err
                     else
-                        req.body.orientation = 1
-                    if metadata?.exif?.dateTime?
-                        req.body.date = metadata.exif.dateTime
-                photo = new Photo req.body
-                Photo.create photo, (err, photo) ->
-                    return res.error 500, "Creation failed.", err if err
+                        res.send photo, 201
 
-                    async.parallel [
-                        (cb) ->
-                            raw = req.files['raw']
-                            data = name: 'raw', type: raw.type
-                            photo.attachFile raw.path, data, cb
-                        (cb) ->
-                            screen = req.files['screen']
-                            data = name: 'screen', type: screen.type
-                            photo.attachFile screen.path, data, cb
-                        (cb) ->
-                            thumb = req.files['thumb']
-                            data = name: 'thumb', type: thumb.type
-                            photo.attachFile thumb.path, data, cb
-                    ], (err) ->
-                        for name, file of req.files
-                            fs.unlink file.path, (err) ->
-                                if err
-                                    console.log 'Could not delete', file.path
-
-                        if err
-                            return res.error 500, "Creation failed.", err
-                        else
-                            res.send photo, 201
 
 doPipe = (req, which, download, res) ->
 

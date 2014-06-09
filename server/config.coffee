@@ -12,8 +12,7 @@ publicStatic = (req, res, next) ->
         next err
 
 markPublicRequests = (req, res, next) ->
-    if req.url.match /^\/public/
-        req.public = true
+    req.public = true if req.url.match /^\/public/
     next()
 
 
@@ -23,11 +22,8 @@ module.exports =
             'view engine': 'jade'
             'views': __dirname + '/../client'
         use: [
-            americano.bodyParser
-                uploadDir: __dirname + '/uploads'
-                defer: true # don't wait for full form. Needed for progress events
-                keepExtensions: true
-                maxFieldsSize: 10 * 1024 * 1024
+            americano.methodOverride()
+            americano.bodyParser()
             staticMiddleware
             publicStatic
             shortcuts
