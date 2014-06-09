@@ -713,13 +713,17 @@ module.exports = Album = (function(_super) {
       });
     }
     delete attrs.photos;
-    if (attrs.thumb) {
-      attrs.thumbsrc = "photos/thumbs/" + attrs.thumb + ".jpg";
+    if (attrs.coverPicture) {
+      attrs.thumbsrc = "photos/thumbs/" + attrs.coverPicture + ".jpg";
       if (((_ref1 = this.photos.get(attrs.thumb)) != null ? (_ref2 = _ref1.attributes) != null ? _ref2.orientation : void 0 : void 0) != null) {
         attrs.orientation = this.photos._byId[attrs.thumb].attributes.orientation;
       }
     }
     return attrs;
+  };
+
+  Album.prototype.getThumbSrc = function() {
+    return "photos/thumbs/" + (this.get('coverPicture')) + ".jpg";
   };
 
   Album.prototype.sendMail = function(url, mails, callback) {
@@ -1256,14 +1260,14 @@ var buf = [];
 with (locals || {}) {
 var interp;
 buf.push('<a');
-buf.push(attrs({ 'href':("#albums/" + (id) + ""), 'style':("background-image: url(" + (thumbsrc) + ")") }, {"href":true,"style":true}));
+buf.push(attrs({ 'id':("" + (id) + ""), 'href':("#albums/" + (id) + ""), 'style':("background-image: url(" + (thumbsrc) + ")") }, {"id":true,"href":true,"style":true}));
 buf.push('><span class="title">' + escape((interp = title) == null ? '' : interp) + '</span></a>');
 }
 return buf.join("");
 };
 });
 
-;require.register("templates/gallery", function(exports, require, module) {
+;require.register("templates/galery", function(exports, require, module) {
 module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -1298,7 +1302,7 @@ return buf.join("");
 });
 
 ;require.register("views/album", function(exports, require, module) {
-var AlbumView, BaseView, Clipboard, Contact, Gallery, app, clipboard, contactModel, editable,
+var AlbumView, BaseView, Clipboard, Contact, Galery, app, clipboard, contactModel, editable,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1307,7 +1311,7 @@ app = require('application');
 
 BaseView = require('lib/base_view');
 
-Gallery = require('views/gallery');
+Galery = require('views/galery');
 
 editable = require('lib/helpers').editable;
 
@@ -1361,14 +1365,14 @@ module.exports = AlbumView = (function(_super) {
   };
 
   AlbumView.prototype.afterRender = function() {
-    this.gallery = new Gallery({
+    this.galery = new Galery({
       el: this.$('#photos'),
       editable: this.options.editable,
       collection: this.model.photos,
       beforeUpload: this.beforePhotoUpload
     });
-    this.gallery.album = this.model;
-    this.gallery.render();
+    this.galery.album = this.model;
+    this.galery.render();
     if (this.options.editable) {
       return this.makeEditable();
     }
@@ -1635,10 +1639,6 @@ module.exports = AlbumsList = (function(_super) {
     return AlbumsList.__super__.initialize.apply(this, arguments);
   };
 
-  AlbumsList.prototype.appendView = function(view) {
-    return this.$el.append(view.el);
-  };
-
   AlbumsList.prototype.checkIfEmpty = function() {
     return this.$('.help').toggle(_.size(this.views) === 0 && app.mode === 'public');
   };
@@ -1698,8 +1698,8 @@ module.exports = AlbumItem = (function(_super) {
 
 });
 
-;require.register("views/gallery", function(exports, require, module) {
-var Gallery, Photo, PhotoView, ViewCollection, app, helpers, photoprocessor,
+;require.register("views/galery", function(exports, require, module) {
+var Galery, Photo, PhotoView, ViewCollection, app, helpers, photoprocessor,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1716,10 +1716,10 @@ photoprocessor = require('models/photoprocessor');
 
 app = require('application');
 
-module.exports = Gallery = (function(_super) {
-  __extends(Gallery, _super);
+module.exports = Galery = (function(_super) {
+  __extends(Galery, _super);
 
-  function Gallery() {
+  function Galery() {
     this.onImageDisplayed = __bind(this.onImageDisplayed, this);
     this.beforeImageDisplayed = __bind(this.beforeImageDisplayed, this);
     this.onFilesChanged = __bind(this.onFilesChanged, this);
@@ -1728,16 +1728,16 @@ module.exports = Gallery = (function(_super) {
     this.onTurnLeft = __bind(this.onTurnLeft, this);
     this.getIdPhoto = __bind(this.getIdPhoto, this);
     this.checkIfEmpty = __bind(this.checkIfEmpty, this);
-    return Gallery.__super__.constructor.apply(this, arguments);
+    return Galery.__super__.constructor.apply(this, arguments);
   }
 
-  Gallery.prototype.itemView = PhotoView;
+  Galery.prototype.itemView = PhotoView;
 
-  Gallery.prototype.template = require('templates/gallery');
+  Galery.prototype.template = require('templates/galery');
 
-  Gallery.prototype.afterRender = function() {
+  Galery.prototype.afterRender = function() {
     var transform;
-    Gallery.__super__.afterRender.apply(this, arguments);
+    Galery.__super__.afterRender.apply(this, arguments);
     this.$el.photobox('a.server', {
       thumbs: true,
       history: false,
@@ -1775,11 +1775,11 @@ module.exports = Gallery = (function(_super) {
     return this.turnRight.on('click', this.onTurnRight);
   };
 
-  Gallery.prototype.checkIfEmpty = function() {
+  Galery.prototype.checkIfEmpty = function() {
     return this.$('.help').toggle(_.size(this.views) === 0 && app.mode === 'public');
   };
 
-  Gallery.prototype.events = function() {
+  Galery.prototype.events = function() {
     if (this.options.editable) {
       return {
         'drop': 'onFilesDropped',
@@ -1789,7 +1789,7 @@ module.exports = Gallery = (function(_super) {
     }
   };
 
-  Gallery.prototype.onFilesDropped = function(evt) {
+  Galery.prototype.onFilesDropped = function(evt) {
     this.$el.removeClass('dragover');
     this.handleFiles(evt.dataTransfer.files);
     evt.stopPropagation();
@@ -1797,14 +1797,14 @@ module.exports = Gallery = (function(_super) {
     return false;
   };
 
-  Gallery.prototype.onDragOver = function(evt) {
+  Galery.prototype.onDragOver = function(evt) {
     this.$el.addClass('dragover');
     evt.preventDefault();
     evt.stopPropagation();
     return false;
   };
 
-  Gallery.prototype.getIdPhoto = function(url) {
+  Galery.prototype.getIdPhoto = function(url) {
     var id, parts;
     if (url == null) {
       url = $('#pbOverlay .wrapper img.zoomable').attr('src');
@@ -1815,7 +1815,7 @@ module.exports = Gallery = (function(_super) {
     return id;
   };
 
-  Gallery.prototype.onTurnLeft = function() {
+  Galery.prototype.onTurnLeft = function() {
     var id, newOrientation, orientation, _ref, _ref1;
     id = this.getIdPhoto();
     orientation = (_ref = this.collection.get(id)) != null ? _ref.attributes.orientation : void 0;
@@ -1832,7 +1832,7 @@ module.exports = Gallery = (function(_super) {
     }) : void 0;
   };
 
-  Gallery.prototype.onTurnRight = function() {
+  Galery.prototype.onTurnRight = function() {
     var id, newOrientation, orientation, _ref, _ref1;
     id = this.getIdPhoto();
     orientation = (_ref = this.collection.get(id)) != null ? _ref.attributes.orientation : void 0;
@@ -1849,9 +1849,13 @@ module.exports = Gallery = (function(_super) {
     }) : void 0;
   };
 
-  Gallery.prototype.onCoverClicked = function() {
+  Galery.prototype.onCoverClicked = function() {
+    var photoId;
     this.coverBtn.addClass('disabled');
-    this.album.set('coverPicture', this.getIdPhoto());
+    photoId = this.getIdPhoto();
+    this.album.set('coverPicture', photoId);
+    this.album.set('thumb', photoId);
+    this.album.set('thumbsrc', this.album.getThumbSrc());
     return this.album.save(null, {
       success: (function(_this) {
         return function() {
@@ -1868,7 +1872,7 @@ module.exports = Gallery = (function(_super) {
     });
   };
 
-  Gallery.prototype.onFilesChanged = function(evt) {
+  Galery.prototype.onFilesChanged = function(evt) {
     var old;
     this.handleFiles(this.uploader[0].files);
     old = this.uploader;
@@ -1876,14 +1880,14 @@ module.exports = Gallery = (function(_super) {
     return old.replaceWith(this.uploader);
   };
 
-  Gallery.prototype.beforeImageDisplayed = function(link) {
+  Galery.prototype.beforeImageDisplayed = function(link) {
     var id, orientation, _ref;
     id = this.getIdPhoto(link.href);
     orientation = (_ref = this.collection.get(id)) != null ? _ref.attributes.orientation : void 0;
     return $('#pbOverlay .wrapper img')[0].dataset.orientation = orientation;
   };
 
-  Gallery.prototype.onImageDisplayed = function(args) {
+  Galery.prototype.onImageDisplayed = function(args) {
     var id, orientation, parts, thumb, thumbs, url, _i, _len, _ref, _results;
     url = $('.pbThumbs .active img').attr('src');
     id = this.getIdPhoto();
@@ -1902,7 +1906,7 @@ module.exports = Gallery = (function(_super) {
     return _results;
   };
 
-  Gallery.prototype.handleFiles = function(files) {
+  Galery.prototype.handleFiles = function(files) {
     return this.options.beforeUpload((function(_this) {
       return function(photoAttributes) {
         var file, photo, _i, _len, _results;
@@ -1920,7 +1924,7 @@ module.exports = Gallery = (function(_super) {
     })(this));
   };
 
-  return Gallery;
+  return Galery;
 
 })(ViewCollection);
 

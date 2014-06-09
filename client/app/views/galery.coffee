@@ -124,7 +124,10 @@ module.exports = class Galery extends ViewCollection
 
     onCoverClicked: () =>
         @coverBtn.addClass 'disabled'
-        @album.set 'coverPicture', @getIdPhoto()
+        photoId = @getIdPhoto()
+        @album.set 'coverPicture', photoId
+        @album.set 'thumb', photoId
+        @album.set 'thumbsrc', @album.getThumbSrc()
         @album.save null,
             success: =>
                 @coverBtn.removeClass 'disabled'

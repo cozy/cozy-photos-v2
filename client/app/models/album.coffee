@@ -25,12 +25,15 @@ module.exports = class Album extends Backbone.Model
         if attrs.photos?.length > 0
             @photos.reset attrs.photos, parse: true
         delete attrs.photos
-        if attrs.thumb
-            attrs.thumbsrc = "photos/thumbs/#{attrs.thumb}.jpg"
+        if attrs.coverPicture
+            attrs.thumbsrc = "photos/thumbs/#{attrs.coverPicture}.jpg"
             if @photos.get(attrs.thumb)?.attributes?.orientation?
                 attrs.orientation =
                     @photos._byId[attrs.thumb].attributes.orientation
         return attrs
+
+    getThumbSrc: ->
+        "photos/thumbs/#{@get 'coverPicture'}.jpg"
 
     sendMail: (url, mails, callback) ->
         data =

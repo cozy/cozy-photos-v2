@@ -11,35 +11,35 @@ catch e then CozyAdapter = require 'jugglingdb-cozy-adapter'
 
 
 module.exports.index = (req, res) ->
+    out = []
+    initAlbums = (albums, callback) =>
+        if albums.length > 0
+            albumModel = albums.pop()
+            album = albumModel.toObject()
+            Photo.fromAlbum album, (err, photos) =>
+                if photos.length > 0
+                    album.coverPicture ?= photos[0].id
+                    album.orientation = photos[0].orientation
 
-        out = []
-        initAlbums = (albums, callback) =>
-            if albums.length > 0
-                albumModel = albums.pop()
-                album = albumModel.toObject()
-                Photo.fromAlbum album, (err, photos) =>
-                    if photos.length > 0
-                        album.thumb = photos[0].id
-                        album.orientation = photos[0].orientation
-                    out.push album
-                    initAlbums albums, callback
-            else
-                callback()
+                out.push album
+                initAlbums albums, callback
+        else
+            callback()
 
-        request = if req.public then 'byTitlePublic' else 'byTitle'
+    request = if req.public then 'byTitlePublic' else 'byTitle'
 
-        async.parallel [
-            (cb) -> Album.request request, cb
-            (cb) -> CozyInstance.getLocale cb
-        ], (err, results) ->
+    async.parallel [
+        (cb) -> Album.request request, cb
+        (cb) -> CozyInstance.getLocale cb
+    ], (err, results) ->
 
-            [albums, locale] = results
-            initAlbums albums, () =>
-                imports = """
-                        window.locale = "#{locale}";
-                        window.initalbums = #{JSON.stringify(out.reverse())};
-                    """
-                res.render 'index.jade', imports: imports
+        [albums, locale] = results
+        initAlbums albums, () =>
+            imports = """
+                    window.locale = "#{locale}";
+                    window.initalbums = #{JSON.stringify(out.reverse())};
+                """
+            res.render 'index.jade', imports: imports
 
 
 module.exports.fetch = (req, res, next, id) ->
@@ -62,7 +62,7 @@ module.exports.list = (req, res) ->
         out = []
         for albumModel in albums
             album = albumModel.toObject()
-            album.thumb = photos[album.id]
+            album.coverPicture ?= photos[album.id]
             out.push album
 
         res.send out
