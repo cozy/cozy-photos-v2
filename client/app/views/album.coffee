@@ -146,6 +146,7 @@ module.exports = class AlbumView extends BaseView
     # This function recalculate them with the right size
     rebuildThumbs: (event) ->
         for model in @model.photos.models
+            console.log model
             thProcessor.process model
 
     onKeyUpMails: (event) ->

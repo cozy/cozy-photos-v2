@@ -1012,7 +1012,7 @@ module.exports = new PhotoProcessor();
 });
 
 ;require.register("models/thumbprocessor", function(exports, require, module) {
-var ThumbProcessor, blobify, makeThumbBlob, makeThumbDataURI, makeThumbWorker, readFile, resize, upload, uploadWorker;
+var ThumbProcessor, blobify, makeThumbBlob, makeThumbDataURI, readFile, resize, upload, uploadWorker;
 
 readFile = function(photo, next) {
   photo.img = new Image();
@@ -1086,19 +1086,6 @@ upload = function(photo, next) {
   });
 };
 
-makeThumbWorker = function(photo, done) {
-  return async.waterfall([
-    function(cb) {
-      return readFile(photo, cb);
-    }, function(cb) {
-      delete photo.img;
-      return cb();
-    }
-  ], function(err) {
-    return done(err);
-  });
-};
-
 uploadWorker = function(photo, done) {
   return async.waterfall([
     function(cb) {
@@ -1123,8 +1110,6 @@ uploadWorker = function(photo, done) {
 ThumbProcessor = (function() {
   function ThumbProcessor() {}
 
-  ThumbProcessor.prototype.thumbsQueue = async.queue(makeThumbWorker, 3);
-
   ThumbProcessor.prototype.uploadQueue = async.queue(uploadWorker, 2);
 
   ThumbProcessor.prototype.process = function(model) {
@@ -1137,13 +1122,14 @@ ThumbProcessor = (function() {
         name: model.get('title')
       }
     };
-    return this.uploadQueue.push(photo, (function(_this) {
-      return function(err) {
+    setTimeout(function() {
+      return uploadWorker(photo, function(err) {
         if (err) {
           return console.log(err);
         }
-      };
-    })(this));
+      });
+    });
+    return 300;
   };
 
   return ThumbProcessor;
@@ -1684,6 +1670,7 @@ module.exports = AlbumView = (function(_super) {
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       model = _ref[_i];
+      console.log(model);
       _results.push(thProcessor.process(model));
     }
     return _results;

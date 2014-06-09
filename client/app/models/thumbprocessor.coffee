@@ -107,17 +107,7 @@ upload = (photo, next) ->
             console.log data
 
 
-# make all thumbs fast
-makeThumbWorker = (photo , done) ->
-    async.waterfall [
-        (cb) -> readFile         photo, cb
-        (cb) ->
-            delete photo.img
-            cb()
-    ], (err) ->
-        done(err)
-
-# make screen sized version and upload
+# make thumb and upload
 uploadWorker = (photo, done) ->
     async.waterfall [
         (cb) -> readFile          photo, cb
@@ -135,9 +125,6 @@ uploadWorker = (photo, done) ->
 
 class ThumbProcessor
 
-    # create thumbs 3 by 3
-    thumbsQueue: async.queue makeThumbWorker, 3
-
     # upload 2 by 2
     uploadQueue: async.queue uploadWorker, 2
 
@@ -150,7 +137,10 @@ class ThumbProcessor
                 type: 'image/jpeg'
                 name: model.get 'title'
 
-        @uploadQueue.push photo, (err) =>
-            return console.log err if err
+                #@uploadQueue.push photo, (err) =>
+        setTimeout ->
+            uploadWorker photo, (err) ->
+                return console.log err if err
+        300
 
 module.exports = new ThumbProcessor()
