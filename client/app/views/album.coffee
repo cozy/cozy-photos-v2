@@ -39,6 +39,7 @@ module.exports = class AlbumView extends BaseView
             collection: @model.photos
             beforeUpload: @beforePhotoUpload
 
+        @gallery.album = @model
         @gallery.render()
 
         @makeEditable() if @options.editable

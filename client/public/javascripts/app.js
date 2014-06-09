@@ -1367,6 +1367,7 @@ module.exports = AlbumView = (function(_super) {
       collection: this.model.photos,
       beforeUpload: this.beforePhotoUpload
     });
+    this.gallery.album = this.model;
     this.gallery.render();
     if (this.options.editable) {
       return this.makeEditable();
@@ -1722,6 +1723,7 @@ module.exports = Gallery = (function(_super) {
     this.onImageDisplayed = __bind(this.onImageDisplayed, this);
     this.beforeImageDisplayed = __bind(this.beforeImageDisplayed, this);
     this.onFilesChanged = __bind(this.onFilesChanged, this);
+    this.onCoverClicked = __bind(this.onCoverClicked, this);
     this.onTurnRight = __bind(this.onTurnRight, this);
     this.onTurnLeft = __bind(this.onTurnLeft, this);
     this.getIdPhoto = __bind(this.getIdPhoto, this);
@@ -1761,6 +1763,11 @@ module.exports = Gallery = (function(_super) {
       this.downloadLink = $('<a class="btn download-link" download> <i class="icon-arrow-down"></i></a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
     }
     this.uploader = this.$('#uploader');
+    this.coverBtn = $('#pbOverlay .pbCaptionText .btn-group .cover-btn');
+    this.coverBtn.unbind('click');
+    this.coverBtn.remove();
+    this.coverBtn = $('<a id="cover-btn" class="btn cover-btn"> <i class="icon-picture" </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
+    this.coverBtn.on('click', this.onCoverClicked);
     this.turnRight = $('#pbOverlay .pbCaptionText .btn-group .right');
     this.turnRight.unbind('click');
     this.turnRight.remove();
@@ -1840,6 +1847,25 @@ module.exports = Gallery = (function(_super) {
         };
       })(this)
     }) : void 0;
+  };
+
+  Gallery.prototype.onCoverClicked = function() {
+    this.coverBtn.addClass('disabled');
+    this.album.set('coverPicture', this.getIdPhoto());
+    return this.album.save(null, {
+      success: (function(_this) {
+        return function() {
+          _this.coverBtn.removeClass('disabled');
+          return alert(t('photo successfully set as cover'));
+        };
+      })(this),
+      error: (function(_this) {
+        return function() {
+          _this.coverBtn.removeClass('disabled');
+          return alert(t('problem occured while setting cover'));
+        };
+      })(this)
+    });
   };
 
   Gallery.prototype.onFilesChanged = function(evt) {

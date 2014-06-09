@@ -50,6 +50,17 @@ module.exports = class Gallery extends ViewCollection
 
         @uploader = @$('#uploader')
 
+
+        # Cover button to select cover
+        @coverBtn = $('#pbOverlay .pbCaptionText .btn-group .cover-btn')
+        @coverBtn.unbind 'click'
+        @coverBtn.remove()
+        @coverBtn = $('<a id="cover-btn" class="btn cover-btn">
+                       <i class="icon-picture" </i> </a>')
+            .appendTo '#pbOverlay .pbCaptionText .btn-group'
+        @coverBtn.on 'click', @onCoverClicked
+
+
         # Add button to return photo to right
         @turnRight = $('#pbOverlay .pbCaptionText .btn-group .right')
         @turnRight.unbind 'click'
@@ -110,6 +121,17 @@ module.exports = class Gallery extends ViewCollection
         @collection.get(id)?.save orientation: newOrientation,
             success : () =>
                 helpers.rotate newOrientation, $('.pbThumbs .active img')
+
+    onCoverClicked: () =>
+        @coverBtn.addClass 'disabled'
+        @album.set 'coverPicture', @getIdPhoto()
+        @album.save null,
+            success: =>
+                @coverBtn.removeClass 'disabled'
+                alert t 'photo successfully set as cover'
+            error: =>
+                @coverBtn.removeClass 'disabled'
+                alert t 'problem occured while setting cover'
 
     onFilesChanged: (evt) =>
         @handleFiles @uploader[0].files

@@ -7,6 +7,7 @@ module.exports = americano.getModel 'Album',
     date          : Date
     clearance     : String
     orientation   : Number
+    coverPicture  : String
 
 # clearance can be one of
 # - public : in public list of album

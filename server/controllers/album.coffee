@@ -124,10 +124,10 @@ module.exports.zip = (req, res) ->
 
 
 module.exports.update = (req, res) ->
-        req.album.updateAttributes req.body, (err) ->
-            return res.error 500, "Update failed.", err if err
+    req.album.updateAttributes req.body, (err) ->
+        return res.error 500, "Update failed.", err if err
 
-            res.send req.album
+        res.send succes: true, model: req.album
 
 module.exports.delete = (req, res) ->
         req.album.destroy (err) ->
