@@ -141,15 +141,15 @@ module.exports.update = (req, res) ->
     req.album.updateAttributes req.body, (err) ->
         return res.error 500, "Update failed.", err if err
 
-        res.send succes: true, model: req.album
+        res.send success: true, model: req.album
 
 
 # Destroy album and all its photos.
 module.exports.delete = (req, res) ->
-        req.album.destroy (err) ->
-            return res.error 500, "Deletion failed.", err if err
+    req.album.destroy (err) ->
+       return res.error 500, "Deletion failed.", err if err
 
-            Photo.fromAlbum req.album, (err, photos) ->
-                photo.destroy() for photo in photos
+       Photo.fromAlbum req.album, (err, photos) ->
+           photo.destroy() for photo in photos
 
-            res.success "Deletion succeded."
+       res.success "Deletion succeded."
