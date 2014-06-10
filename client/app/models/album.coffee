@@ -21,20 +21,26 @@ module.exports = class Album extends Backbone.Model
         @photos = new PhotoCollection()
         return super
 
+    # Build orientation and cover thumb src from photo attribute/
     parse: (attrs) ->
+
         if attrs.photos?.length > 0
             @photos.reset attrs.photos, parse: true
         delete attrs.photos
+
         if attrs.coverPicture
             attrs.thumbsrc = "photos/thumbs/#{attrs.coverPicture}.jpg"
             if @photos.get(attrs.thumb)?.attributes?.orientation?
                 attrs.orientation =
                     @photos._byId[attrs.thumb].attributes.orientation
+
         return attrs
 
+    # Build cover thumb src from coverPicture field.
     getThumbSrc: ->
         "photos/thumbs/#{@get 'coverPicture'}.jpg"
 
+    # Send sharing email for this album.
     sendMail: (url, mails, callback) ->
         data =
             url: url

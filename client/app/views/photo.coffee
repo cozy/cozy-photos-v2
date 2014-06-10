@@ -39,14 +39,15 @@ module.exports = class PhotoView extends BaseView
     onProgress: (event) ->
         @setProgress 10 + 90 * event.loaded / event.total
 
-    # when the thumb is ready
+    # when the thumb is ready, it is displayed.
     onThumbed: ->
         @setProgress 10
         @image.attr 'src', @model.thumb_du
         @image.attr 'orientation', @model.get('orientation')
         @image.addClass 'thumbed'
 
-    # when the upload is complete
+    # when the upload is complete, the view of the photo is refreshed via a
+    # remove/add.
     onServer: ->
         # detach-reatach so photobox can pick up the object
         col = @model.collection
@@ -57,14 +58,14 @@ module.exports = class PhotoView extends BaseView
         # @link.attr 'href', "photos/#{@model.id}.jpg"
         # @image.attr 'src', "photos/thumbs/#{@model.id}.jpg"
 
-    # when an error occured
+    # when an error occured, the photo is marked with error image.
     onError: (err) ->
         @setProgress 0
         @error = @model.get('title') + " " + err
         @link.attr 'title', @error
         @image.attr 'src', 'img/error.gif'
 
-    # prevent openning the gallery if the photos
+    # Prevent opeNing the gallery if the photos
     # hasn't been upload yet
     onClickListener: (evt) =>
         if @model.isNew()

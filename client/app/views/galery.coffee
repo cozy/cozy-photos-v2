@@ -20,6 +20,8 @@ module.exports = class Galery extends ViewCollection
             beforeShow: @beforeImageDisplayed
         , @onImageDisplayed
 
+        # Addition to photobox ui to give more control to the user.
+
         # Add button to return photo to left
         if $('#pbOverlay .pbCaptionText .btn-group').length is 0
             $('#pbOverlay .pbCaptionText')
@@ -49,7 +51,6 @@ module.exports = class Galery extends ViewCollection
 
         @uploader = @$('#uploader')
 
-
         # Cover button to select cover
         @coverBtn = $('#pbOverlay .pbCaptionText .btn-group .cover-btn')
         @coverBtn.unbind 'click'
@@ -58,7 +59,6 @@ module.exports = class Galery extends ViewCollection
                        <i class="icon-picture" </i> </a>')
             .appendTo '#pbOverlay .pbCaptionText .btn-group'
         @coverBtn.on 'click', @onCoverClicked
-
 
         # Add button to return photo to right
         @turnRight = $('#pbOverlay .pbCaptionText .btn-group .right')
@@ -88,12 +88,15 @@ module.exports = class Galery extends ViewCollection
         evt.preventDefault()
         return false
 
+    # Display orange background telling that drag is active.
     onDragOver: (evt) ->
         @$el.addClass 'dragover'
         evt.preventDefault()
         evt.stopPropagation()
         return false
 
+    # Extract photo id from its URL. It's useful to get the id of the current
+    # picture when the user browses them via photobox.
     getIdPhoto: (url) =>
         url ?= $('#pbOverlay .wrapper img.zoomable').attr 'src'
         parts = url.split('/')
@@ -101,6 +104,7 @@ module.exports = class Galery extends ViewCollection
         id = id.split('.')[0]
         return id
 
+    # Rotate 90° left the picture by updating css and orientation.
     onTurnLeft: () =>
         id = @getIdPhoto()
         orientation = @collection.get(id)?.attributes.orientation
@@ -111,6 +115,7 @@ module.exports = class Galery extends ViewCollection
             success : () =>
                 helpers.rotate newOrientation, $('.pbThumbs .active img')
 
+    # Rotate 90° right the picture by updating css and orientation.
     onTurnRight: () =>
         id = @getIdPhoto()
         orientation = @collection.get(id)?.attributes.orientation
@@ -121,6 +126,8 @@ module.exports = class Galery extends ViewCollection
             success : () =>
                 helpers.rotate newOrientation, $('.pbThumbs .active img')
 
+    # When cover button is clicked, the current picture is set on the current
+    # album as cover. Then information are saved.
     onCoverClicked: () =>
         @coverBtn.addClass 'disabled'
         photoId = @getIdPhoto()
@@ -135,9 +142,10 @@ module.exports = class Galery extends ViewCollection
                 @coverBtn.removeClass 'disabled'
                 alert t 'problem occured while setting cover'
 
+
     onFilesChanged: (evt) =>
         @handleFiles @uploader[0].files
-        # reset the input
+        # reset the iNput
         old = @uploader
         @uploader = old.clone true
         old.replaceWith @uploader
@@ -162,7 +170,6 @@ module.exports = class Galery extends ViewCollection
             id = id.split('.')[0]
             orientation = @collection.get(id)?.attributes.orientation
             helpers.rotate orientation, $(thumb)
-
 
     handleFiles: (files) ->
         # allow parent view to set some attributes on the photo

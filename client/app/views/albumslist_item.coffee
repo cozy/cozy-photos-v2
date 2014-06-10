@@ -15,7 +15,6 @@ module.exports = class AlbumItem extends BaseView
         out.description = limitLength out.description, 250
         return out
 
-
     afterRender: ->
         @image = @$ 'img'
         @image.attr 'src', @model.attributes.thumbsrc

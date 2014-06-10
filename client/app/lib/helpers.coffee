@@ -26,6 +26,7 @@ module.exports =
             else
                 onChanged el.html()
 
+    # Focus a given element (required for content editable elements).
     forceFocus: (el) ->
         range = document.createRange()
         range.selectNodeContents el[0]
@@ -35,6 +36,7 @@ module.exports =
         el.focus()
 
     ## Helpers to rotate photos
+    # TODO refactor it with switch
 
     rotate: (orientation, image) ->
         if navigator.userAgent.search("Firefox") isnt -1

@@ -7,6 +7,7 @@ module.exports = class Photo extends Backbone.Model
         src: ''
         orientation: 1
 
+    # build img src attributes from id.
     parse: (attrs) ->
         if not attrs.id then attrs
         else _.extend attrs,
@@ -14,5 +15,6 @@ module.exports = class Photo extends Backbone.Model
             src: "photos/#{attrs.id}.jpg"
             orientation: attrs.orientation
 
+    # Return screen size photo src built from id.
     getPrevSrc: ->
         "photos/#{@get 'id'}.jpg"

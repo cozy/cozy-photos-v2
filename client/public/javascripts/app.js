@@ -1453,9 +1453,9 @@ BaseView = require('lib/base_view');
 
 Galery = require('views/galery');
 
-editable = require('lib/helpers').editable;
-
 Clipboard = require('lib/clipboard');
+
+editable = require('lib/helpers').editable;
 
 thProcessor = require('models/thumbprocessor');
 
@@ -1670,7 +1670,6 @@ module.exports = AlbumView = (function(_super) {
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       model = _ref[_i];
-      console.log(model);
       _results.push(thProcessor.process(model));
     }
     return _results;
@@ -1696,7 +1695,7 @@ module.exports = AlbumView = (function(_super) {
             var mail, msg, _i, _len;
             _this.$("a.sendmail").spin();
             _this.$("a.sendmail").css('color', 'white');
-            msg = "Mail was successfully sent to : \n";
+            msg = "Mail was successfully sent to: \n";
             mails = mails.split(',');
             for (_i = 0, _len = mails.length; _i < _len; _i++) {
               mail = mails[_i];

@@ -1,8 +1,10 @@
 app = require 'application'
+
 BaseView = require 'lib/base_view'
 Galery = require 'views/galery'
-{editable} = require 'lib/helpers'
 Clipboard = require 'lib/clipboard'
+{editable} = require 'lib/helpers'
+
 thProcessor = require 'models/thumbprocessor'
 contactModel = require 'models/contact'
 
@@ -66,6 +68,7 @@ module.exports = class AlbumView extends BaseView
             placeholder: t 'Write some more ...'
             onChanged: (text) => @saveModel description: text.trim()
 
+    # Ask for confirmation if album is not new.
     destroyModel: ->
         if @model.isNew()
             return app.router.navigate 'albums', true
@@ -74,6 +77,7 @@ module.exports = class AlbumView extends BaseView
             @model.destroy().then ->
                 app.router.navigate 'albums', true
 
+    # Change sharing state of the album.
     changeClearance: (event) ->
         newclearance = event.target.id.replace 'change', ''
         id = event.target.id
@@ -85,6 +89,7 @@ module.exports = class AlbumView extends BaseView
             @$("##{id}").css 'color', 'white'
             @refreshPopOver newclearance
 
+    # Change content of clearance modal accordingly with current album.
     refreshPopOver: (clearance) ->
         help =  @clearanceHelpers clearance
         modal = @$('#clearance-modal')
@@ -101,6 +106,7 @@ module.exports = class AlbumView extends BaseView
             modal.find('.share').hide()
             clipboard.set ""
 
+    # Add a contact to the list of contacts with who the album is shared.
     addcontact: () ->
         # Initialize user's contacts
         modal = @$('#add-contact-modal')
@@ -129,6 +135,7 @@ module.exports = class AlbumView extends BaseView
             error: (err) ->
                 console.log err
 
+    # Prepare contact fields by adding emails that are already there.
     prepareContact: (event) ->
         # Recover mails of selected contacts
         modal = @$('#add-contact-modal')
@@ -146,13 +153,14 @@ module.exports = class AlbumView extends BaseView
     # This function recalculate them with the right size
     rebuildThumbs: (event) ->
         for model in @model.photos.models
-            console.log model
             thProcessor.process model
 
+    # Check if enter key is pressed.
     onKeyUpMails: (event) ->
         if event.which is 13 or event.keyCode is 13
             @sendMail()
 
+    # Send mail via server to contacts selected for the sharing.
     sendMail: (event) ->
         mails = @$('#mails').val()
         if mails.length is 0
@@ -164,7 +172,8 @@ module.exports = class AlbumView extends BaseView
                 success: =>
                     @$("a.sendmail").spin()
                     @$("a.sendmail").css 'color', 'white'
-                    msg = "Mail was successfully sent to : \n"
+                    # TODO: translation
+                    msg = "Mail was successfully sent to: \n"
                     mails = mails.split(',')
                     for mail in mails
                         msg = msg + "\n" + mail
@@ -180,9 +189,9 @@ module.exports = class AlbumView extends BaseView
             promise = promise.then =>
                 app.albums.add @model
                 app.router.navigate "albums/#{@model.id}/edit"
-
         return promise
 
+    # Get public url of the current album (the url shared with contacts).
     getPublicUrl: ->
         origin = window.location.origin
         path = window.location.pathname.replace 'apps', 'public'
@@ -190,6 +199,7 @@ module.exports = class AlbumView extends BaseView
         hash = window.location.hash.replace '/edit', ''
         return origin + path + hash
 
+    # Give displayed text depending on clearance state.
     clearanceHelpers: (clearance) ->
         if clearance is 'public'
             title: t 'This album is public'
