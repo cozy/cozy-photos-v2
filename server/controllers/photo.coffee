@@ -8,6 +8,7 @@ multiparty = require 'multiparty'
 app = null
 module.exports.setApp = (ref) -> app = ref
 
+# Get given photo, returns 404 if photo is not found.
 module.exports.fetch = (req, res, next, id) ->
     id = id.substring 0, id.length - 4 if id.indexOf('.jpg') > 0
     Photo.find id, (err, photo) =>
@@ -17,28 +18,33 @@ module.exports.fetch = (req, res, next, id) ->
         req.photo = photo
         next()
 
+# Create a photo and save file, thumb and scree image as attachments of the
+# photo document.
 module.exports.create = (req, res, next) =>
     cid = null
     lastPercent = 0
     files = {}
 
+    # Parse given form to extract image blobs.
     form = new multiparty.Form
         uploadDir: __dirname + '../../uploads'
         defer: true # don't wait for full form. Needed for progress events
         keepExtensions: true
         maxFieldsSize: 10 * 1024 * 1024
-
     form.parse req
 
+    # Get fields from form.
     form.on 'field', (name, value) ->
         req.body[name] = value
         cid = value if name is 'cid'
 
+    # Get files from form.
     form.on 'file', (name, val) ->
         val.name = val.originalFilename
         val.type = val.headers['content-type'] or null
         files[name] = val
 
+    # Get progress to display it to the user. Data are sent via websocket.
     form.on 'progress', (bytesReceived, bytesExpected) ->
         return unless cid?
         percent = bytesReceived/bytesExpected
@@ -50,6 +56,7 @@ module.exports.create = (req, res, next) =>
     form.on 'error', (err) ->
         next err
 
+    # When form is fully parsed, data are saved into CouchDB.
     form.on 'close', ->
         req.files = qs.parse files
         raw = req.files['raw']
@@ -59,6 +66,7 @@ module.exports.create = (req, res, next) =>
                 console.log "Are you sure imagemagick is installed ?"
                 next err
             else
+                # Add date and orientation from EXIF data.
                 if metadata?.exif?.orientation?
                     req.body.orientation = metadata.exif.orientation
                 else
@@ -66,7 +74,7 @@ module.exports.create = (req, res, next) =>
                 if metadata?.exif?.dateTime?
                     req.body.date = metadata.exif.dateTime
             photo = new Photo req.body
-            console.log req.body
+
             Photo.create photo, (err, photo) ->
                 return next err if err
 
@@ -115,13 +123,16 @@ doPipe = (req, which, download, res) ->
     request.pipe res
 
 
+# Get mid-size version of the picture.
 module.exports.screen = (req, res) ->
     which = if req.photo._attachments.screen then 'screen' else 'raw'
     doPipe req, which, false, res
 
+# Get a small size of the picture.
 module.exports.thumb = (req, res) ->
     doPipe req, 'thumb', false, res
 
+# Get raw version f the picture (file orginally sent).
 module.exports.raw = (req, res) ->
     doPipe req, 'raw', true, res
 
@@ -135,6 +146,10 @@ module.exports.delete = (req, res) ->
         return res.error 500, "Deletion failed." if err
         res.success "Deletion succeded."
 
+
+# Thumbs can change a lot depending on UI. If a change occurs, previously built
+# thumbnails doesn't fit anymore with the new style. So this route allows to
+# update the thumbnail for a given picture.
 module.exports.updateThumb = (req, res, next) ->
     files = {}
     form = new multiparty.Form
@@ -145,6 +160,7 @@ module.exports.updateThumb = (req, res, next) ->
 
     form.parse req
 
+    # Get file from form.
     form.on 'file', (name, val) ->
         val.name = val.originalFilename
         val.type = val.headers['content-type'] or null
@@ -153,11 +169,15 @@ module.exports.updateThumb = (req, res, next) ->
     form.on 'error', (err) ->
         next err
 
+    # When form is fully parsed, save the sent thumbnailS as attachment.
     form.on 'close', ->
         req.files = qs.parse files
         thumb = req.files['thumb']
         data = name: 'thumb', type: thumb.type
-        console.log req.photo
-        req.photo.attachFile thumb.path, data, ->
-            res.send success: true
 
+        req.photo.attachFile thumb.path, data, (err) ->
+            return next err if err
+
+            fs.unlink thumb.path, (err) ->
+                return next err if err
+                res.send success: true

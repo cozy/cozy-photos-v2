@@ -1,50 +1,11 @@
-# read the file from photo.file using a FileReader
-# create photo.img : an Image object
+# Create an image node to get thumb prev data
 readFile = (photo, next) ->
 
-    #if not photo.file.type.match /image\/.*/
-        #return next t 'is not an image'
-
-    #reader = new FileReader()
-    #photo.img = new Image()
-
-    #$.ajax
-        #url: url
-        #cache:false
-        #xhr: ->
-            #@XHR.responseType = 'blob'
-            #@XHR
-        #mimeType: 'image/png'
-        #beforeSend: (xhr) ->
-            #@XHR = new XMLHttpRequest()
-            #@XHR.responseType = 'blob'
-            #console.log 'a', @XHR, 'b'
-        #success: ->
-            #console.log(typeof arguments[0], typeof @XHR.response, @XHR)
-        #error: ->
-            #console.log arguments, this
-
-    #xhr = new XMLHttpRequest()
-    #xhr.onreadystatechange = ->
-        #if (this.readyState is 4 && this.status is 200)
-            #console.log this.response, typeof this.response
-            #photo = this.response
-            #resize photo.img, 300, 300
-
-    #xhr.open('GET', url)
-    #xhr.responseType = 'blob'
-    #xhr.send()
     photo.img = new Image()
     photo.img.onload = ->
         next()
     photo.img.src = photo.url
 
-    #reader.readAsDataURL photo.file
-    #reader.onloadend = =>
-        #photo.img.src = reader.result
-        #photo.img.orientation = photo.attributes.orientation
-        #photo.img.onload = ->
-            #next()
 
 # resize an image into given dimensions
 # if fill, the image will be croped to fit in new dim

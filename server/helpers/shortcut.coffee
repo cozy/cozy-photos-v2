@@ -1,3 +1,4 @@
+# Add Helpers to send error or success responses to jquery UI in a prettier way.
 module.exports = (req, res, next) ->
 
     res.error = (code, msg, err) ->

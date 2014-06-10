@@ -1,5 +1,6 @@
 americano = require 'americano-cozy'
 
+# Required to get locale and domain data.
 module.exports = CozyInstance = americano.getModel 'CozyInstance',
     locale : String
 

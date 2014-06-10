@@ -10,6 +10,8 @@ try CozyAdapter = require 'americano-cozy/node_modules/jugglingdb-cozy-adapter'
 catch e then CozyAdapter = require 'jugglingdb-cozy-adapter'
 
 
+# Get all albums and their covers then put data into the index template.
+# (For faster rendering).
 module.exports.index = (req, res) ->
     out = []
     initAlbums = (albums, callback) =>
@@ -42,6 +44,7 @@ module.exports.index = (req, res) ->
             res.render 'index.jade', imports: imports
 
 
+# Retrieve given album data.
 module.exports.fetch = (req, res, next, id) ->
     Album.find id, (err, album) ->
         return res.error 500, 'An error occured', err if err
@@ -50,6 +53,8 @@ module.exports.fetch = (req, res, next, id) ->
         req.album = album
         next()
 
+
+# Get all albums and their cover.
 module.exports.list = (req, res) ->
 
     request = if req.public then 'byTitlePublic' else 'byTitle'
@@ -67,6 +72,8 @@ module.exports.list = (req, res) ->
 
         res.send out
 
+
+# Create new photo album.
 module.exports.create = (req, res) ->
     album = new Album req.body
     Album.create album, (err, album) ->
@@ -74,15 +81,19 @@ module.exports.create = (req, res) ->
 
         res.send album, 201
 
+
+# Send sharing email to given contact.
 module.exports.sendMail = (req, res) ->
     data =
         to: req.body.mails
-            subject: "I share an album with you"
-            content: "You can access to my album via this link: #{req.body.url}"
+        subject: "I share an album with you"
+        content: "You can access to my album via this link: #{req.body.url}"
     CozyAdapter.sendMailFromUser data, (err) ->
         return res.error 500, "Server couldn't send mail.", err if err
         res.send 200
 
+
+# Read given photo album if rights are not broken.
 module.exports.read = (req, res) ->
 
     if req.album.clearance is 'private' and req.public
@@ -98,6 +109,9 @@ module.exports.read = (req, res) ->
 
         res.send out
 
+
+# Generate a zip archive containing all photo attached to photo docs of give
+# album.
 module.exports.zip = (req, res) ->
     Photo.fromAlbum req.album, (err, photos) ->
         return res.error 500, 'An error occured', err if err
@@ -122,13 +136,15 @@ module.exports.zip = (req, res) ->
         zip.pipe res
 
 
-
+# Destroy album and all its photos.
 module.exports.update = (req, res) ->
     req.album.updateAttributes req.body, (err) ->
         return res.error 500, "Update failed.", err if err
 
         res.send succes: true, model: req.album
 
+
+# Destroy album and all its photos.
 module.exports.delete = (req, res) ->
         req.album.destroy (err) ->
             return res.error 500, "Deletion failed.", err if err

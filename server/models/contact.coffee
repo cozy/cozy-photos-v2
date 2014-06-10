@@ -1,5 +1,6 @@
 americano = require 'americano-cozy'
 
+# Contacts are required to make sharing easier.
 module.exports = americano.getModel 'Contact',
     id : String
     fn : String

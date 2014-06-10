@@ -2,7 +2,7 @@ americano = require 'americano'
 shortcuts = require './helpers/shortcut'
 
 staticMiddleware = americano.static __dirname + '/../client/public',
-            maxAge: 86400000
+                        maxAge: 86400000
 
 publicStatic = (req, res, next) ->
     url = req.url
@@ -24,11 +24,12 @@ module.exports =
         use: [
             americano.methodOverride()
             americano.bodyParser()
+
             staticMiddleware
             publicStatic
+
             shortcuts
             markPublicRequests
-
             americano.errorHandler
                 dumpExceptions: true
                 showStack: true
