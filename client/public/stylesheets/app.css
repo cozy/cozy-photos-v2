@@ -175,6 +175,17 @@ button.delete {
 #about #description:active {
   outline: 0;
 }
+#album.editing #title {
+  white-space: nowrap;
+  overflow: hidden;
+}
+#album.editing #title br {
+  display: none;
+}
+#album.editing #title * {
+  display: inline;
+  white-space: nowrap;
+}
 #album.editing #title:focus,
 #album.editing #description:focus {
   outline: 1px solid #34a6ff;
