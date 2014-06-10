@@ -106,8 +106,8 @@ module.exports = {
     window.t = this.polyglot.t.bind(this.polyglot);
     AlbumCollection = require('collections/album');
     Router = require('router');
-    this.albums = new AlbumCollection();
     this.router = new Router();
+    this.albums = new AlbumCollection();
     this.mode = window.location.pathname.match(/public/) ? 'public' : 'owner';
     if (window.initalbums) {
       this.albums.reset(window.initalbums, {
@@ -170,35 +170,6 @@ module.exports = PhotoCollection = (function(_super) {
   return PhotoCollection;
 
 })(Backbone.Collection);
-
-});
-
-;require.register("helpers/client", function(exports, require, module) {
-exports.request = function(type, url, data, callbacks) {
-  return $.ajax({
-    type: type,
-    url: url,
-    data: data,
-    success: callbacks.success,
-    error: callbacks.error
-  });
-};
-
-exports.get = function(url, callbacks) {
-  return exports.request("GET", url, null, callbacks);
-};
-
-exports.post = function(url, data, callbacks) {
-  return exports.request("POST", url, data, callbacks);
-};
-
-exports.put = function(url, data, callbacks) {
-  return exports.request("PUT", url, data, callbacks);
-};
-
-exports.del = function(url, callbacks) {
-  return exports.request("DELETE", url, null, callbacks);
-};
 
 });
 
@@ -302,6 +273,35 @@ module.exports = BaseView = (function(_super) {
   return BaseView;
 
 })(Backbone.View);
+
+});
+
+;require.register("lib/client", function(exports, require, module) {
+exports.request = function(type, url, data, callbacks) {
+  return $.ajax({
+    type: type,
+    url: url,
+    data: data,
+    success: callbacks.success,
+    error: callbacks.error
+  });
+};
+
+exports.get = function(url, callbacks) {
+  return exports.request("GET", url, null, callbacks);
+};
+
+exports.post = function(url, data, callbacks) {
+  return exports.request("POST", url, data, callbacks);
+};
+
+exports.put = function(url, data, callbacks) {
+  return exports.request("PUT", url, data, callbacks);
+};
+
+exports.del = function(url, callbacks) {
+  return exports.request("DELETE", url, null, callbacks);
+};
 
 });
 
@@ -687,7 +687,7 @@ var Album, PhotoCollection, client,
 
 PhotoCollection = require('collections/photo');
 
-client = require("../helpers/client");
+client = require("../lib/client");
 
 module.exports = Album = (function(_super) {
   __extends(Album, _super);
@@ -750,7 +750,7 @@ var Contact, client,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-client = require("../helpers/client");
+client = require("../lib/client");
 
 module.exports = Contact = (function(_super) {
   __extends(Contact, _super);

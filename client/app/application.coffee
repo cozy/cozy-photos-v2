@@ -2,6 +2,7 @@ module.exports =
 
     initialize: ->
 
+        # Translation helpers.
         @locale = window.locale
         @polyglot = new Polyglot()
         try
@@ -15,12 +16,15 @@ module.exports =
         AlbumCollection = require('collections/album')
         Router = require('router')
 
-        @albums = new AlbumCollection()
         @router = new Router()
+
+        # Base data
+        @albums = new AlbumCollection()
 
         @mode = if window.location.pathname.match /public/ then 'public'
         else 'owner'
 
+        # Display albums. Fetch data if no data were loaded via server index.
         if window.initalbums
             @albums.reset window.initalbums, parse: true
             delete window.initalbums

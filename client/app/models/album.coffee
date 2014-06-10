@@ -1,5 +1,5 @@
 PhotoCollection = require 'collections/photo'
-client = require "../helpers/client"
+client = require "../lib/client"
 
 # An album
 # Properties :
