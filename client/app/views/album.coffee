@@ -152,8 +152,17 @@ module.exports = class AlbumView extends BaseView
     # set recently. New size is larger, so older thumbs looks blurry.
     # This function recalculate them with the right size
     rebuildThumbs: (event) ->
-        for model in @model.photos.models
-            thProcessor.process model
+        $("#rebuild-th p").remove()
+        models = @model.photos.models
+
+        recFunc = ->
+            if models.length > -1
+                model = models.pop()
+                setTimeout ->
+                    thProcessor.process model
+                    recFunc()
+                , 500
+        recFunc()
 
     # Check if enter key is pressed.
     onKeyUpMails: (event) ->

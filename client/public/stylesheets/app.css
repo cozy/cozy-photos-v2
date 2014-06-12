@@ -287,8 +287,12 @@ button.delete {
   transform: scale(1.2);
   -webkit-transform: scale(1.2);
 }
-a#rebuild-th-btn {
+#rebuild-th p {
   padding-left: 10px;
+}
+#rebuild-th a#rebuild-th-btn {
+  padding-left: 10px;
+  padding-bottom: 10px;
   cursor: pointer;
 }
 .editing #photos.empty {
@@ -1209,6 +1213,9 @@ a#rebuild-th-btn {
 @media (max-width: 767px) {
   .flatbtn {
     width: 19%;
+  }
+  #rebuild-th {
+    display: none;
   }
 }
 

@@ -1060,13 +1060,12 @@ blobify = function(dataUrl, type) {
 
 makeThumbDataURI = function(photo, next) {
   photo.thumb_du = resize(photo, 300, 300, true);
-  return next();
+  return setTimeout(next, 1);
 };
 
 makeThumbBlob = function(photo, next) {
-  console.log(photo);
   photo.thumb = blobify(photo.thumb_du, photo.file.type);
-  return next();
+  return setTimeout(next, 1);
 };
 
 upload = function(photo, next) {
@@ -1081,7 +1080,7 @@ upload = function(photo, next) {
     processData: false,
     type: 'PUT',
     success: function(data) {
-      return console.log(data);
+      return $("#rebuild-th").append("<p>" + photo.file.name + " photo updated.</p>");
     }
   });
 };
@@ -1122,14 +1121,11 @@ ThumbProcessor = (function() {
         name: model.get('title')
       }
     };
-    setTimeout(function() {
-      return uploadWorker(photo, function(err) {
-        if (err) {
-          return console.log(err);
-        }
-      });
+    return uploadWorker(photo, function(err) {
+      if (err) {
+        return console.log(err);
+      }
     });
-    return 300;
   };
 
   return ThumbProcessor;
@@ -1665,14 +1661,20 @@ module.exports = AlbumView = (function(_super) {
   };
 
   AlbumView.prototype.rebuildThumbs = function(event) {
-    var model, _i, _len, _ref, _results;
-    _ref = this.model.photos.models;
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      model = _ref[_i];
-      _results.push(thProcessor.process(model));
-    }
-    return _results;
+    var models, recFunc;
+    $("#rebuild-th p").remove();
+    models = this.model.photos.models;
+    recFunc = function() {
+      var model;
+      if (models.length > -1) {
+        model = models.pop();
+        return setTimeout(function() {
+          thProcessor.process(model);
+          return recFunc();
+        }, 500);
+      }
+    };
+    return recFunc();
   };
 
   AlbumView.prototype.onKeyUpMails = function(event) {
