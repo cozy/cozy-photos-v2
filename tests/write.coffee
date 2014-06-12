@@ -27,6 +27,15 @@ describe 'Write operations', ->
             @albumid = @body.id
 
 
+    describe 'Create Album with multiline title - POST /albums', ->
+
+        album =
+            title: "mytitle<div><br></div>"
+
+        it 'should reply with the created album with a sanitized title', ->
+            expect(@body.title).to.equal 'mytitle'
+
+
     describe 'Create Photo - POST /photos', ->
 
         raw = "./tests/fixtures/test.jpg"
@@ -68,6 +77,22 @@ describe 'Write operations', ->
 
         it 'then it is changed', ->
             expect(@body.description).to.equal 'newdescription'
+
+
+    describe 'Update Album with multiline title - POST /albums', ->
+
+        update =
+            title: "newtitle<div><br></div>"
+            id: @albumid
+
+        it 'should reply with the updated album with a sanitized title', ->
+            expect(@body.title).to.equal 'newtitle'
+
+        it 'when I GET the album', (done) ->
+            @client.get "albums/#{@albumid}", done
+
+        it 'then it is changed', ->
+            expect(@body.title).to.equal 'newtitle'
 
 
     describe 'Update Photo - PUT /photos/:id', ->

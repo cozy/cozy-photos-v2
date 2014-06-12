@@ -141,7 +141,7 @@ module.exports.update = (req, res) ->
     req.album.updateAttributes req.body, (err) ->
         return res.error 500, "Update failed.", err if err
 
-        res.send success: true, model: req.album
+        res.send 200, req.album
 
 
 # Destroy album and all its photos.

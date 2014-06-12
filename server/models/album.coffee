@@ -1,6 +1,6 @@
 americano = require 'americano-cozy'
 
-module.exports = americano.getModel 'Album',
+module.exports = Album = americano.getModel 'Album',
     id            : String
     title         : String
     description   : String
@@ -13,3 +13,9 @@ module.exports = americano.getModel 'Album',
 # - public : in public list of album
 # - hidden : accessible with proper URL
 # - private : not visible from outside
+Album.beforeSave = (next, data) ->
+    data.title = data.title
+                    .replace /<br>/g, ""
+                    .replace /<div>/g, ""
+                    .replace /<\/div>/g, ""
+    next()
