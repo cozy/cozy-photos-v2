@@ -9,6 +9,9 @@ publicMap = (doc) ->
 # Order docs by title
 byTitleMap = (doc) -> emit doc.title, doc
 
+byTitlePublicMap = (doc) ->
+    emit doc.title, doc if doc.clearance is 'public'
+
 # MapReduce's map to fetch photos by albumid
 byAlbumMap = (photo) -> emit [photo.albumid, photo.title], photo
 
@@ -22,7 +25,7 @@ module.exports =
         'all': allMap
         'byTitle': byTitleMap
         'public': publicMap
-        'byTitlePublic': byTitleMap
+        'byTitlePublic': byTitlePublicMap
     'photo':
         'all': allMap
         'byalbum': byAlbumMap
