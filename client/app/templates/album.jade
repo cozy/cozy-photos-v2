@@ -1,37 +1,44 @@
 div.row-fluid
-  div#about.span4
+  div#about.span2
     div#links.clearfix
-      a.flatbtn.back(href="#albums")
-        i.icon-arrow-left.icon-white
-        span= t("Back")
+      p
+          a.flatbtn.back(href="#albums")
+            i.icon-arrow-left.icon-white
+            span= t("Back")
 
       if 'undefined' != typeof id
-        a.flatbtn.startediting(href="#albums/#{id}/edit")
-          i.icon-edit.icon-white
-          span= t("Edit")
+        p
+            a.flatbtn.startediting(href="#albums/#{id}/edit")
+              i.icon-edit.icon-white
+              span= t("Edit")
+            br
 
         if photosNumber != 0
-          a.flatbtn.download(href="albums/#{id}.zip")
-            i.icon-download-alt.icon-white
-            span= t("Download")
+          p
+              a.flatbtn.download(href="albums/#{id}.zip")
+                i.icon-download-alt.icon-white
+                span= t("Download")
 
-        a.flatbtn.stopediting(href="#albums/#{id}")
-          i.icon-eye-open.icon-white
-          span= t("View")
+        p
+            a.flatbtn.stopediting(href="#albums/#{id}")
+              i.icon-eye-open.icon-white
+              span= t("View")
 
-        a.flatbtn.delete
-          i.icon-remove.icon-white
-          span= t("Delete")
+        p
+            a.flatbtn.delete
+              i.icon-remove.icon-white
+              span= t("Delete")
 
-        a.flatbtn.clearance(
-          href="#clearance-modal",
-          data-toggle="modal")
-          i.icon-upload.icon-white
-          span= t(clearance)
+        p
+            a.flatbtn.clearance(
+              href="#clearance-modal",
+              data-toggle="modal")
+              i.icon-upload.icon-white
+              span= t(clearance)
 
     h1#title!= title
     div#description!= description
-  div#photos.span8
+  div#photos.span10
   div#rebuild-th
       a#rebuild-th-btn= t("rebuild thumbnails")
 

@@ -1249,39 +1249,39 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div class="row-fluid"><div id="about" class="span4"><div id="links" class="clearfix"><a href="#albums" class="flatbtn back"><i class="icon-arrow-left icon-white"></i><span>');
+buf.push('<div class="row-fluid"><div id="about" class="span2"><div id="links" class="clearfix"><p><a href="#albums" class="flatbtn back"><i class="icon-arrow-left icon-white"></i><span>');
 var __val__ = t("Back")
 buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a>');
+buf.push('</span></a></p>');
 if ( 'undefined' != typeof id)
 {
-buf.push('<a');
+buf.push('<p><a');
 buf.push(attrs({ 'href':("#albums/" + (id) + "/edit"), "class": ('flatbtn') + ' ' + ('startediting') }, {"href":true}));
 buf.push('><i class="icon-edit icon-white"></i><span>');
 var __val__ = t("Edit")
 buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a>');
+buf.push('</span></a><br/></p>');
 if ( photosNumber != 0)
 {
-buf.push('<a');
+buf.push('<p><a');
 buf.push(attrs({ 'href':("albums/" + (id) + ".zip"), "class": ('flatbtn') + ' ' + ('download') }, {"href":true}));
 buf.push('><i class="icon-download-alt icon-white"></i><span>');
 var __val__ = t("Download")
 buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a>');
+buf.push('</span></a></p>');
 }
-buf.push('<a');
+buf.push('<p><a');
 buf.push(attrs({ 'href':("#albums/" + (id) + ""), "class": ('flatbtn') + ' ' + ('stopediting') }, {"href":true}));
 buf.push('><i class="icon-eye-open icon-white"></i><span>');
 var __val__ = t("View")
 buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a><a class="flatbtn delete"><i class="icon-remove icon-white"></i><span>');
+buf.push('</span></a></p><p><a class="flatbtn delete"><i class="icon-remove icon-white"></i><span>');
 var __val__ = t("Delete")
 buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a><a href="#clearance-modal" data-toggle="modal" class="flatbtn clearance"><i class="icon-upload icon-white"></i><span>');
+buf.push('</span></a></p><p><a href="#clearance-modal" data-toggle="modal" class="flatbtn clearance"><i class="icon-upload icon-white"></i><span>');
 var __val__ = t(clearance)
 buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a>');
+buf.push('</span></a></p>');
 }
 buf.push('</div><h1 id="title">');
 var __val__ = title
@@ -1289,7 +1289,7 @@ buf.push(null == __val__ ? "" : __val__);
 buf.push('</h1><div id="description">');
 var __val__ = description
 buf.push(null == __val__ ? "" : __val__);
-buf.push('</div></div><div id="photos" class="span8"></div><div id="rebuild-th"><a id="rebuild-th-btn">');
+buf.push('</div></div><div id="photos" class="span10"></div><div id="rebuild-th"><a id="rebuild-th-btn">');
 var __val__ = t("rebuild thumbnails")
 buf.push(escape(null == __val__ ? "" : __val__));
 buf.push('</a></div><div id="clipboard-container"><textarea id="clipboard"></textarea></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer">     <a id="changeprivate" class="flatbtn changeclearance">');
