@@ -123,18 +123,15 @@ module.exports.zip = (req, res, err) ->
 
         zip = new zipstream()
 
-        log.debug "zip started"
         addToZip = (photo, cb) ->
             stream = photo.getFile 'raw', noop
             extension = photo.title.substr photo.title.lastIndexOf '.'
             photoname = photo.title.substr 0, photo.title.lastIndexOf '.'
             photoname = slugify(photoname) + extension
-            log.debug "zip #{photoname}"
             zip.entry stream, name: photoname, cb
 
         async.eachSeries photos, addToZip, (err) ->
             next err if err
-            log.debug 'zip finished'
             zip.finalize()
 
         zipname = slugify req.album.title
