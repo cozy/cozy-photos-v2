@@ -122,6 +122,7 @@ module.exports.zip = (req, res, err) ->
         return res.error 401, 'The album is empty' unless photos.length
 
         zip = new zipstream()
+        zipname = slugify req.album.title
 
         addToZip = (photo, cb) ->
             stream = photo.getFile 'raw', noop
@@ -134,7 +135,6 @@ module.exports.zip = (req, res, err) ->
             next err if err
             zip.finalize()
 
-        zipname = slugify req.album.title
         disposition = "attachment; filename=\"#{zipname}.zip\""
         res.setHeader 'Content-Disposition', disposition
         res.setHeader 'Content-Type', 'application/zip'
