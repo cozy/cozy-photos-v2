@@ -2,7 +2,7 @@ americano = require 'americano'
 fs = require 'fs'
 
 module.exports = start = (options, cb) ->
-    options.name = 'cozy-files'
+    options.name = 'cozy-photos'
     options.port ?= 9119
     options.host ?= '127.0.0.1'
     americano.start options, (app, server) ->

@@ -3,11 +3,15 @@ Photo = require '../models/photo'
 CozyInstance = require '../models/cozy_instance'
 async = require 'async'
 fs    = require 'fs'
-zipstream = require 'zipstream'
+zipstream = require 'zip-stream'
 {slugify, noop} = require '../helpers/helpers'
 
 try CozyAdapter = require 'americano-cozy/node_modules/jugglingdb-cozy-adapter'
 catch e then CozyAdapter = require 'jugglingdb-cozy-adapter'
+
+log = require('printit')
+    date: false
+    prefix: "album"
 
 
 # Get all albums and their covers then put data into the index template.
@@ -112,24 +116,28 @@ module.exports.read = (req, res) ->
 
 # Generate a zip archive containing all photo attached to photo docs of give
 # album.
-module.exports.zip = (req, res) ->
+module.exports.zip = (req, res, err) ->
     Photo.fromAlbum req.album, (err, photos) ->
         return res.error 500, 'An error occured', err if err
         return res.error 401, 'The album is empty' unless photos.length
 
-        zip = zipstream.createZip level: 1
+        zip = new zipstream()
 
+        log.debug "zip started"
         addToZip = (photo, cb) ->
             stream = photo.getFile 'raw', noop
             extension = photo.title.substr photo.title.lastIndexOf '.'
             photoname = photo.title.substr 0, photo.title.lastIndexOf '.'
             photoname = slugify(photoname) + extension
-            zip.addFile stream, name: photoname, cb
+            log.debug "zip #{photoname}"
+            zip.entry stream, name: photoname, cb
 
         async.eachSeries photos, addToZip, (err) ->
-            zip.finalize noop
+            next err if err
+            log.debug 'zip finished'
+            zip.finalize()
 
-        zipname = slugify(req.album.title)
+        zipname = slugify req.album.title
         disposition = "attachment; filename=\"#{zipname}.zip\""
         res.setHeader 'Content-Disposition', disposition
         res.setHeader 'Content-Type', 'application/zip'
