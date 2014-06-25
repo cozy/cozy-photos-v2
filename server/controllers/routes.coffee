@@ -1,6 +1,8 @@
 photo = require './photo'
 album = require './album'
 contact = require './contact'
+sharing = require './sharing'
+
 
 module.exports =
 
@@ -47,3 +49,12 @@ module.exports =
     'public/photos/:photoid.jpg'        : get : photo.screen
     'public/photos/thumbs/:photoid.jpg' : get : photo.thumb
     'public/photos/raws/:photoid.jpg'   : get : photo.raw
+
+    'shareid':
+        param: sharing.fetch
+    'clearance/contacts':
+        get: sharing.contactList
+    'clearance/contacts/:contactid.jpg':
+        get: sharing.contactPicture
+    'clearance/:shareid/send':
+        post: sharing.sendAll
