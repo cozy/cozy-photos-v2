@@ -1,5 +1,6 @@
 @import 'nib'
 
+@import '_cozy'
 
 // Fonts
 
@@ -161,7 +162,9 @@ button.delete
         margin: 0 10px 10px 0
 
 #about
-    height 90%
+    float: left
+    width: 300px
+    margin-right: 20px
 
     #description
         text-align justify
@@ -273,80 +276,9 @@ button.delete
     border 1px solid orange
 
 
-// Clearance
-
-.modal
-    border-radius 0px
-    border 0px
-    input
-    select
-        border: 1px solid lightgrey
-        box-shadow: 0
-        border-radius: 0px
-        shadow: none
-        font-family: styled, helvetica
-
-    input.disabled
-        border: 1px solid transparent
-
-    input:hover
-    select:hover
-        border: 1px solid orange
-        border-radius: 0px
-        shadow: inset 1px 1px 2px rgba(100, 100, 100, 0.1)
-        color: #333
-
-    input:focus
-    input:active
-    select:active
-    select:focus
-        border: 1px solid blue
-        box-shadow: none
-
-.modal-header
-    background-color bluegreen
-    color white
-    font-family styled
-    border-top-left-radius: 5px
-    border-top-right-radius: 5px
-
-    h3
-        font-weight: normal
-
-#clearance-modal
-#share-modal
-#add-contact-modal
-    border-radius: 5px
-
-    a.flatbtn
-        float: right
-
-        span
-            margin: 0
-
-.modal-footer
-    padding: 8px
-    border: 0
-    background: transparent
-
-    a.flatbtn
-        float: right
-        text-align: left
-        width: auto
-        padding: 8px
-        line-height: 16px
-        font-size:  16px
-        text-transform: lowercase
-
-        span
-            text-align: left
-
-    a.flatbtn.active
-        background-color: orange
-
 #uploadblock
-    width: 180px
-    height: 180px
+    width: 200px
+    height: 200px
     display none
     margin 0px
     overflow hidden
@@ -368,6 +300,122 @@ button.delete
  .pbCaptionText
      .btn-group
          margin-left: 30px
+
+
+// Clearance
+
+
+#clearancemanager
+  label
+    font-weight normal
+
+#cozy-clearance-modal
+  .modal-dialog
+    width 700px
+
+  .input-group
+    width 100%
+    input
+      width 90%
+      height 34px
+      line-height 1.428
+      padding-left 5px
+      -webkit-appearance button
+    a.btn
+      width 10%
+      border-bottom-left-radius 0
+      border-top-left-radius 0
+
+#share-list
+    list-style-type: none
+    margin-top 5px
+    padding-left 5px
+
+    // will allow inline-block children to be vertically aligned
+    li
+      font-size 0
+      letter-spacing 0
+      word-spacing 0
+
+      span
+        display inline-block
+        vertical-align middle
+
+        &.clearance-name
+          max-width 190px
+          overflow hidden
+          text-overflow ellipsis
+          white-space nowrap
+
+    select
+        vertical-align middle
+        font-size 14px
+        margin-left 5px
+        background: white
+        border-bottom: 1px solid lightcolor
+
+        &:focus
+            outline: none
+
+
+#inherited-share-list
+  li.header
+    list-style-type none
+    margin-left -30px
+    font-weight bold
+
+.linkshow
+  font-size 14px
+  margin-bottom 5px
+  margin-left -5px
+  padding-left 10px
+  line-height: 20px
+
+  label
+      margin-top: 10px
+      font-weight: normal
+
+  input
+    color #444
+    width 70%
+
+.typeahead.dropdown-menu > li > a
+  padding: 3px 6px 3px 3px
+
+.typeahead.dropdown-menu > li > a > img
+  margin: 0 3px 0 0
+
+.clearance-name
+  font-size: 15px
+  margin-left: 5px
+
+  &:first-child
+    margin-left: 50px
+
+.clearance-btn
+  font-size: 20px
+  margin-left: 10px
+
+.clearance-btn.revoke
+  font-size: 12px
+
+.clearance-line
+  line-height: 47px
+  border-bottom: 1px solid lightcolor
+  padding-bottom: 5px
+
+.notifs-label
+  margin-top: 30px
+  font-weight: normal
+  margin-bottom: 0px
+
+  input
+    margin-right: 5px
+
+
+#add-contact
+    padding: 7px
+
 
 // ### Logic ###
 .mode-public .flatbtn
@@ -392,8 +440,6 @@ button.delete
     display block
 
 // # Remove effect from photobox //
-
-
 
 
 exifTransforms = (1 rotateZ(0deg)) (2 scale(-1, 1)) (3 rotateZ(180deg)) (4 scale(1,-1)) \
@@ -452,7 +498,6 @@ for t in exifTransforms
   width: 1px
   height: 1px
   padding: 0px
-
 
 // Responsive
 
