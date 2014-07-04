@@ -4,6 +4,7 @@ module.exports =
     "Delete" : "Supprimer"
     "Download" : "Télécharger"
     "Edit" : "Modifier"
+    "Stop editing" : "Arrêter modifier"
     "It will appears on your homepage." : "It apparaitra votre page d'accueil"
     "Make it Hidden" : "masqué"
     "Make it Private" : "privé"
@@ -37,7 +38,7 @@ module.exports =
         l'album.'''
 
     "Click Here or drag your photos below to upload":"""
-        Cliquez ici pour ajouter des photos ou déposer vos fichiers
+        Cliquez ici pour ajouter des photos ou déposer vos photos
     """
 
     "hidden-description": """
@@ -48,3 +49,45 @@ module.exports =
     "It cannot be accessed from the public side" : """
       Il ne peut pas être vu depuis le coté public
     """
+
+    "rebuild thumbnails": "Regénérer les vignettes"
+
+     # clearance modal
+    "also have access" : "Ces personnes ont égalment accès, car ils ont accès à un dossier parent"
+    "cancel" : "Annuler"
+    "copy paste link" : "Pour donner accès à votre contact envoyez lui ce lien : "
+    "details" : "Details"
+    "inherited from" : "hérité de"
+    "modal question album shareable" : "Choisissez le mode de partage pour cet album"
+    "modal shared album custom msg" : "Entrez un email et appuyez sur entrez"
+    "modal shared album link msg" : "Envoyez ce lien pour qu'ils puissent accéder à cet album"
+    "only you can see" : "Seul vous et les personnes ci-dessous peuvent accéder à cette ressource."
+    "public" : "Public"
+    "private" : "Privé"
+    "shared" : "Partagé"
+    "save" : "Sauvegarder"
+    "see link" : "Voir le lien"
+    "sharing" : "Partage"
+    "revoke" : "Révoquer la permission"
+    "send mails question" : "Envoyer un email de notification à : "
+    "modal send mails" : "Envoyer une notification"
+    "forced public" : "Ce dossier est public car un parent est public : "
+    "confirm" : "Confirmer"
+    "share forgot add" : """
+Il semble que vous ayez oublié d'appuyer sur le boutton Add
+"""
+    "share confirm save" : """
+Les changements effectués sur les permissions ne seront pas sauvegardés. Etes vous sur ?
+"""
+    "yes forgot" : "Retour"
+    "no forgot" : "Ok"
+    "perm" : "peut "
+    "r" : "lire cet album"
+    "perm r album" : "parcourir cet album"
+    "perm rw album" : "parcourir cet ablum et ajouter des photos"
+    "change notif" : """
+Cocher cette case pour recevoir une notification cozy quand un contact
+ajoute une photo à cet album."""
+    "send email hint": "Des emails de notification seront envoyés lors de la première sauvegarde."
+    "yes" : "Oui"
+    "no" : "Non"
