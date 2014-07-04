@@ -122,7 +122,6 @@ module.exports = {
     }
   }
 };
-
 });
 
 ;require.register("collections/album", function(exports, require, module) {
@@ -144,7 +143,6 @@ module.exports = AlbumCollection = (function(_super) {
   return AlbumCollection;
 
 })(Backbone.Collection);
-
 });
 
 ;require.register("collections/photo", function(exports, require, module) {
@@ -170,7 +168,6 @@ module.exports = PhotoCollection = (function(_super) {
   return PhotoCollection;
 
 })(Backbone.Collection);
-
 });
 
 ;require.register("initialize", function(exports, require, module) {
@@ -235,7 +232,6 @@ $(function() {
     }
   };
 });
-
 });
 
 ;require.register("lib/base_view", function(exports, require, module) {
@@ -273,7 +269,6 @@ module.exports = BaseView = (function(_super) {
   return BaseView;
 
 })(Backbone.View);
-
 });
 
 ;require.register("lib/client", function(exports, require, module) {
@@ -302,7 +297,6 @@ exports.put = function(url, data, callbacks) {
 exports.del = function(url, callbacks) {
   return exports.request("DELETE", url, null, callbacks);
 };
-
 });
 
 ;require.register("lib/clipboard", function(exports, require, module) {
@@ -350,7 +344,6 @@ module.exports = Clipboard = (function() {
   return Clipboard;
 
 })();
-
 });
 
 ;require.register("lib/helpers", function(exports, require, module) {
@@ -485,7 +478,115 @@ module.exports = {
     }
   }
 };
+});
 
+;require.register("lib/modal", function(exports, require, module) {
+var BaseView, ModalView,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+BaseView = require('../lib/base_view');
+
+module.exports = ModalView = (function(_super) {
+  __extends(ModalView, _super);
+
+  ModalView.prototype.id = "dialog-modal";
+
+  ModalView.prototype.className = "modal fade";
+
+  ModalView.prototype.attributes = {
+    'tab-index': -1
+  };
+
+  ModalView.prototype.template = require('./templates/modal');
+
+  ModalView.prototype.value = 0;
+
+  ModalView.prototype.events = function() {
+    return {
+      "click #modal-dialog-no": "onNo",
+      "click #modal-dialog-yes": "onYes"
+    };
+  };
+
+  function ModalView(title, msg, yes, no, cb, hideOnYes) {
+    this.title = title;
+    this.msg = msg;
+    this.yes = yes;
+    this.no = no;
+    this.cb = cb;
+    this.hideOnYes = hideOnYes;
+    ModalView.__super__.constructor.call(this);
+    if (this.hideOnYes == null) {
+      this.hideOnYes = true;
+    }
+  }
+
+  ModalView.prototype.initialize = function() {
+    this.$el.on('hidden.bs.modal', (function(_this) {
+      return function() {
+        return _this.close();
+      };
+    })(this));
+    this.render();
+    return this.show();
+  };
+
+  ModalView.prototype.onYes = function() {
+    if (this.cb) {
+      this.cb(true);
+    }
+    return this.hide();
+  };
+
+  ModalView.prototype.onNo = function() {
+    if (this.cb) {
+      this.cb(false);
+    }
+    if (this.hideOnYes) {
+      return this.hide();
+    }
+  };
+
+  ModalView.prototype.onShow = function() {};
+
+  ModalView.prototype.close = function() {
+    return setTimeout(((function(_this) {
+      return function() {
+        return _this.destroy();
+      };
+    })(this)), 500);
+  };
+
+  ModalView.prototype.show = function() {
+    this.$el.modal('show');
+    return this.$el.trigger('show');
+  };
+
+  ModalView.prototype.hide = function() {
+    this.$el.modal('hide');
+    return this.$el.trigger('hide');
+  };
+
+  ModalView.prototype.render = function() {
+    this.$el.append(this.template({
+      title: this.title,
+      msg: this.msg,
+      yes: this.yes,
+      no: this.no
+    }));
+    $("body").append(this.$el);
+    this.afterRender();
+    return this;
+  };
+
+  return ModalView;
+
+})(BaseView);
+
+module.exports.error = function(code, cb) {
+  return new ModalView(t("modal error"), code, t("modal ok"), false, cb);
+};
 });
 
 ;require.register("lib/view_collection", function(exports, require, module) {
@@ -593,7 +694,6 @@ module.exports = ViewCollection = (function(_super) {
   return ViewCollection;
 
 })(BaseView);
-
 });
 
 ;require.register("locales/en", function(exports, require, module) {
@@ -603,6 +703,7 @@ module.exports = {
   "Delete": "Delete",
   "Download": "Download",
   "Edit": "Edit",
+  "Stop editing": "Stop editing",
   "It will appears on your homepage.": "It will appears on your homepage.",
   "Make it Hidden": "hidden",
   "Make it Private": "private",
@@ -633,9 +734,38 @@ module.exports = {
   'problem occured while setting cover': 'A problem occured while setting picture as cover',
   "Click Here or drag your photos below to upload": "Click Here or drag your photos below to upload",
   "hidden-description": "It will not appears on your homepage.\nBut you can share it with the following url :",
-  "It cannot be accessed from the public side": "It cannot be accessed from the public side\""
+  "It cannot be accessed from the public side": "It cannot be accessed from the public side\"",
+  "rebuild thumbnails": "Rebuild thumbnails",
+  "cancel": "Cancel",
+  "copy paste link": "To give access to your contact send him/her the link below:",
+  "details": "Details",
+  "inherited from": "inherited from",
+  "modal question album shareable": "Select share mode for this album",
+  "modal shared album custom msg": "Enter email and press enter",
+  "modal shared album link msg": "Send this link to let people access this album",
+  "modal send mails": "Send a notification",
+  "only you can see": "Only you and the people listed below can access this resource",
+  "public": "Public",
+  "private": "Private",
+  "shared": "Shared",
+  "save": "Save",
+  "see link": "See link",
+  "send mails question": "Send a notification email to:",
+  "sharing": "Sharing",
+  "revoke": "Revoke",
+  "confirm": "Confirm",
+  "share forgot add": "Looks like you forgot to click the Add button",
+  "share confirm save": "The changes you made to the permissions will not be saved. Is that what you want ?",
+  "yes forgot": "Back",
+  "no forgot": "It's ok",
+  "perm": "can ",
+  "perm r album": "browse this album",
+  "perm rw album": "browse and upload photos",
+  "change notif": "Check this box to be notified when a contact\nadd a photo to this album.",
+  "send email hint": "Notification emails will be sent one time on save",
+  "yes": "Yes",
+  "no": "No"
 };
-
 });
 
 ;require.register("locales/fr", function(exports, require, module) {
@@ -645,6 +775,7 @@ module.exports = {
   "Delete": "Supprimer",
   "Download": "Télécharger",
   "Edit": "Modifier",
+  "Stop editing": "Arrêter modifier",
   "It will appears on your homepage.": "It apparaitra votre page d'accueil",
   "Make it Hidden": "masqué",
   "Make it Private": "privé",
@@ -673,11 +804,43 @@ module.exports = {
   "Cancel": "Annuler",
   'photo successfully set as cover': 'L\'image est maintenant la couverture de l\'album.',
   'problem occured while setting cover': 'Un problème est survenu en positionnant l\'image comme couverture de\nl\'album.',
-  "Click Here or drag your photos below to upload": "Cliquez ici pour ajouter des photos ou déposer vos fichiers",
+  "Click Here or drag your photos below to upload": "Cliquez ici pour ajouter des photos ou déposer vos photos",
   "hidden-description": "Il n'apparaitra pas sur votre page d'accueil,\nMais vous pouvez partager cet url :",
-  "It cannot be accessed from the public side": "Il ne peut pas être vu depuis le coté public"
+  "It cannot be accessed from the public side": "Il ne peut pas être vu depuis le coté public",
+  "rebuild thumbnails": "Regénérer les vignettes",
+  "also have access": "Ces personnes ont égalment accès, car ils ont accès à un dossier parent",
+  "cancel": "Annuler",
+  "copy paste link": "Pour donner accès à votre contact envoyez lui ce lien : ",
+  "details": "Details",
+  "inherited from": "hérité de",
+  "modal question album shareable": "Choisissez le mode de partage pour cet album",
+  "modal shared album custom msg": "Entrez un email et appuyez sur entrez",
+  "modal shared album link msg": "Envoyez ce lien pour qu'ils puissent accéder à cet album",
+  "only you can see": "Seul vous et les personnes ci-dessous peuvent accéder à cette ressource.",
+  "public": "Public",
+  "private": "Privé",
+  "shared": "Partagé",
+  "save": "Sauvegarder",
+  "see link": "Voir le lien",
+  "sharing": "Partage",
+  "revoke": "Révoquer la permission",
+  "send mails question": "Envoyer un email de notification à : ",
+  "modal send mails": "Envoyer une notification",
+  "forced public": "Ce dossier est public car un parent est public : ",
+  "confirm": "Confirmer",
+  "share forgot add": "Il semble que vous ayez oublié d'appuyer sur le boutton Add",
+  "share confirm save": "Les changements effectués sur les permissions ne seront pas sauvegardés. Etes vous sur ?",
+  "yes forgot": "Retour",
+  "no forgot": "Ok",
+  "perm": "peut ",
+  "r": "lire cet album",
+  "perm r album": "parcourir cet album",
+  "perm rw album": "parcourir cet ablum et ajouter des photos",
+  "change notif": "Cocher cette case pour recevoir une notification cozy quand un contact\najoute une photo à cet album.",
+  "send email hint": "Des emails de notification seront envoyés lors de la première sauvegarde.",
+  "yes": "Oui",
+  "no": "Non"
 };
-
 });
 
 ;require.register("models/album", function(exports, require, module) {
@@ -698,7 +861,7 @@ module.exports = Album = (function(_super) {
     return {
       title: '',
       description: '',
-      clearance: 'private',
+      clearance: [],
       thumbsrc: 'img/nophotos.gif',
       orientation: 1
     };
@@ -730,6 +893,10 @@ module.exports = Album = (function(_super) {
     return "photos/thumbs/" + (this.get('coverPicture')) + ".jpg";
   };
 
+  Album.prototype.getPublicURL = function() {
+    return "" + window.location.origin + "/public/albums/" + this.id;
+  };
+
   Album.prototype.sendMail = function(url, mails, callback) {
     var data;
     data = {
@@ -742,7 +909,6 @@ module.exports = Album = (function(_super) {
   return Album;
 
 })(Backbone.Model);
-
 });
 
 ;require.register("models/contact", function(exports, require, module) {
@@ -766,7 +932,6 @@ module.exports = Contact = (function(_super) {
   return Contact;
 
 })(Backbone.Model);
-
 });
 
 ;require.register("models/photo", function(exports, require, module) {
@@ -808,7 +973,6 @@ module.exports = Photo = (function(_super) {
   return Photo;
 
 })(Backbone.Model);
-
 });
 
 ;require.register("models/photoprocessor", function(exports, require, module) {
@@ -1008,7 +1172,6 @@ PhotoProcessor = (function() {
 })();
 
 module.exports = new PhotoProcessor();
-
 });
 
 ;require.register("models/thumbprocessor", function(exports, require, module) {
@@ -1133,7 +1296,6 @@ ThumbProcessor = (function() {
 })();
 
 module.exports = new ThumbProcessor();
-
 });
 
 ;require.register("router", function(exports, require, module) {
@@ -1240,208 +1402,121 @@ module.exports = Router = (function(_super) {
   return Router;
 
 })(Backbone.Router);
-
 });
 
 ;require.register("templates/album", function(exports, require, module) {
-module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
-attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
+var __templateData = function template(locals) {
 var buf = [];
-with (locals || {}) {
-var interp;
-buf.push('<div class="row-fluid"><div id="about" class="span2"><div id="links" class="clearfix"><p><a href="#albums" class="flatbtn back"><i class="icon-arrow-left icon-white"></i><span>');
-var __val__ = t("Back")
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a></p>');
-if ( 'undefined' != typeof id)
+var jade_mixins = {};
+var jade_interp;
+var locals_ = (locals || {}),clearance = locals_.clearance,id = locals_.id,title = locals_.title,description = locals_.description;
+buf.push("<div class=\"row-fluid\"><div id=\"about\"><div id=\"links\" class=\"clearfix\"><p><a href=\"#albums\" class=\"flatbtn back\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Back")) ? "" : jade_interp)) + "</span></a></p><P><a class=\"flatbtn clearance\">");
+if ( clearance == 'public')
 {
-buf.push('<p><a');
-buf.push(attrs({ 'href':("#albums/" + (id) + "/edit"), "class": ('flatbtn') + ' ' + ('startediting') }, {"href":true}));
-buf.push('><i class="icon-edit icon-white"></i><span>');
-var __val__ = t("Edit")
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a><br/></p>');
-if ( photosNumber != 0)
-{
-buf.push('<p><a');
-buf.push(attrs({ 'href':("albums/" + (id) + ".zip"), "class": ('flatbtn') + ' ' + ('download') }, {"href":true}));
-buf.push('><i class="icon-download-alt icon-white"></i><span>');
-var __val__ = t("Download")
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a></p>');
+buf.push("<span class=\"glyphicon glyphicon-globe icon-white\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('public')) == null ? '' : jade_interp)) + "");
 }
-buf.push('<p><a');
-buf.push(attrs({ 'href':("#albums/" + (id) + ""), "class": ('flatbtn') + ' ' + ('stopediting') }, {"href":true}));
-buf.push('><i class="icon-eye-open icon-white"></i><span>');
-var __val__ = t("View")
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a></p><p><a class="flatbtn delete"><i class="icon-remove icon-white"></i><span>');
-var __val__ = t("Delete")
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a></p><p><a href="#clearance-modal" data-toggle="modal" class="flatbtn clearance"><i class="icon-upload icon-white"></i><span>');
-var __val__ = t(clearance)
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a></p>');
-}
-buf.push('</div><h1 id="title">');
-var __val__ = title
-buf.push(null == __val__ ? "" : __val__);
-buf.push('</h1><div id="description">');
-var __val__ = description
-buf.push(null == __val__ ? "" : __val__);
-buf.push('</div></div><div id="photos" class="span10"></div><div id="rebuild-th"><a id="rebuild-th-btn">');
-var __val__ = t("rebuild thumbnails")
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</a></div><div id="clipboard-container"><textarea id="clipboard"></textarea></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer">     <a id="changeprivate" class="flatbtn changeclearance">');
-var __val__ = t("Make it Private")
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</a><a id="changehidden" class="flatbtn changeclearance">');
-var __val__ = t("Make it Hidden")
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</a><a id="changepublic" class="flatbtn changeclearance">');
-var __val__ = t("Make it Public")
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="flatbtn share"><span>');
-var __val__ = t("Share album by mail")
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a></div></div><div id="share-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>');
-var __val__ = t("Share album")
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</h3></div><div class="modal-body"> <input type="text" value="" id="mails" placeholder="example@cozycloud.cc, other-example@cozycloud.cc" class="input-block-level"/></div><div class="modal-footer"> <a href="#add-contact-modal" data-toggle="modal" data-dismiss="modal" class="flatbtn addcontact"><span>');
-var __val__ = t("Add contact")
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a><a type="button" data-dismiss="modal" class="flatbtn sendmail"><span>');
-var __val__ = t("Send mail")    
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a></div></div><div id="add-contact-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>');
-var __val__ = t("Select your friends")
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</h3></div><div class="modal-body"> <div id="contacts" class="input">');
-if ( contacts.length === 0)
+else if ( clearance && clearance.length > 0)
 {
-buf.push('<p>');
-var __val__ = t("Upload your contacts ...")
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</p>');
-}
-else if ( contacts === "No contacts found")
-{
-buf.push('<p>');
-var __val__ = t("No contacts found")
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</p>');
+buf.push("<span>" + (jade.escape(null == (jade_interp = clearance.length) ? "" : jade_interp)) + "</span><span class=\"glyphicon glyphicon-share icon-white\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('shared')) == null ? '' : jade_interp)) + "");
 }
 else
 {
-// iterate contacts
-;(function(){
-  if ('number' == typeof contacts.length) {
-
-    for (var $index = 0, $$l = contacts.length; $index < $$l; $index++) {
-      var contact = contacts[$index];
-
-buf.push('<input');
-buf.push(attrs({ 'type':("checkbox"), 'name':("" + (contact.index) + ""), 'id':("" + (contact.index) + ""), "class": ('checkbox') }, {"type":true,"name":true,"id":true}));
-buf.push('/><span> ' + escape((interp = contact.fn) == null ? '' : interp) + '</span><br/>');
-    }
-
-  } else {
-    var $$l = 0;
-    for (var $index in contacts) {
-      $$l++;      var contact = contacts[$index];
-
-buf.push('<input');
-buf.push(attrs({ 'type':("checkbox"), 'name':("" + (contact.index) + ""), 'id':("" + (contact.index) + ""), "class": ('checkbox') }, {"type":true,"name":true,"id":true}));
-buf.push('/><span> ' + escape((interp = contact.fn) == null ? '' : interp) + '</span><br/>');
-    }
-
-  }
-}).call(this);
-
+buf.push("<span class=\"glyphicon glyphicon-lock icon-white\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('private')) == null ? '' : jade_interp)) + "");
 }
-buf.push('</div></div><div class="modal-footer">     <a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="flatbtn add"><span>');
-var __val__ = t("Add")
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a><a href="#share-modal" data-toggle="modal" data-dismiss="modal" class="flatbtn cancel"><span>');
-var __val__ = t("Cancel")
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a></div></div></div>');
-}
-return buf.join("");
+buf.push("</a></P><p><a" + (jade.attr("href", "albums/" + (id) + ".zip", true, false)) + " class=\"flatbtn download\"><span class=\"glyphicon glyphicon-download-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn stopediting\"><span class=\"glyphicon glyphicon-eye-open icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><p><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn startediting\"><span class=\"glyphicon glyphicon-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p><a class=\"flatbtn delete\"><span class=\"glyphicon glyphicon-remove icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p></div><h1 id=\"title\">" + (null == (jade_interp = title) ? "" : jade_interp) + "</h1><div id=\"description\">" + (null == (jade_interp = description) ? "" : jade_interp) + "</div></div><div id=\"photos\"></div></div>");;return buf.join("");
 };
+if (typeof define === 'function' && define.amd) {
+  define([], function() {
+    return __templateData;
+  });
+} else if (typeof module === 'object' && module && module.exports) {
+  module.exports = __templateData;
+} else {
+  __templateData;
+}
 });
 
 ;require.register("templates/albumlist", function(exports, require, module) {
-module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
-attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
+var __templateData = function template(locals) {
 var buf = [];
-with (locals || {}) {
-var interp;
-buf.push('<div class="albumitem create"><a href="#albums/new"><img src="img/new-galery.png"/><br/><span>');
-var __val__ = t('Create a new album')
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a></div><p class="help">');
-var __val__ = t('There is no public albums.')
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</p>');
-}
-return buf.join("");
+var jade_mixins = {};
+var jade_interp;
+
+buf.push("<div class=\"albumitem create\"><a href=\"#albums/new\"><img src=\"img/new-galery.png\"/><br/><span>" + (jade.escape(null == (jade_interp = t('Create a new album')) ? "" : jade_interp)) + "</span></a></div><p class=\"help\">" + (jade.escape(null == (jade_interp = t('There is no public albums.')) ? "" : jade_interp)) + "</p>");;return buf.join("");
 };
+if (typeof define === 'function' && define.amd) {
+  define([], function() {
+    return __templateData;
+  });
+} else if (typeof module === 'object' && module && module.exports) {
+  module.exports = __templateData;
+} else {
+  __templateData;
+}
 });
 
 ;require.register("templates/albumlist_item", function(exports, require, module) {
-module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
-attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
+var __templateData = function template(locals) {
 var buf = [];
-with (locals || {}) {
-var interp;
-buf.push('<a');
-buf.push(attrs({ 'id':("" + (id) + ""), 'href':("#albums/" + (id) + ""), 'style':("background-image: url(" + (thumbsrc) + ")") }, {"id":true,"href":true,"style":true}));
-buf.push('><span class="title">' + escape((interp = title) == null ? '' : interp) + '</span></a>');
-}
-return buf.join("");
+var jade_mixins = {};
+var jade_interp;
+var locals_ = (locals || {}),id = locals_.id,thumbsrc = locals_.thumbsrc,title = locals_.title;
+buf.push("<a" + (jade.attr("id", "" + (id) + "", true, false)) + (jade.attr("href", "#albums/" + (id) + "", true, false)) + (jade.attr("style", "background-image: url(" + (thumbsrc) + ")", true, false)) + "><span class=\"title\">" + (jade.escape((jade_interp = title) == null ? '' : jade_interp)) + "</span></a>");;return buf.join("");
 };
+if (typeof define === 'function' && define.amd) {
+  define([], function() {
+    return __templateData;
+  });
+} else if (typeof module === 'object' && module && module.exports) {
+  module.exports = __templateData;
+} else {
+  __templateData;
+}
 });
 
 ;require.register("templates/galery", function(exports, require, module) {
-module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
-attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
+var __templateData = function template(locals) {
 var buf = [];
-with (locals || {}) {
-var interp;
-buf.push('<p class="help">');
-var __val__ = t('There is no photos in this album')
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</p><div id="uploadblock" class="flatbtn photo"><input id="uploader" type="file" multiple="multiple"/>');
-var __val__ = t('Click Here or drag your photos below to upload')
-buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</div>');
-}
-return buf.join("");
+var jade_mixins = {};
+var jade_interp;
+
+buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = t('There is no photos in this album')) ? "" : jade_interp)) + "</p><div id=\"uploadblock\" class=\"flatbtn photo\"><input id=\"uploader\" type=\"file\" multiple=\"multiple\"/>" + (jade.escape(null == (jade_interp = t('Click Here or drag your photos below to upload')) ? "" : jade_interp)) + "</div>");;return buf.join("");
 };
+if (typeof define === 'function' && define.amd) {
+  define([], function() {
+    return __templateData;
+  });
+} else if (typeof module === 'object' && module && module.exports) {
+  module.exports = __templateData;
+} else {
+  __templateData;
+}
 });
 
 ;require.register("templates/photo", function(exports, require, module) {
-module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
-attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
+var __templateData = function template(locals) {
 var buf = [];
-with (locals || {}) {
-var interp;
-buf.push('<a');
-buf.push(attrs({ 'href':("" + (src) + ""), 'title':("" + (title) + "") }, {"href":true,"title":true}));
-buf.push('><img');
-buf.push(attrs({ 'src':("" + (thumbsrc) + ""), 'alt':("" + (title) + "") }, {"src":true,"alt":true}));
-buf.push('/><div class="progressfill"></div></a><button class="delete flatbtn"><i class="icon-remove icon-white"></i></button>');
-}
-return buf.join("");
+var jade_mixins = {};
+var jade_interp;
+var locals_ = (locals || {}),src = locals_.src,title = locals_.title,thumbsrc = locals_.thumbsrc;
+buf.push("<a" + (jade.attr("href", "" + (src) + "", true, false)) + (jade.attr("title", "" + (title) + "", true, false)) + "><img" + (jade.attr("src", "" + (thumbsrc) + "", true, false)) + (jade.attr("alt", "" + (title) + "", true, false)) + "/><div class=\"progressfill\"></div></a><button class=\"delete flatbtn\"><i class=\"icon-remove icon-white\"></i></button>");;return buf.join("");
 };
+if (typeof define === 'function' && define.amd) {
+  define([], function() {
+    return __templateData;
+  });
+} else if (typeof module === 'object' && module && module.exports) {
+  module.exports = __templateData;
+} else {
+  __templateData;
+}
 });
 
 ;require.register("views/album", function(exports, require, module) {
-var AlbumView, BaseView, Clipboard, Contact, Galery, app, clipboard, contactModel, editable, thProcessor,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+var AlbumView, BaseView, Clipboard, Contact, CozyClearanceModal, Galery, ShareModal, app, clipboard, contactModel, editable, thProcessor,
   __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 app = require('application');
 
@@ -1455,16 +1530,35 @@ editable = require('lib/helpers').editable;
 
 thProcessor = require('models/thumbprocessor');
 
+CozyClearanceModal = require('cozy-clearance/modal_share_view');
+
 contactModel = require('models/contact');
 
 Contact = new contactModel();
 
 clipboard = new Clipboard();
 
+ShareModal = (function(_super) {
+  __extends(ShareModal, _super);
+
+  function ShareModal() {
+    return ShareModal.__super__.constructor.apply(this, arguments);
+  }
+
+  ShareModal.prototype.initialize = function() {
+    ShareModal.__super__.initialize.apply(this, arguments);
+    return this.refresh();
+  };
+
+  return ShareModal;
+
+})(CozyClearanceModal);
+
 module.exports = AlbumView = (function(_super) {
   __extends(AlbumView, _super);
 
   function AlbumView() {
+    this.changeClearance = __bind(this.changeClearance, this);
     this.makeEditable = __bind(this.makeEditable, this);
     this.beforePhotoUpload = __bind(this.beforePhotoUpload, this);
     this.events = __bind(this.events, this);
@@ -1480,24 +1574,15 @@ module.exports = AlbumView = (function(_super) {
   AlbumView.prototype.events = function() {
     return {
       'click a.delete': this.destroyModel,
-      'click a.changeclearance': this.changeClearance,
-      'click a.addcontact': this.addcontact,
+      'click a.clearance': this.changeClearance,
       'click a.sendmail': this.sendMail,
-      'click a.add': this.prepareContact,
-      'click a#rebuild-th-btn': this.rebuildThumbs,
-      'keyup #mails': this.onKeyUpMails
+      'click a#rebuild-th-btn': this.rebuildThumbs
     };
   };
 
   AlbumView.prototype.getRenderData = function() {
-    var clearance, clearanceHelpers, res;
-    clearance = this.model.get('clearance');
-    if (clearance == null) {
-      clearance = 'private';
-    }
-    clearanceHelpers = this.clearanceHelpers(clearance);
+    var res;
     res = _.extend({
-      clearanceHelpers: clearanceHelpers,
       photosNumber: this.model.photos.length
     }, this.model.attributes);
     return res;
@@ -1510,6 +1595,14 @@ module.exports = AlbumView = (function(_super) {
       collection: this.model.photos,
       beforeUpload: this.beforePhotoUpload
     });
+    this.model.on('change', (function(_this) {
+      return function() {
+        var data;
+        data = _.extend({}, _this.options, _this.getRenderData());
+        _this.$el.html(_this.template(data));
+        return _this.$el.find("#photos").append(_this.galery.$el);
+      };
+    })(this));
     this.galery.album = this.model;
     this.galery.render();
     if (this.options.editable) {
@@ -1529,7 +1622,6 @@ module.exports = AlbumView = (function(_super) {
 
   AlbumView.prototype.makeEditable = function() {
     this.$el.addClass('editing');
-    this.refreshPopOver(this.model.get('clearance'));
     editable(this.$('#title'), {
       placeholder: t('Title ...'),
       onChanged: (function(_this) {
@@ -1564,100 +1656,14 @@ module.exports = AlbumView = (function(_super) {
   };
 
   AlbumView.prototype.changeClearance = function(event) {
-    var id, newclearance;
-    newclearance = event.target.id.replace('change', '');
-    id = event.target.id;
-    this.$("#" + id).spin('tiny');
-    this.$("#" + id).css('color', 'transparent');
-    return this.saveModel({
-      clearance: newclearance
-    }).then((function(_this) {
-      return function() {
-        _this.$("#" + id).spin();
-        _this.$("#" + id).css('color', 'white');
-        return _this.refreshPopOver(newclearance);
-      };
-    })(this));
-  };
-
-  AlbumView.prototype.refreshPopOver = function(clearance) {
-    var help, modal;
-    help = this.clearanceHelpers(clearance);
-    modal = this.$('#clearance-modal');
-    this.$('.clearance').find('span').text(clearance);
-    modal.find('h3').text(help != null ? help.title : void 0);
-    modal.find('.modal-body').html(help != null ? help.content : void 0);
-    modal.find('.changeclearance').removeClass('active');
-    modal.find('#change' + clearance).addClass('active');
-    if (clearance === "hidden") {
-      modal.find('.share').show();
-      return clipboard.set(this.getPublicUrl());
-    } else {
-      modal.find('.share').hide();
-      return clipboard.set("");
+    if (this.model.get('clearance') == null) {
+      this.model.set('clearance', []);
     }
-  };
-
-  AlbumView.prototype.addcontact = function() {
-    var modal;
-    modal = this.$('#add-contact-modal');
-    this.options.contacts = [];
-    return Contact.list({
-      success: (function(_this) {
-        return function(body) {
-          var contact, item, n, _i, _j, _len, _len1, _ref;
-          for (_i = 0, _len = body.length; _i < _len; _i++) {
-            contact = body[_i];
-            _ref = contact.datapoints;
-            for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-              item = _ref[_j];
-              if (item.name === "email") {
-                contact.index = contact.fn.split(' ').join('_');
-                contact.index = contact.index.split("'").join('_');
-                contact.index = contact.index.split("/").join('_');
-                contact.index = contact.index.split("*").join('_');
-                n = 0;
-                while ((_this.options.contacts[n] != null) && _this.options.contacts[n].fn < contact.fn) {
-                  n++;
-                }
-                _this.options.contacts.splice(n, 0, contact);
-                break;
-              }
-            }
-          }
-          if (_this.options.contacts.length === 0) {
-            _this.options.contacts = "No contacts found";
-          }
-          _this.$('#add-contact-modal').modal('hide');
-          _this.render(modal);
-          return _this.$('#add-contact-modal').modal('show');
-        };
-      })(this),
-      error: function(err) {
-        return console.log(err);
-      }
+    this.model.set('type', 'album');
+    console.log(this.model);
+    return new ShareModal({
+      model: this.model
     });
-  };
-
-  AlbumView.prototype.prepareContact = function(event) {
-    var contact, item, mails, modal, _i, _j, _len, _len1, _ref, _ref1;
-    modal = this.$('#add-contact-modal');
-    mails = [];
-    _ref = this.options.contacts;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      contact = _ref[_i];
-      if (this.$("#" + contact.index).is(':checked')) {
-        _ref1 = contact.datapoints;
-        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-          item = _ref1[_j];
-          if (item.name === "email") {
-            mails.push(' ' + item.value);
-            break;
-          }
-        }
-      }
-    }
-    return this.$('#mails').val(mails);
   };
 
   AlbumView.prototype.rebuildThumbs = function(event) {
@@ -1675,46 +1681,6 @@ module.exports = AlbumView = (function(_super) {
       }
     };
     return recFunc();
-  };
-
-  AlbumView.prototype.onKeyUpMails = function(event) {
-    if (event.which === 13 || event.keyCode === 13) {
-      return this.sendMail();
-    }
-  };
-
-  AlbumView.prototype.sendMail = function(event) {
-    var mails;
-    mails = this.$('#mails').val();
-    if (mails.length === 0) {
-      return alert("Please enter an email.");
-    } else {
-      this.$("a.sendmail").spin('tiny');
-      this.$("a.sendmail").css('color', 'transparent');
-      return this.model.sendMail(this.getPublicUrl(), mails, {
-        success: (function(_this) {
-          return function() {
-            var mail, msg, _i, _len;
-            _this.$("a.sendmail").spin();
-            _this.$("a.sendmail").css('color', 'white');
-            msg = "Mail was successfully sent to: \n";
-            mails = mails.split(',');
-            for (_i = 0, _len = mails.length; _i < _len; _i++) {
-              mail = mails[_i];
-              msg = msg + "\n" + mail;
-            }
-            return alert(msg);
-          };
-        })(this),
-        error: (function(_this) {
-          return function(err) {
-            _this.$("a.sendmail").spin();
-            _this.$("a.sendmail").css('color', 'white');
-            return alert(JSON.parse(err.responseText).error);
-          };
-        })(this)
-      });
-    }
   };
 
   AlbumView.prototype.saveModel = function(hash) {
@@ -1742,29 +1708,9 @@ module.exports = AlbumView = (function(_super) {
     return origin + path + hash;
   };
 
-  AlbumView.prototype.clearanceHelpers = function(clearance) {
-    if (clearance === 'public') {
-      return {
-        title: t('This album is public'),
-        content: t('It will appears on your homepage.')
-      };
-    } else if (clearance === 'hidden') {
-      return {
-        title: t('This album is hidden'),
-        content: t("hidden-description") + (" " + (this.getPublicUrl())) + "<p>If you want to copy url in your clipboard: " + "just press Ctrl+C </p>"
-      };
-    } else if (clearance === 'private') {
-      return {
-        title: t('This album is private'),
-        content: t('It cannot be accessed from the public side')
-      };
-    }
-  };
-
   return AlbumView;
 
 })(BaseView);
-
 });
 
 ;require.register("views/albumslist", function(exports, require, module) {
@@ -1802,7 +1748,6 @@ module.exports = AlbumsList = (function(_super) {
   return AlbumsList;
 
 })(ViewCollection);
-
 });
 
 ;require.register("views/albumslist_item", function(exports, require, module) {
@@ -1851,7 +1796,6 @@ module.exports = AlbumItem = (function(_super) {
   return AlbumItem;
 
 })(BaseView);
-
 });
 
 ;require.register("views/galery", function(exports, require, module) {
@@ -2083,7 +2027,6 @@ module.exports = Galery = (function(_super) {
   return Galery;
 
 })(ViewCollection);
-
 });
 
 ;require.register("views/photo", function(exports, require, module) {
@@ -2193,7 +2136,6 @@ module.exports = PhotoView = (function(_super) {
   return PhotoView;
 
 })(BaseView);
-
 });
 
 ;
