@@ -20,7 +20,7 @@ class LocalizationManager
     retrieveLocale: (callback) ->
         Instance.getLocale (err, locale) ->
             if err? or not locale then locale = 'en' # default value
-            callback err, locale
+            callback null, locale
 
     getPolyglotByLocale: (locale) ->
         if locale?
@@ -46,4 +46,4 @@ class LocalizationManager
     # for template localization
     getPolyglot: -> return @polyglot
 
-module.exports = new LocalizationManager()
+module.exports = LocalizationManager
