@@ -8,6 +8,8 @@ exports.config =
         coffeelint:
             options:
                 indentation: value:4, level:'error'
+        jade:
+            globals: ['t']
 
     conventions:
         vendor: /(vendor)|(_specs)(\/|\\)/ # do not wrap tests in modules
@@ -30,6 +32,7 @@ exports.config =
                     'vendor/scripts/async.js',
                     # Twitter Bootstrap jquery plugins
                     'vendor/scripts/bootstrap.js',
+                    'vendor/scripts/polyglot.js',
                 ]
                 after: [
                 ]
@@ -40,8 +43,7 @@ exports.config =
                 'stylesheets/vendor.css': /^vendor/
             order:
                 before: [
-                    'vendor/styles/bootstrap.css'
-                    'vendor/styles/bootstrap-responsive.css',
+                    'vendor/styles/bootstrap.min.css'
                 ]
                 after: []
         templates:
