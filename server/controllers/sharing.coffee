@@ -4,16 +4,19 @@ clearance = require 'cozy-clearance'
 Album = require '../models/album'
 User = require '../models/user'
 
-localization = require '../helpers/localization_manager'
-MailTemplate = localization.getEmailTemplate 'sharemail.jade'
+LocalizationManager = require '../helpers/localization_manager'
+localization = new LocalizationManager
 
 clearanceCtl = clearance.controller
     mailTemplate: (options, callback) ->
-        User.getDisplayName (err, displayName) ->
-            options.displayName = displayName or \
-                                  localization.t 'default user name'
-            options.localization = localization
-            callback null, mailTemplate options
+        console.log options
+        localization.initialize ->
+            mailTemplate = localization.getEmailTemplate 'sharemail.jade'
+            User.getDisplayName (err, displayName) ->
+                options.displayName = displayName or \
+                                      localization.t 'default user name'
+                options.localization = localization
+                callback null, mailTemplate options
 
     mailSubject: (options, callback) ->
         name = options.doc.title
@@ -34,6 +37,7 @@ module.exports.fetch = (req, res, next, id) ->
             err.status = 400
             next err
 
+module.exports.change = clearanceCtl.change
 module.exports.sendAll = clearanceCtl.sendAll
 module.exports.contactList = clearanceCtl.contactList
 module.exports.contactPicture = clearanceCtl.contactPicture
