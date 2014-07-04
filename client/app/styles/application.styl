@@ -304,6 +304,8 @@ button.delete
 
 // Clearance
 
+.flatbtn.clearance
+    background: green
 
 #clearancemanager
   label
@@ -423,10 +425,8 @@ button.delete
 .mode-public .create
 .mode-owner .empty .help
 .stopediting
-.flatbtn
 .delete
 .editing .flatbtn.startediting
-.editing .flatbtn.download
 .mode-owner.editing .empty .help
     display none
 
@@ -499,6 +499,19 @@ for t in exifTransforms
   height: 1px
   padding: 0px
 
+
+// Dirty fix required for clearance modal that includes a weird style for its remove button.
+.icon-remove
+    position: relative
+ 
+.icon-remove:before
+    content: "";
+    font-family: "Glyphicons Halflings";
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    cursor: pointer
+
 // Responsive
 
 @media (max-width: 1210px)
@@ -511,3 +524,4 @@ for t in exifTransforms
 
     #rebuild-th
         display: none
+        
