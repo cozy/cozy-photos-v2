@@ -13,7 +13,7 @@ module.exports = class Album extends Backbone.Model
     defaults: ->
         title: ''
         description: ''
-        clearance: 'private'
+        clearance: []
         thumbsrc: 'img/nophotos.gif'
         orientation: 1
 
@@ -39,6 +39,9 @@ module.exports = class Album extends Backbone.Model
     # Build cover thumb src from coverPicture field.
     getThumbSrc: ->
         "photos/thumbs/#{@get 'coverPicture'}.jpg"
+
+    getPublicURL: ->
+        "#{window.location.origin}/public/albums/#{@id}"
 
     # Send sharing email for this album.
     sendMail: (url, mails, callback) ->
