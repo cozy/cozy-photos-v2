@@ -1,113 +1,47 @@
 div.row-fluid
-  div#about.span2
+  div#about
     div#links.clearfix
-      p
-          a.flatbtn.back(href="#albums")
-            i.icon-arrow-left.icon-white
-            span= t("Back")
-
-      if 'undefined' != typeof id
         p
-            a.flatbtn.startediting(href="#albums/#{id}/edit")
-              i.icon-edit.icon-white
-              span= t("Edit")
-            br
-
-        if photosNumber != 0
-          p
-              a.flatbtn.download(href="albums/#{id}.zip")
-                i.icon-download-alt.icon-white
-                span= t("Download")
+          a.flatbtn.back(href="#albums")
+            span.glyphicon.glyphicon-arrow-left.icon-white
+            span= t("Back")
+        P
+            a.flatbtn.clearance
+                if clearance == 'public'
+                  span.glyphicon.glyphicon-globe.icon-white
+                  | &nbsp;
+                  | #{t('public')}
+                else if clearance && clearance.length > 0
+                  span= clearance.length
+                  span.glyphicon.glyphicon-share.icon-white
+                  | &nbsp;
+                  | #{t('shared')}
+                else
+                  span.glyphicon.glyphicon-lock.icon-white
+                  | &nbsp;
+                  | #{t('private')}
+        p
+             a.flatbtn.download(href="albums/#{id}.zip")
+              span.glyphicon.glyphicon-download-alt.icon-white
+              span= t("Download")
 
         p
             a.flatbtn.stopediting(href="#albums/#{id}")
-              i.icon-eye-open.icon-white
-              span= t("View")
+              span.glyphicon.glyphicon-eye-open.icon-white
+              span= t("Stop editing")
 
+
+        p
+             a.flatbtn.startediting(href="#albums/#{id}/edit")
+               span.glyphicon.glyphicon-edit.icon-white
+               span= t("Edit")
         p
             a.flatbtn.delete
-              i.icon-remove.icon-white
+              span.glyphicon.glyphicon-remove.icon-white
               span= t("Delete")
-
-        p
-            a.flatbtn.clearance(
-              href="#clearance-modal",
-              data-toggle="modal")
-              i.icon-upload.icon-white
-              span= t(clearance)
 
     h1#title!= title
     div#description!= description
-  div#photos.span10
-  div#rebuild-th
-      a#rebuild-th-btn= t("rebuild thumbnails")
-
-
-  #clipboard-container
-    textarea(id="clipboard")
-    
-  #clearance-modal.modal.hide
-    .modal-header
-      button.close(type="button", data-dismiss="modal") &times;
-      h3 clearanceHelpers.title
-
-    .modal-body clearanceHelpers.content
-
-    .modal-footer      
-      a#changeprivate.flatbtn.changeclearance= t("Make it Private")
-      a#changehidden.flatbtn.changeclearance= t("Make it Hidden")
-      a#changepublic.flatbtn.changeclearance= t("Make it Public")
-      a.flatbtn.share(
-        href="#share-modal",
-        data-toggle="modal",
-        data-dismiss="modal")
-        span= t("Share album by mail")
-
-  #share-modal.modal.hide
-    .modal-header
-      button.close(type="button", data-dismiss="modal") &times;
-      h3= t("Share album")
-
-    .modal-body 
-      input.input-block-level(type="text", value="", id="mails", placeholder="example@cozycloud.cc, other-example@cozycloud.cc")
-
-    .modal-footer 
-      a.flatbtn.addcontact(
-        href="#add-contact-modal",
-        data-toggle="modal",
-        data-dismiss="modal")
-        span= t("Add contact")
-      a.flatbtn.sendmail(type="button", data-dismiss="modal")
-        span= t("Send mail")    
-
-
-
-  #add-contact-modal.modal.hide
-    .modal-header
-      button.close(type="button", data-dismiss="modal") &times;
-      h3= t("Select your friends")
-
-    .modal-body 
-      #contacts.input
-        if contacts.length === 0
-          p= t("Upload your contacts ...")
-        else if contacts === "No contacts found"
-          p= t("No contacts found")
-        else
-          each contact in contacts
-            input(type="checkbox", name="#{contact.index}", id ="#{contact.index}").checkbox
-            span  #{contact.fn}
-            br
-
-    .modal-footer      
-      a.flatbtn.add(
-        href="#share-modal",
-        data-toggle="modal",
-        data-dismiss="modal")
-        span= t("Add")
-
-      a.flatbtn.cancel(
-        href="#share-modal",
-        data-toggle="modal",
-        data-dismiss="modal")
-        span= t("Cancel")
+  div#photos
+  //-div#rebuild-th
+      //-a#rebuild-th-btn= t("rebuild thumbnails")
