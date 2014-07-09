@@ -3,11 +3,15 @@ Photo = require '../models/photo'
 CozyInstance = require '../models/cozy_instance'
 async = require 'async'
 fs    = require 'fs'
-zipstream = require 'zipstream'
+zipstream = require 'zip-stream'
 {slugify, noop} = require '../helpers/helpers'
 
 try CozyAdapter = require 'americano-cozy/node_modules/jugglingdb-cozy-adapter'
 catch e then CozyAdapter = require 'jugglingdb-cozy-adapter'
+
+log = require('printit')
+    date: false
+    prefix: "album"
 
 
 # Get all albums and their covers then put data into the index template.
@@ -112,24 +116,25 @@ module.exports.read = (req, res) ->
 
 # Generate a zip archive containing all photo attached to photo docs of give
 # album.
-module.exports.zip = (req, res) ->
+module.exports.zip = (req, res, err) ->
     Photo.fromAlbum req.album, (err, photos) ->
         return res.error 500, 'An error occured', err if err
         return res.error 401, 'The album is empty' unless photos.length
 
-        zip = zipstream.createZip level: 1
+        zip = new zipstream()
+        zipname = slugify req.album.title
 
         addToZip = (photo, cb) ->
             stream = photo.getFile 'raw', noop
             extension = photo.title.substr photo.title.lastIndexOf '.'
             photoname = photo.title.substr 0, photo.title.lastIndexOf '.'
             photoname = slugify(photoname) + extension
-            zip.addFile stream, name: photoname, cb
+            zip.entry stream, name: photoname, cb
 
         async.eachSeries photos, addToZip, (err) ->
-            zip.finalize noop
+            next err if err
+            zip.finalize()
 
-        zipname = slugify(req.album.title)
         disposition = "attachment; filename=\"#{zipname}.zip\""
         res.setHeader 'Content-Disposition', disposition
         res.setHeader 'Content-Type', 'application/zip'
@@ -141,15 +146,15 @@ module.exports.update = (req, res) ->
     req.album.updateAttributes req.body, (err) ->
         return res.error 500, "Update failed.", err if err
 
-        res.send succes: true, model: req.album
+        res.send 200, req.album
 
 
 # Destroy album and all its photos.
 module.exports.delete = (req, res) ->
-        req.album.destroy (err) ->
-            return res.error 500, "Deletion failed.", err if err
+    req.album.destroy (err) ->
+       return res.error 500, "Deletion failed.", err if err
 
-            Photo.fromAlbum req.album, (err, photos) ->
-                photo.destroy() for photo in photos
+       Photo.fromAlbum req.album, (err, photos) ->
+           photo.destroy() for photo in photos
 
-            res.success "Deletion succeded."
+       res.success "Deletion succeded."

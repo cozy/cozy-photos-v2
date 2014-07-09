@@ -1060,13 +1060,12 @@ blobify = function(dataUrl, type) {
 
 makeThumbDataURI = function(photo, next) {
   photo.thumb_du = resize(photo, 300, 300, true);
-  return next();
+  return setTimeout(next, 1);
 };
 
 makeThumbBlob = function(photo, next) {
-  console.log(photo);
   photo.thumb = blobify(photo.thumb_du, photo.file.type);
-  return next();
+  return setTimeout(next, 1);
 };
 
 upload = function(photo, next) {
@@ -1081,7 +1080,7 @@ upload = function(photo, next) {
     processData: false,
     type: 'PUT',
     success: function(data) {
-      return console.log(data);
+      return $("#rebuild-th").append("<p>" + photo.file.name + " photo updated.</p>");
     }
   });
 };
@@ -1122,14 +1121,11 @@ ThumbProcessor = (function() {
         name: model.get('title')
       }
     };
-    setTimeout(function() {
-      return uploadWorker(photo, function(err) {
-        if (err) {
-          return console.log(err);
-        }
-      });
+    return uploadWorker(photo, function(err) {
+      if (err) {
+        return console.log(err);
+      }
     });
-    return 300;
   };
 
   return ThumbProcessor;
@@ -1253,39 +1249,39 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div class="row-fluid"><div id="about" class="span4"><div id="links" class="clearfix"><a href="#albums" class="flatbtn back"><i class="icon-arrow-left icon-white"></i><span>');
+buf.push('<div class="row-fluid"><div id="about" class="span2"><div id="links" class="clearfix"><p><a href="#albums" class="flatbtn back"><i class="icon-arrow-left icon-white"></i><span>');
 var __val__ = t("Back")
 buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a>');
+buf.push('</span></a></p>');
 if ( 'undefined' != typeof id)
 {
-buf.push('<a');
+buf.push('<p><a');
 buf.push(attrs({ 'href':("#albums/" + (id) + "/edit"), "class": ('flatbtn') + ' ' + ('startediting') }, {"href":true}));
 buf.push('><i class="icon-edit icon-white"></i><span>');
 var __val__ = t("Edit")
 buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a>');
+buf.push('</span></a><br/></p>');
 if ( photosNumber != 0)
 {
-buf.push('<a');
+buf.push('<p><a');
 buf.push(attrs({ 'href':("albums/" + (id) + ".zip"), "class": ('flatbtn') + ' ' + ('download') }, {"href":true}));
 buf.push('><i class="icon-download-alt icon-white"></i><span>');
 var __val__ = t("Download")
 buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a>');
+buf.push('</span></a></p>');
 }
-buf.push('<a');
+buf.push('<p><a');
 buf.push(attrs({ 'href':("#albums/" + (id) + ""), "class": ('flatbtn') + ' ' + ('stopediting') }, {"href":true}));
 buf.push('><i class="icon-eye-open icon-white"></i><span>');
 var __val__ = t("View")
 buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a><a class="flatbtn delete"><i class="icon-remove icon-white"></i><span>');
+buf.push('</span></a></p><p><a class="flatbtn delete"><i class="icon-remove icon-white"></i><span>');
 var __val__ = t("Delete")
 buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a><a href="#clearance-modal" data-toggle="modal" class="flatbtn clearance"><i class="icon-upload icon-white"></i><span>');
+buf.push('</span></a></p><p><a href="#clearance-modal" data-toggle="modal" class="flatbtn clearance"><i class="icon-upload icon-white"></i><span>');
 var __val__ = t(clearance)
 buf.push(escape(null == __val__ ? "" : __val__));
-buf.push('</span></a>');
+buf.push('</span></a></p>');
 }
 buf.push('</div><h1 id="title">');
 var __val__ = title
@@ -1293,7 +1289,7 @@ buf.push(null == __val__ ? "" : __val__);
 buf.push('</h1><div id="description">');
 var __val__ = description
 buf.push(null == __val__ ? "" : __val__);
-buf.push('</div></div><div id="photos" class="span8"></div><div id="rebuild-th"><a id="rebuild-th-btn">');
+buf.push('</div></div><div id="photos" class="span10"></div><div id="rebuild-th"><a id="rebuild-th-btn">');
 var __val__ = t("rebuild thumbnails")
 buf.push(escape(null == __val__ ? "" : __val__));
 buf.push('</a></div><div id="clipboard-container"><textarea id="clipboard"></textarea></div><div id="clearance-modal" class="modal hide"><div class="modal-header"><button type="button" data-dismiss="modal" class="close">&times;</button><h3>clearanceHelpers.title</h3></div><div class="modal-body">clearanceHelpers.content</div><div class="modal-footer">     <a id="changeprivate" class="flatbtn changeclearance">');
@@ -1665,14 +1661,20 @@ module.exports = AlbumView = (function(_super) {
   };
 
   AlbumView.prototype.rebuildThumbs = function(event) {
-    var model, _i, _len, _ref, _results;
-    _ref = this.model.photos.models;
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      model = _ref[_i];
-      _results.push(thProcessor.process(model));
-    }
-    return _results;
+    var models, recFunc;
+    $("#rebuild-th p").remove();
+    models = this.model.photos.models;
+    recFunc = function() {
+      var model;
+      if (models.length > -1) {
+        model = models.pop();
+        return setTimeout(function() {
+          thProcessor.process(model);
+          return recFunc();
+        }, 500);
+      }
+    };
+    return recFunc();
   };
 
   AlbumView.prototype.onKeyUpMails = function(event) {

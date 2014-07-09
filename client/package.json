@@ -10,7 +10,7 @@
     "jade-brunch": "> 1.0 < 1.5",
     "stylus-brunch": ">= 1.0 < 1.4"
   },
-  "repository": "https://github.com/aenario/cozy-photos",
+  "repository": "https://github.com/cozy/cozy-photos",
   "author": "Romain M. Foucault",
   "readmeFilename": "README.md"
 }

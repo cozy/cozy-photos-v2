@@ -18,13 +18,14 @@ module.exports =
         get: album.list
         post: album.create
 
+    'albums/:albumid.zip':
+        get: album.zip
+
     'albums/:albumid/?':
         get: album.read
         put: album.update
         delete: album.delete
 
-    'albums/:albumid.zip':
-        get: album.zip
 
     'photos/?':
         post: photo.create

@@ -43,13 +43,12 @@ blobify = (dataUrl, type) ->
 # create photo.thumb_du : a DataURL encoded thumbnail of photo.img
 makeThumbDataURI = (photo, next) ->
     photo.thumb_du = resize photo, 300, 300, true
-    next()
+    setTimeout next, 1
 
 # create photo.screen : a Blob(~File) copy of photo.screen_du
 makeThumbBlob = (photo, next) ->
-    console.log photo
     photo.thumb = blobify photo.thumb_du, photo.file.type
-    next()
+    setTimeout next, 1
 
 
 # create a FormData object with photo.file, photo.thumb, photo.screen
@@ -65,7 +64,8 @@ upload = (photo, next) ->
         processData: false
         type: 'PUT',
         success: (data) ->
-            console.log data
+            $("#rebuild-th").append "<p>#{photo.file.name} photo updated.</p>"
+
 
 
 # make thumb and upload
@@ -98,10 +98,12 @@ class ThumbProcessor
                 type: 'image/jpeg'
                 name: model.get 'title'
 
-                #@uploadQueue.push photo, (err) =>
-        setTimeout ->
-            uploadWorker photo, (err) ->
-                return console.log err if err
-        300
+        #setTimeout =>
+            #@uploadQueue.push photo, (err) =>
+                #return console.log err if err
+        #, 300
+        uploadWorker photo, (err) ->
+            console.log err if err
+
 
 module.exports = new ThumbProcessor()

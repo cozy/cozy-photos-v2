@@ -25,8 +25,7 @@ h4 {
   color: #fff;
   cursor: pointer;
   text-transform: capitalize;
-  width: 30%;
-  float: left;
+  width: 100%;
   border: 0;
 }
 .flatbtn span {
@@ -175,6 +174,17 @@ button.delete {
 #about #description:active {
   outline: 0;
 }
+#album.editing #title {
+  white-space: nowrap;
+  overflow: hidden;
+}
+#album.editing #title br {
+  display: none;
+}
+#album.editing #title * {
+  display: inline;
+  white-space: nowrap;
+}
 #album.editing #title:focus,
 #album.editing #description:focus {
   outline: 1px solid #34a6ff;
@@ -204,13 +214,16 @@ button.delete {
 }
 #photos .photo {
   float: left;
-  margin: 5px;
+  opacity: 0.9;
+  -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=90);
+  filter: alpha(opacity=90);
+  margin: 0px;
   position: relative;
 }
 #photos .photo a {
   display: block;
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 200px;
   vertical-align: bottom;
   overflow: hidden;
   background: rgba(0,0,0,0.1);
@@ -246,20 +259,17 @@ button.delete {
   border: 1px solid #34a6ff;
 }
 #photos .photo:hover {
-  -webkit-transform: scale(1.5);
-  -moz-transform: scale(1.5);
-  -o-transform: scale(1.5);
-  -ms-transform: scale(1.5);
-  transform: scale(1.5);
-  -webkit-transform: scale(1.5);
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
   z-index: 3;
 }
 #photos .photo:hover a {
-  border: 0;
+  z-index: 10;
   padding: 0;
   outline: 0;
-  -webkit-box-shadow: 0 0 0 2px #fff, 2px 2px 2px 2px #bbb;
-  box-shadow: 0 0 0 2px #fff, 2px 2px 2px 2px #bbb;
+  -webkit-box-shadow: 0px 0px 10px #666;
+  box-shadow: 0px 0px 10px #666;
   -webkit-transition: 0.1s;
   -moz-transition: 0.1s;
   -o-transition: 0.1s;
@@ -267,17 +277,12 @@ button.delete {
   transition: 0.1s;
   -webkit-transition: 0.1s;
 }
-#photos .photo:hover img {
-  border: 0;
-  -webkit-transform: scale(1.2);
-  -moz-transform: scale(1.2);
-  -o-transform: scale(1.2);
-  -ms-transform: scale(1.2);
-  transform: scale(1.2);
-  -webkit-transform: scale(1.2);
-}
-a#rebuild-th-btn {
+#rebuild-th p {
   padding-left: 10px;
+}
+#rebuild-th a#rebuild-th-btn {
+  padding-left: 10px;
+  padding-bottom: 10px;
   cursor: pointer;
 }
 .editing #photos.empty {
@@ -364,8 +369,8 @@ a#rebuild-th-btn {
   background-color: #fe8800;
 }
 #uploadblock {
-  width: 130px;
-  height: 130px;
+  width: 180px;
+  height: 180px;
   display: none;
   margin: 0px;
   overflow: hidden;
@@ -1198,6 +1203,9 @@ a#rebuild-th-btn {
 @media (max-width: 767px) {
   .flatbtn {
     width: 19%;
+  }
+  #rebuild-th {
+    display: none;
   }
 }
 
