@@ -1,5 +1,6 @@
 americano = require 'americano'
 shortcuts = require './helpers/shortcut'
+sharing = require './controllers/sharing'
 
 staticMiddleware = americano.static __dirname + '/../client/public',
                         maxAge: 86400000
@@ -10,11 +11,6 @@ publicStatic = (req, res, next) ->
     staticMiddleware req, res, (err) ->
         req.url = url
         next err
-
-markPublicRequests = (req, res, next) ->
-    req.public = true if req.url.match /^\/public/
-    next()
-
 
 module.exports =
     common:
@@ -29,7 +25,7 @@ module.exports =
             publicStatic
 
             shortcuts
-            markPublicRequests
+            sharing.markPublicRequests
             americano.errorHandler
                 dumpExceptions: true
                 showStack: true

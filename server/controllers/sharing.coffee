@@ -26,7 +26,7 @@ clearanceCtl = clearance.controller
                 displayName: displayName
                 name: name
 
-# fetch file or folder, put it in req.doc
+# fetch album, put it in req.doc
 module.exports.fetch = (req, res, next, id) ->
     Album.find id, (err, album) ->
         if album
@@ -37,7 +37,39 @@ module.exports.fetch = (req, res, next, id) ->
             err.status = 400
             next err
 
-module.exports.change = clearanceCtl.change
+# middleware to mark public request as such
+module.exports.markPublicRequests = (req, res, next) ->
+    req.public = true if req.url.match /^\/public/
+    next()
+
+module.exports.checkPermissions = (album, req, callback) ->
+    # owner can do everything
+    return callback null, true unless req.public
+
+    # public request are handled by cozy-clearance
+    clearance.check album, 'r', req, callback
+
+# we cache album's clearance to avoid extra couchquery
+cache = {}
+module.exports.checkPermissionsPhoto = (photo, req, callback) ->
+    # owner can do everything
+    return callback null, true unless req.public
+
+    # public request are handled by cozy-clearance
+    albumid = photo.albumid
+    if incache = cache[albumid]
+        clearance.check {clearance: incache}, 'r', req, callback
+    else
+        Album.find albumid, (err, album) ->
+            return callback null, false if err or not album
+            cache[albumid] = album.clearance
+            clearance.check album, 'r', req, callback
+
+# overrige clearanceCtl to clear cache
+module.exports.change = (req, res, next) ->
+    cache[req.params.shareid] = null
+    clearanceCtl.change req, res, next
+
 module.exports.sendAll = clearanceCtl.sendAll
 module.exports.contactList = clearanceCtl.contactList
 module.exports.contactPicture = clearanceCtl.contactPicture
