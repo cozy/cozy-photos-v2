@@ -126,7 +126,7 @@ doPipe = (req, which, download, res) ->
         else if req.photo.binary[which]
             stream = req.photo.getBinary which, onError
         else
-            return res.error 404, "Neither binary not attachment", err
+            res.sendFile "../client/app/assets/img/error.gif"
 
         # This is a temporary hack to allow caching
         # ideally, we would do as follow :
@@ -151,9 +151,13 @@ module.exports.screen = (req, res) ->
 module.exports.thumb = (req, res) ->
     doPipe req, 'thumb', false, res
 
-# Get raw version f the picture (file orginally sent).
+# Get raw version of the picture (file orginally sent).
 module.exports.raw = (req, res) ->
-    doPipe req, 'raw', true, res
+    which = if req.photo._attachments.raw then 'raw'
+    else if req.photo.binary.raw then 'raw'
+    else if req.photo.binary.file then 'file'
+    else 'file'
+    doPipe req, 'file', true, res
 
 module.exports.update = (req, res) ->
     req.photo.updateAttributes req.body, (err) ->
