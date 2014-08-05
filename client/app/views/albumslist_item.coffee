@@ -13,9 +13,10 @@ module.exports = class AlbumItem extends BaseView
     getRenderData: ->
         out = _.clone @model.attributes
         out.description = limitLength out.description, 250
+        out.thumbsrc =  @model.getThumbSrc()
         return out
 
     afterRender: ->
         @image = @$ 'img'
-        @image.attr 'src', @model.attributes.thumbsrc
+        @image.attr 'src', @model.getThumbSrc()
         helpers.rotate @model.attributes.orientation, @image

@@ -2,6 +2,7 @@ module.exports =
 
     initialize: ->
 
+        window.app = this
         # Translation helpers.
         @locale = window.locale
         @polyglot = new Polyglot()
@@ -20,6 +21,12 @@ module.exports =
 
         # Base data
         @albums = new AlbumCollection()
+
+        @urlKey = ""
+        if window.location.search
+            for param in window.location.search.substring(1).split '&'
+                [key, value] = param.split '='
+                @urlKey = "?key=#{value}" if key is 'key'
 
         @mode = if window.location.pathname.match /public/ then 'public'
         else 'owner'

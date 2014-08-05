@@ -32,7 +32,6 @@ module.exports = class Router extends Backbone.Router
             @displayView new AlbumView
                 model: album
                 editable: editable
-                contacts: []
 
         .fail =>
             alert t 'this album does not exist'
@@ -49,7 +48,6 @@ module.exports = class Router extends Backbone.Router
         @displayView new AlbumView
             model: new Album()
             editable: true
-            contacts: []
 
     # display a page properly (remove previous page)
     displayView: (view) =>

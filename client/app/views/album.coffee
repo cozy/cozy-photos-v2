@@ -7,15 +7,16 @@ Clipboard = require 'lib/clipboard'
 
 thProcessor = require 'models/thumbprocessor'
 CozyClearanceModal = require 'cozy-clearance/modal_share_view'
-contactModel = require 'models/contact'
-
-Contact = new contactModel()
 clipboard = new Clipboard()
 
 class ShareModal extends CozyClearanceModal
     initialize: ->
         super
         @refresh()
+
+    # override makeURL to append the key in the middle of the url
+    # see: models/album:getPublicURL
+    makeURL: (key) -> @model.getPublicURL key
 
 module.exports = class AlbumView extends BaseView
     template: require 'templates/album'
@@ -113,11 +114,3 @@ module.exports = class AlbumView extends BaseView
                 app.albums.add @model
                 app.router.navigate "albums/#{@model.id}/edit"
         return promise
-
-    # Get public url of the current album (the url shared with contacts).
-    getPublicUrl: ->
-        origin = window.location.origin
-        path = window.location.pathname.replace 'apps', 'public'
-        path = '/public/' if path is '/'
-        hash = window.location.hash.replace '/edit', ''
-        return origin + path + hash

@@ -17,6 +17,8 @@ module.exports = class Album extends Backbone.Model
         thumbsrc: 'img/nophotos.gif'
         orientation: 1
 
+    url: -> super + app.urlKey
+
     constructor: ->
         @photos = new PhotoCollection()
         return super
@@ -38,10 +40,11 @@ module.exports = class Album extends Backbone.Model
 
     # Build cover thumb src from coverPicture field.
     getThumbSrc: ->
-        "photos/thumbs/#{@get 'coverPicture'}.jpg"
+        "photos/thumbs/#{@get 'coverPicture'}.jpg" + app.urlKey
 
-    getPublicURL: ->
-        "#{window.location.origin}/public/albums/#{@id}"
+    getPublicURL: (key) ->
+        urlKey = if key then "?key=#{key}" else ""
+        "#{window.location.origin}/public/photos/#{urlKey}#albums/#{@id}"
 
     # Send sharing email for this album.
     sendMail: (url, mails, callback) ->
