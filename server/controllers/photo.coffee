@@ -4,6 +4,7 @@ fs = require 'fs'
 qs = require 'qs'
 im = require 'imagemagick'
 multiparty = require 'multiparty'
+sharing = require './sharing'
 
 app = null
 module.exports.setApp = (ref) -> app = ref
@@ -78,7 +79,7 @@ module.exports.create = (req, res, next) =>
             Photo.create photo, (err, photo) ->
                 return next err if err
 
-                async.parallel [
+                async.series [
                     (cb) ->
                         raw = req.files['raw']
                         data = name: 'raw', type: raw.type
@@ -105,22 +106,28 @@ module.exports.create = (req, res, next) =>
 
 doPipe = (req, which, download, res) ->
 
-    if download
-        disposition = 'attachment; filename=' + req.photo.title
-        res.setHeader 'Content-disposition', disposition
+    sharing.checkPermissionsPhoto req.photo, req, (err, isAllowed) ->
 
-    request = req.photo.getFile which, (err) ->
-        if err then res.error 500, "File fetching failed.", err
+        if err or not isAllowed
+            return res.error 401, "Not allowed", err
 
-    # This is a temporary hack to allow caching
-    # ideally, we would do as follow :
-    # request.headers['If-None-Match'] = req.headers['if-none-match']
-    # but couchdb goes 500 (COUCHDB-1697 ?)
-    request.pipefilter = (couchres, myres) ->
-        if couchres.headers.etag is req.headers['if-none-match']
-            myres.send 304
+        if download
+            disposition = 'attachment; filename=' + req.photo.title
+            res.setHeader 'Content-disposition', disposition
 
-    request.pipe res
+        request = req.photo.getFile which, (err) ->
+            if err and not res.statusCode
+                res.error 500, "File fetching failed.", err
+
+        # This is a temporary hack to allow caching
+        # ideally, we would do as follow :
+        # request.headers['If-None-Match'] = req.headers['if-none-match']
+        # but couchdb goes 500 (COUCHDB-1697 ?)
+        request.pipefilter = (couchres, myres) ->
+            if couchres.headers.etag is req.headers['if-none-match']
+                myres.send 304
+
+        request.pipe res
 
 
 # Get mid-size version of the picture.

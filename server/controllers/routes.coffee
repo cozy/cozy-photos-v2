@@ -13,9 +13,6 @@ module.exports =
     '':
         get: album.index
 
-    'contacts':
-        get: contact.list
-
     'albums/?':
         get: album.list
         post: album.create

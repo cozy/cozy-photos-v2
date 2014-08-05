@@ -4,6 +4,7 @@ CozyInstance = require '../models/cozy_instance'
 async = require 'async'
 fs    = require 'fs'
 zipstream = require 'zip-stream'
+sharing = require './sharing'
 {slugify, noop} = require '../helpers/helpers'
 
 try CozyAdapter = require 'americano-cozy/node_modules/jugglingdb-cozy-adapter'
@@ -17,35 +18,33 @@ log = require('printit')
 # Get all albums and their covers then put data into the index template.
 # (For faster rendering).
 module.exports.index = (req, res) ->
-    out = []
-    initAlbums = (albums, callback) =>
-        if albums.length > 0
-            albumModel = albums.pop()
-            album = albumModel.toObject()
-            Photo.fromAlbum album, (err, photos) =>
-                if photos.length > 0
-                    album.coverPicture ?= photos[0].id
-                    album.orientation = photos[0].orientation
-
-                out.push album
-                initAlbums albums, callback
-        else
-            callback()
-
-    request = if req.public then 'byTitlePublic' else 'byTitle'
-
     async.parallel [
-        (cb) -> Album.request request, cb
+        (cb) -> Album.request 'byTitle', cb
         (cb) -> CozyInstance.getLocale cb
     ], (err, results) ->
 
         [albums, locale] = results
-        initAlbums albums, () =>
-            imports = """
+        async.map albums, (album, callback) =>
+            sharing.checkPermissions album, req, (err, isAllowed) =>
+                console.log err, isAllowed
+                return callback null, null unless isAllowed
+
+                # we are allowed, we get the thumbnail for the album
+                album = album.toObject()
+                Photo.fromAlbum album, (err, photos) =>
+                    if photos.length > 0
+                        album.coverPicture ?= photos[0].id
+                        album.orientation = photos[0].orientation
+
+                    callback null, album
+
+        , (err, albums) ->
+            console.log albums
+            albums = albums.filter (x) -> x # remove null albums
+            res.render 'index.jade', imports: """
                     window.locale = "#{locale}";
-                    window.initalbums = #{JSON.stringify(out.reverse())};
+                    window.initalbums = #{JSON.stringify(albums)};
                 """
-            res.render 'index.jade', imports: imports
 
 
 # Retrieve given album data.
@@ -89,18 +88,20 @@ module.exports.create = (req, res) ->
 # Read given photo album if rights are not broken.
 module.exports.read = (req, res) ->
 
-    if req.album.clearance is 'private' and req.public
-        return res.error 401, "You are not allowed to view this album."
+    sharing.checkPermissions req.album, req, (err, isAllowed) ->
+        if not isAllowed
+            return res.error 401, "You are not allowed to view this album."
 
-    Photo.fromAlbum req.album, (err, photos) ->
-        return res.error 500, 'An error occured', err if err
+        else
+            Photo.fromAlbum req.album, (err, photos) ->
+                return res.error 500, 'An error occured', err if err
 
-        # JugglingDb doesn't let you add attributes to the model
-        out = req.album.toObject()
-        out.photos = photos
-        out.thumb = photos[0].id if photos.length
+                # JugglingDb doesn't let you add attributes to the model
+                out = req.album.toObject()
+                out.photos = photos
+                out.thumb = photos[0].id if photos.length
 
-        res.send out
+                res.send out
 
 
 # Generate a zip archive containing all photo attached to photo docs of give

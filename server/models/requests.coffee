@@ -2,15 +2,8 @@
 # MapReduce's map for "all" request
 allMap = (doc) -> emit doc._id, doc
 
-# MapReduce's map for "public" request
-publicMap = (doc) ->
-    emit doc._id, doc if doc.clearance is 'public'
-
 # Order docs by title
 byTitleMap = (doc) -> emit doc.title, doc
-
-byTitlePublicMap = (doc) ->
-    emit doc.title, doc if doc.clearance is 'public'
 
 # MapReduce's map to fetch photos by albumid
 byAlbumMap = (photo) -> emit [photo.albumid, photo.title], photo
@@ -24,8 +17,6 @@ module.exports =
     'album':
         'all': allMap
         'byTitle': byTitleMap
-        'public': publicMap
-        'byTitlePublic': byTitlePublicMap
     'photo':
         'all': allMap
         'byalbum': byAlbumMap
