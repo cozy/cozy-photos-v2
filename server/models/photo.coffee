@@ -11,10 +11,13 @@ module.exports = Photo = americano.getModel 'Photo',
 
 # Get all photo linked to given album
 Photo.fromAlbum = (album, callback) ->
-    params =
-        startkey: [album.id]
-        endkey: [album.id + "0"]
-    Photo.request 'byalbum', params, callback
+    if album.folderid is "all"
+        Photo.request 'all', {}, callback
+    else
+        params =
+            startkey: [album.id]
+            endkey: [album.id + "0"]
+        Photo.request 'byalbum', params, callback
 
 # Get all thumbnails of a given photo album.
 Photo.albumsThumbs = (callback) ->

@@ -83,15 +83,15 @@ module.exports.create = (req, res, next) =>
                     (cb) ->
                         raw = req.files['raw']
                         data = name: 'raw', type: raw.type
-                        photo.attachFile raw.path, data, cb
+                        photo.attachBinary raw.path, data, cb
                     (cb) ->
                         screen = req.files['screen']
                         data = name: 'screen', type: screen.type
-                        photo.attachFile screen.path, data, cb
+                        photo.attachBinary screen.path, data, cb
                     (cb) ->
                         thumb = req.files['thumb']
                         data = name: 'thumb', type: thumb.type
-                        photo.attachFile thumb.path, data, cb
+                        photo.attachBinary thumb.path, data, cb
                 ], (err) ->
                     for name, file of req.files
                         fs.unlink file.path, (err) ->
@@ -115,24 +115,36 @@ doPipe = (req, which, download, res) ->
             disposition = 'attachment; filename=' + req.photo.title
             res.setHeader 'Content-disposition', disposition
 
-        request = req.photo.getFile which, (err) ->
+        # support both old style _attachment photo and new style binary photo
+
+        onError = (err) ->
             if err and not res.statusCode
                 res.error 500, "File fetching failed.", err
 
+        if req.photo._attachments[which]
+            stream = req.photo.getFile which, onError
+        else if req.photo.binary[which]
+            stream = req.photo.getBinary which, onError
+        else
+            return res.error 404, "Neither binary not attachment", err
+
         # This is a temporary hack to allow caching
         # ideally, we would do as follow :
-        # request.headers['If-None-Match'] = req.headers['if-none-match']
+        # stream.headers['If-None-Match'] = req.headers['if-none-match']
         # but couchdb goes 500 (COUCHDB-1697 ?)
-        request.pipefilter = (couchres, myres) ->
+        stream.pipefilter = (couchres, myres) ->
             if couchres.headers.etag is req.headers['if-none-match']
                 myres.send 304
 
-        request.pipe res
+        stream.pipe res
 
 
 # Get mid-size version of the picture.
 module.exports.screen = (req, res) ->
-    which = if req.photo._attachments.screen then 'screen' else 'raw'
+    # very old photo might not have a screen-size version
+    which = if req.photo._attachments.screen then 'screen'
+    else if req.photo.binary.screen then 'screen'
+    else 'raw'
     doPipe req, which, false, res
 
 # Get a small size of the picture.

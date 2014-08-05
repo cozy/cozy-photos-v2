@@ -1,2 +1,6 @@
 a(id="#{id}", href="#albums/#{id}", style="background-image: url(#{thumbsrc})")
-    span.title #{title}
+    span.title
+        if folderid == "all"
+            = title
+        else
+            b= title

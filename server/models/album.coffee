@@ -9,6 +9,7 @@ module.exports = Album = americano.getModel 'Album',
     orientation   : Number
     coverPicture  : String
     clearance: (x) -> x
+    folderid      : String
 
 # clearance can be one of
 # - public : in public list of album
