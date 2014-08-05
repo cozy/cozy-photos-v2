@@ -147,7 +147,7 @@ button.delete
         margin-bottom: 10px
 
     &:hover
-        background: orange 
+        background: orange
 
 
 // #### album page ###
@@ -359,6 +359,20 @@ button.delete
         &:focus
             outline: none
 
+.modal-footer
+    padding: 8px;
+    border: 0px none;
+    background: none repeat scroll 0% 0% transparent;
+
+    a.flatbtn
+        float: right
+        text-align: left
+        width: auto
+        padding: 8px
+        line-height: 10px
+        font-size:  10px
+        text-transform: lowercase
+
 
 #inherited-share-list
   li.header
@@ -372,6 +386,9 @@ button.delete
   margin-left -5px
   padding-left 10px
   line-height: 20px
+
+  a.flatbtn.active
+      background-color: blue
 
   label
       margin-top: 10px
@@ -406,10 +423,39 @@ button.delete
   border-bottom: 1px solid lightcolor
   padding-bottom: 5px
 
+.modal-body
+  max-height: 73%
+
+  img
+    border: 5px solid transparent
+    height: 120px
+    margin-bottom: 5px
+    margin-right: 5px
+    opacity: 0.8
+
+  img.selected
+    border: 5px solid blue
+    height: 120px
+    border-radius: 8px
+    opacity: 1
+
 .notifs-label
   margin-top: 30px
   font-weight: normal
   margin-bottom: 0px
+
+#uploadblock
+    width: 180px
+    height: 180px
+    display none
+    margin 0px
+    overflow hidden
+    padding: 10px
+    margin 5px
+    position relative
+    text-align center
+    transition height 1s
+    text-transform: lowercase
 
   input
     margin-right: 5px
@@ -503,7 +549,7 @@ for t in exifTransforms
 // Dirty fix required for clearance modal that includes a weird style for its remove button.
 .icon-remove
     position: relative
- 
+
 .icon-remove:before
     content: "";
     font-family: "Glyphicons Halflings";
@@ -524,4 +570,4 @@ for t in exifTransforms
 
     #rebuild-th
         display: none
-        
+
