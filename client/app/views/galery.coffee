@@ -40,7 +40,7 @@ module.exports = class Galery extends ViewCollection
         else
             transform = "-webkit-transform"
         @turnLeft = $('<a id="left" class="btn left" type="button">
-                       <i class="icon-share-alt"
+                       <i class="glyphicon glyphicon-share-alt glyphicon-reverted"
                         style="' + transform + ': scale(-1,1)"> </i> </a>')
             .appendTo '#pbOverlay .pbCaptionText .btn-group'
         @turnLeft.on 'click', @onTurnLeft
@@ -52,7 +52,7 @@ module.exports = class Galery extends ViewCollection
         unless @downloadLink.length
             @downloadLink =
                 $('<a class="btn download-link" download>
-                  <i class="icon-arrow-down"></i></a>')
+                  <i class="glyphicon glyphicon-arrow-down"></i></a>')
                 .appendTo '#pbOverlay .pbCaptionText .btn-group'
 
         @uploader = @$('#uploader')
@@ -62,7 +62,7 @@ module.exports = class Galery extends ViewCollection
         @coverBtn.unbind 'click'
         @coverBtn.remove()
         @coverBtn = $('<a id="cover-btn" class="btn cover-btn">
-                       <i class="icon-picture" </i> </a>')
+                       <i class="glyphicon glyphicon-picture" </i> </a>')
             .appendTo '#pbOverlay .pbCaptionText .btn-group'
         @coverBtn.on 'click', @onCoverClicked
 
@@ -71,7 +71,7 @@ module.exports = class Galery extends ViewCollection
         @turnRight.unbind 'click'
         @turnRight.remove()
         @turnRight = $('<a id="right" class="btn right">
-                       <i class="icon-share-alt" </i> </a>')
+                       <i class="glyphicon glyphicon-share-alt" </i> </a>')
             .appendTo '#pbOverlay .pbCaptionText .btn-group'
         @turnRight.on 'click', @onTurnRight
 

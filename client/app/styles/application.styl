@@ -472,6 +472,9 @@ button.delete
 
 // # Remove effect from photobox //
 
+#pbOverlay *, #pbOverlay *:before, #pbOverlay *:after
+  box-sizing content-box
+
 
 exifTransforms = (1 rotateZ(0deg)) (2 scale(-1, 1)) (3 rotateZ(180deg)) (4 scale(1,-1)) \
 (5 rotateZ(-90deg) scale(-1, 1)) (6 rotateZ(90deg)) (7 rotateZ(90deg) scale(-1, 1)) (8 rotateZ(-90deg))
