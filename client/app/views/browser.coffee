@@ -42,6 +42,4 @@ module.exports = class FilesBrowser extends Modal
                 fileid = img.id
                 Photo.makeFromFile fileid, attrs, (err, photo) =>
                     return console.log err if err
-
-                    photo.thumbsrc = "photos/thumbs/#{photo.id}.jpg"
-                    @collection.add photo
+                    @collection.add photo, parse: true

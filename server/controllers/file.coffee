@@ -41,12 +41,12 @@ resize = (raw, photo, name, callback) ->
     options = if name is 'thumb'
         mode: 'crop'
         width: 300
-        heigth: 300
+        height: 300
 
     else #screen
         mode: 'resize'
         width: 1200
-        heigth: 800
+        height: 800
 
     options.srcPath = raw
     options.dstPath = "/tmp/#{photo.id}2"
@@ -85,15 +85,11 @@ module.exports.createPhoto = (req, res, next) ->
         stream.pipe fs.createWriteStream rawFile
         stream.on 'error', next
         stream.on 'end', =>
-            console.log "A"
             photo.attachBinary rawFile, name: 'raw', (err) ->
-                console.log "B", err
                 return next err if err
                 resize rawFile, photo, 'thumb', (err) ->
-                    console.log "C"
                     return next err if err
                     resize rawFile, photo, 'screen', (err) ->
-                        console.log "D"
                         fs.unlink rawFile, ->
                             res.send 201, photo
 
