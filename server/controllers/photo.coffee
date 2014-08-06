@@ -104,7 +104,7 @@ module.exports.create = (req, res, next) =>
                         res.send photo, 201
 
 
-doPipe = (req, which, download, res) ->
+doPipe = (req, which, download, res, next) ->
 
     sharing.checkPermissionsPhoto req.photo, req, (err, isAllowed) ->
 
@@ -115,11 +115,9 @@ doPipe = (req, which, download, res) ->
             disposition = 'attachment; filename=' + req.photo.title
             res.setHeader 'Content-disposition', disposition
 
-        # support both old style _attachment photo and new style binary photo
 
-        onError = (err) ->
-            if err and not res.statusCode
-                res.error 500, "File fetching failed.", err
+        # support both old style _attachment photo and new style binary photo
+        onError = (err) -> next err if err
 
         if req.photo._attachments?[which]
             stream = req.photo.getFile which, onError
@@ -132,24 +130,24 @@ doPipe = (req, which, download, res) ->
         # ideally, we would do as follow :
         # stream.headers['If-None-Match'] = req.headers['if-none-match']
         # but couchdb goes 500 (COUCHDB-1697 ?)
-        stream.pipefilter = (couchres, myres) ->
-            if couchres.headers.etag is req.headers['if-none-match']
-                myres.send 304
+        # stream.pipefilter = (couchres, myres) ->
+        #     if couchres.headers.etag is req.headers['if-none-match']
+        #         myres.send 304
 
         stream.pipe res
 
 
-# Get mid-size version of the picture.
+# Get mid-size version of the picture
 module.exports.screen = (req, res) ->
     # very old photo might not have a screen-size version
     which = if req.photo._attachments?.screen then 'screen'
     else if req.photo.binary?.screen then 'screen'
     else 'raw'
-    doPipe req, which, false, res
+    doPipe req, which, false, res, next
 
 # Get a small size of the picture.
-module.exports.thumb = (req, res) ->
-    doPipe req, 'thumb', false, res
+module.exports.thumb = (req, res, next) ->
+    doPipe req, 'thumb', false, res, next
 
 # Get raw version of the picture (file orginally sent).
 module.exports.raw = (req, res) ->
@@ -157,7 +155,7 @@ module.exports.raw = (req, res) ->
     else if req.photo.binary?.raw then 'raw'
     else if req.photo.binary?.file then 'file'
     else 'file'
-    doPipe req, 'file', true, res
+    doPipe req, 'file', true, res, next
 
 module.exports.update = (req, res) ->
     req.photo.updateAttributes req.body, (err) ->
