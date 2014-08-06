@@ -138,7 +138,7 @@ doPipe = (req, which, download, res, next) ->
 
 
 # Get mid-size version of the picture
-module.exports.screen = (req, res) ->
+module.exports.screen = (req, res, next) ->
     # very old photo might not have a screen-size version
     which = if req.photo._attachments?.screen then 'screen'
     else if req.photo.binary?.screen then 'screen'
@@ -150,7 +150,7 @@ module.exports.thumb = (req, res, next) ->
     doPipe req, 'thumb', false, res, next
 
 # Get raw version of the picture (file orginally sent).
-module.exports.raw = (req, res) ->
+module.exports.raw = (req, res, next) ->
     which = if req.photo._attachments?.raw then 'raw'
     else if req.photo.binary?.raw then 'raw'
     else if req.photo.binary?.file then 'file'

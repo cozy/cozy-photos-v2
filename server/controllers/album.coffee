@@ -19,29 +19,20 @@ log = require('printit')
 # (For faster rendering).
 module.exports.index = (req, res) ->
     async.parallel [
-        (cb) -> Album.request 'byTitle', cb
+        (cb) -> Album.listWithThumbs cb
         (cb) -> CozyInstance.getLocale cb
     ], (err, results) ->
-
         [albums, locale] = results
-        async.map albums, (album, callback) =>
+        visible = []
+        async.each albums, (album, callback) =>
             sharing.checkPermissions album, req, (err, isAllowed) =>
-                return callback null, null unless isAllowed
+                visible.push album if isAllowed and not err
+                callback null
 
-                # we are allowed, we get the thumbnail for the album
-                album = album.toObject()
-                Photo.fromAlbum album, (err, photos) =>
-                    if photos.length > 0
-                        album.coverPicture ?= photos[0].id
-                        album.orientation = photos[0].orientation
-
-                    callback null, album
-
-        , (err, albums) ->
-            albums = albums.filter (x) -> x # remove null albums
+        , (err) ->
             res.render 'index.jade', imports: """
                     window.locale = "#{locale}";
-                    window.initalbums = #{JSON.stringify(albums)};
+                    window.initalbums = #{JSON.stringify(visible)};
                 """
 
 
@@ -56,23 +47,20 @@ module.exports.fetch = (req, res, next, id) ->
 
 
 # Get all albums and their cover.
-module.exports.list = (req, res) ->
+module.exports.list = (req, res, next) ->
 
-    request = if req.public then 'byTitlePublic' else 'byTitle'
+    Album.listWithThumbs (err, albums) ->
+        return next err if err
 
-    async.parallel [
-        (cb) -> Photo.albumsThumbs cb
-        (cb) -> Album.request request, cb
-    ], (err, results) ->
-        [photos, albums] = results
-        out = []
-        for albumModel in albums
-            album = albumModel.toObject()
-            album.coverPicture ?= photos[album.id]
-            out.push album
+        visible = []
+        async.each albums, (album, callback) =>
+            sharing.checkPermissions album, req, (err, isAllowed) =>
+                visible.push album if isAllowed and not err
+                callback null
 
-        res.send out
-
+        , (err) ->
+            return next err if err
+            res.send visible
 
 # Create new photo album.
 module.exports.create = (req, res) ->

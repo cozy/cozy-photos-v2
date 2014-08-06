@@ -1,5 +1,7 @@
 americano = require 'americano-cozy'
+async = require 'async'
 CozyInstance = require './cozy_instance'
+Photo = require './photo'
 
 module.exports = Album = americano.getModel 'Album',
     id            : String
@@ -11,10 +13,6 @@ module.exports = Album = americano.getModel 'Album',
     clearance: (x) -> x
     folderid      : String
 
-# clearance can be one of
-# - public : in public list of album
-# - hidden : accessible with proper URL
-# - private : not visible from outside
 Album.beforeSave = (next, data) ->
     data.title ?= ''
     data.title = data.title
@@ -28,3 +26,19 @@ Album::getPublicURL = (callback) ->
         return callback err if err
         url = "#{domain}public/album/#{@id}"
         callback null, url
+
+Album.listWithThumbs = (callback) ->
+    async.parallel [
+        (cb) -> Album.request 'byTitle', cb
+        (cb) -> Photo.albumsThumbs cb
+    ], (err, results) ->
+        [albums, defaultCovers] = results
+        async.map albums, (album, cb) =>
+            album = album.toObject()
+            unless album.coverPicture
+                defaultCover = defaultCovers[album.id]
+                [album.coverPicture, album.orientation] = defaultCover
+
+            cb null, album
+
+        , callback

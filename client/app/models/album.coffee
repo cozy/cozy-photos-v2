@@ -36,6 +36,12 @@ module.exports = class Album extends Backbone.Model
                 attrs.orientation =
                     @photos._byId[attrs.thumb].attributes.orientation
 
+        if attrs.clearance is 'hidden'
+            attrs.clearance = 'public'
+
+        if attrs.clearance is 'private'
+            attrs.clearance = []
+
         return attrs
 
     # Build cover thumb src from coverPicture field.

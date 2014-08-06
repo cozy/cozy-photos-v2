@@ -12,6 +12,11 @@ module.exports = class Galery extends ViewCollection
 
     template: require 'templates/galery'
 
+    initialize: ->
+        super
+        # when the cover picture is deleted, we remove it from the album
+        @listenTo @collection, 'destroy', @onPictureDestroyed
+
     # launch photobox after render
     afterRender: ->
         super
@@ -144,6 +149,9 @@ module.exports = class Galery extends ViewCollection
                 @coverBtn.removeClass 'disabled'
                 alert t 'problem occured while setting cover'
 
+    onPictureDestroyed: (destroyed) =>
+        if destroyed.id is @album.get 'coverPicture'
+            @album.save coverPicture: null
 
     onFilesChanged: (evt) =>
         @handleFiles @uploader[0].files

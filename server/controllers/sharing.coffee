@@ -46,6 +46,12 @@ module.exports.checkPermissions = (album, req, callback) ->
     # owner can do everything
     return callback null, true unless req.public
 
+    if album.clearance is 'hidden'
+        album.clearance = 'public'
+
+    if album.clearance is 'private'
+        album.clearance = []
+
     # public request are handled by cozy-clearance
     clearance.check album, 'r', req, callback
 
@@ -62,6 +68,11 @@ module.exports.checkPermissionsPhoto = (photo, req, callback) ->
     else
         Album.find albumid, (err, album) ->
             return callback null, false if err or not album
+            if album.clearance is 'hidden'
+                album.clearance = 'public'
+
+            if album.clearance is 'private'
+                album.clearance = []
             cache[albumid] = album.clearance
             clearance.check album, 'r', req, callback
 

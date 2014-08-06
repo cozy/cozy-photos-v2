@@ -14,7 +14,7 @@ imageByDate = (doc) ->
 
 # MapReduce to fetch thumbs for every album
 albumPhotosRequest =
-    map: (photo) -> emit photo.albumid, photo._id
+    map: (photo) -> emit photo.albumid, [photo._id, photo.orientation]
     reduce: (key, values, rereduce) -> values[0]
 
 module.exports =
