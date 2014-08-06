@@ -5,6 +5,7 @@ module.exports = Photo = americano.getModel 'Photo',
     title        : String
     description  : String
     orientation  : Number
+    binary       : (x) -> x
     _attachments : Object
     albumid      : String
     date         : String

@@ -276,25 +276,26 @@ button.delete
     border 1px solid orange
 
 
-#uploadblock
+#uploadblock, #browseFiles
     width: 200px
     height: 200px
     display none
     margin 0px
     overflow hidden
     padding: 10px
-    margin 5px
+    margin 0px
     position relative
     text-align center
     transition height 1s
     text-transform: lowercase
+    float: left
 
 #uploadblock.photo:hover
     transform scale(1)
     -webkit-transform scale(1)
     cursor: pointer
 
-.editing #uploadblock
+.editing #uploadblock, .editing #browseFiles
     display block
 
  .pbCaptionText
@@ -443,22 +444,6 @@ button.delete
   margin-top: 30px
   font-weight: normal
   margin-bottom: 0px
-
-#uploadblock
-    width: 180px
-    height: 180px
-    display none
-    margin 0px
-    overflow hidden
-    padding: 10px
-    margin 5px
-    position relative
-    text-align center
-    transition height 1s
-    text-transform: lowercase
-
-  input
-    margin-right: 5px
 
 
 #add-contact

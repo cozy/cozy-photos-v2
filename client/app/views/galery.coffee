@@ -1,5 +1,6 @@
 ViewCollection = require 'lib/view_collection'
 helpers = require 'lib/helpers'
+FilesBrowser = require './browser'
 PhotoView = require 'views/photo'
 Photo = require 'models/photo'
 photoprocessor = require 'models/photoprocessor'
@@ -79,6 +80,7 @@ module.exports = class Galery extends ViewCollection
             'drop'     : 'onFilesDropped'
             'dragover' : 'onDragOver'
             'change #uploader': 'onFilesChanged'
+            'click #browseFiles': 'displayBrowser'
 
     # event listeners for D&D events
     onFilesDropped: (evt) ->
@@ -182,3 +184,9 @@ module.exports = class Galery extends ViewCollection
                 @collection.add photo
 
                 photoprocessor.process photo
+
+    displayBrowser: ->
+        new FilesBrowser
+            model: @album
+            collection: @collection
+            beforeUpload: @options.beforeUpload

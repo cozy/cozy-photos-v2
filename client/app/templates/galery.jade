@@ -1,22 +1,8 @@
 p.help= t('There is no photos in this album')
-#add-photo-modal.modal.fade
-    .modal-header
-        button.close(type="button", data-dismiss="modal") &times;
-        h3= t("Sélectionnez vos photos")
-        //h4 #{$('.selected').length}
-    .modal-body
-        if dates.length === 0
-            p= t("Recherche des photos ...")
-        else if dates === "No photos found"
-            p= t("Pas de photos trouvées")
-        else
-            for date in dates
-                h4 #{t(date.split('-')[1])} #{date.split('-')[0]}
-                br
-                for photo in photos[date]
-                    img(src="files/thumbs/#{photo.id}.jpg", id="#{photo.id}", onclick="if ($(this).hasClass('selected')) {$(this).removeClass('selected')} else {$(this).addClass('selected')}")
-                br
 
-#uploadblock.flatbtn.photo
+#uploadblock.flatbtn
     input#uploader(type="file", multiple="multiple")
     = t('Click Here or drag your photos below to upload')
+
+#browseFiles.flatbtn
+    = t('Click Here to pick pictures from cozy files')

@@ -8,6 +8,10 @@ byTitleMap = (doc) -> emit doc.title, doc
 # MapReduce's map to fetch photos by albumid
 byAlbumMap = (photo) -> emit [photo.albumid, photo.title], photo
 
+imageByDate = (doc) ->
+    if doc.class is "image"
+        emit doc.lastModification, doc
+
 # MapReduce to fetch thumbs for every album
 albumPhotosRequest =
     map: (photo) -> emit photo.albumid, photo._id
@@ -25,3 +29,5 @@ module.exports =
         'all': allMap
     'cozy_instance':
         'all': allMap
+    'file':
+        'imageByDate': imageByDate

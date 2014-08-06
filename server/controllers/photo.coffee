@@ -121,12 +121,12 @@ doPipe = (req, which, download, res) ->
             if err and not res.statusCode
                 res.error 500, "File fetching failed.", err
 
-        if req.photo._attachments[which]
+        if req.photo._attachments?[which]
             stream = req.photo.getFile which, onError
-        else if req.photo.binary[which]
+        else if req.photo.binary?[which]
             stream = req.photo.getBinary which, onError
         else
-            res.sendFile "../client/app/assets/img/error.gif"
+            return res.sendfile './server/img/error.gif'
 
         # This is a temporary hack to allow caching
         # ideally, we would do as follow :
@@ -142,8 +142,8 @@ doPipe = (req, which, download, res) ->
 # Get mid-size version of the picture.
 module.exports.screen = (req, res) ->
     # very old photo might not have a screen-size version
-    which = if req.photo._attachments.screen then 'screen'
-    else if req.photo.binary.screen then 'screen'
+    which = if req.photo._attachments?.screen then 'screen'
+    else if req.photo.binary?.screen then 'screen'
     else 'raw'
     doPipe req, which, false, res
 
@@ -153,9 +153,9 @@ module.exports.thumb = (req, res) ->
 
 # Get raw version of the picture (file orginally sent).
 module.exports.raw = (req, res) ->
-    which = if req.photo._attachments.raw then 'raw'
-    else if req.photo.binary.raw then 'raw'
-    else if req.photo.binary.file then 'file'
+    which = if req.photo._attachments?.raw then 'raw'
+    else if req.photo.binary?.raw then 'raw'
+    else if req.photo.binary?.file then 'file'
     else 'file'
     doPipe req, 'file', true, res
 

@@ -1,5 +1,6 @@
 photo = require './photo'
 album = require './album'
+file = require './file'
 contact = require './contact'
 sharing = require './sharing'
 
@@ -9,6 +10,7 @@ module.exports =
     # fetch on params
     'albumid': param: album.fetch
     'photoid': param: photo.fetch
+    'fileid': param: file.fetch
 
     '':
         get: album.index
@@ -25,6 +27,14 @@ module.exports =
         put: album.update
         delete: album.delete
 
+    'files/':
+        get: file.list
+
+    'files/thumbs/:fileid':
+        get: file.thumb
+
+    'files/:fileid/toPhoto':
+        post: file.createPhoto
 
     'photos/?':
         post: photo.create

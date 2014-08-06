@@ -1,3 +1,5 @@
+client = require('../lib/client')
+
 # A photo
 # maintains attributes src / thumbsrc depending of the state of the model
 module.exports = class Photo extends Backbone.Model
@@ -21,3 +23,9 @@ module.exports = class Photo extends Backbone.Model
     # Return screen size photo src built from id.
     getPrevSrc: ->
         "photos/#{@get 'id'}.jpg"
+
+Photo.listFromFiles = (callback)->
+    client.get "files/", callback
+
+Photo.makeFromFile = (fileid, attr, callback) ->
+    client.post "files/#{fileid}/toPhoto", attr, callback

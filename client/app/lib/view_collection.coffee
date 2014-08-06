@@ -29,17 +29,17 @@ module.exports = class ViewCollection extends BaseView
 
         index = @collection.indexOf view.model
 
-        if index is 0
-            @$el.append view.$el
-        else
+        @$el.append view.$el
+        # if index is 0
+        # else
 
-            className = if view.className? then ".#{view.className}"
-            else ""
+        #     className = if view.className? then ".#{view.className}"
+        #     else ""
 
-            tagName = view.tagName or ""
+        #     tagName = view.tagName or ""
 
-            selector = "#{tagName}#{className}:nth-of-type(#{index})"
-            @$el.find(selector).after view.$el
+        #     selector = "#{tagName}#{className}:nth-of-type(#{index})"
+        #     @$el.find(selector).after view.$el
 
 
     # bind listeners to the collection
@@ -59,7 +59,7 @@ module.exports = class ViewCollection extends BaseView
 
     # after render, we reattach the views
     afterRender: ->
-        if @collection.length > 0 
+        if @collection.length > 0
             for i in [0..@collection.length-1]
                 @appendView @views[@collection.at(i).cid]
 

@@ -26,7 +26,6 @@ module.exports.index = (req, res) ->
         [albums, locale] = results
         async.map albums, (album, callback) =>
             sharing.checkPermissions album, req, (err, isAllowed) =>
-                console.log err, isAllowed
                 return callback null, null unless isAllowed
 
                 # we are allowed, we get the thumbnail for the album
@@ -39,7 +38,6 @@ module.exports.index = (req, res) ->
                     callback null, album
 
         , (err, albums) ->
-            console.log albums
             albums = albums.filter (x) -> x # remove null albums
             res.render 'index.jade', imports: """
                     window.locale = "#{locale}";

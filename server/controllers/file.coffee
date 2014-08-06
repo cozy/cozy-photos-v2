@@ -4,7 +4,7 @@ async = require 'async'
 fs = require 'fs'
 im = require 'imagemagick'
 
-# Get given photo, returns 404 if photo is not found.
+# Get given file, returns 404 if photo is not found.
 module.exports.fetch = (req, res, next, id) ->
     id = id.substring 0, id.length - 4 if id.indexOf('.jpg') > 0
     File.find id, (err, file) =>
@@ -13,7 +13,6 @@ module.exports.fetch = (req, res, next, id) ->
 
         req.file = file
         next()
-
 
 module.exports.list = (req, res, next) ->
     dates = {}
@@ -30,64 +29,72 @@ module.exports.list = (req, res, next) ->
                     dates[date] = [photo]
             res.send dates, 201
 
+module.exports.thumb = (req, res, next) ->
+    which = if req.file.binary.thumb then 'thumb' else 'file'
+    stream = req.file.getBinary which, (err) ->
+            return next err if err
+    stream.pipe res
 
-doPipe = (req, which, res) ->
 
-    request = req.file.getBinary "file", (err) ->
-        if err
-            options =
-                encoding: 'base64'
-            stream = fs.createReadStream "/home/zoe/Documents/Cozy_Cloud/cozy-photos/server/helpers/error.gif", options
-            stream.pipe res
-            #if err then res.error 500, "File fetching failed.", err
+resize = (raw, photo, name, callback) ->
 
-    # This is a temporary hack to allow caching
-    # ideally, we would do as follow :
-    # request.headers['If-None-Match'] = req.headers['if-none-match']
-    # but couchdb goes 500 (COUCHDB-1697 ?)
-    request.pipefilter = (couchres, myres) ->
-        if couchres.headers.etag is req.headers['if-none-match']
-            myres.send 304
+    options = if name is 'thumb'
+        mode: 'crop'
+        width: 300
+        heigth: 300
 
-    request.pipe res
+    else #screen
+        mode: 'resize'
+        width: 1200
+        heigth: 800
 
-# Get a small size of the picture.
-module.exports.thumb = (req, res) ->
-    doPipe req, 'thumb', res
+    options.srcPath = raw
+    options.dstPath = "/tmp/#{photo.id}2"
+
+    # create files
+    fs.openSync options.dstPath, 'w'
+
+    # create a resized file and push it to db
+    im[options.mode] options, (err, stdout, stderr) =>
+        return callback err if err
+        photo.attachBinary options.dstPath, {name}, (err) ->
+            fs.unlink options.dstPath, ->
+                callback err
 
 module.exports.createPhoto = (req, res, next) ->
     file = req.file
+
+    return next new Error('no binary') unless file.binary?
+
     photo =
         date         : file.lastModification
         title        : ""
         description  : ""
         orientation  : 1
-        binary       : file.binary
         albumid      : "#{req.body.albumid}"
-    if not file.binary?
-        next "Binary doesn't exist"
-    else
-        File.find file.binary.id, (err, binary) ->
+
     Photo.create photo, (err, photo) ->
         return next err if err
-        tmp = "/tmp/#{photo.id}"
-        fs.openSync tmp, 'w'
-        tmp2 = "/tmp/#{photo.id}2"
-        fs.openSync tmp2, 'w'
-        stream = file.getBinary 'file', (err, res) =>
+
+        console.log "photo"
+
+        rawFile = "/tmp/#{photo.id}"
+        fs.openSync rawFile, 'w'
+        stream = file.getBinary 'file', (err) ->
             return next err if err
-        out = fs.createWriteStream(tmp)
-        stream.pipe(out)
-        stream.on 'end', () =>
-            im.resize
-                srcPath: tmp,
-                dstPath: tmp2,
-                width:   300,
-                height: 300
-            , (err, stdout, stderr) =>
-                next err if err?
-                photo.attachBinary tmp2, name:'thumb', (err) =>
-                    next err if err?
-                    fs.unlink tmp
-                    fs.unlink tmp2
-                    res.send photo, 201
+        stream.pipe fs.createWriteStream rawFile
+        stream.on 'error', next
+        stream.on 'end', =>
+            console.log "A"
+            photo.attachBinary rawFile, name: 'raw', (err) ->
+                console.log "B", err
+                return next err if err
+                resize rawFile, photo, 'thumb', (err) ->
+                    console.log "C"
+                    return next err if err
+                    resize rawFile, photo, 'screen', (err) ->
+                        console.log "D"
+                        fs.unlink rawFile, ->
+                            res.send 201, photo
+
+

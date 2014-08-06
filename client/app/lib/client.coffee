@@ -2,12 +2,17 @@
 # Make ajax request more easy to do.
 # Expected callbacks: success and error
 exports.request = (type, url, data, callbacks) ->
+
+    success = callbacks.success or (res) -> callbacks null, res
+    error = callbacks.error or (err) -> callbacks err
+
+
     $.ajax
         type: type
         url: url
         data: data
-        success: callbacks.success
-        error: callbacks.error
+        success: success
+        error: error
 
 # Sends a get request with data as body
 # Expected callbacks: success and error
