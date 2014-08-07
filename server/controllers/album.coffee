@@ -85,7 +85,6 @@ module.exports.read = (req, res) ->
                 # JugglingDb doesn't let you add attributes to the model
                 out = req.album.toObject()
                 out.photos = photos
-                out.thumb = photos[0].id if photos.length
 
                 res.send out
 

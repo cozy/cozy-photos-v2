@@ -30,7 +30,7 @@ module.exports = class Album extends Backbone.Model
             @photos.reset attrs.photos, parse: true
         delete attrs.photos
 
-        if attrs.coverPicture
+        if attrs.coverPicture and attrs.coverPicture isnt 'null'
             attrs.thumbsrc = "photos/thumbs/#{attrs.coverPicture}.jpg"
             if @photos.get(attrs.thumb)?.attributes?.orientation?
                 attrs.orientation =
