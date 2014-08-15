@@ -1,11 +1,13 @@
-Album = require '../models/album'
-Photo = require '../models/photo'
-CozyInstance = require '../models/cozy_instance'
 async = require 'async'
 fs    = require 'fs'
 zipstream = require 'zip-stream'
+
+Album = require '../models/album'
+Photo = require '../models/photo'
+CozyInstance = require '../models/cozy_instance'
 sharing = require './sharing'
 {slugify, noop} = require '../helpers/helpers'
+downloader = require '../helpers/downloader'
 
 try CozyAdapter = require 'americano-cozy/node_modules/jugglingdb-cozy-adapter'
 catch e then CozyAdapter = require 'jugglingdb-cozy-adapter'
@@ -105,11 +107,21 @@ module.exports.zip = (req, res, err) ->
                 zipname = slugify req.album.title
 
                 addToZip = (photo, cb) ->
-                    stream = photo.getFile 'raw', noop
-                    extension = photo.title.substr photo.title.lastIndexOf '.'
-                    photoname = photo.title.substr 0, photo.title.lastIndexOf '.'
-                    photoname = slugify(photoname) + extension
-                    zip.entry stream, name: photoname, cb
+                    if photo.binary?
+                        path = "/data/#{photo.id}/binaries/raw"
+                    else
+                        path = "/data/#{photo.id}/attachments/raw"
+
+                    downloader.download path, (stream) ->
+                        if stream.statusCode is 200
+                            extension = photo.title.substr(
+                                photo.title.lastIndexOf '.')
+                            photoname = photo.title.substr(
+                                0, photo.title.lastIndexOf '.')
+                            photoname = slugify(photoname) + extension
+                            zip.entry stream, name: photoname, cb
+                        else
+                            cb()
 
                 async.eachSeries photos, addToZip, (err) ->
                     next err if err

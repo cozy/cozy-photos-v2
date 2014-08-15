@@ -39,7 +39,7 @@ module.exports.create = (req, res, next) =>
     form.on 'field', (name, value) ->
         req.body[name] = value
         if name is 'cid' then cid = value
-        else if name is 'albumid' and req.public then
+        else if name is 'albumid' and req.public
             sharing.checkPermissionsPhoto {albumid}, 'w', req, (err, ok) ->
                 isAllowed = ok
 

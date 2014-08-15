@@ -32,7 +32,7 @@ module.exports.list = (req, res, next) ->
 module.exports.thumb = (req, res, next) ->
     which = if req.file.binary.thumb then 'thumb' else 'file'
     stream = req.file.getBinary which, (err) ->
-            return next err if err
+        return next err if err
     stream.pipe res
 
 
@@ -75,8 +75,6 @@ module.exports.createPhoto = (req, res, next) ->
 
     Photo.create photo, (err, photo) ->
         return next err if err
-
-        console.log "photo"
 
         rawFile = "/tmp/#{photo.id}"
         fs.openSync rawFile, 'w'

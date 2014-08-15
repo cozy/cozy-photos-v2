@@ -54,7 +54,7 @@ module.exports =
     'public/albums/?'                   : get : album.list
     'public/albums/:albumid.zip'        : get : album.zip
     'public/albums/:albumid/?'          : get : album.read
-    'public/photos/?'                   : post: photo.publicUpload
+    #'public/photos/?'                   : post: photo.publicUpload
     'public/photos/:photoid.jpg'        : get : photo.screen
     'public/photos/thumbs/:photoid.jpg' : get : photo.thumb
     'public/photos/raws/:photoid.jpg'   : get : photo.raw
