@@ -1,10 +1,12 @@
-Photo = require '../models/photo'
 async = require 'async'
 fs = require 'fs'
 qs = require 'qs'
 im = require 'imagemagick'
 multiparty = require 'multiparty'
+
+Photo = require '../models/photo'
 sharing = require './sharing'
+downloader = require '../helpers/downloader'
 
 app = null
 module.exports.setApp = (ref) -> app = ref
@@ -133,9 +135,21 @@ doPipe = (req, which, download, res, next) ->
         onError = (err) -> next err if err
 
         if req.photo._attachments?[which]
-            stream = req.photo.getFile which, onError
+            path = "/data/#{req.photo.id}/attachments/#{which}"
+            downloader.download path, (stream) ->
+                if stream.statusCode is 200
+                    stream.pipe res
+                else
+                    return res.sendfile './server/img/error.gif'
+
         else if req.photo.binary?[which]
-            stream = req.photo.getBinary which, onError
+            path = "/data/#{req.photo.id}/binaries/#{which}"
+            downloader.download path, (stream) ->
+                if stream.statusCode is 200
+                    stream.pipe res
+                else
+                    return res.sendfile './server/img/error.gif'
+
         else
             return res.sendfile './server/img/error.gif'
 
@@ -147,7 +161,6 @@ doPipe = (req, which, download, res, next) ->
         #     if couchres.headers.etag is req.headers['if-none-match']
         #         myres.send 304
 
-        stream.pipe res
 
 
 # Get mid-size version of the picture
