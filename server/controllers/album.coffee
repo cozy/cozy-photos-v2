@@ -92,28 +92,33 @@ module.exports.read = (req, res) ->
 # Generate a zip archive containing all photo attached to photo docs of give
 # album.
 module.exports.zip = (req, res, err) ->
-    Photo.fromAlbum req.album, (err, photos) ->
-        return res.error 500, 'An error occured', err if err
-        return res.error 401, 'The album is empty' unless photos.length
+    sharing.checkPermissions req.album, req, (err, isAllowed) ->
+        if not isAllowed
+            return res.error 401, "You are not allowed to view this album."
 
-        zip = new zipstream()
-        zipname = slugify req.album.title
+        else
+            Photo.fromAlbum req.album, (err, photos) ->
+                return res.error 500, 'An error occured', err if err
+                return res.error 401, 'The album is empty' unless photos.length
 
-        addToZip = (photo, cb) ->
-            stream = photo.getFile 'raw', noop
-            extension = photo.title.substr photo.title.lastIndexOf '.'
-            photoname = photo.title.substr 0, photo.title.lastIndexOf '.'
-            photoname = slugify(photoname) + extension
-            zip.entry stream, name: photoname, cb
+                zip = new zipstream()
+                zipname = slugify req.album.title
 
-        async.eachSeries photos, addToZip, (err) ->
-            next err if err
-            zip.finalize()
+                addToZip = (photo, cb) ->
+                    stream = photo.getFile 'raw', noop
+                    extension = photo.title.substr photo.title.lastIndexOf '.'
+                    photoname = photo.title.substr 0, photo.title.lastIndexOf '.'
+                    photoname = slugify(photoname) + extension
+                    zip.entry stream, name: photoname, cb
 
-        disposition = "attachment; filename=\"#{zipname}.zip\""
-        res.setHeader 'Content-Disposition', disposition
-        res.setHeader 'Content-Type', 'application/zip'
-        zip.pipe res
+                async.eachSeries photos, addToZip, (err) ->
+                    next err if err
+                    zip.finalize()
+
+                disposition = "attachment; filename=\"#{zipname}.zip\""
+                res.setHeader 'Content-Disposition', disposition
+                res.setHeader 'Content-Type', 'application/zip'
+                zip.pipe res
 
 
 # Destroy album and all its photos.

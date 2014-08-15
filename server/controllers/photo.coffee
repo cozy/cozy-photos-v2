@@ -25,6 +25,7 @@ module.exports.create = (req, res, next) =>
     cid = null
     lastPercent = 0
     files = {}
+    isAllowed = not req.public
 
     # Parse given form to extract image blobs.
     form = new multiparty.Form
@@ -37,7 +38,10 @@ module.exports.create = (req, res, next) =>
     # Get fields from form.
     form.on 'field', (name, value) ->
         req.body[name] = value
-        cid = value if name is 'cid'
+        if name is 'cid' then cid = value
+        else if name is 'albumid' and req.public then
+            sharing.checkPermissionsPhoto {albumid}, 'w', req, (err, ok) ->
+                isAllowed = ok
 
     # Get files from form.
     form.on 'file', (name, val) ->
@@ -55,12 +59,21 @@ module.exports.create = (req, res, next) =>
         app.io.sockets.emit 'uploadprogress', cid: cid, p: percent
 
     form.on 'error', (err) ->
-        next err
+        return next err if err.message isnt "Request aborted"
 
     # When form is fully parsed, data are saved into CouchDB.
     form.on 'close', ->
         req.files = qs.parse files
         raw = req.files['raw']
+
+        # cleanup & 401
+        unless isAllowed
+            for name, file of req.files
+                fs.unlink file.path, (err) ->
+                    console.log 'Could not delete %s', file.path if err
+            return res.error 401, "Not allowed", err
+
+
         im.readMetadata raw.path, (err, metadata) ->
             if err?
                 console.log "[Create photo - Exif metadata extraction]"
@@ -106,7 +119,7 @@ module.exports.create = (req, res, next) =>
 
 doPipe = (req, which, download, res, next) ->
 
-    sharing.checkPermissionsPhoto req.photo, req, (err, isAllowed) ->
+    sharing.checkPermissionsPhoto req.photo, 'r', req, (err, isAllowed) ->
 
         if err or not isAllowed
             return res.error 401, "Not allowed", err

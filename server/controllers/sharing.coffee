@@ -57,14 +57,14 @@ module.exports.checkPermissions = (album, req, callback) ->
 
 # we cache album's clearance to avoid extra couchquery
 cache = {}
-module.exports.checkPermissionsPhoto = (photo, req, callback) ->
+module.exports.checkPermissionsPhoto = (photo, perm, req, callback) ->
     # owner can do everything
     return callback null, true unless req.public
 
     # public request are handled by cozy-clearance
     albumid = photo.albumid
     if incache = cache[albumid]
-        clearance.check {clearance: incache}, 'r', req, callback
+        clearance.check {clearance: incache}, perm, req, callback
     else
         Album.find albumid, (err, album) ->
             return callback null, false if err or not album
@@ -74,7 +74,7 @@ module.exports.checkPermissionsPhoto = (photo, req, callback) ->
             if album.clearance is 'private'
                 album.clearance = []
             cache[albumid] = album.clearance
-            clearance.check album, 'r', req, callback
+            clearance.check album, perm, req, callback
 
 # overrige clearanceCtl to clear cache
 module.exports.change = (req, res, next) ->
