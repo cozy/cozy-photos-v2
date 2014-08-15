@@ -43,13 +43,11 @@ Photo::destroyWithBinary = (callback) ->
         binaries = []
         binaries.push @binary[key] for key, value of @binary
         async.eachSeries binaries, (binaryData, cb) =>
-            console.log binaryData
             binary = new Binary binaryData
             binary.destroy (err) =>
                 console.log "Cannot destroy binary linked to photo #{@id}" if err
                 cb()
         , (err) =>
-            callback()
-            #@destroy callback
+            @destroy callback
     else
         @destroy callback
