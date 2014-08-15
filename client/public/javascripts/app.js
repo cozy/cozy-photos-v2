@@ -1647,6 +1647,202 @@ if (typeof define === 'function' && define.amd) {
 }
 });
 
+;require.register("views/album", function(exports, require, module) {
+var AlbumView, BaseView, Clipboard, CozyClearanceModal, Galery, ShareModal, app, clipboard, editable, thProcessor,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+app = require('application');
+
+BaseView = require('lib/base_view');
+
+Galery = require('views/galery');
+
+Clipboard = require('lib/clipboard');
+
+editable = require('lib/helpers').editable;
+
+thProcessor = require('models/thumbprocessor');
+
+CozyClearanceModal = require('cozy-clearance/modal_share_view');
+
+clipboard = new Clipboard();
+
+ShareModal = (function(_super) {
+  __extends(ShareModal, _super);
+
+  function ShareModal() {
+    return ShareModal.__super__.constructor.apply(this, arguments);
+  }
+
+  ShareModal.prototype.initialize = function() {
+    ShareModal.__super__.initialize.apply(this, arguments);
+    return this.refresh();
+  };
+
+  ShareModal.prototype.makeURL = function(key) {
+    return this.model.getPublicURL(key);
+  };
+
+  return ShareModal;
+
+})(CozyClearanceModal);
+
+module.exports = AlbumView = (function(_super) {
+  __extends(AlbumView, _super);
+
+  function AlbumView() {
+    this.changeClearance = __bind(this.changeClearance, this);
+    this.makeEditable = __bind(this.makeEditable, this);
+    this.beforePhotoUpload = __bind(this.beforePhotoUpload, this);
+    this.events = __bind(this.events, this);
+    return AlbumView.__super__.constructor.apply(this, arguments);
+  }
+
+  AlbumView.prototype.template = require('templates/album');
+
+  AlbumView.prototype.id = 'album';
+
+  AlbumView.prototype.className = 'container-fluid';
+
+  AlbumView.prototype.events = function() {
+    return {
+      'click a.delete': this.destroyModel,
+      'click a.clearance': this.changeClearance,
+      'click a.sendmail': this.sendMail,
+      'click a#rebuild-th-btn': this.rebuildThumbs
+    };
+  };
+
+  AlbumView.prototype.getRenderData = function() {
+    var res;
+    res = _.extend({
+      photosNumber: this.model.photos.length
+    }, this.model.attributes);
+    return res;
+  };
+
+  AlbumView.prototype.afterRender = function() {
+    this.galery = new Galery({
+      el: this.$('#photos'),
+      editable: this.options.editable,
+      collection: this.model.photos,
+      beforeUpload: this.beforePhotoUpload
+    });
+    this.galery.album = this.model;
+    this.galery.render();
+    this.resize();
+    if (this.options.editable) {
+      this.makeEditable();
+    }
+    return this.model.on('change', (function(_this) {
+      return function() {
+        var data;
+        data = _.extend({}, _this.options, _this.getRenderData());
+        _this.$el.html(_this.template(data));
+        _this.$el.find("#photos").append(_this.galery.$el);
+        if (_this.options.editable) {
+          return _this.makeEditable();
+        }
+      };
+    })(this));
+  };
+
+  AlbumView.prototype.resize = function() {};
+
+  AlbumView.prototype.beforePhotoUpload = function(callback) {
+    return this.saveModel().then((function(_this) {
+      return function() {
+        return callback({
+          albumid: _this.model.id
+        });
+      };
+    })(this));
+  };
+
+  AlbumView.prototype.makeEditable = function() {
+    this.$el.addClass('editing');
+    editable(this.$('#title'), {
+      placeholder: t('Title ...'),
+      onChanged: (function(_this) {
+        return function(text) {
+          return _this.saveModel({
+            title: text.trim()
+          });
+        };
+      })(this)
+    });
+    return editable(this.$('#description'), {
+      placeholder: t('Write some more ...'),
+      onChanged: (function(_this) {
+        return function(text) {
+          return _this.saveModel({
+            description: text.trim()
+          });
+        };
+      })(this)
+    });
+  };
+
+  AlbumView.prototype.destroyModel = function() {
+    if (this.model.isNew()) {
+      return app.router.navigate('albums', true);
+    }
+    if (confirm(t('Are you sure ?'))) {
+      return this.model.destroy().then(function() {
+        return app.router.navigate('albums', true);
+      });
+    }
+  };
+
+  AlbumView.prototype.changeClearance = function(event) {
+    if (this.model.get('clearance') == null) {
+      this.model.set('clearance', []);
+    }
+    this.model.set('type', 'album');
+    console.log(this.model);
+    return new ShareModal({
+      model: this.model
+    });
+  };
+
+  AlbumView.prototype.rebuildThumbs = function(event) {
+    var models, recFunc;
+    $("#rebuild-th p").remove();
+    models = this.model.photos.models;
+    recFunc = function() {
+      var model;
+      if (models.length > -1) {
+        model = models.pop();
+        return setTimeout(function() {
+          thProcessor.process(model);
+          return recFunc();
+        }, 500);
+      }
+    };
+    return recFunc();
+  };
+
+  AlbumView.prototype.saveModel = function(hash) {
+    var promise;
+    promise = this.model.save(hash);
+    if (this.model.isNew()) {
+      promise = promise.then((function(_this) {
+        return function() {
+          app.albums.add(_this.model);
+          return app.router.navigate("albums/" + _this.model.id + "/edit");
+        };
+      })(this));
+    }
+    return promise;
+  };
+
+  return AlbumView;
+
+})(BaseView);
+});
+
 ;require.register("views/albumslist", function(exports, require, module) {
 var AlbumsList, ViewCollection, app,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
