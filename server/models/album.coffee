@@ -35,8 +35,7 @@ Album.listWithThumbs = (callback) ->
         [albums, defaultCovers] = results
         async.map albums, (album, cb) =>
             album = album.toObject()
-            unless album.coverPicture
-                defaultCover = defaultCovers[album.id]
+            if not album.coverPicture and defaultCover = defaultCovers[album.id]
                 [album.coverPicture, album.orientation] = defaultCover
 
             cb null, album
