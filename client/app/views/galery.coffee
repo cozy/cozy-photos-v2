@@ -75,7 +75,6 @@ module.exports = class Galery extends ViewCollection
             .appendTo '#pbOverlay .pbCaptionText .btn-group'
         @turnRight.on 'click', @onTurnRight
 
-
     checkIfEmpty: =>
         @$('.help').toggle _.size(@views) is 0 and app.mode is 'public'
 

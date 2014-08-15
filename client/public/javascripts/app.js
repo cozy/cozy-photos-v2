@@ -1414,6 +1414,15 @@ module.exports = Router = (function(_super) {
       this.mainView.remove();
     }
     this.mainView = view;
+    $(window).unbind('resize');
+    $(window).resize((function(_this) {
+      return function() {
+        var _ref;
+        if (((_ref = _this.mainView) != null ? _ref.resize : void 0) != null) {
+          return _this.mainView.resize();
+        }
+      };
+    })(this));
     el = this.mainView.render().$el;
     el.addClass("mode-" + app.mode);
     return $('body').append(el);
@@ -1723,6 +1732,7 @@ module.exports = AlbumView = (function(_super) {
     });
     this.galery.album = this.model;
     this.galery.render();
+    this.resize();
     if (this.options.editable) {
       this.makeEditable();
     }
@@ -1737,6 +1747,20 @@ module.exports = AlbumView = (function(_super) {
         }
       };
     })(this));
+  };
+
+  AlbumView.prototype.resize = function() {
+    var nbPhotosByLine, photoWidth, wWidth;
+    wWidth = $(document).width();
+    nbPhotosByLine = Math.ceil(wWidth / 200);
+    photoWidth = wWidth / nbPhotosByLine;
+    this.$('.photo').width(photoWidth);
+    this.$('.photo a').width(photoWidth);
+    this.$('.photo img').width(photoWidth);
+    this.$('.photo').height(photoWidth);
+    this.$('.photo a').height(photoWidth);
+    this.$('.photo img').height(photoWidth);
+    return this.$("#about").width(photoWidth * 2);
   };
 
   AlbumView.prototype.beforePhotoUpload = function(callback) {
@@ -1861,6 +1885,23 @@ module.exports = AlbumsList = (function(_super) {
 
   AlbumsList.prototype.checkIfEmpty = function() {
     return this.$('.help').toggle(_.size(this.views) === 0 && app.mode === 'public');
+  };
+
+  AlbumsList.prototype.afterRender = function() {
+    AlbumsList.__super__.afterRender.apply(this, arguments);
+    return this.resize();
+  };
+
+  AlbumsList.prototype.resize = function() {
+    var nbPhotosByLine, wWidth;
+    wWidth = $(document).width();
+    nbPhotosByLine = Math.ceil(wWidth / 300);
+    this.$('.albumitem').width(wWidth / nbPhotosByLine);
+    this.$('.albumitem a').width(wWidth / nbPhotosByLine);
+    this.$('.albumitem span').width(wWidth / nbPhotosByLine);
+    this.$('.albumitem').height(wWidth / nbPhotosByLine);
+    this.$('.albumitem a').height(wWidth / nbPhotosByLine);
+    return this.$('.albumitem span').height(wWidth / nbPhotosByLine);
   };
 
   return AlbumsList;

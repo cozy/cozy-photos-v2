@@ -45,6 +45,8 @@ module.exports = class AlbumView extends BaseView
 
         @galery.album = @model
         @galery.render()
+        @resize()
+
         @makeEditable() if @options.editable
 
         # Do not run afterRender again when model changed.
@@ -54,6 +56,18 @@ module.exports = class AlbumView extends BaseView
             @$el.find("#photos").append @galery.$el
             @makeEditable() if @options.editable
 
+    resize: ->
+        wWidth = $(document).width()
+        nbPhotosByLine = Math.ceil wWidth / 200
+        photoWidth = wWidth / nbPhotosByLine
+
+        @$('.photo').width photoWidth
+        @$('.photo a').width photoWidth
+        @$('.photo img').width photoWidth
+        @$('.photo').height photoWidth
+        @$('.photo a').height photoWidth
+        @$('.photo img').height photoWidth
+        @$("#about").width (photoWidth * 2)
 
 
     # save album before photos are uploaded to it

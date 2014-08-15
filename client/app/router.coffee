@@ -53,6 +53,10 @@ module.exports = class Router extends Backbone.Router
     displayView: (view) =>
         @mainView.remove() if @mainView
         @mainView = view
+        $(window).unbind 'resize'
+        $(window).resize =>
+            @mainView.resize() if @mainView?.resize?
+
         el = @mainView.render().$el
         el.addClass "mode-#{app.mode}"
         $('body').append el
