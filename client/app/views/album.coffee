@@ -67,7 +67,8 @@ module.exports = class AlbumView extends BaseView
         @$('.photo').height photoWidth
         @$('.photo a').height photoWidth
         @$('.photo img').height photoWidth
-        @$("#about").width (photoWidth * 2)
+        @$("#about").width (photoWidth * 2) - 40
+        @$("#links").width (photoWidth * 2) - 40
 
 
     # save album before photos are uploaded to it
