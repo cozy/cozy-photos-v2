@@ -57,18 +57,18 @@ module.exports = class AlbumView extends BaseView
             @makeEditable() if @options.editable
 
     resize: ->
-        wWidth = $(document).width()
-        nbPhotosByLine = Math.ceil wWidth / 200
-        photoWidth = wWidth / nbPhotosByLine
+        #wWidth = $(document).width()
+        #nbPhotosByLine = Math.ceil wWidth / 200
+        #photoWidth = (wWidth / nbPhotosByLine)
 
-        @$('.photo').width photoWidth
-        @$('.photo a').width photoWidth
-        @$('.photo img').width photoWidth
-        @$('.photo').height photoWidth
-        @$('.photo a').height photoWidth
-        @$('.photo img').height photoWidth
-        @$("#about").width (photoWidth * 2) - 40
-        @$("#links").width (photoWidth * 2) - 40
+        #@$('.photo').width photoWidth
+        #@$('.photo a').width photoWidth
+        #@$('.photo img').width photoWidth
+        #@$('.photo').height photoWidth
+        #@$('.photo a').height photoWidth
+        #@$('.photo img').height photoWidth
+        #@$("#about").width (photoWidth * 2) - 40
+        #@$("#links").width (photoWidth * 2) - 40
 
 
     # save album before photos are uploaded to it
