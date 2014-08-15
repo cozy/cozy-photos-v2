@@ -43,16 +43,18 @@ module.exports = class AlbumView extends BaseView
             collection: @model.photos
             beforeUpload: @beforePhotoUpload
 
+        @galery.album = @model
+        @galery.render()
+        @makeEditable() if @options.editable
+
         # Do not run afterRender again when model changed.
         @model.on 'change', =>
             data = _.extend {}, @options, @getRenderData()
             @$el.html @template(data)
             @$el.find("#photos").append @galery.$el
+            @makeEditable() if @options.editable
 
-        @galery.album = @model
-        @galery.render()
 
-        @makeEditable() if @options.editable
 
     # save album before photos are uploaded to it
     # store albumid in the photo

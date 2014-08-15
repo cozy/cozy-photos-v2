@@ -38,8 +38,11 @@ module.exports =
         A problem occured while setting picture as cover'''
 
 
-    "Click Here or drag your photos below to upload":"""
+    "pick from computer":"""
         Click Here or drag your photos below to upload
+    """
+    "pick from files":"""
+        Click Here to pick from cozy files
     """
 
     "hidden-description": """

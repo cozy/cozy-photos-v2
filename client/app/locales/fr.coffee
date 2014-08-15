@@ -37,8 +37,11 @@ module.exports =
         Un problème est survenu en positionnant l'image comme couverture de
         l'album.'''
 
-    "Click Here or drag your photos below to upload":"""
-        Cliquez ici pour ajouter des photos ou déposer vos photos
+    "pick from computer":"""
+        Click Here or drag your photos below to upload
+    """
+    "pick from files":"""
+        Click Here to pick from cozy files
     """
 
     "hidden-description": """

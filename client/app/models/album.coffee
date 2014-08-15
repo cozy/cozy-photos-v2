@@ -30,11 +30,13 @@ module.exports = class Album extends Backbone.Model
             @photos.reset attrs.photos, parse: true
         delete attrs.photos
 
+
         if attrs.coverPicture and attrs.coverPicture isnt 'null'
+            attrs.thumb = attrs.coverPicture
             attrs.thumbsrc = "photos/thumbs/#{attrs.coverPicture}.jpg"
-            if @photos.get(attrs.thumb)?.attributes?.orientation?
+            if @photos.get(attrs.coverPicture)?.attributes?.orientation?
                 attrs.orientation =
-                    @photos._byId[attrs.thumb].attributes.orientation
+                    @photos._byId[attrs.coverPicture].attributes.orientation
 
         if attrs.clearance is 'hidden'
             attrs.clearance = 'public'

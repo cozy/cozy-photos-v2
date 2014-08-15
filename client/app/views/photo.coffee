@@ -33,7 +33,7 @@ module.exports = class PhotoView extends BaseView
         @link.addClass 'server' unless @model.isNew()
 
     setProgress: (percent) ->
-        @progressbar.css 'height', percent + '%'
+        @progressbar.css 'width', percent + '%'
 
     # when the upload progresses
     onProgress: (event) ->
@@ -50,9 +50,14 @@ module.exports = class PhotoView extends BaseView
     # remove/add.
     onServer: ->
         # detach-reatach so photobox can pick up the object
-        col = @model.collection
-        col.remove @model
-        col.add @model
+        preload = new Image();
+        preload.onerror = preload.onload = =>
+            # col = @model.collection
+            # col.remove @model
+            # col.add @model
+            @render()
+
+        preload.src = "photos/thumbs/#{@model.id}.jpg"
 
         # @setProgress 0
         # @link.attr 'href', "photos/#{@model.id}.jpg"

@@ -86,7 +86,7 @@ upload = (photo, next) ->
         contentType: false # Prevent $.ajax from being smart
         data: formdata
         success: (data) ->
-            photo.set photo.parse(data)
+            photo.set photo.parse(data), silent: true
             next()
         error: ->
             next t ' : upload failled' # clear tmps anyway
