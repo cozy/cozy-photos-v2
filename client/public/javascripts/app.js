@@ -1439,7 +1439,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 var locals_ = (locals || {}),clearance = locals_.clearance,id = locals_.id,title = locals_.title,description = locals_.description;
-buf.push("<div id=\"about\"><div id=\"links\" class=\"clearfix\"><p><a href=\"#albums\" class=\"flatbtn back\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Back")) ? "" : jade_interp)) + "</span></a></p><P><a class=\"flatbtn clearance\">");
+buf.push("<div id=\"about\"><div class=\"pa2\"><div id=\"links\" class=\"clearfix\"><p><a href=\"#albums\" class=\"flatbtn back\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Back")) ? "" : jade_interp)) + "</span></a></p><P><a class=\"flatbtn clearance\">");
 if ( clearance == 'public')
 {
 buf.push("<span class=\"glyphicon glyphicon-globe icon-white\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('public')) == null ? '' : jade_interp)) + "");
@@ -1452,7 +1452,7 @@ else
 {
 buf.push("<span class=\"glyphicon glyphicon-lock icon-white\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('private')) == null ? '' : jade_interp)) + "");
 }
-buf.push("</a></P><p><a" + (jade.attr("href", "albums/" + (id) + ".zip", true, false)) + " class=\"flatbtn download\"><span class=\"glyphicon glyphicon-download-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn stopediting\"><span class=\"glyphicon glyphicon-eye-open icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><p><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn startediting\"><span class=\"glyphicon glyphicon-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p><a class=\"flatbtn delete\"><span class=\"glyphicon glyphicon-remove icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p></div><h1 id=\"title\">" + (null == (jade_interp = title) ? "" : jade_interp) + "</h1><div id=\"description\">" + (null == (jade_interp = description) ? "" : jade_interp) + "</div></div><div id=\"photos\"></div>");;return buf.join("");
+buf.push("</a></P><p><a" + (jade.attr("href", "albums/" + (id) + ".zip", true, false)) + " class=\"flatbtn download\"><span class=\"glyphicon glyphicon-download-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn stopediting\"><span class=\"glyphicon glyphicon-eye-open icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><p><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn startediting\"><span class=\"glyphicon glyphicon-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p><a class=\"flatbtn delete\"><span class=\"glyphicon glyphicon-remove icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p></div><h1 id=\"title\">" + (null == (jade_interp = title) ? "" : jade_interp) + "</h1><div id=\"description\">" + (null == (jade_interp = description) ? "" : jade_interp) + "</div></div></div><div id=\"photos\"></div>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -1732,7 +1732,7 @@ module.exports = AlbumView = (function(_super) {
     });
     this.galery.album = this.model;
     this.galery.render();
-    this.resize();
+    this.resize(true);
     if (this.options.editable) {
       this.makeEditable();
     }
@@ -1749,7 +1749,36 @@ module.exports = AlbumView = (function(_super) {
     })(this));
   };
 
-  AlbumView.prototype.resize = function() {};
+  AlbumView.prototype.resize = function(wait) {
+    var updatePictureSize;
+    if (wait == null) {
+      wait = false;
+    }
+    updatePictureSize = (function(_this) {
+      return function() {
+        var nbPhotos, nbPhotosByLine, photoWidth, wHeight, wWidth;
+        wHeight = $(document).height();
+        wWidth = $(document).width();
+        nbPhotosByLine = Math.ceil(wWidth / 200);
+        photoWidth = wWidth / nbPhotosByLine;
+        nbPhotos = _this.$('.photo').length;
+        _this.$('.photo').width(photoWidth);
+        _this.$('.photo a').width(photoWidth);
+        _this.$('.photo img').width(photoWidth);
+        _this.$('.photo').height(photoWidth);
+        _this.$('.photo a').height(photoWidth);
+        _this.$('.photo img').height(photoWidth);
+        return _this.$("#about").width(photoWidth * 2);
+      };
+    })(this);
+    if (wait) {
+      return setTimeout(function() {
+        return updatePictureSize();
+      }, 200);
+    } else {
+      return updatePictureSize();
+    }
+  };
 
   AlbumView.prototype.beforePhotoUpload = function(callback) {
     return this.saveModel().then((function(_this) {

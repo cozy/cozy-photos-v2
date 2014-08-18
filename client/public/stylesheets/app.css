@@ -161,6 +161,9 @@ h1,
 h4 {
   font-family: styled;
 }
+.pa2 {
+  padding: 20px;
+}
 .flatbtn {
   margin-bottom: 20px;
   display: block;
@@ -311,15 +314,26 @@ button.delete {
   box-sizing: border-box;
   float: left;
   width: 380px;
-  padding: 20px;
+  padding: 0px;
+}
+#about a {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 #about #description {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   text-align: justify;
   padding: 1px;
   border: 0px;
 }
 #about #title,
 #about #description {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   font-weight: normal;
   padding: 8px;
 }

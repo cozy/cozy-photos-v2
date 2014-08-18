@@ -45,7 +45,7 @@ module.exports = class AlbumView extends BaseView
 
         @galery.album = @model
         @galery.render()
-        @resize()
+        @resize(true)
 
         @makeEditable() if @options.editable
 
@@ -56,19 +56,29 @@ module.exports = class AlbumView extends BaseView
             @$el.find("#photos").append @galery.$el
             @makeEditable() if @options.editable
 
-    resize: ->
-        #wWidth = $(document).width()
-        #nbPhotosByLine = Math.ceil wWidth / 200
-        #photoWidth = (wWidth / nbPhotosByLine)
+    resize: (wait=false) ->
+        updatePictureSize = =>
+            wHeight = $(document).height()
+            wWidth = $(document).width()
+            nbPhotosByLine = Math.ceil wWidth / 200
+            photoWidth = (wWidth / nbPhotosByLine)
+            nbPhotos = @$('.photo').length
 
-        #@$('.photo').width photoWidth
-        #@$('.photo a').width photoWidth
-        #@$('.photo img').width photoWidth
-        #@$('.photo').height photoWidth
-        #@$('.photo a').height photoWidth
-        #@$('.photo img').height photoWidth
-        #@$("#about").width (photoWidth * 2) - 40
-        #@$("#links").width (photoWidth * 2) - 40
+            @$('.photo').width photoWidth
+            @$('.photo a').width photoWidth
+            @$('.photo img').width photoWidth
+            @$('.photo').height photoWidth
+            @$('.photo a').height photoWidth
+            @$('.photo img').height photoWidth
+            @$("#about").width (photoWidth * 2)
+
+        # Wait is required because at start,
+        if wait
+            setTimeout ->
+                updatePictureSize()
+            , 200
+        else
+            updatePictureSize()
 
 
     # save album before photos are uploaded to it
