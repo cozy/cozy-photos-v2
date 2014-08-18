@@ -1453,6 +1453,18 @@ button.delete {
     display: none;
   }
 }
+@media (max-width: 600px) {
+  #album-list .albumitem.create a {
+    font-size: 16px;
+  }
+  #album-list .albumitem.create a img {
+    width: 40px;
+    margin-top: 40px;
+  }
+  #album-list .albumitem .title {
+    font-size: 18px;
+  }
+}
 
 
 /*# sourceMappingURL=app.css.map*/
