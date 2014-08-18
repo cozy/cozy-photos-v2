@@ -209,6 +209,9 @@ button.delete {
   padding: 5px;
   width: auto;
 }
+#album {
+  height: 100%;
+}
 #album,
 #album-list {
   font-family: main;
@@ -301,19 +304,21 @@ button.delete {
 }
 #album {
   padding: 0;
+  position: absolute;
+  bottom: 0;
 }
 #links {
   margin-bottom: 20px;
 }
 #links a {
-  margin: 0 10px 10px 0;
+  margin: 0;
 }
 #about {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   float: left;
-  width: 380px;
+  width: 280px;
   padding: 0px;
 }
 #about a {
@@ -361,7 +366,7 @@ button.delete {
   outline: 1px solid #fe8800;
 }
 #photos {
-  min-height: 300px;
+  min-height: 100%;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -459,22 +464,23 @@ button.delete {
 }
 #uploadblock,
 #browseFiles {
+  display: none;
+  position: relative;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: hidden;
   width: 200px;
   height: 200px;
-  display: none;
   margin: 0px;
-  overflow: hidden;
-  padding: 10px;
-  margin: 0px;
-  position: relative;
+  padding: 0px;
   text-align: center;
-  -webkit-transition: height 1s;
-  -moz-transition: height 1s;
-  -o-transition: height 1s;
-  -ms-transition: height 1s;
-  transition: height 1s;
   text-transform: lowercase;
   float: left;
+}
+#uploadblock span,
+#browseFiles span {
+  padding: 10px;
 }
 #uploadblock.photo:hover {
   -webkit-transform: scale(1);

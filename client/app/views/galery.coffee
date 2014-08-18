@@ -92,7 +92,26 @@ module.exports = class Galery extends ViewCollection
         @handleFiles evt.dataTransfer.files
         evt.stopPropagation()
         evt.preventDefault()
+
         return false
+
+    # Adapt photo size to screen size (to make the galery fill the whole
+    # space).
+    updatePictureSize: (photoWidth) ->
+        unless photoWidth?
+            wHeight = $(document).height()
+            wWidth = $(document).width()
+            nbPhotosByLine = Math.ceil wWidth / 200
+            photoWidth = (wWidth / nbPhotosByLine)
+
+        @$('.photo').width photoWidth
+        @$('.photo a').width photoWidth
+        @$('.photo img').width photoWidth
+        @$('.photo').height photoWidth
+        @$('.photo a').height photoWidth
+        @$('.photo img').height photoWidth
+        @$('#uploadblock').width photoWidth
+        @$('#uploadblock').height photoWidth
 
     # Display orange background telling that drag is active.
     onDragOver: (evt) ->
@@ -191,6 +210,8 @@ module.exports = class Galery extends ViewCollection
                 @collection.add photo
 
                 photoprocessor.process photo
+            @updatePictureSize()
+
 
     displayBrowser: ->
         new FilesBrowser

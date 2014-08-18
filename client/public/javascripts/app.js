@@ -1615,7 +1615,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 
-buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = t('There is no photos in this album')) ? "" : jade_interp)) + "</p><div id=\"uploadblock\" class=\"flatbtn\"><input id=\"uploader\" type=\"file\" multiple=\"multiple\"/>" + (jade.escape(null == (jade_interp = t('pick from computer')) ? "" : jade_interp)) + "</div><div id=\"browseFiles\" class=\"flatbtn\">" + (jade.escape(null == (jade_interp = t('pick from files')) ? "" : jade_interp)) + "</div>");;return buf.join("");
+buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = t('There is no photos in this album')) ? "" : jade_interp)) + "</p><div id=\"uploadblock\" class=\"flatbtn\"><div class=\"pa2\"><input id=\"uploader\" type=\"file\" multiple=\"multiple\"/>" + (jade.escape(null == (jade_interp = t('pick from computer')) ? "" : jade_interp)) + "</div></div><div id=\"browseFiles\" class=\"flatbtn\">" + (jade.escape(null == (jade_interp = t('pick from files')) ? "" : jade_interp)) + "</div>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -1696,6 +1696,7 @@ module.exports = AlbumView = (function(_super) {
     this.changeClearance = __bind(this.changeClearance, this);
     this.makeEditable = __bind(this.makeEditable, this);
     this.beforePhotoUpload = __bind(this.beforePhotoUpload, this);
+    this.updatePictureSize = __bind(this.updatePictureSize, this);
     this.events = __bind(this.events, this);
     return AlbumView.__super__.constructor.apply(this, arguments);
   }
@@ -1732,10 +1733,10 @@ module.exports = AlbumView = (function(_super) {
     });
     this.galery.album = this.model;
     this.galery.render();
-    this.resize(true);
     if (this.options.editable) {
       this.makeEditable();
     }
+    this.resize(true);
     return this.model.on('change', (function(_this) {
       return function() {
         var data;
@@ -1749,34 +1750,28 @@ module.exports = AlbumView = (function(_super) {
     })(this));
   };
 
+  AlbumView.prototype.updatePictureSize = function() {
+    var nbPhotosByLine, photoWidth, wHeight, wWidth;
+    wHeight = $(document).height();
+    wWidth = $(document).width();
+    nbPhotosByLine = Math.ceil(wWidth / 200);
+    photoWidth = wWidth / nbPhotosByLine;
+    this.galery.updatePictureSize(photoWidth);
+    return this.$("#about").width(photoWidth * 2);
+  };
+
   AlbumView.prototype.resize = function(wait) {
-    var updatePictureSize;
     if (wait == null) {
       wait = false;
     }
-    updatePictureSize = (function(_this) {
-      return function() {
-        var nbPhotos, nbPhotosByLine, photoWidth, wHeight, wWidth;
-        wHeight = $(document).height();
-        wWidth = $(document).width();
-        nbPhotosByLine = Math.ceil(wWidth / 200);
-        photoWidth = wWidth / nbPhotosByLine;
-        nbPhotos = _this.$('.photo').length;
-        _this.$('.photo').width(photoWidth);
-        _this.$('.photo a').width(photoWidth);
-        _this.$('.photo img').width(photoWidth);
-        _this.$('.photo').height(photoWidth);
-        _this.$('.photo a').height(photoWidth);
-        _this.$('.photo img').height(photoWidth);
-        return _this.$("#about").width(photoWidth * 2);
-      };
-    })(this);
     if (wait) {
-      return setTimeout(function() {
-        return updatePictureSize();
-      }, 200);
+      return setTimeout((function(_this) {
+        return function() {
+          return _this.updatePictureSize();
+        };
+      })(this), 200);
     } else {
-      return updatePictureSize();
+      return this.updatePictureSize();
     }
   };
 
@@ -2174,6 +2169,24 @@ module.exports = Galery = (function(_super) {
     return false;
   };
 
+  Galery.prototype.updatePictureSize = function(photoWidth) {
+    var nbPhotosByLine, wHeight, wWidth;
+    if (photoWidth == null) {
+      wHeight = $(document).height();
+      wWidth = $(document).width();
+      nbPhotosByLine = Math.ceil(wWidth / 200);
+      photoWidth = wWidth / nbPhotosByLine;
+    }
+    this.$('.photo').width(photoWidth);
+    this.$('.photo a').width(photoWidth);
+    this.$('.photo img').width(photoWidth);
+    this.$('.photo').height(photoWidth);
+    this.$('.photo a').height(photoWidth);
+    this.$('.photo img').height(photoWidth);
+    this.$('#uploadblock').width(photoWidth);
+    return this.$('#uploadblock').height(photoWidth);
+  };
+
   Galery.prototype.onDragOver = function(evt) {
     this.$el.addClass('dragover');
     evt.preventDefault();
@@ -2294,17 +2307,16 @@ module.exports = Galery = (function(_super) {
   Galery.prototype.handleFiles = function(files) {
     return this.options.beforeUpload((function(_this) {
       return function(photoAttributes) {
-        var file, photo, _i, _len, _results;
-        _results = [];
+        var file, photo, _i, _len;
         for (_i = 0, _len = files.length; _i < _len; _i++) {
           file = files[_i];
           photoAttributes.title = file.name;
           photo = new Photo(photoAttributes);
           photo.file = file;
           _this.collection.add(photo);
-          _results.push(photoprocessor.process(photo));
+          photoprocessor.process(photo);
         }
-        return _results;
+        return _this.updatePictureSize();
       };
     })(this));
   };

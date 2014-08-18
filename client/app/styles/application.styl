@@ -81,6 +81,9 @@ button.delete
     width: auto
 
 
+#album
+    height: 100%
+
 #album, #album-list
     font-family main
 
@@ -156,17 +159,19 @@ button.delete
 
 #album
     padding: 0
+    position: absolute
+    bottom: 0
 
 #links
     margin-bottom: 20px
 
     a
-        margin: 0 10px 10px 0
+        margin: 0
 
 #about
     box-sizing: border-box
     float: left
-    width: 380px
+    width: 280px
     padding: 0px
 
     a
@@ -207,7 +212,7 @@ button.delete
         outline 1px solid orange
 
 #photos
-    min-height 300px
+    min-height: 100%
     box-sizing border-box
 
     &.dragover
@@ -287,18 +292,20 @@ button.delete
 
 
 #uploadblock, #browseFiles
+    display: none
+    position: relative
+    box-sizing: border-box
+    overflow: hidden
     width: 200px
     height: 200px
-    display none
-    margin 0px
-    overflow hidden
-    padding: 10px
-    margin 0px
-    position relative
-    text-align center
-    transition height 1s
+    margin: 0px
+    padding: 0px
+    text-align: center
     text-transform: lowercase
     float: left
+
+    span
+        padding: 10px
 
 #uploadblock.photo:hover
     transform scale(1)
