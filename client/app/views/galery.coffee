@@ -75,6 +75,9 @@ module.exports = class Galery extends ViewCollection
             .appendTo '#pbOverlay .pbCaptionText .btn-group'
         @turnRight.on 'click', @onTurnRight
 
+        for key, view of @views
+            view.collection = @collection
+
     checkIfEmpty: =>
         @$('.help').toggle _.size(@views) is 0 and app.mode is 'public'
 
@@ -83,6 +86,7 @@ module.exports = class Galery extends ViewCollection
         if @options.editable
             'drop'     : 'onFilesDropped'
             'dragover' : 'onDragOver'
+            'dragleave' : 'onDragLeave'
             'change #uploader': 'onFilesChanged'
             'click #browseFiles': 'displayBrowser'
 
@@ -116,6 +120,12 @@ module.exports = class Galery extends ViewCollection
     # Display orange background telling that drag is active.
     onDragOver: (evt) ->
         @$el.addClass 'dragover'
+        evt.preventDefault()
+        evt.stopPropagation()
+        return false
+
+    onDragLeave: (evt) ->
+        @$el.removeClass 'dragover'
         evt.preventDefault()
         evt.stopPropagation()
         return false
@@ -210,6 +220,10 @@ module.exports = class Galery extends ViewCollection
                 @collection.add photo
 
                 photoprocessor.process photo
+
+            for key, view of @views
+                view.collection = @collection
+
             @updatePictureSize()
 
 

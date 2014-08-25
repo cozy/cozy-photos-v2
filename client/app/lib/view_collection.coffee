@@ -89,5 +89,3 @@ module.exports = class ViewCollection extends BaseView
         delete @views[model.cid]
         @checkIfEmpty @views
 
-
-

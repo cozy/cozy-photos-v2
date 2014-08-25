@@ -50,7 +50,7 @@ module.exports = class PhotoView extends BaseView
     # remove/add.
     onServer: ->
         # detach-reatach so photobox can pick up the object
-        preload = new Image();
+        preload = new Image()
         preload.onerror = preload.onload = =>
             # col = @model.collection
             # col.remove @model
@@ -81,4 +81,7 @@ module.exports = class PhotoView extends BaseView
 
     destroyModel: ->
         @$('.delete').spin()
-        @model.destroy()
+        @model.destroy
+            success: =>
+                @collection.remove @model
+                @remove()
