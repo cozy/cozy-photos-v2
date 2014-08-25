@@ -5,7 +5,7 @@ module.exports =
     "Download" : "Télécharger"
     "Edit" : "Modifier"
     "Stop editing" : "Arrêter modifier"
-    "It will appears on your homepage." : "It apparaitra votre page d'accueil"
+    "It will appears on your homepage." : "Il apparaîtra sur votre page d'accueil"
     "Make it Hidden" : "masqué"
     "Make it Private" : "privé"
     "Make it Public" : "public"
@@ -15,16 +15,16 @@ module.exports =
     "hidden" : "masqué"
     "There is no photos in this album" : "Pas de photos dans cet album"
     "There is no public albums." : "Il n'y a aucun album"
-    "This album is private" : "Cet album est Privé"
-    "This album is hidden" : "Cet album est Masqué"
-    "This album is public" : "Cet album est Public"
+    "This album is private" : "Cet album est privé"
+    "This album is hidden" : "Cet album est masqué"
+    "This album is public" : "Cet album est public"
     "Title ..." : "Titre ..."
     "Write some more ..." : "Description ..."
     "View" : "Voir"
     "is too big (max 10Mo)":"est trop grosse (max 10Mo)"
     "is not an image": "n'est pas une image"
     "Share album by mail": "Partagez par mail"
-    "Upload your contacts ...": "Uploader vos contacts ..."
+    "Upload your contacts ...": "Uploadez vos contacts…"
     "Share album": "Partagez l'album"
     "Add contact": "Ajouter contact"
     "Send mail": "Envoyez mail"
@@ -38,33 +38,33 @@ module.exports =
         l'album.'''
 
     "pick from computer":"""
-        Click Here or drag your photos below to upload
+        Cliquez ici ou glissez-déposez vos photos pour uploader
     """
     "pick from files":"""
-        Click Here to pick from cozy files
+        Cliquez ici pour choisir dans vos fichiers de cozy
     """
 
     "hidden-description": """
-      Il n'apparaitra pas sur votre page d'accueil,
+      Il n'apparaîtra pas sur votre page d'accueil,
       Mais vous pouvez partager cet url :
     """
 
     "It cannot be accessed from the public side" : """
-      Il ne peut pas être vu depuis le coté public
+      Il ne peut pas être vu depuis le côté public
     """
 
     "rebuild thumbnails": "Regénérer les vignettes"
 
      # clearance modal
-    "also have access" : "Ces personnes ont égalment accès, car ils ont accès à un dossier parent"
+    "also have access" : "Ces personnes ont égalment accès, car elles ont accès à un dossier parent"
     "cancel" : "Annuler"
-    "copy paste link" : "Pour donner accès à votre contact envoyez lui ce lien : "
-    "details" : "Details"
+    "copy paste link" : "Pour donner accès à votre contact envoyez-lui ce lien : "
+    "details" : "Détails"
     "inherited from" : "hérité de"
     "modal question album shareable" : "Choisissez le mode de partage pour cet album"
-    "modal shared album custom msg" : "Entrez un email et appuyez sur entrez"
-    "modal shared album link msg" : "Envoyez ce lien pour qu'ils puissent accéder à cet album"
-    "only you can see" : "Seul vous et les personnes ci-dessous peuvent accéder à cette ressource."
+    "modal shared album custom msg" : "Entrez un email et appuyez sur Entrée"
+    "modal shared album link msg" : "Envoyez ce lien pour donner accès à cet album"
+    "only you can see" : "Seuls vous et les personnes ci-dessous peuvent accéder à cette ressource."
     "public" : "Public"
     "private" : "Privé"
     "shared" : "Partagé"
@@ -77,17 +77,17 @@ module.exports =
     "forced public" : "Ce dossier est public car un parent est public : "
     "confirm" : "Confirmer"
     "share forgot add" : """
-Il semble que vous ayez oublié d'appuyer sur le boutton Add
+Il semble que vous ayez oublié d'appuyer sur le boutton Ajouter
 """
     "share confirm save" : """
-Les changements effectués sur les permissions ne seront pas sauvegardés. Etes vous sur ?
+Les changements effectués sur les permissions ne seront pas sauvegardées. Etes vous sûr ?
 """
     "yes forgot" : "Retour"
     "no forgot" : "Ok"
     "perm" : "peut "
     "r" : "lire cet album"
     "perm r album" : "parcourir cet album"
-    "perm rw album" : "parcourir cet ablum et ajouter des photos"
+    "perm rw album" : "parcourir cet album et ajouter des photos"
     "change notif" : """
 Cocher cette case pour recevoir une notification cozy quand un contact
 ajoute une photo à cet album."""
