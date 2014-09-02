@@ -50,6 +50,9 @@
     "CozyInstance": {
       "description": "Read language setting"
     },
+    "File": {
+      "description": "Import pictures from the Files app"
+    },
     "Send mail from user": {
       "description": "Share album with your friends"
     }
