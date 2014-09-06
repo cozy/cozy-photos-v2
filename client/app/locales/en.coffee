@@ -6,7 +6,7 @@ module.exports =
     "Download" : "Download"
     "Edit" : "Edit"
     "Stop editing" : "Stop editing"
-    "It will appears on your homepage." : "It will appears on your homepage."
+    "It will appear on your homepage." : "It will appear on your homepage."
     "Make it Hidden" : "hidden"
     "Make it Private" : "private"
     "Make it Public" : "public"
@@ -87,7 +87,7 @@ The changes you made to the permissions will not be saved. Is that what you want
     "perm rw album" : "browse and upload photos"
     "change notif" : """
 Check this box to be notified when a contact
-add a photo to this album."""
+adds a photo to this album."""
     "send email hint": "Notification emails will be sent one time on save"
     "yes" : "Yes"
     "no" : "No"
