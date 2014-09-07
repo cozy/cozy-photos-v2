@@ -917,7 +917,14 @@ module.exports = Album = (function(_super) {
   };
 
   Album.prototype.getThumbSrc = function() {
-    return ("photos/thumbs/" + (this.get('coverPicture')) + ".jpg") + app.urlKey;
+    var coverPicture, thumbSrc;
+    coverPicture = this.get('coverPicture');
+    if (coverPicture != null) {
+      thumbSrc = "photos/thumbs/" + (this.get('coverPicture')) + ".jpg";
+    } else {
+      thumbSrc = "img/nophotos.gif";
+    }
+    return thumbSrc + app.urlKey;
   };
 
   Album.prototype.getPublicURL = function(key) {
