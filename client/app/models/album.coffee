@@ -48,7 +48,12 @@ module.exports = class Album extends Backbone.Model
 
     # Build cover thumb src from coverPicture field.
     getThumbSrc: ->
-        "photos/thumbs/#{@get 'coverPicture'}.jpg" + app.urlKey
+        coverPicture = @get 'coverPicture'
+        if coverPicture?
+            thumbSrc = "photos/thumbs/#{@get 'coverPicture'}.jpg"
+        else
+            thumbSrc = "img/nophotos.gif"
+        return thumbSrc + app.urlKey
 
     getPublicURL: (key) ->
         urlKey = if key then "?key=#{key}" else ""
