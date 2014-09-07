@@ -718,7 +718,7 @@ module.exports = {
   "Download": "Download",
   "Edit": "Edit",
   "Stop editing": "Stop editing",
-  "It will appears on your homepage.": "It will appears on your homepage.",
+  "It will appear on your homepage.": "It will appear on your homepage.",
   "Make it Hidden": "hidden",
   "Make it Private": "private",
   "Make it Public": "public",
@@ -776,7 +776,7 @@ module.exports = {
   "perm": "can ",
   "perm r album": "browse this album",
   "perm rw album": "browse and upload photos",
-  "change notif": "Check this box to be notified when a contact\nadd a photo to this album.",
+  "change notif": "Check this box to be notified when a contact\nadds a photo to this album.",
   "send email hint": "Notification emails will be sent one time on save",
   "yes": "Yes",
   "no": "No"
