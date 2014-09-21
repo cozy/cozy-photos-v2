@@ -1,5 +1,5 @@
 div#about
-  div
+  div.clearfix
     div#links.clearfix
         p
           a.flatbtn.back(href="#albums")
@@ -29,8 +29,6 @@ div#about
             a.flatbtn.stopediting(href="#albums/#{id}")
               span.glyphicon.glyphicon-eye-open.icon-white
               span= t("Stop editing")
-
-
         p
              a.flatbtn.startediting(href="#albums/#{id}/edit")
                span.glyphicon.glyphicon-edit.icon-white
@@ -40,8 +38,10 @@ div#about
               span.glyphicon.glyphicon-remove.icon-white
               span= t("Delete")
 
-    h1#title!= title
-    div#description!= description
+    div#album-text
+        h1#title!= title
+        div#description!= description
+            
 div#photos
   //-div#rebuild-th
       //-a#rebuild-th-btn= t("rebuild thumbnails")

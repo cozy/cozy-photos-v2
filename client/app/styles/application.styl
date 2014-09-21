@@ -2,17 +2,6 @@
 
 @import '_cozy'
 
-// Fonts
-
-@font-face
-    font-family: styled
-    src: url('/fonts/maven-pro-light-300.otf');
-
-@font-face
-    font-family: main
-    src: url('/fonts/signika-regular.ttf');
-
-
 // Colors
 
 bgcolor = #fcfcfc
@@ -164,7 +153,7 @@ button.delete
     bottom: 0
 
     .help
-        margin-top: 20px
+        margin: 20px
 
 #links
     margin-bottom: 20px
@@ -209,6 +198,10 @@ button.delete
         *
             display:inline;
             white-space:nowrap;
+
+    #title
+    #description
+        outline 1px solid blue
 
     #title:focus
     #description:focus
@@ -603,15 +596,26 @@ for t in exifTransforms
 #about
     width: 100%
     padding: 0
+    box-sizing: border-box
 
     #links
+        box-sizing: border-box
         padding: 0 20px 
+        padding-top: 20px
         float: left
         width: 20%
-        margin-right: 20px
 
         .flatbtn
             width: 100%
+
+    #album-text
+        box-sizing: border-box
+        float: right
+        width: 80%
+        padding: 0 20px
+
+        #description
+            font-size: 18px
 
 @media (max-width: 1600px)
 
@@ -621,6 +625,8 @@ for t in exifTransforms
     #about
         #links
             width: 25%
+        #album-text
+            width: 75%
 
 
 @media (max-width: 1200px)
@@ -631,6 +637,8 @@ for t in exifTransforms
     #about
         #links
             width: 33.333333%
+        #album-text
+            width: 66.666666%
 
 @media (max-width: 900px)
 
@@ -647,8 +655,15 @@ for t in exifTransforms
         width: 50%
 
     #about
-        padding: 0 20px
+        padding: 20px
 
         #links
             padding: 0
             width: 100%
+
+        #album-text
+            padding: 0 0 20px 0
+            width: 100% 
+
+            h1#title
+                margin-top: 0
