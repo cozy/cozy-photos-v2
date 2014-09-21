@@ -82,6 +82,7 @@ button.delete
 
 
 #album
+    width: 100%
     height: 100%
 
 #album, #album-list
@@ -162,6 +163,9 @@ button.delete
     position: absolute
     bottom: 0
 
+    .help
+        margin-top: 20px
+
 #links
     margin-bottom: 20px
 
@@ -194,6 +198,9 @@ button.delete
         outline 0
 
 #album.editing
+    .help
+        display: none
+
     #title
         white-space: nowrap;
         overflow: hidden;
@@ -235,8 +242,6 @@ button.delete
 
         a
             display block
-            width 200px
-            height 200px
             vertical-align bottom
             overflow hidden
             background rgba(0,0,0,0.1)
@@ -393,74 +398,74 @@ button.delete
 
 
 #inherited-share-list
-  li.header
-    list-style-type none
-    margin-left -30px
-    font-weight bold
+    li.header
+        list-style-type none
+        margin-left -30px
+        font-weight bold
 
 .linkshow
-  font-size 14px
-  margin-bottom 5px
-  margin-left -5px
-  padding-left 10px
-  line-height: 20px
+    font-size 14px
+    margin-bottom 5px
+    margin-left -5px
+    padding-left 10px
+    line-height: 20px
 
-  a.flatbtn.active
-      background-color: blue
+    a.flatbtn.active
+            background-color: blue
 
-  label
-      margin-top: 10px
-      font-weight: normal
+    label
+            margin-top: 10px
+            font-weight: normal
 
-  input
-    color #444
-    width 70%
+    input
+        color #444
+        width 70%
 
 .typeahead.dropdown-menu > li > a
-  padding: 3px 6px 3px 3px
+    padding: 3px 6px 3px 3px
 
 .typeahead.dropdown-menu > li > a > img
-  margin: 0 3px 0 0
+    margin: 0 3px 0 0
 
 .clearance-name
-  font-size: 15px
-  margin-left: 5px
+    font-size: 15px
+    margin-left: 5px
 
-  &:first-child
-    margin-left: 50px
+    &:first-child
+        margin-left: 50px
 
 .clearance-btn
-  font-size: 20px
-  margin-left: 10px
+    font-size: 20px
+    margin-left: 10px
 
 .clearance-btn.revoke
-  font-size: 12px
+    font-size: 12px
 
 .clearance-line
-  line-height: 47px
-  border-bottom: 1px solid lightcolor
-  padding-bottom: 5px
+    line-height: 47px
+    border-bottom: 1px solid lightcolor
+    padding-bottom: 5px
 
 .modal-body
-  max-height: 73%
+    max-height: 73%
 
-  img
-    border: 5px solid transparent
-    height: 120px
-    margin-bottom: 5px
-    margin-right: 5px
-    opacity: 0.8
+    img
+        border: 5px solid transparent
+        height: 120px
+        margin-bottom: 5px
+        margin-right: 5px
+        opacity: 0.8
 
-  img.selected
-    border: 5px solid blue
-    height: 120px
-    border-radius: 8px
-    opacity: 1
+    img.selected
+        border: 5px solid blue
+        height: 120px
+        border-radius: 8px
+        opacity: 1
 
 .notifs-label
-  margin-top: 30px
-  font-weight: normal
-  margin-bottom: 0px
+    margin-top: 30px
+    font-weight: normal
+    margin-bottom: 0px
 
 
 #add-contact
@@ -476,7 +481,7 @@ button.delete
 .delete
 .editing .flatbtn.startediting
 .mode-owner.editing .empty .help
-    display none
+    dIsplay none
 
 .editing .flatbtn
 .editing .delete
@@ -490,7 +495,7 @@ button.delete
 // # Remove effect from photobox //
 
 #pbOverlay *, #pbOverlay *:before, #pbOverlay *:after
-  box-sizing content-box
+    box-sizing content-box
 
 
 exifTransforms = (1 rotateZ(0deg)) (2 scale(-1, 1)) (3 rotateZ(180deg)) (4 scale(1,-1)) \
@@ -583,3 +588,67 @@ for t in exifTransforms
 
         .albumitem .title
             font-size: 18px
+
+
+// Handle photo size depending on the screen width
+
+.photo a
+.photo img
+#uploadblock
+    width: 100%
+
+.photo
+    width: 10%
+
+#about
+    width: 100%
+    padding: 0
+
+    #links
+        padding: 0 20px 
+        float: left
+        width: 20%
+        margin-right: 20px
+
+        .flatbtn
+            width: 100%
+
+@media (max-width: 1600px)
+
+    .photo
+        width: 12.5%
+
+    #about
+        #links
+            width: 25%
+
+
+@media (max-width: 1200px)
+
+    .photo
+        width: 16.66666%
+
+    #about
+        #links
+            width: 33.333333%
+
+@media (max-width: 900px)
+
+    .photo
+        width: 33.333%
+
+    #about
+        #links
+            width: 33.333%
+     
+@media (max-width: 600px)
+
+    .photo
+        width: 50%
+
+    #about
+        padding: 0 20px
+
+        #links
+            padding: 0
+            width: 100%

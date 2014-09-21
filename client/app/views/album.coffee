@@ -47,33 +47,12 @@ module.exports = class AlbumView extends BaseView
         @galery.render()
         @makeEditable() if @options.editable
 
-        @resize true
-
-
         # Do not run afterRender again when model changed.
         @model.on 'change', =>
             data = _.extend {}, @options, @getRenderData()
             @$el.html @template(data)
             @$el.find("#photos").append @galery.$el
             @makeEditable() if @options.editable
-
-    updatePictureSize: =>
-        wHeight = $(document).height()
-        wWidth = $(document).width()
-        nbPhotosByLine = Math.ceil wWidth / 200
-        photoWidth = (wWidth / nbPhotosByLine)
-
-        @galery.updatePictureSize photoWidth
-        @$("#about").width (photoWidth * 2)
-
-    resize: (wait=false) ->
-        # Wait is required because at start,
-        if wait
-            setTimeout =>
-                @updatePictureSize()
-            , 200
-        else
-            @updatePictureSize()
 
 
     # save album before photos are uploaded to it
