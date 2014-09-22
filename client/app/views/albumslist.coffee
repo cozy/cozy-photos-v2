@@ -18,14 +18,3 @@ module.exports = class AlbumsList extends ViewCollection
 
     afterRender: ->
         super
-        @resize()
-
-    resize: ->
-        wWidth = $(document).width()
-        nbPhotosByLine = Math.ceil wWidth / 300
-        @$('.albumitem').width wWidth / nbPhotosByLine
-        @$('.albumitem a').width wWidth / nbPhotosByLine
-        @$('.albumitem span').width wWidth / nbPhotosByLine
-        @$('.albumitem').height wWidth / nbPhotosByLine
-        @$('.albumitem a').height wWidth / nbPhotosByLine
-        @$('.albumitem span').height wWidth / nbPhotosByLine

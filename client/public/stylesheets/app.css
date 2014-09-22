@@ -1,10 +1,10 @@
 @font-face {
   font-family: styled;
-  src: url("/fonts/maven-pro-light-300.otf");
+  src: url("/fonts/maven-pro-light-200.otf");
 }
 @font-face {
   font-family: main;
-  src: url("/fonts/signika-light.ttf");
+  src: url("/fonts/source-sans-pro.ttf");
 }
 a {
   color: #34a6ff;
@@ -146,16 +146,8 @@ glyphicon-reverted {
   transform: scaleX(-1);
   filter: FlipH;
 }
-@font-face {
-  font-family: styled;
-  src: url("/fonts/maven-pro-light-300.otf");
-}
-@font-face {
-  font-family: main;
-  src: url("/fonts/signika-regular.ttf");
-}
 body {
-  background-color: #fcfcfc;
+  background-color: #f3f3f3;
 }
 h1,
 h4 {
@@ -208,13 +200,6 @@ button.delete {
   z-index: 2;
   padding: 5px;
   width: auto;
-}
-#album {
-  height: 100%;
-}
-#album,
-#album-list {
-  font-family: main;
 }
 .albumitem {
   float: left;
@@ -282,30 +267,19 @@ button.delete {
   -webkit-box-shadow: 1px 3px 2px rgba(0,0,0,0.2) inset, 0 1px 2px rgba(0,0,0,0);
   box-shadow: 1px 3px 2px rgba(0,0,0,0.2) inset, 0 1px 2px rgba(0,0,0,0);
 }
-.albumitem.create {
-  background: #5c5;
-  text-align: center;
-  -webkit-transition: all 0.2s ease-out;
-  -moz-transition: all 0.2s ease-out;
-  -o-transition: all 0.2s ease-out;
-  -ms-transition: all 0.2s ease-out;
-  transition: all 0.2s ease-out;
-}
-.albumitem.create a {
-  font-size: 20px;
-}
-.albumitem.create img {
-  width: auto;
-  margin-top: 100px;
-  margin-bottom: 10px;
-}
-.albumitem.create:hover {
-  background: #fe8800;
+#album,
+#album-list {
+  font-family: main;
 }
 #album {
+  width: 100%;
+  height: 100%;
   padding: 0;
   position: absolute;
   bottom: 0;
+}
+#album .help {
+  margin: 20px;
 }
 #links {
   margin-bottom: 20px;
@@ -346,6 +320,9 @@ button.delete {
 #about #description:active {
   outline: 0;
 }
+#album.editing .help {
+  display: none;
+}
 #album.editing #title {
   white-space: nowrap;
   overflow: hidden;
@@ -356,6 +333,10 @@ button.delete {
 #album.editing #title * {
   display: inline;
   white-space: nowrap;
+}
+#album.editing #title,
+#album.editing #description {
+  outline: 1px solid #34a6ff;
 }
 #album.editing #title:focus,
 #album.editing #description:focus {
@@ -394,8 +375,6 @@ button.delete {
 }
 #photos .photo a {
   display: block;
-  width: 200px;
-  height: 200px;
   vertical-align: bottom;
   overflow: hidden;
   background: rgba(0,0,0,0.1);
@@ -464,14 +443,11 @@ button.delete {
 }
 #uploadblock,
 #browseFiles {
-  display: none;
-  position: relative;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
-  width: 200px;
-  height: 200px;
+  display: none;
   margin: 0px;
   padding: 0px;
   text-align: center;
@@ -651,7 +627,7 @@ button.delete {
 .delete,
 .editing .flatbtn.startediting,
 .mode-owner.editing .empty .help {
-  display: none;
+  dIsplay: none;
 }
 .editing .flatbtn,
 .editing .delete,
@@ -1465,10 +1441,140 @@ button.delete {
   }
   #album-list .albumitem.create a img {
     width: 40px;
-    margin-top: 40px;
   }
   #album-list .albumitem .title {
     font-size: 18px;
+  }
+}
+.photo a,
+.photo img,
+#uploadblock {
+  width: 100%;
+}
+#uploadblock {
+  height: 100px;
+}
+.photo {
+  width: 10%;
+}
+#about {
+  width: 100%;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+#about #links {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0 20px;
+  padding-top: 20px;
+  float: left;
+  width: 20%;
+}
+#about #links .flatbtn {
+  width: 100%;
+}
+#about #album-text {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  float: right;
+  width: 80%;
+  padding: 0 20px 20px 20px;
+  margin: 20px ky;
+  background-color: #fcfcfc;
+}
+#about #album-text #description {
+  font-size: 18px;
+}
+.albumitem a,
+.albumitem span {
+  width: auto;
+}
+.albumitem,
+.albumitem img {
+  width: 16.6666%;
+  height: auto;
+}
+.albumitem.create {
+  width: 100%;
+  height: 60px;
+  background: #5c5;
+  padding: 10px;
+  -webkit-transition: all 0.2s ease-out;
+  -moz-transition: all 0.2s ease-out;
+  -o-transition: all 0.2s ease-out;
+  -ms-transition: all 0.2s ease-out;
+  transition: all 0.2s ease-out;
+}
+.albumitem.create a {
+  font-size: 20px;
+}
+.albumitem.create img {
+  float: left;
+  width: 35px;
+  margin-right: 10px;
+}
+.albumitem.create span {
+  float: left;
+  margin-top: 5px;
+}
+.albumitem.create:hover {
+  background: #fe8800;
+}
+.albumitem .title {
+  width: 100%;
+  height: 100%;
+}
+@media (max-width: 1600px) {
+  .photo {
+    width: 12.5%;
+  }
+  #about #links {
+    width: 25%;
+  }
+  #about #album-text {
+    width: 75%;
+  }
+}
+@media (max-width: 1200px) {
+  .photo {
+    width: 16.66666%;
+  }
+  #about #links {
+    width: 33.333333%;
+  }
+  #about #album-text {
+    width: 66.666666%;
+  }
+}
+@media (max-width: 900px) {
+  .photo {
+    width: 33.333%;
+  }
+  #about #links {
+    width: 33.333%;
+  }
+}
+@media (max-width: 600px) {
+  .photo {
+    width: 50%;
+  }
+  #about {
+    padding: 20px;
+  }
+  #about #links {
+    padding: 0;
+    width: 100%;
+  }
+  #about #album-text {
+    padding: 0 0 20px 0;
+    width: 100%;
+  }
+  #about #album-text h1#title {
+    margin-top: 0;
   }
 }
 

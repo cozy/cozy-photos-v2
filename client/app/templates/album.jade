@@ -21,22 +21,22 @@ div#about
                   | &nbsp;
                   | #{t('private')}
         p
-             a.flatbtn.download(href="albums/#{id}.zip")
-              span.glyphicon.glyphicon-download-alt.icon-white
-              span= t("Download")
+            a.flatbtn.download(href="albums/#{id}.zip")
+                span.glyphicon.glyphicon-download-alt.icon-white
+                span= t("Download")
 
         p
             a.flatbtn.stopediting(href="#albums/#{id}")
-              span.glyphicon.glyphicon-eye-open.icon-white
-              span= t("Stop editing")
+                span.glyphicon.glyphicon-eye-open.icon-white
+                span= t("Stop editing")
         p
              a.flatbtn.startediting(href="#albums/#{id}/edit")
-               span.glyphicon.glyphicon-edit.icon-white
-               span= t("Edit")
+                span.glyphicon.glyphicon-edit.icon-white
+                span= t("Edit")
         p
             a.flatbtn.delete
-              span.glyphicon.glyphicon-remove.icon-white
-              span= t("Delete")
+                span.glyphicon.glyphicon-remove.icon-white
+                span= t("Delete")
 
     div#album-text
         h1#title!= title

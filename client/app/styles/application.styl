@@ -5,6 +5,7 @@
 // Colors
 
 bgcolor = #fcfcfc
+bgcolor = #F3F3F3
 uploadcolor = #34a6ff
 darkgrey = #444
 basecolor = lightgrey
@@ -70,14 +71,6 @@ button.delete
     width: auto
 
 
-#album
-    width: 100%
-    height: 100%
-
-#album, #album-list
-    font-family main
-
-
 // #### album list page ###
 
 .albumitem
@@ -128,26 +121,14 @@ button.delete
 //a:hover
 //border 1px solid orange
 
-.albumitem.create
-    background: green
-    text-align: center
-    transition: all .2s ease-out
-
-    a
-        font-size: 20px
-
-    img
-        width: auto
-        margin-top: 100px
-        margin-bottom: 10px
-
-    &:hover
-        background: orange
-
-
 // #### album page ###
 
+#album, #album-list
+    font-family main
+
 #album
+    width: 100%
+    height: 100%
     padding: 0
     position: absolute
     bottom: 0
@@ -290,12 +271,9 @@ button.delete
 
 
 #uploadblock, #browseFiles
-    display: none
-    position: relative
     box-sizing: border-box
     overflow: hidden
-    width: 200px
-    height: 200px
+    display: none
     margin: 0px
     padding: 0px
     text-align: center
@@ -577,7 +555,6 @@ for t in exifTransforms
 
                 img
                     width: 40px
-                    margin-top: 40px
 
         .albumitem .title
             font-size: 18px
@@ -589,6 +566,9 @@ for t in exifTransforms
 .photo img
 #uploadblock
     width: 100%
+
+#uploadblock
+    height: 100px
 
 .photo
     width: 10%
@@ -612,10 +592,51 @@ for t in exifTransforms
         box-sizing: border-box
         float: right
         width: 80%
-        padding: 0 20px
+        padding: 0 20px 20px 20px
+        margin: 20px ky
+        background-color: #FCFCFC
 
         #description
             font-size: 18px
+
+
+.albumitem a
+.albumitem span
+    width: auto
+
+.albumitem
+.albumitem img
+    width: 16.6666%
+    height: auto
+
+.albumitem.create
+    width: 100%
+    height: 60px
+    background: green
+    padding: 10px
+    transition: all .2s ease-out
+
+    a
+        font-size: 20px
+
+    img
+        float: left
+        width: 35px
+        margin-right: 10px
+
+    span
+        float: left
+        margin-top: 5px
+
+    &:hover
+        background: orange
+
+
+
+.albumitem .title
+    width: 100%
+    height: 100%
+
 
 @media (max-width: 1600px)
 
@@ -627,7 +648,6 @@ for t in exifTransforms
             width: 25%
         #album-text
             width: 75%
-
 
 @media (max-width: 1200px)
 

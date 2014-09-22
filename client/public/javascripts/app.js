@@ -1446,7 +1446,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 var locals_ = (locals || {}),clearance = locals_.clearance,id = locals_.id,title = locals_.title,description = locals_.description;
-buf.push("<div id=\"about\"><div class=\"pa2\"><div id=\"links\" class=\"clearfix\"><p><a href=\"#albums\" class=\"flatbtn back\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Back")) ? "" : jade_interp)) + "</span></a></p><P><a class=\"flatbtn clearance\">");
+buf.push("<div id=\"about\"><div class=\"clearfix\"><div id=\"links\" class=\"clearfix\"><p><a href=\"#albums\" class=\"flatbtn back\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Back")) ? "" : jade_interp)) + "</span></a></p><P><a class=\"flatbtn clearance\">");
 if ( clearance == 'public')
 {
 buf.push("<span class=\"glyphicon glyphicon-globe icon-white\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('public')) == null ? '' : jade_interp)) + "");
@@ -1459,7 +1459,7 @@ else
 {
 buf.push("<span class=\"glyphicon glyphicon-lock icon-white\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('private')) == null ? '' : jade_interp)) + "");
 }
-buf.push("</a></P><p><a" + (jade.attr("href", "albums/" + (id) + ".zip", true, false)) + " class=\"flatbtn download\"><span class=\"glyphicon glyphicon-download-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn stopediting\"><span class=\"glyphicon glyphicon-eye-open icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><p><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn startediting\"><span class=\"glyphicon glyphicon-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p><a class=\"flatbtn delete\"><span class=\"glyphicon glyphicon-remove icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p></div><h1 id=\"title\">" + (null == (jade_interp = title) ? "" : jade_interp) + "</h1><div id=\"description\">" + (null == (jade_interp = description) ? "" : jade_interp) + "</div></div></div><div id=\"photos\"></div>");;return buf.join("");
+buf.push("</a></P><p><a" + (jade.attr("href", "albums/" + (id) + ".zip", true, false)) + " class=\"flatbtn download\"><span class=\"glyphicon glyphicon-download-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn stopediting\"><span class=\"glyphicon glyphicon-eye-open icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><p><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn startediting\"><span class=\"glyphicon glyphicon-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p><a class=\"flatbtn delete\"><span class=\"glyphicon glyphicon-remove icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p></div><div id=\"album-text\"><h1 id=\"title\">" + (null == (jade_interp = title) ? "" : jade_interp) + "</h1><div id=\"description\">" + (null == (jade_interp = description) ? "" : jade_interp) + "</div></div></div></div><div id=\"photos\"></div>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -1478,7 +1478,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 
-buf.push("<div class=\"albumitem create\"><a href=\"#albums/new\"><img src=\"img/new-galery.png\"/><br/><span>" + (jade.escape(null == (jade_interp = t('Create a new album')) ? "" : jade_interp)) + "</span></a></div><p class=\"help\">" + (jade.escape(null == (jade_interp = t('There is no public albums.')) ? "" : jade_interp)) + "</p>");;return buf.join("");
+buf.push("<div class=\"albumitem create\"><a id=\"create-album-link\" href=\"#albums/new\"><img src=\"img/new-galery.png\"/><span>" + (jade.escape(null == (jade_interp = t('Create a new album')) ? "" : jade_interp)) + "</span></a></div><p class=\"help\">" + (jade.escape(null == (jade_interp = t('There is no public albums.')) ? "" : jade_interp)) + "</p>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -1703,7 +1703,6 @@ module.exports = AlbumView = (function(_super) {
     this.changeClearance = __bind(this.changeClearance, this);
     this.makeEditable = __bind(this.makeEditable, this);
     this.beforePhotoUpload = __bind(this.beforePhotoUpload, this);
-    this.updatePictureSize = __bind(this.updatePictureSize, this);
     this.events = __bind(this.events, this);
     return AlbumView.__super__.constructor.apply(this, arguments);
   }
@@ -1743,7 +1742,6 @@ module.exports = AlbumView = (function(_super) {
     if (this.options.editable) {
       this.makeEditable();
     }
-    this.resize(true);
     return this.model.on('change', (function(_this) {
       return function() {
         var data;
@@ -1755,31 +1753,6 @@ module.exports = AlbumView = (function(_super) {
         }
       };
     })(this));
-  };
-
-  AlbumView.prototype.updatePictureSize = function() {
-    var nbPhotosByLine, photoWidth, wHeight, wWidth;
-    wHeight = $(document).height();
-    wWidth = $(document).width();
-    nbPhotosByLine = Math.ceil(wWidth / 200);
-    photoWidth = wWidth / nbPhotosByLine;
-    this.galery.updatePictureSize(photoWidth);
-    return this.$("#about").width(photoWidth * 2);
-  };
-
-  AlbumView.prototype.resize = function(wait) {
-    if (wait == null) {
-      wait = false;
-    }
-    if (wait) {
-      return setTimeout((function(_this) {
-        return function() {
-          return _this.updatePictureSize();
-        };
-      })(this), 200);
-    } else {
-      return this.updatePictureSize();
-    }
   };
 
   AlbumView.prototype.beforePhotoUpload = function(callback) {
@@ -1907,20 +1880,7 @@ module.exports = AlbumsList = (function(_super) {
   };
 
   AlbumsList.prototype.afterRender = function() {
-    AlbumsList.__super__.afterRender.apply(this, arguments);
-    return this.resize();
-  };
-
-  AlbumsList.prototype.resize = function() {
-    var nbPhotosByLine, wWidth;
-    wWidth = $(document).width();
-    nbPhotosByLine = Math.ceil(wWidth / 300);
-    this.$('.albumitem').width(wWidth / nbPhotosByLine);
-    this.$('.albumitem a').width(wWidth / nbPhotosByLine);
-    this.$('.albumitem span').width(wWidth / nbPhotosByLine);
-    this.$('.albumitem').height(wWidth / nbPhotosByLine);
-    this.$('.albumitem a').height(wWidth / nbPhotosByLine);
-    return this.$('.albumitem span').height(wWidth / nbPhotosByLine);
+    return AlbumsList.__super__.afterRender.apply(this, arguments);
   };
 
   return AlbumsList;
@@ -2184,24 +2144,6 @@ module.exports = Galery = (function(_super) {
     return false;
   };
 
-  Galery.prototype.updatePictureSize = function(photoWidth) {
-    var nbPhotosByLine, wHeight, wWidth;
-    if (photoWidth == null) {
-      wHeight = $(document).height();
-      wWidth = $(document).width();
-      nbPhotosByLine = Math.ceil(wWidth / 200);
-      photoWidth = wWidth / nbPhotosByLine;
-    }
-    this.$('.photo').width(photoWidth);
-    this.$('.photo a').width(photoWidth);
-    this.$('.photo img').width(photoWidth);
-    this.$('.photo').height(photoWidth);
-    this.$('.photo a').height(photoWidth);
-    this.$('.photo img').height(photoWidth);
-    this.$('#uploadblock').width(photoWidth);
-    return this.$('#uploadblock').height(photoWidth);
-  };
-
   Galery.prototype.onDragOver = function(evt) {
     this.$el.addClass('dragover');
     evt.preventDefault();
@@ -2329,7 +2271,7 @@ module.exports = Galery = (function(_super) {
   Galery.prototype.handleFiles = function(files) {
     return this.options.beforeUpload((function(_this) {
       return function(photoAttributes) {
-        var file, key, photo, view, _i, _len, _ref;
+        var file, key, photo, view, _i, _len, _ref, _results;
         for (_i = 0, _len = files.length; _i < _len; _i++) {
           file = files[_i];
           photoAttributes.title = file.name;
@@ -2339,11 +2281,12 @@ module.exports = Galery = (function(_super) {
           photoprocessor.process(photo);
         }
         _ref = _this.views;
+        _results = [];
         for (key in _ref) {
           view = _ref[key];
-          view.collection = _this.collection;
+          _results.push(view.collection = _this.collection);
         }
-        return _this.updatePictureSize();
+        return _results;
       };
     })(this));
   };
