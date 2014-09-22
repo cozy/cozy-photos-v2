@@ -717,7 +717,7 @@ module.exports = {
   "Delete": "Delete",
   "Download": "Download",
   "Edit": "Edit",
-  "Stop editing": "Stop editing",
+  "Stop editing": "Save Changes",
   "It will appear on your homepage.": "It will appear on your homepage.",
   "Make it Hidden": "hidden",
   "Make it Private": "private",
@@ -790,7 +790,7 @@ module.exports = {
   "Delete": "Supprimer",
   "Download": "Télécharger",
   "Edit": "Modifier",
-  "Stop editing": "Arrêter modifier",
+  "Stop editing": "Enregistrer les modifications",
   "It will appears on your homepage.": "Il apparaîtra sur votre page d'accueil",
   "Make it Hidden": "masqué",
   "Make it Private": "privé",
@@ -1459,7 +1459,7 @@ else
 {
 buf.push("<span class=\"glyphicon glyphicon-lock icon-white\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('private')) == null ? '' : jade_interp)) + "");
 }
-buf.push("</a></P><p><a" + (jade.attr("href", "albums/" + (id) + ".zip", true, false)) + " class=\"flatbtn download\"><span class=\"glyphicon glyphicon-download-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn stopediting\"><span class=\"glyphicon glyphicon-eye-open icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><p><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn startediting\"><span class=\"glyphicon glyphicon-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p><a class=\"flatbtn delete\"><span class=\"glyphicon glyphicon-remove icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p></div><div id=\"album-text\"><h1 id=\"title\">" + (null == (jade_interp = title) ? "" : jade_interp) + "</h1><div id=\"description\">" + (null == (jade_interp = description) ? "" : jade_interp) + "</div></div></div></div><div id=\"photos\"></div>");;return buf.join("");
+buf.push("</a></P><p><a" + (jade.attr("href", "albums/" + (id) + ".zip", true, false)) + " class=\"flatbtn download\"><span class=\"glyphicon glyphicon-download-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn stopediting\"><span class=\"glyphicon glyphicon-eye-open icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><p><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn startediting\"><span class=\"glyphicon glyphicon-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p><a class=\"flatbtn delete\"><span class=\"glyphicon glyphicon-remove icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p></div><div id=\"album-text\"><div id=\"album-text-background\"><h1 id=\"title\">" + (null == (jade_interp = title) ? "" : jade_interp) + "</h1><div id=\"description\">" + (null == (jade_interp = description) ? "" : jade_interp) + "</div></div></div></div></div><div id=\"photos\"></div>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {

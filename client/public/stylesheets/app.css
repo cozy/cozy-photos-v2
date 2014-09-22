@@ -347,6 +347,7 @@ button.delete {
   outline: 1px solid #fe8800;
 }
 #photos {
+  padding: 20px;
   min-height: 100%;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -1482,12 +1483,14 @@ button.delete {
   box-sizing: border-box;
   float: right;
   width: 80%;
-  padding: 0 20px 20px 20px;
-  margin: 20px ky;
-  background-color: #fcfcfc;
+  padding: 0px 20px 20px 20px;
+  margin: 0;
 }
 #about #album-text #description {
   font-size: 18px;
+}
+#about #album-text #album-text-background {
+  background-color: #fcfcfc;
 }
 .albumitem a,
 .albumitem span {
