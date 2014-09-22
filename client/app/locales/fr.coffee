@@ -4,7 +4,7 @@ module.exports =
     "Delete" : "Supprimer"
     "Download" : "Télécharger"
     "Edit" : "Modifier"
-    "Stop editing" : "Arrêter modifier"
+    "Stop editing" : "Enregistrer les modifications"
     "It will appears on your homepage." : "Il apparaîtra sur votre page d'accueil"
     "Make it Hidden" : "masqué"
     "Make it Private" : "privé"

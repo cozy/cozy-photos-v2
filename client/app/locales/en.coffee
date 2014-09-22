@@ -5,7 +5,7 @@ module.exports =
     "Delete" : "Delete"
     "Download" : "Download"
     "Edit" : "Edit"
-    "Stop editing" : "Stop editing"
+    "Stop editing" : "Save Changes"
     "It will appear on your homepage." : "It will appear on your homepage."
     "Make it Hidden" : "hidden"
     "Make it Private" : "private"
