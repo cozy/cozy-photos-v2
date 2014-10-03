@@ -1,11 +1,19 @@
 div#about
   div.clearfix
     div#links.clearfix
-        p
-          a.flatbtn.back(href="#albums")
-            span.glyphicon.glyphicon-arrow-left.icon-white
-            span= t("Back")
-        P
+        p.back
+            a.flatbtn(href="#albums")
+                span.glyphicon.glyphicon-arrow-left.icon-white
+                span= t("Back")
+        p.startediting
+             a.flatbtn(href="#albums/#{id}/edit")
+                span.glyphicon.glyphicon-edit.icon-white
+                span= t("Edit")
+        p.stopediting
+            a.flatbtn(href="#albums/#{id}")
+                span.glyphicon.glyphicon-arrow-left.icon-white
+                span= t("Stop editing")
+        P.clearance
             a.flatbtn.clearance
                 if clearance == 'public'
                   span.glyphicon.glyphicon-globe.icon-white
@@ -20,20 +28,12 @@ div#about
                   span.glyphicon.glyphicon-lock.icon-white
                   | &nbsp;
                   | #{t('private')}
-        p
-            a.flatbtn.download(href="albums/#{id}.zip")
+        p.download
+            a.flatbtn(href="albums/#{id}.zip")
                 span.glyphicon.glyphicon-download-alt.icon-white
                 span= t("Download")
 
-        p
-            a.flatbtn.stopediting(href="#albums/#{id}")
-                span.glyphicon.glyphicon-eye-open.icon-white
-                span= t("Stop editing")
-        p
-             a.flatbtn.startediting(href="#albums/#{id}/edit")
-                span.glyphicon.glyphicon-edit.icon-white
-                span= t("Edit")
-        p
+        p.delete
             a.flatbtn.delete
                 span.glyphicon.glyphicon-remove.icon-white
                 span= t("Delete")
