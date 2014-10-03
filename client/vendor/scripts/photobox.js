@@ -94,13 +94,13 @@
     // @param [List of elements to work on, Custom settings, Callback after image is loaded]
     $.fn.photobox = function(target, settings, callback){
         return this.each(function(){
-            var o, pb, 
+            var o, pb,
 				PB_data = $(this).data('_photobox');
-			
+
     		if( PB_data ){ // don't initiate the plugin more than once on the same element
     			if( target === 'destroy')
 					PB_data.destroy();
-					
+
 				return this;
 			}
 
@@ -163,11 +163,11 @@
                     that.observerTimeout = setTimeout( function(){
                         var filtered = that.imageLinksFilter( that.selector.find(that.target) ),
                             activeIndex = 0;
-							
+
 						// Make sure that ONLY DOM changes in the photobox number of items will trigger a change
                         if(that.imageLinks.length == filtered[0].length)
                             return;
-							
+
                         that.imageLinks = filtered[0];
                         that.images = filtered[1];
 

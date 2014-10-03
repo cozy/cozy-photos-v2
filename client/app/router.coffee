@@ -26,21 +26,32 @@ module.exports = class Router extends Backbone.Router
     # display the album view for an album with given id
     # fetch before displaying it
     album: (id, editable=false) ->
-        album = app.albums.get(id) or new Album id:id
-        album.fetch()
-        .done =>
-            @displayView new AlbumView
-                model: album
-                editable: editable
+        if @mainView?.model?.get('id') is id
 
-        .fail =>
-            alert t 'this album does not exist'
-            @navigate 'albums', true
+            if editable
+                @mainView.makeEditable()
+            else
+                @mainView.makeNonEditable()
+
+        else
+            album = app.albums.get(id) or new Album id:id
+            album.fetch()
+            .done =>
+                @displayView new AlbumView
+                    model: album
+                    editable: editable
+
+            .fail =>
+                alert t 'this album does not exist'
+                @navigate 'albums', true
 
     # display the album view in edit mode
     albumedit: (id) ->
         return @navigate 'albums', true if app.mode is 'public'
         @album id, true
+        setTimeout ->
+            $('#title').focus()
+        , 200
 
     # display the album view for a new Album
     newalbum: ->
@@ -48,6 +59,7 @@ module.exports = class Router extends Backbone.Router
         @displayView new AlbumView
             model: new Album()
             editable: true
+        $('#title').focus()
 
     # display a page properly (remove previous page)
     displayView: (view) =>

@@ -3,11 +3,12 @@ app = require 'application'
 BaseView = require 'lib/base_view'
 Galery = require 'views/galery'
 Clipboard = require 'lib/clipboard'
-{editable} = require 'lib/helpers'
 
 thProcessor = require 'models/thumbprocessor'
 CozyClearanceModal = require 'cozy-clearance/modal_share_view'
 clipboard = new Clipboard()
+
+TAB_KEY_CODE = 9
 
 class ShareModal extends CozyClearanceModal
     initialize: ->
@@ -29,6 +30,15 @@ module.exports = class AlbumView extends BaseView
         'click a.clearance': @changeClearance
         'click a.sendmail': @sendMail
         'click a#rebuild-th-btn': @rebuildThumbs
+        'blur #title': @onTitleChanged
+        'blur #description': @onDescriptionChanged
+        'click #title': @onFieldClicked
+        'click #description': @onFieldClicked
+        'mousedown #title': @onFieldClicked
+        'mousedown #description': @onFieldClicked
+        'mouseup #title': @onFieldClicked
+        'mouseup #description': @onFieldClicked
+        'keydown #description': @onDescriptionKeyUp
 
     getRenderData: ->
         res = _.extend
@@ -43,17 +53,29 @@ module.exports = class AlbumView extends BaseView
             collection: @model.photos
             beforeUpload: @beforePhotoUpload
 
+        @title = @$ '#title'
+        @description = @$ '#description'
+
         @galery.album = @model
         @galery.render()
-        @makeEditable() if @options.editable
+
+        if @options.editable
+            @makeEditable()
+        else
+            @title.addClass 'disabled'
+            @description.addClass 'disabled'
+
 
         # Do not run afterRender again when model changed.
         @model.on 'change', =>
             data = _.extend {}, @options, @getRenderData()
             @$el.html @template(data)
             @$el.find("#photos").append @galery.$el
-            @makeEditable() if @options.editable
-
+            if @options.editable
+                @makeEditable()
+            else
+                @title.addClass 'disabled'
+                @description.addClass 'disabled'
 
     # save album before photos are uploaded to it
     # store albumid in the photo
@@ -61,17 +83,26 @@ module.exports = class AlbumView extends BaseView
         @saveModel().then =>
             callback albumid: @model.id
 
-    # make the divs editable
+    onTitleChanged: =>
+        @saveModel title: @title.val().trim()
+
+    onDescriptionChanged: =>
+        @saveModel description: @description.val().trim()
+
     makeEditable: =>
         @$el.addClass 'editing'
+        @options.editable = true
+        @galery.options.editable = true
 
-        editable @$('#title'),
-            placeholder: t 'Title ...'
-            onChanged: (text) => @saveModel title: text.trim()
+    makeNonEditable: =>
+        @$el.removeClass 'editing'
+        @options.editable = false
+        @galery.options.editable = false
 
-        editable @$('#description'),
-            placeholder: t 'Write some more ...'
-            onChanged: (text) => @saveModel description: text.trim()
+    onFieldClicked: (event) =>
+        unless @options.editable
+            event.preventDefault()
+            false
 
     # Ask for confirmation if album is not new.
     destroyModel: ->
@@ -86,8 +117,6 @@ module.exports = class AlbumView extends BaseView
     changeClearance: (event) =>
         @model.set 'clearance', [] unless @model.get('clearance')?
         @model.set 'type', 'album'
-
-        console.log @model
         new ShareModal model: @model
 
 
@@ -107,6 +136,9 @@ module.exports = class AlbumView extends BaseView
                 , 500
         recFunc()
 
+    onDescriptionKeyUp: (event) ->
+        if TAB_KEY_CODE in [event.keyCode, event.which]
+            $('.stopediting').focus()
 
     saveModel: (hash) ->
         promise = @model.save(hash)

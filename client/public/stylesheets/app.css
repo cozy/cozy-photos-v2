@@ -233,13 +233,10 @@ button.delete {
   z-index: 100;
   -webkit-border-radius: 0;
   border-radius: 0;
-  width: 300px;
-  height: 300px;
   display: block;
   opacity: 0;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
   filter: alpha(opacity=0);
-  padding-top: 135px;
   font-size: 25px;
   line-height: 25px;
   text-align: center;
@@ -315,11 +312,28 @@ button.delete {
   box-sizing: border-box;
   font-weight: normal;
   padding: 8px;
+  background: transparent;
+  cursor: default;
+  font-family: main;
 }
 #about #title {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 80%;
   min-height: 60px;
+  font-size: 30px;
+  margin-bottom: 20px;
+  border: 0;
+}
+#about .right {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 60px;
 }
 #about #description {
+  width: 100%;
   min-height: 40px;
 }
 #about #title:active,
@@ -329,20 +343,10 @@ button.delete {
 #album.editing .help {
   display: none;
 }
-#album.editing #title {
-  white-space: nowrap;
-  overflow: hidden;
-}
-#album.editing #title br {
-  display: none;
-}
-#album.editing #title * {
-  display: inline;
-  white-space: nowrap;
-}
 #album.editing #title,
 #album.editing #description {
   outline: 1px solid #34a6ff;
+  cursor: text;
 }
 #album.editing #title:focus,
 #album.editing #description:focus {
@@ -367,8 +371,7 @@ button.delete {
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
   filter: alpha(opacity=0);
   display: block;
-  height: 100%;
-  font-size: 30em;
+  font-size: 80px;
   line-height: 100px;
   position: absolute;
 }
@@ -653,11 +656,11 @@ button.delete {
   box-sizing: content-box;
 }
 #pbOverlay .wrapper img[data-orientation="1"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -673,11 +676,11 @@ button.delete {
   transform: rotateZ(0deg);
 }
 #pbOverlay.next .wrapper img[data-orientation="1"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -686,25 +689,25 @@ button.delete {
   opacity: 1;
   -ms-filter: none;
   filter: none;
-  -webkit-transform: translate(3000px, 0px) rotateZ(0deg);
-  -moz-transform: translate(3000px, 0px) rotateZ(0deg);
-  -o-transform: translate(3000px, 0px) rotateZ(0deg);
-  -ms-transform: translate(3000px, 0px) rotateZ(0deg);
-  transform: translate(3000px, 0px) rotateZ(0deg);
+  -webkit-transform: translate(-3000px, 0px) rotateZ(0deg);
+  -moz-transform: translate(-3000px, 0px) rotateZ(0deg);
+  -o-transform: translate(-3000px, 0px) rotateZ(0deg);
+  -ms-transform: translate(-3000px, 0px) rotateZ(0deg);
+  transform: translate(-3000px, 0px) rotateZ(0deg);
 }
 #pbOverlay.next .wrapper img[data-orientation="1"].prepare {
-  -webkit-transform: translate(-3000px, 0px) rotateZ(0deg);
-  -moz-transform: translate(-3000px, 0px) rotateZ(0deg);
-  -o-transform: translate(-3000px, 0px) rotateZ(0deg);
-  -ms-transform: translate(-3000px, 0px) rotateZ(0deg);
-  transform: translate(-3000px, 0px) rotateZ(0deg);
+  -webkit-transform: translate(3000px, 0px) rotateZ(0deg);
+  -moz-transform: translate(3000px, 0px) rotateZ(0deg);
+  -o-transform: translate(3000px, 0px) rotateZ(0deg);
+  -ms-transform: translate(3000px, 0px) rotateZ(0deg);
+  transform: translate(3000px, 0px) rotateZ(0deg);
 }
 #pbOverlay.prev .wrapper img[data-orientation="1"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -713,25 +716,25 @@ button.delete {
   opacity: 1;
   -ms-filter: none;
   filter: none;
-  -webkit-transform: translate(-3000px, 0px) rotateZ(0deg);
-  -moz-transform: translate(-3000px, 0px) rotateZ(0deg);
-  -o-transform: translate(-3000px, 0px) rotateZ(0deg);
-  -ms-transform: translate(-3000px, 0px) rotateZ(0deg);
-  transform: translate(-3000px, 0px) rotateZ(0deg);
-}
-#pbOverlay.prev .wrapper img[data-orientation="1"].prepare {
   -webkit-transform: translate(3000px, 0px) rotateZ(0deg);
   -moz-transform: translate(3000px, 0px) rotateZ(0deg);
   -o-transform: translate(3000px, 0px) rotateZ(0deg);
   -ms-transform: translate(3000px, 0px) rotateZ(0deg);
   transform: translate(3000px, 0px) rotateZ(0deg);
 }
+#pbOverlay.prev .wrapper img[data-orientation="1"].prepare {
+  -webkit-transform: translate(-3000px, 0px) rotateZ(0deg);
+  -moz-transform: translate(-3000px, 0px) rotateZ(0deg);
+  -o-transform: translate(-3000px, 0px) rotateZ(0deg);
+  -ms-transform: translate(-3000px, 0px) rotateZ(0deg);
+  transform: translate(-3000px, 0px) rotateZ(0deg);
+}
 #pbOverlay .wrapper img.prepare[data-orientation="1"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -747,11 +750,11 @@ button.delete {
   transform: translate(0px, 0px) rotateZ(0deg);
 }
 #pbOverlay .wrapper img[data-orientation="2"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -767,11 +770,11 @@ button.delete {
   transform: scale(-1, 1);
 }
 #pbOverlay.next .wrapper img[data-orientation="2"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -780,25 +783,25 @@ button.delete {
   opacity: 1;
   -ms-filter: none;
   filter: none;
-  -webkit-transform: translate(3000px, 0px) scale(-1, 1);
-  -moz-transform: translate(3000px, 0px) scale(-1, 1);
-  -o-transform: translate(3000px, 0px) scale(-1, 1);
-  -ms-transform: translate(3000px, 0px) scale(-1, 1);
-  transform: translate(3000px, 0px) scale(-1, 1);
+  -webkit-transform: translate(-3000px, 0px) scale(-1, 1);
+  -moz-transform: translate(-3000px, 0px) scale(-1, 1);
+  -o-transform: translate(-3000px, 0px) scale(-1, 1);
+  -ms-transform: translate(-3000px, 0px) scale(-1, 1);
+  transform: translate(-3000px, 0px) scale(-1, 1);
 }
 #pbOverlay.next .wrapper img[data-orientation="2"].prepare {
-  -webkit-transform: translate(-3000px, 0px) scale(-1, 1);
-  -moz-transform: translate(-3000px, 0px) scale(-1, 1);
-  -o-transform: translate(-3000px, 0px) scale(-1, 1);
-  -ms-transform: translate(-3000px, 0px) scale(-1, 1);
-  transform: translate(-3000px, 0px) scale(-1, 1);
+  -webkit-transform: translate(3000px, 0px) scale(-1, 1);
+  -moz-transform: translate(3000px, 0px) scale(-1, 1);
+  -o-transform: translate(3000px, 0px) scale(-1, 1);
+  -ms-transform: translate(3000px, 0px) scale(-1, 1);
+  transform: translate(3000px, 0px) scale(-1, 1);
 }
 #pbOverlay.prev .wrapper img[data-orientation="2"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -807,25 +810,25 @@ button.delete {
   opacity: 1;
   -ms-filter: none;
   filter: none;
-  -webkit-transform: translate(-3000px, 0px) scale(-1, 1);
-  -moz-transform: translate(-3000px, 0px) scale(-1, 1);
-  -o-transform: translate(-3000px, 0px) scale(-1, 1);
-  -ms-transform: translate(-3000px, 0px) scale(-1, 1);
-  transform: translate(-3000px, 0px) scale(-1, 1);
-}
-#pbOverlay.prev .wrapper img[data-orientation="2"].prepare {
   -webkit-transform: translate(3000px, 0px) scale(-1, 1);
   -moz-transform: translate(3000px, 0px) scale(-1, 1);
   -o-transform: translate(3000px, 0px) scale(-1, 1);
   -ms-transform: translate(3000px, 0px) scale(-1, 1);
   transform: translate(3000px, 0px) scale(-1, 1);
 }
+#pbOverlay.prev .wrapper img[data-orientation="2"].prepare {
+  -webkit-transform: translate(-3000px, 0px) scale(-1, 1);
+  -moz-transform: translate(-3000px, 0px) scale(-1, 1);
+  -o-transform: translate(-3000px, 0px) scale(-1, 1);
+  -ms-transform: translate(-3000px, 0px) scale(-1, 1);
+  transform: translate(-3000px, 0px) scale(-1, 1);
+}
 #pbOverlay .wrapper img.prepare[data-orientation="2"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -841,11 +844,11 @@ button.delete {
   transform: translate(0px, 0px) scale(-1, 1);
 }
 #pbOverlay .wrapper img[data-orientation="3"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -861,11 +864,11 @@ button.delete {
   transform: rotateZ(180deg);
 }
 #pbOverlay.next .wrapper img[data-orientation="3"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -874,25 +877,25 @@ button.delete {
   opacity: 1;
   -ms-filter: none;
   filter: none;
-  -webkit-transform: translate(3000px, 0px) rotateZ(180deg);
-  -moz-transform: translate(3000px, 0px) rotateZ(180deg);
-  -o-transform: translate(3000px, 0px) rotateZ(180deg);
-  -ms-transform: translate(3000px, 0px) rotateZ(180deg);
-  transform: translate(3000px, 0px) rotateZ(180deg);
+  -webkit-transform: translate(-3000px, 0px) rotateZ(180deg);
+  -moz-transform: translate(-3000px, 0px) rotateZ(180deg);
+  -o-transform: translate(-3000px, 0px) rotateZ(180deg);
+  -ms-transform: translate(-3000px, 0px) rotateZ(180deg);
+  transform: translate(-3000px, 0px) rotateZ(180deg);
 }
 #pbOverlay.next .wrapper img[data-orientation="3"].prepare {
-  -webkit-transform: translate(-3000px, 0px) rotateZ(180deg);
-  -moz-transform: translate(-3000px, 0px) rotateZ(180deg);
-  -o-transform: translate(-3000px, 0px) rotateZ(180deg);
-  -ms-transform: translate(-3000px, 0px) rotateZ(180deg);
-  transform: translate(-3000px, 0px) rotateZ(180deg);
+  -webkit-transform: translate(3000px, 0px) rotateZ(180deg);
+  -moz-transform: translate(3000px, 0px) rotateZ(180deg);
+  -o-transform: translate(3000px, 0px) rotateZ(180deg);
+  -ms-transform: translate(3000px, 0px) rotateZ(180deg);
+  transform: translate(3000px, 0px) rotateZ(180deg);
 }
 #pbOverlay.prev .wrapper img[data-orientation="3"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -901,25 +904,25 @@ button.delete {
   opacity: 1;
   -ms-filter: none;
   filter: none;
-  -webkit-transform: translate(-3000px, 0px) rotateZ(180deg);
-  -moz-transform: translate(-3000px, 0px) rotateZ(180deg);
-  -o-transform: translate(-3000px, 0px) rotateZ(180deg);
-  -ms-transform: translate(-3000px, 0px) rotateZ(180deg);
-  transform: translate(-3000px, 0px) rotateZ(180deg);
-}
-#pbOverlay.prev .wrapper img[data-orientation="3"].prepare {
   -webkit-transform: translate(3000px, 0px) rotateZ(180deg);
   -moz-transform: translate(3000px, 0px) rotateZ(180deg);
   -o-transform: translate(3000px, 0px) rotateZ(180deg);
   -ms-transform: translate(3000px, 0px) rotateZ(180deg);
   transform: translate(3000px, 0px) rotateZ(180deg);
 }
+#pbOverlay.prev .wrapper img[data-orientation="3"].prepare {
+  -webkit-transform: translate(-3000px, 0px) rotateZ(180deg);
+  -moz-transform: translate(-3000px, 0px) rotateZ(180deg);
+  -o-transform: translate(-3000px, 0px) rotateZ(180deg);
+  -ms-transform: translate(-3000px, 0px) rotateZ(180deg);
+  transform: translate(-3000px, 0px) rotateZ(180deg);
+}
 #pbOverlay .wrapper img.prepare[data-orientation="3"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -935,11 +938,11 @@ button.delete {
   transform: translate(0px, 0px) rotateZ(180deg);
 }
 #pbOverlay .wrapper img[data-orientation="4"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -955,11 +958,11 @@ button.delete {
   transform: scale(1, -1);
 }
 #pbOverlay.next .wrapper img[data-orientation="4"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -968,25 +971,25 @@ button.delete {
   opacity: 1;
   -ms-filter: none;
   filter: none;
-  -webkit-transform: translate(3000px, 0px) scale(1, -1);
-  -moz-transform: translate(3000px, 0px) scale(1, -1);
-  -o-transform: translate(3000px, 0px) scale(1, -1);
-  -ms-transform: translate(3000px, 0px) scale(1, -1);
-  transform: translate(3000px, 0px) scale(1, -1);
+  -webkit-transform: translate(-3000px, 0px) scale(1, -1);
+  -moz-transform: translate(-3000px, 0px) scale(1, -1);
+  -o-transform: translate(-3000px, 0px) scale(1, -1);
+  -ms-transform: translate(-3000px, 0px) scale(1, -1);
+  transform: translate(-3000px, 0px) scale(1, -1);
 }
 #pbOverlay.next .wrapper img[data-orientation="4"].prepare {
-  -webkit-transform: translate(-3000px, 0px) scale(1, -1);
-  -moz-transform: translate(-3000px, 0px) scale(1, -1);
-  -o-transform: translate(-3000px, 0px) scale(1, -1);
-  -ms-transform: translate(-3000px, 0px) scale(1, -1);
-  transform: translate(-3000px, 0px) scale(1, -1);
+  -webkit-transform: translate(3000px, 0px) scale(1, -1);
+  -moz-transform: translate(3000px, 0px) scale(1, -1);
+  -o-transform: translate(3000px, 0px) scale(1, -1);
+  -ms-transform: translate(3000px, 0px) scale(1, -1);
+  transform: translate(3000px, 0px) scale(1, -1);
 }
 #pbOverlay.prev .wrapper img[data-orientation="4"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -995,25 +998,25 @@ button.delete {
   opacity: 1;
   -ms-filter: none;
   filter: none;
-  -webkit-transform: translate(-3000px, 0px) scale(1, -1);
-  -moz-transform: translate(-3000px, 0px) scale(1, -1);
-  -o-transform: translate(-3000px, 0px) scale(1, -1);
-  -ms-transform: translate(-3000px, 0px) scale(1, -1);
-  transform: translate(-3000px, 0px) scale(1, -1);
-}
-#pbOverlay.prev .wrapper img[data-orientation="4"].prepare {
   -webkit-transform: translate(3000px, 0px) scale(1, -1);
   -moz-transform: translate(3000px, 0px) scale(1, -1);
   -o-transform: translate(3000px, 0px) scale(1, -1);
   -ms-transform: translate(3000px, 0px) scale(1, -1);
   transform: translate(3000px, 0px) scale(1, -1);
 }
+#pbOverlay.prev .wrapper img[data-orientation="4"].prepare {
+  -webkit-transform: translate(-3000px, 0px) scale(1, -1);
+  -moz-transform: translate(-3000px, 0px) scale(1, -1);
+  -o-transform: translate(-3000px, 0px) scale(1, -1);
+  -ms-transform: translate(-3000px, 0px) scale(1, -1);
+  transform: translate(-3000px, 0px) scale(1, -1);
+}
 #pbOverlay .wrapper img.prepare[data-orientation="4"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -1029,11 +1032,11 @@ button.delete {
   transform: translate(0px, 0px) scale(1, -1);
 }
 #pbOverlay .wrapper img[data-orientation="5"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -1049,11 +1052,11 @@ button.delete {
   transform: rotateZ(-90deg) scale(-1, 1);
 }
 #pbOverlay.next .wrapper img[data-orientation="5"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -1062,25 +1065,25 @@ button.delete {
   opacity: 1;
   -ms-filter: none;
   filter: none;
-  -webkit-transform: translate(3000px, 0px) rotateZ(-90deg) scale(-1, 1);
-  -moz-transform: translate(3000px, 0px) rotateZ(-90deg) scale(-1, 1);
-  -o-transform: translate(3000px, 0px) rotateZ(-90deg) scale(-1, 1);
-  -ms-transform: translate(3000px, 0px) rotateZ(-90deg) scale(-1, 1);
-  transform: translate(3000px, 0px) rotateZ(-90deg) scale(-1, 1);
+  -webkit-transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
+  -moz-transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
+  -o-transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
+  -ms-transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
+  transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
 }
 #pbOverlay.next .wrapper img[data-orientation="5"].prepare {
-  -webkit-transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
-  -moz-transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
-  -o-transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
-  -ms-transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
-  transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
+  -webkit-transform: translate(3000px, 0px) rotateZ(-90deg) scale(-1, 1);
+  -moz-transform: translate(3000px, 0px) rotateZ(-90deg) scale(-1, 1);
+  -o-transform: translate(3000px, 0px) rotateZ(-90deg) scale(-1, 1);
+  -ms-transform: translate(3000px, 0px) rotateZ(-90deg) scale(-1, 1);
+  transform: translate(3000px, 0px) rotateZ(-90deg) scale(-1, 1);
 }
 #pbOverlay.prev .wrapper img[data-orientation="5"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -1089,25 +1092,25 @@ button.delete {
   opacity: 1;
   -ms-filter: none;
   filter: none;
-  -webkit-transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
-  -moz-transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
-  -o-transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
-  -ms-transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
-  transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
-}
-#pbOverlay.prev .wrapper img[data-orientation="5"].prepare {
   -webkit-transform: translate(3000px, 0px) rotateZ(-90deg) scale(-1, 1);
   -moz-transform: translate(3000px, 0px) rotateZ(-90deg) scale(-1, 1);
   -o-transform: translate(3000px, 0px) rotateZ(-90deg) scale(-1, 1);
   -ms-transform: translate(3000px, 0px) rotateZ(-90deg) scale(-1, 1);
   transform: translate(3000px, 0px) rotateZ(-90deg) scale(-1, 1);
 }
+#pbOverlay.prev .wrapper img[data-orientation="5"].prepare {
+  -webkit-transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
+  -moz-transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
+  -o-transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
+  -ms-transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
+  transform: translate(-3000px, 0px) rotateZ(-90deg) scale(-1, 1);
+}
 #pbOverlay .wrapper img.prepare[data-orientation="5"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -1123,11 +1126,11 @@ button.delete {
   transform: translate(0px, 0px) rotateZ(-90deg) scale(-1, 1);
 }
 #pbOverlay .wrapper img[data-orientation="6"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -1143,11 +1146,11 @@ button.delete {
   transform: rotateZ(90deg);
 }
 #pbOverlay.next .wrapper img[data-orientation="6"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -1156,25 +1159,25 @@ button.delete {
   opacity: 1;
   -ms-filter: none;
   filter: none;
-  -webkit-transform: translate(3000px, 0px) rotateZ(90deg);
-  -moz-transform: translate(3000px, 0px) rotateZ(90deg);
-  -o-transform: translate(3000px, 0px) rotateZ(90deg);
-  -ms-transform: translate(3000px, 0px) rotateZ(90deg);
-  transform: translate(3000px, 0px) rotateZ(90deg);
+  -webkit-transform: translate(-3000px, 0px) rotateZ(90deg);
+  -moz-transform: translate(-3000px, 0px) rotateZ(90deg);
+  -o-transform: translate(-3000px, 0px) rotateZ(90deg);
+  -ms-transform: translate(-3000px, 0px) rotateZ(90deg);
+  transform: translate(-3000px, 0px) rotateZ(90deg);
 }
 #pbOverlay.next .wrapper img[data-orientation="6"].prepare {
-  -webkit-transform: translate(-3000px, 0px) rotateZ(90deg);
-  -moz-transform: translate(-3000px, 0px) rotateZ(90deg);
-  -o-transform: translate(-3000px, 0px) rotateZ(90deg);
-  -ms-transform: translate(-3000px, 0px) rotateZ(90deg);
-  transform: translate(-3000px, 0px) rotateZ(90deg);
+  -webkit-transform: translate(3000px, 0px) rotateZ(90deg);
+  -moz-transform: translate(3000px, 0px) rotateZ(90deg);
+  -o-transform: translate(3000px, 0px) rotateZ(90deg);
+  -ms-transform: translate(3000px, 0px) rotateZ(90deg);
+  transform: translate(3000px, 0px) rotateZ(90deg);
 }
 #pbOverlay.prev .wrapper img[data-orientation="6"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -1183,25 +1186,25 @@ button.delete {
   opacity: 1;
   -ms-filter: none;
   filter: none;
-  -webkit-transform: translate(-3000px, 0px) rotateZ(90deg);
-  -moz-transform: translate(-3000px, 0px) rotateZ(90deg);
-  -o-transform: translate(-3000px, 0px) rotateZ(90deg);
-  -ms-transform: translate(-3000px, 0px) rotateZ(90deg);
-  transform: translate(-3000px, 0px) rotateZ(90deg);
-}
-#pbOverlay.prev .wrapper img[data-orientation="6"].prepare {
   -webkit-transform: translate(3000px, 0px) rotateZ(90deg);
   -moz-transform: translate(3000px, 0px) rotateZ(90deg);
   -o-transform: translate(3000px, 0px) rotateZ(90deg);
   -ms-transform: translate(3000px, 0px) rotateZ(90deg);
   transform: translate(3000px, 0px) rotateZ(90deg);
 }
+#pbOverlay.prev .wrapper img[data-orientation="6"].prepare {
+  -webkit-transform: translate(-3000px, 0px) rotateZ(90deg);
+  -moz-transform: translate(-3000px, 0px) rotateZ(90deg);
+  -o-transform: translate(-3000px, 0px) rotateZ(90deg);
+  -ms-transform: translate(-3000px, 0px) rotateZ(90deg);
+  transform: translate(-3000px, 0px) rotateZ(90deg);
+}
 #pbOverlay .wrapper img.prepare[data-orientation="6"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -1217,11 +1220,11 @@ button.delete {
   transform: translate(0px, 0px) rotateZ(90deg);
 }
 #pbOverlay .wrapper img[data-orientation="7"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -1237,11 +1240,11 @@ button.delete {
   transform: rotateZ(90deg) scale(-1, 1);
 }
 #pbOverlay.next .wrapper img[data-orientation="7"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -1250,25 +1253,25 @@ button.delete {
   opacity: 1;
   -ms-filter: none;
   filter: none;
-  -webkit-transform: translate(3000px, 0px) rotateZ(90deg) scale(-1, 1);
-  -moz-transform: translate(3000px, 0px) rotateZ(90deg) scale(-1, 1);
-  -o-transform: translate(3000px, 0px) rotateZ(90deg) scale(-1, 1);
-  -ms-transform: translate(3000px, 0px) rotateZ(90deg) scale(-1, 1);
-  transform: translate(3000px, 0px) rotateZ(90deg) scale(-1, 1);
+  -webkit-transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
+  -moz-transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
+  -o-transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
+  -ms-transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
+  transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
 }
 #pbOverlay.next .wrapper img[data-orientation="7"].prepare {
-  -webkit-transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
-  -moz-transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
-  -o-transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
-  -ms-transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
-  transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
+  -webkit-transform: translate(3000px, 0px) rotateZ(90deg) scale(-1, 1);
+  -moz-transform: translate(3000px, 0px) rotateZ(90deg) scale(-1, 1);
+  -o-transform: translate(3000px, 0px) rotateZ(90deg) scale(-1, 1);
+  -ms-transform: translate(3000px, 0px) rotateZ(90deg) scale(-1, 1);
+  transform: translate(3000px, 0px) rotateZ(90deg) scale(-1, 1);
 }
 #pbOverlay.prev .wrapper img[data-orientation="7"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -1277,25 +1280,25 @@ button.delete {
   opacity: 1;
   -ms-filter: none;
   filter: none;
-  -webkit-transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
-  -moz-transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
-  -o-transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
-  -ms-transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
-  transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
-}
-#pbOverlay.prev .wrapper img[data-orientation="7"].prepare {
   -webkit-transform: translate(3000px, 0px) rotateZ(90deg) scale(-1, 1);
   -moz-transform: translate(3000px, 0px) rotateZ(90deg) scale(-1, 1);
   -o-transform: translate(3000px, 0px) rotateZ(90deg) scale(-1, 1);
   -ms-transform: translate(3000px, 0px) rotateZ(90deg) scale(-1, 1);
   transform: translate(3000px, 0px) rotateZ(90deg) scale(-1, 1);
 }
+#pbOverlay.prev .wrapper img[data-orientation="7"].prepare {
+  -webkit-transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
+  -moz-transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
+  -o-transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
+  -ms-transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
+  transform: translate(-3000px, 0px) rotateZ(90deg) scale(-1, 1);
+}
 #pbOverlay .wrapper img.prepare[data-orientation="7"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -1311,11 +1314,11 @@ button.delete {
   transform: translate(0px, 0px) rotateZ(90deg) scale(-1, 1);
 }
 #pbOverlay .wrapper img[data-orientation="8"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -1331,11 +1334,11 @@ button.delete {
   transform: rotateZ(-90deg);
 }
 #pbOverlay.next .wrapper img[data-orientation="8"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -1344,25 +1347,25 @@ button.delete {
   opacity: 1;
   -ms-filter: none;
   filter: none;
-  -webkit-transform: translate(3000px, 0px) rotateZ(-90deg);
-  -moz-transform: translate(3000px, 0px) rotateZ(-90deg);
-  -o-transform: translate(3000px, 0px) rotateZ(-90deg);
-  -ms-transform: translate(3000px, 0px) rotateZ(-90deg);
-  transform: translate(3000px, 0px) rotateZ(-90deg);
+  -webkit-transform: translate(-3000px, 0px) rotateZ(-90deg);
+  -moz-transform: translate(-3000px, 0px) rotateZ(-90deg);
+  -o-transform: translate(-3000px, 0px) rotateZ(-90deg);
+  -ms-transform: translate(-3000px, 0px) rotateZ(-90deg);
+  transform: translate(-3000px, 0px) rotateZ(-90deg);
 }
 #pbOverlay.next .wrapper img[data-orientation="8"].prepare {
-  -webkit-transform: translate(-3000px, 0px) rotateZ(-90deg);
-  -moz-transform: translate(-3000px, 0px) rotateZ(-90deg);
-  -o-transform: translate(-3000px, 0px) rotateZ(-90deg);
-  -ms-transform: translate(-3000px, 0px) rotateZ(-90deg);
-  transform: translate(-3000px, 0px) rotateZ(-90deg);
+  -webkit-transform: translate(3000px, 0px) rotateZ(-90deg);
+  -moz-transform: translate(3000px, 0px) rotateZ(-90deg);
+  -o-transform: translate(3000px, 0px) rotateZ(-90deg);
+  -ms-transform: translate(3000px, 0px) rotateZ(-90deg);
+  transform: translate(3000px, 0px) rotateZ(-90deg);
 }
 #pbOverlay.prev .wrapper img[data-orientation="8"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -1371,25 +1374,25 @@ button.delete {
   opacity: 1;
   -ms-filter: none;
   filter: none;
-  -webkit-transform: translate(-3000px, 0px) rotateZ(-90deg);
-  -moz-transform: translate(-3000px, 0px) rotateZ(-90deg);
-  -o-transform: translate(-3000px, 0px) rotateZ(-90deg);
-  -ms-transform: translate(-3000px, 0px) rotateZ(-90deg);
-  transform: translate(-3000px, 0px) rotateZ(-90deg);
-}
-#pbOverlay.prev .wrapper img[data-orientation="8"].prepare {
   -webkit-transform: translate(3000px, 0px) rotateZ(-90deg);
   -moz-transform: translate(3000px, 0px) rotateZ(-90deg);
   -o-transform: translate(3000px, 0px) rotateZ(-90deg);
   -ms-transform: translate(3000px, 0px) rotateZ(-90deg);
   transform: translate(3000px, 0px) rotateZ(-90deg);
 }
+#pbOverlay.prev .wrapper img[data-orientation="8"].prepare {
+  -webkit-transform: translate(-3000px, 0px) rotateZ(-90deg);
+  -moz-transform: translate(-3000px, 0px) rotateZ(-90deg);
+  -o-transform: translate(-3000px, 0px) rotateZ(-90deg);
+  -ms-transform: translate(-3000px, 0px) rotateZ(-90deg);
+  transform: translate(-3000px, 0px) rotateZ(-90deg);
+}
 #pbOverlay .wrapper img.prepare[data-orientation="8"] {
-  -webkit-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -moz-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -o-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  -ms-transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
-  transition: 0.3s cubic-bezier(0.1, 0.87, 0.48, 1);
+  -webkit-transition: 0.3s ease;
+  -moz-transition: 0.3s ease;
+  -o-transition: 0.3s ease;
+  -ms-transition: 0.3s ease;
+  transition: 0.3s ease;
   -webkit-transition-delay: 0s;
   -moz-transition-delay: 0s;
   -o-transition-delay: 0s;
@@ -1459,7 +1462,7 @@ button.delete {
   width: 100%;
 }
 #uploadblock {
-  height: 100px;
+  height: 65px;
 }
 .photo {
   width: 10%;
@@ -1489,8 +1492,13 @@ button.delete {
   box-sizing: border-box;
   float: right;
   width: 80%;
-  padding: 0px 20px 20px 20px;
+  padding: 20px;
   margin: 0;
+}
+#about #album-text h1#title {
+  margin-top: 0;
+  font-family: main;
+  font-size: 40px;
 }
 #about #album-text #description {
   font-size: 18px;
@@ -1499,47 +1507,77 @@ button.delete {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  padding-left: 10px;
+  padding: 20px;
   background-color: #fcfcfc;
+}
+#about #album-text #album-text-background .right {
+  font-size: 16px;
+  float: right;
+  margin-left: 20px;
+}
+#about #album-text #album-text-background .right .photo-number {
+  font-size: 30px;
 }
 .albumitem a,
 .albumitem span {
   width: auto;
 }
-.albumitem,
-.albumitem img {
+.albumitem {
   width: 16.6666%;
-  height: auto;
+  height: 100;
 }
 .albumitem.create {
   width: 100%;
   height: 60px;
   background: #5c5;
-  padding: 10px;
   -webkit-transition: all 0.2s ease-out;
   -moz-transition: all 0.2s ease-out;
   -o-transition: all 0.2s ease-out;
   -ms-transition: all 0.2s ease-out;
   transition: all 0.2s ease-out;
+  text-align: center;
 }
 .albumitem.create a {
+  padding: 10px;
   font-size: 20px;
+  text-align: center;
 }
 .albumitem.create img {
   float: left;
   width: 35px;
+  height: 35px;
   margin-right: 10px;
 }
 .albumitem.create span {
-  float: left;
   margin-top: 5px;
+  margin-left: 50%;
+  margin-right: 50%;
+  text-transform: uppercase;
+  width: 200px;
 }
 .albumitem.create:hover {
   background: #fe8800;
 }
-.albumitem .title {
+.albumitem span {
+  float: left;
+}
+.albumitem a,
+.albumitem .title,
+.albumitem img {
   width: 100%;
   height: 100%;
+}
+.albumitem .title {
+  position: relative;
+  top: 0px;
+  left: 0px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  display: block;
+  min-height: 100px;
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
 }
 @media (max-width: 1600px) {
   .photo {
@@ -1588,6 +1626,9 @@ button.delete {
   }
   #about #album-text h1#title {
     margin-top: 0;
+  }
+  #about .right {
+    display: none;
   }
 }
 

@@ -83,33 +83,35 @@ module.exports = class Galery extends ViewCollection
 
     # D&D events
     events: ->
-        if @options.editable
-            'drop'     : 'onFilesDropped'
-            'dragover' : 'onDragOver'
-            'dragleave' : 'onDragLeave'
-            'change #uploader': 'onFilesChanged'
-            'click #browseFiles': 'displayBrowser'
+        'drop'     : 'onFilesDropped'
+        'dragover' : 'onDragOver'
+        'dragleave' : 'onDragLeave'
+        'change #uploader': 'onFilesChanged'
+        'click #browseFiles': 'displayBrowser'
 
     # event listeners for D&D events
     onFilesDropped: (evt) ->
-        @$el.removeClass 'dragover'
-        @handleFiles evt.dataTransfer.files
-        evt.stopPropagation()
-        evt.preventDefault()
+        if @options.editable
+            @$el.removeClass 'dragover'
+            @handleFiles evt.dataTransfer.files
+            evt.stopPropagation()
+            evt.preventDefault()
 
         return false
 
     # Display orange background telling that drag is active.
     onDragOver: (evt) ->
-        @$el.addClass 'dragover'
-        evt.preventDefault()
-        evt.stopPropagation()
+        if @options.editable
+            @$el.addClass 'dragover'
+            evt.preventDefault()
+            evt.stopPropagation()
         return false
 
     onDragLeave: (evt) ->
-        @$el.removeClass 'dragover'
-        evt.preventDefault()
-        evt.stopPropagation()
+        if @options.editable
+            @$el.removeClass 'dragover'
+            evt.preventDefault()
+            evt.stopPropagation()
         return false
 
     # Extract photo id from its URL. It's useful to get the id of the current

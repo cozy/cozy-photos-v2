@@ -14,14 +14,14 @@ module.exports =
     "private" : "private"
     "public" : "public"
     "hidden" : "hidden"
-    "There is no photos in this album" : "There are no photos in this album"
+    "There is no photos in this album" : "There is no photo in this album. Click on Edit button to add new ones."
     "There is no public albums." : "There are no albums."
     "This album is private" : "This album is private"
     "This album is hidden" : "This album is hidden"
     "This album is public" : "This album is public"
-    "Title ..." : "Title ..."
+    "Title ..." : "Set a title for this album..."
     "View" : "View"
-    "Write some more ..." : "Write some more ..."
+    "Write some more ..." : "Write a description..."
     "is too big (max 10Mo)":"is too big (max 10Mo)"
     "is not an image": "is not an image"
     "Share album by mail": "Share album by mail"
@@ -39,7 +39,7 @@ module.exports =
 
 
     "pick from computer":"""
-        Click Here or drag your photos below to upload
+        Click Here or drag your photos below to add them to the album.
     """
     "pick from files":"""
         Click Here to pick from cozy files

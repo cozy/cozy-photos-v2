@@ -40,9 +40,17 @@ div#about
 
     div#album-text
         div#album-text-background
-            h1#title!= title
-            div#description!= description
-            
+
+            div.right
+                p
+                    span.photo-number= photosNumber
+                    br
+                    span= t("pictures")
+ 
+            form 
+                input#title(type="text", placeholder="Title...", value=title)
+                textarea#description(placeholder="Description...")!= description
+           
 div#photos
   //-div#rebuild-th
       //-a#rebuild-th-btn= t("rebuild thumbnails")

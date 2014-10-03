@@ -94,12 +94,9 @@ button.delete
     .title
         z-index: 100
         border-radius: 0
-        width: 300px
-        height: 300px
         display: block
         opacity: 0
 
-        padding-top: 135px
         font-size: 25px
         line-height: 25px
         text-align: center
@@ -162,11 +159,24 @@ button.delete
         box-sizing border-box
         font-weight: normal
         padding: 8px
+        background: transparent
+        cursor: default
+        font-family: main
 
     #title
+        box-sizing border-box
+        width: 80%
         min-height: 60px
+        font-size: 30px
+        margin-bottom: 20px
+        border: 0
+
+    .right
+        box-sizing border-box
+        width: 60px
 
     #description
+        width: 100%
         min-height: 40px
 
     #title:active
@@ -178,17 +188,9 @@ button.delete
         display: none
 
     #title
-        white-space: nowrap;
-        overflow: hidden;
-        br
-            display:none;
-        *
-            display:inline;
-            white-space:nowrap;
-
-    #title
     #description
         outline 1px solid blue
+        cursor: text
 
     #title:focus
     #description:focus
@@ -209,9 +211,7 @@ button.delete
     #uploader
         opacity 0.0001
         display block
-        // z-index -1
-        height 100%
-        font-size 30em
+        font-size 80px
         line-height 100px
         position absolute
 
@@ -480,7 +480,7 @@ exifTransforms = (1 rotateZ(0deg)) (2 scale(-1, 1)) (3 rotateZ(180deg)) (4 scale
 (5 rotateZ(-90deg) scale(-1, 1)) (6 rotateZ(90deg)) (7 rotateZ(90deg) scale(-1, 1)) (8 rotateZ(-90deg))
 
 pbtransition()
-    transition .3s cubic-bezier(0.1, 0.87, 0.48, 1)
+    transition 0.3s ease
     transition-delay 0s
     opacity 1
     // -ms-transition .3s .5s ease-out
@@ -495,17 +495,17 @@ for t in exifTransforms
 
     &.next .wrapper img{'[data-orientation="' + id + '"]'}
       pbtransition true
-      transform translate(3000px, 0px) t[1] t[2]
-
-      &.prepare
-        transform translate(-3000px, 0px) t[1] t[2]
-
-    &.prev .wrapper img{'[data-orientation="' + id + '"]'}
-      pbtransition true
       transform translate(-3000px, 0px) t[1] t[2]
 
       &.prepare
         transform translate(3000px, 0px) t[1] t[2]
+
+    &.prev .wrapper img{'[data-orientation="' + id + '"]'}
+      pbtransition true
+      transform translate(3000px, 0px) t[1] t[2]
+
+      &.prepare
+        transform translate(-3000px, 0px) t[1] t[2]
 
     .wrapper img.prepare{'[data-orientation="' + id + '"]'}
       pbtransition true
@@ -575,7 +575,7 @@ for t in exifTransforms
     width: 100%
 
 #uploadblock
-    height: 100px
+    height: 65px
 
 .photo
     width: 10%
@@ -599,55 +599,84 @@ for t in exifTransforms
         box-sizing: border-box
         float: right
         width: 80%
-        padding: 0px 20px 20px 20px
+        padding: 20px
         margin: 0
 
+        h1#title
+            margin-top: 0
+            font-family: main
+            font-size: 40px
 
         #description
             font-size: 18px
 
         #album-text-background
             box-sizing: border-box
-            padding-left: 10px
+            padding: 20px
             background-color: #FCFCFC
+
+            .right
+                font-size: 16px
+                float: right
+                margin-left: 20px
+
+                .photo-number
+                    font-size: 30px
 
 .albumitem a
 .albumitem span
     width: auto
 
 .albumitem
-.albumitem img
     width: 16.6666%
-    height: auto
+    height: 100
 
 .albumitem.create
     width: 100%
     height: 60px
     background: green
-    padding: 10px
     transition: all .2s ease-out
+    text-align: center
 
     a
+        padding: 10px
         font-size: 20px
+        text-align: center
 
     img
         float: left
         width: 35px
+        height: 35px
         margin-right: 10px
 
     span
-        float: left
         margin-top: 5px
+        margin-left: 50%
+        margin-right: 50%
+        text-transform: uppercase
+        width: 200px
 
     &:hover
         background: orange
 
+.albumitem span
+    float: left
 
-
+.albumitem a
 .albumitem .title
+.albumitem img
     width: 100%
     height: 100%
 
+.albumitem .title
+    position: relative
+    top: 0px
+    left: 0px
+    padding-top: 20px
+    padding-bottom: 20px
+    display: block
+    min-height: 100px
+    opacity: 1
 
 @media (max-width: 1600px)
 
@@ -698,3 +727,6 @@ for t in exifTransforms
 
             h1#title
                 margin-top: 0
+
+        .right
+            display: none

@@ -8,24 +8,6 @@ module.exports =
         then string.substring(0, length) + '...'
         else string
 
-    # Make a $-element editable
-    # options :
-    #   placeholder : a place holder for the editable element
-    #   onChanged   : a callback(text), fired when the text change
-    editable: (el, options) ->
-        {placeholder, onChanged} = options
-        el.prop 'contenteditable', true
-        el.text placeholder if not el.text()
-        el.click ->
-            el.text ' ' if el.text() is placeholder
-            #module.exports.forceFocus el
-        el.focus -> el.text ' ' if el.text() is placeholder
-        el.blur  ->
-            if not el.text()
-                el.text placeholder
-            else
-                onChanged el.html()
-
     # Focus a given element (required for content editable elements).
     forceFocus: (el) ->
         range = document.createRange()
