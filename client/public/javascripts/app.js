@@ -1465,7 +1465,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 
-buf.push("<div class=\"albumitem create\"><a id=\"create-album-link\" href=\"#albums/new\"><span>" + (jade.escape(null == (jade_interp = t('Create a new album')) ? "" : jade_interp)) + "</span></a></div><p class=\"help\">" + (jade.escape(null == (jade_interp = t('There is no public albums.')) ? "" : jade_interp)) + "</p>");;return buf.join("");
+buf.push("<a id=\"create-album-link\" href=\"#albums/new\" class=\"create\"><span>" + (jade.escape(null == (jade_interp = t('Create a new album')) ? "" : jade_interp)) + "</span></a><p class=\"help\">" + (jade.escape(null == (jade_interp = t('There is no public albums.')) ? "" : jade_interp)) + "</p>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {

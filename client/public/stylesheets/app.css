@@ -1446,10 +1446,10 @@ button.delete {
   }
 }
 @media (max-width: 600px) {
-  #album-list .albumitem.create a {
+  #album-list .create a {
     font-size: 16px;
   }
-  #album-list .albumitem.create a img {
+  #album-list .create a img {
     width: 40px;
   }
   #album-list .albumitem .title {
@@ -1518,15 +1518,10 @@ button.delete {
 #about #album-text #album-text-background .right .photo-number {
   font-size: 30px;
 }
-.albumitem a,
-.albumitem span {
-  width: auto;
-}
 .albumitem {
   width: 16.6666%;
-  height: 100;
 }
-.albumitem.create {
+.create {
   width: 100%;
   height: 60px;
   background: #5c5;
@@ -1536,30 +1531,28 @@ button.delete {
   -ms-transition: all 0.2s ease-out;
   transition: all 0.2s ease-out;
   text-align: center;
-}
-.albumitem.create a {
-  padding: 10px;
+  padding-top: 15px;
+  display: block;
+  color: #fff;
   font-size: 20px;
-  text-align: center;
+  width: 100%;
 }
-.albumitem.create img {
+.create:hover {
+  background: #fe8800;
+  text-decoration: none;
+  color: #fff;
+}
+.create img {
   float: left;
   width: 35px;
   height: 35px;
   margin-right: 10px;
 }
-.albumitem.create span {
-  margin-top: 5px;
-  margin-left: 50%;
-  margin-right: 50%;
+.create span {
   text-transform: uppercase;
-  width: 200px;
 }
-.albumitem.create:hover {
-  background: #fe8800;
-}
-.albumitem span {
-  float: left;
+.albumitem {
+  position: relative;
 }
 .albumitem a,
 .albumitem .title,
@@ -1567,17 +1560,20 @@ button.delete {
   width: 100%;
   height: 100%;
 }
+.albumitem a {
+  height: auto;
+}
 .albumitem .title {
-  position: relative;
+  position: absolute;
   top: 0px;
   left: 0px;
-  padding-top: 20px;
+  padding-top: 45%;
   padding-bottom: 20px;
   display: block;
   min-height: 100px;
-  opacity: 1;
-  -ms-filter: none;
-  filter: none;
+  opacity: 0;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+  filter: alpha(opacity=0);
 }
 @media (max-width: 1600px) {
   .photo {
@@ -1588,6 +1584,9 @@ button.delete {
   }
   #about #album-text {
     width: 75%;
+  }
+  .albumitem {
+    width: 20%;
   }
 }
 @media (max-width: 1200px) {
@@ -1600,12 +1599,18 @@ button.delete {
   #about #album-text {
     width: 66.666666%;
   }
+  .albumitem {
+    width: 25%;
+  }
 }
 @media (max-width: 900px) {
   .photo {
     width: 33.333%;
   }
   #about #links {
+    width: 33.333%;
+  }
+  .albumitem {
     width: 33.333%;
   }
 }
@@ -1629,6 +1634,9 @@ button.delete {
   }
   #about .right {
     display: none;
+  }
+  .albumitem {
+    width: 50%;
   }
 }
 

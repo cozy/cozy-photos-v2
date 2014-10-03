@@ -556,7 +556,7 @@ for t in exifTransforms
 @media (max-width: 600px)
 
     #album-list 
-        .albumitem.create
+        .create
             a
                 font-size: 16px
 
@@ -623,25 +623,26 @@ for t in exifTransforms
                 .photo-number
                     font-size: 30px
 
-.albumitem a
-.albumitem span
-    width: auto
-
 .albumitem
     width: 16.6666%
-    height: 100
 
-.albumitem.create
+.create
     width: 100%
     height: 60px
     background: green
     transition: all .2s ease-out
     text-align: center
+    padding-top: 15px
+    display: block
 
-    a
-        padding: 10px
-        font-size: 20px
-        text-align: center
+    color: white
+    font-size: 20px
+    width: 100%
+
+    &:hover
+        background: orange
+        text-decoration: none
+        color: white
 
     img
         float: left
@@ -650,17 +651,10 @@ for t in exifTransforms
         margin-right: 10px
 
     span
-        margin-top: 5px
-        margin-left: 50%
-        margin-right: 50%
         text-transform: uppercase
-        width: 200px
 
-    &:hover
-        background: orange
-
-.albumitem span
-    float: left
+.albumitem
+    position: relative
 
 .albumitem a
 .albumitem .title
@@ -668,15 +662,18 @@ for t in exifTransforms
     width: 100%
     height: 100%
 
+.albumitem a
+    height: auto
+
 .albumitem .title
-    position: relative
+    position: absolute
     top: 0px
     left: 0px
-    padding-top: 20px
+    padding-top: 45%
     padding-bottom: 20px
     display: block
     min-height: 100px
-    opacity: 1
+    opacity: 0
 
 @media (max-width: 1600px)
 
@@ -689,6 +686,9 @@ for t in exifTransforms
         #album-text
             width: 75%
 
+    .albumitem
+        width: 20%
+
 @media (max-width: 1200px)
 
     .photo
@@ -700,6 +700,9 @@ for t in exifTransforms
         #album-text
             width: 66.666666%
 
+    .albumitem
+        width: 25%
+
 @media (max-width: 900px)
 
     .photo
@@ -709,6 +712,9 @@ for t in exifTransforms
         #links
             width: 33.333%
      
+    .albumitem
+        width: 33.333%
+
 @media (max-width: 600px)
 
     .photo
@@ -730,3 +736,7 @@ for t in exifTransforms
 
         .right
             display: none
+
+    .albumitem
+        width: 50%
+
