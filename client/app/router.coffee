@@ -56,18 +56,16 @@ module.exports = class Router extends Backbone.Router
     # display the album view for a new Album
     newalbum: ->
         return @navigate 'albums', true if app.mode is 'public'
-        @displayView new AlbumView
-            model: new Album()
-            editable: true
-        $('#title').focus()
+        window.app.albums.create {},
+            success: (model) =>
+                @navigate "albums/#{model.id}/edit", true
+            error: =>
+                @navigate "albums", true
 
     # display a page properly (remove previous page)
     displayView: (view) =>
         @mainView.remove() if @mainView
         @mainView = view
-        $(window).unbind 'resize'
-        $(window).resize =>
-            @mainView.resize() if @mainView?.resize?
 
         el = @mainView.render().$el
         el.addClass "mode-#{app.mode}"
