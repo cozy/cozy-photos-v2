@@ -86,8 +86,7 @@ button.delete
         text-decoration: none
         border-radius: 0
         box-sizing: border-box
-        transition .2s ease-out
-        -webkit-transition .2s ease-out
+        transition: .2s ease-out
         background-repeat: no-repeat
         background-size: 100%
 
@@ -111,12 +110,9 @@ button.delete
             opacity: 1
 
     a:active
-        transition 0s ease-out
-        -webkit-transition 0s ease-out
+        transition: 0s ease-out
         box-shadow: 1px 3px 2px rgba(0, 0, 0, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.0)
 
-//a:hover
-//border 1px solid orange
 
 // #### album page ###
 
@@ -146,17 +142,17 @@ button.delete
     padding: 0px
 
     a
-        box-sizing border-box
+        box-sizing: border-box
 
     #description
-        box-sizing border-box
+        box-sizing: border-box
         text-align justify
-        padding 1px
-        border 0px
+        padding: 1px
+        border: 0px
 
     #title
     #description
-        box-sizing border-box
+        box-sizing: border-box
         font-weight: normal
         padding: 8px
         background: transparent
@@ -164,7 +160,8 @@ button.delete
         font-family: main
 
     #title
-        box-sizing border-box
+        box-sizing: border-box
+        display: block
         width: 80%
         min-height: 60px
         font-size: 30px
@@ -211,9 +208,10 @@ button.delete
     #uploader
         opacity 0.0001
         display block
-        font-size 80px
+        width: 90%
         line-height 100px
         position absolute
+        border: 0
 
     .photo
         float left
@@ -580,6 +578,11 @@ for t in exifTransforms
 
 #uploadblock
     height: 65px
+    cursor: pointer
+
+#uploadblock input#uploader
+#uploadblock div
+    cursor: pointer
 
 .photo
     width: 10%
@@ -737,6 +740,9 @@ for t in exifTransforms
 
             h1#title
                 margin-top: 0
+
+        #title
+            width: 100%
 
         .right
             display: none
