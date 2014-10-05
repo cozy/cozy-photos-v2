@@ -53,6 +53,7 @@ blobify = (dataUrl, type) ->
 # create photo.thumb_du : a DataURL encoded thumbnail of photo.img
 makeThumbDataURI = (photo, next) ->
     photo.thumb_du = resize photo, 300, 300, true
+    photo.trigger 'thumbed'
     next()
 
 # create photo.screen_du : a DataURL encoded thumbnail of photo.img
@@ -107,19 +108,25 @@ makeThumbWorker = (photo , done) ->
         (cb) -> makeThumbDataURI photo, cb
         (cb) ->
             delete photo.img
-            cb()
+            setTimeout cb, 200
     ], (err) ->
         if err
             photo.trigger 'upError', err
         else
             photo.trigger 'thumbed'
 
-        done(err)
+        if err
+            done err
+        else
+            console.log photo
+            uploadWorker photo, done
+        #done(err)
 
 # make screen sized version and upload
 uploadWorker = (photo, done) ->
     async.waterfall [
         (cb) -> readFile          photo, cb
+        (cb) -> makeThumbDataURI photo, cb
         (cb) -> makeScreenDataURI photo, cb
         (cb) -> makeScreenBlob    photo, cb
         (cb) -> makeThumbBlob     photo, cb
@@ -133,7 +140,7 @@ uploadWorker = (photo, done) ->
             delete photo.thumb_du
             delete photo.scren
             delete photo.screen_du
-            cb()
+            setTimeout cb, 200
     ], (err) ->
         if err
             photo.trigger 'upError', err
@@ -146,15 +153,15 @@ uploadWorker = (photo, done) ->
 class PhotoProcessor
 
     # create thumbs 3 by 3
-    thumbsQueue: async.queue makeThumbWorker, 3
+    #thumbsQueue: async.queue makeThumbWorker, 2
 
     # upload 2 by 2
     uploadQueue: async.queue uploadWorker, 2
 
     process: (photo) ->
-        @thumbsQueue.push photo, (err) =>
-            return console.log err if err
-            @uploadQueue.push photo, (err) =>
-                return console.log err if err
+        #@thumbsQueue.push photo, (err) =>
+        #    return console.log err if err
+        @uploadQueue.push photo, (err) =>
+             return console.log err if err
 
 module.exports = new PhotoProcessor()
