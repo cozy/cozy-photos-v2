@@ -1627,6 +1627,10 @@ button.delete {
   .photo {
     width: 50%;
   }
+  #photos {
+    padding-left: 0;
+    padding-right: 0;
+  }
   #about {
     padding: 20px;
   }
