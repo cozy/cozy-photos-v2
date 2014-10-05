@@ -96,7 +96,6 @@ module.exports = class Galery extends ViewCollection
             @handleFiles evt.dataTransfer.files
             evt.stopPropagation()
             evt.preventDefault()
-
         return false
 
     # Display orange background telling that drag is active.
@@ -197,12 +196,12 @@ module.exports = class Galery extends ViewCollection
         # allow parent view to set some attributes on the photo
         # (current usage = albumid + save album if it is new)
         @options.beforeUpload (photoAttributes) =>
+
             for file in files
                 photoAttributes.title = file.name
                 photo = new Photo photoAttributes
                 photo.file = file
                 @collection.add photo
-
                 photoprocessor.process photo
 
             for key, view of @views

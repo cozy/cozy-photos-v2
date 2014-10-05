@@ -106,12 +106,11 @@ module.exports = class AlbumView extends BaseView
 
     # Ask for confirmation if album is not new.
     destroyModel: ->
-        if @model.isNew()
-            return app.router.navigate 'albums', true
-
-        if confirm t 'Are you sure ?'
+        if confirm t "are you sure you want to delete this album"
             @model.destroy().then ->
                 app.router.navigate 'albums', true
+
+
 
     # Change sharing state of the album.
     changeClearance: (event) =>
