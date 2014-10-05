@@ -754,7 +754,9 @@ module.exports = {
   "change notif": "Check this box to be notified when a contact\nadds a photo to this album.",
   "send email hint": "Notification emails will be sent one time on save",
   "yes": "Yes",
-  "no": "No"
+  "no": "No",
+  "pictures": "pictures",
+  "are you sure you want to delete this album": "Are you sure you want to delete this album?"
 };
 });
 
@@ -830,7 +832,9 @@ module.exports = {
   "change notif": "Cocher cette case pour recevoir une notification cozy quand un contact\najoute une photo à cet album.",
   "send email hint": "Des emails de notification seront envoyés lors de la première sauvegarde.",
   "yes": "Oui",
-  "no": "Non"
+  "no": "Non",
+  "pictures": "photos",
+  "are you sure you want to delete this album": "Etes vous sûr de vouloir effacer cet album?"
 };
 });
 
@@ -1040,6 +1044,7 @@ blobify = function(dataUrl, type) {
 
 makeThumbDataURI = function(photo, next) {
   photo.thumb_du = resize(photo, 300, 300, true);
+  photo.trigger('thumbed');
   return next();
 };
 
@@ -1106,7 +1111,7 @@ makeThumbWorker = function(photo, done) {
       return makeThumbDataURI(photo, cb);
     }, function(cb) {
       delete photo.img;
-      return cb();
+      return setTimeout(cb, 200);
     }
   ], function(err) {
     if (err) {
@@ -1114,7 +1119,12 @@ makeThumbWorker = function(photo, done) {
     } else {
       photo.trigger('thumbed');
     }
-    return done(err);
+    if (err) {
+      return done(err);
+    } else {
+      console.log(photo);
+      return uploadWorker(photo, done);
+    }
   });
 };
 
@@ -1122,6 +1132,8 @@ uploadWorker = function(photo, done) {
   return async.waterfall([
     function(cb) {
       return readFile(photo, cb);
+    }, function(cb) {
+      return makeThumbDataURI(photo, cb);
     }, function(cb) {
       return makeScreenDataURI(photo, cb);
     }, function(cb) {
@@ -1137,7 +1149,7 @@ uploadWorker = function(photo, done) {
       delete photo.thumb_du;
       delete photo.scren;
       delete photo.screen_du;
-      return cb();
+      return setTimeout(cb, 200);
     }
   ], function(err) {
     if (err) {
@@ -1152,21 +1164,14 @@ uploadWorker = function(photo, done) {
 PhotoProcessor = (function() {
   function PhotoProcessor() {}
 
-  PhotoProcessor.prototype.thumbsQueue = async.queue(makeThumbWorker, 3);
-
   PhotoProcessor.prototype.uploadQueue = async.queue(uploadWorker, 2);
 
   PhotoProcessor.prototype.process = function(photo) {
-    return this.thumbsQueue.push(photo, (function(_this) {
+    return this.uploadQueue.push(photo, (function(_this) {
       return function(err) {
         if (err) {
           return console.log(err);
         }
-        return _this.uploadQueue.push(photo, function(err) {
-          if (err) {
-            return console.log(err);
-          }
-        });
       };
     })(this));
   };
@@ -1395,11 +1400,18 @@ module.exports = Router = (function(_super) {
     if (app.mode === 'public') {
       return this.navigate('albums', true);
     }
-    this.displayView(new AlbumView({
-      model: new Album(),
-      editable: true
-    }));
-    return $('#title').focus();
+    return window.app.albums.create({}, {
+      success: (function(_this) {
+        return function(model) {
+          return _this.navigate("albums/" + model.id + "/edit", true);
+        };
+      })(this),
+      error: (function(_this) {
+        return function() {
+          return _this.navigate("albums", true);
+        };
+      })(this)
+    });
   };
 
   Router.prototype.displayView = function(view) {
@@ -1408,15 +1420,6 @@ module.exports = Router = (function(_super) {
       this.mainView.remove();
     }
     this.mainView = view;
-    $(window).unbind('resize');
-    $(window).resize((function(_this) {
-      return function() {
-        var _ref;
-        if (((_ref = _this.mainView) != null ? _ref.resize : void 0) != null) {
-          return _this.mainView.resize();
-        }
-      };
-    })(this));
     el = this.mainView.render().$el;
     el.addClass("mode-" + app.mode);
     return $('body').append(el);
@@ -1446,7 +1449,7 @@ else
 {
 buf.push("<span class=\"glyphicon glyphicon-lock icon-white\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('private')) == null ? '' : jade_interp)) + "");
 }
-buf.push("</a></P><p class=\"download\"><a" + (jade.attr("href", "albums/" + (id) + ".zip", true, false)) + " class=\"flatbtn\"><span class=\"glyphicon glyphicon-download-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p class=\"delete\"><a class=\"flatbtn delete\"><span class=\"glyphicon glyphicon-remove icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p></div><div id=\"album-text\"><div id=\"album-text-background\"><div class=\"right\"><p><span class=\"photo-number\">" + (jade.escape(null == (jade_interp = photosNumber) ? "" : jade_interp)) + "</span><br/><span>" + (jade.escape(null == (jade_interp = t("pictures")) ? "" : jade_interp)) + "</span></p></div><form><input id=\"title\" type=\"text\" placeholder=\"Title...\"" + (jade.attr("value", title, true, false)) + "/><textarea id=\"description\" placeholder=\"Description...\">" + (null == (jade_interp = description) ? "" : jade_interp) + "</textarea></form></div></div></div></div><div id=\"photos\"></div>");;return buf.join("");
+buf.push("</a></P><p class=\"download\"><a" + (jade.attr("href", "albums/" + (id) + ".zip", true, false)) + " class=\"flatbtn\"><span class=\"glyphicon glyphicon-download-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p class=\"delete\"><a class=\"flatbtn delete\"><span class=\"glyphicon glyphicon-remove icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p></div><div id=\"album-text\"><div id=\"album-text-background\"><div class=\"right\"><p><span class=\"photo-number\">" + (jade.escape(null == (jade_interp = photosNumber) ? "" : jade_interp)) + "</span><br/><span>" + (jade.escape(null == (jade_interp = t("pictures")) ? "" : jade_interp)) + "</span></p></div><form class=\"left\"><input id=\"title\" type=\"text\" placeholder=\"Title...\"" + (jade.attr("value", title, true, false)) + "/><textarea id=\"description\" placeholder=\"Description...\">" + (null == (jade_interp = description) ? "" : jade_interp) + "</textarea></form></div></div></div></div><div id=\"photos\"></div>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -1609,7 +1612,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 
-buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = t('There is no photos in this album')) ? "" : jade_interp)) + "</p><div id=\"uploadblock\" class=\"flatbtn\"><div class=\"pa2\"><input id=\"uploader\" type=\"file\" multiple=\"multiple\"/>" + (jade.escape(null == (jade_interp = t('pick from computer')) ? "" : jade_interp)) + "</div></div><div id=\"browseFiles\" class=\"flatbtn\">" + (jade.escape(null == (jade_interp = t('pick from files')) ? "" : jade_interp)) + "</div>");;return buf.join("");
+buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = t('There is no photos in this album')) ? "" : jade_interp)) + "</p><div id=\"uploadblock\" class=\"flatbtn\"><input id=\"uploader\" type=\"file\" multiple=\"multiple\"/><div class=\"pa2\">" + (jade.escape(null == (jade_interp = t('pick from computer')) ? "" : jade_interp)) + "</div></div><div id=\"browseFiles\" class=\"flatbtn\">" + (jade.escape(null == (jade_interp = t('pick from files')) ? "" : jade_interp)) + "</div>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -1805,10 +1808,7 @@ module.exports = AlbumView = (function(_super) {
   };
 
   AlbumView.prototype.destroyModel = function() {
-    if (this.model.isNew()) {
-      return app.router.navigate('albums', true);
-    }
-    if (confirm(t('Are you sure ?'))) {
+    if (confirm(t("are you sure you want to delete this album"))) {
       return this.model.destroy().then(function() {
         return app.router.navigate('albums', true);
       });
