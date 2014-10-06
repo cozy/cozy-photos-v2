@@ -107,8 +107,8 @@ describe 'Write operations', ->
             expect(@body.title).to.equal 'newtitle'
 
         it 'should have keeped its attachements', ->
-            expect(@body._attachments.raw).to.exist
-            expect(@body._attachments.thumb).to.exist
+            expect(@body.binary.raw).to.exist
+            expect(@body.binary.thumb).to.exist
 
 
     describe 'Delete Photo - DELETE /photos/:id', ->
