@@ -3,6 +3,9 @@ fs = require 'fs'
 helpers = require './helpers'
 expect = require('chai').expect
 
+
+store = {}
+
 describe 'Write operations', ->
 
     before helpers.clearDb
@@ -24,13 +27,16 @@ describe 'Write operations', ->
             expect(@body.description).to.equal album.description
             expect(@body.title).to.equal album.title
             expect(@body.id).to.exist
-            @albumid = @body.id
+            store.albumid = @body.id
 
 
     describe 'Create Album with multiline title - POST /albums', ->
 
         album =
             title: "mytitle<div><br></div>"
+
+        it 'should allow requests', (done) ->
+            @client.post 'albums', album, done
 
         it 'should reply with the created album with a sanitized title', ->
             expect(@body.title).to.equal 'mytitle'
@@ -47,14 +53,14 @@ describe 'Write operations', ->
             req = @client.post "photos", null, done
             form = req.form()
             form.append 'title', 'phototitle'
-            form.append 'albumid', @albumid
+            form.append 'albumid', store.albumid
             form.append 'raw', fs.createReadStream(raw)
             form.append 'screen', fs.createReadStream(screen)
             form.append 'thumb', fs.createReadStream(thumb)
 
         it 'should reply with the created photo', ->
             expect(@body.title).to.equal 'phototitle'
-            @photoid = @body.id
+            store.photoid = @body.id
 
 
     describe 'Update Album - PUT /albums/:id', ->
@@ -62,10 +68,10 @@ describe 'Write operations', ->
         update =
             description: "newdescription"
             title: "newtitle"
-            id: @albumid
+            id: store.albumid
 
         it 'should allow requests', (done) ->
-            @client.put "albums/#{@albumid}", update, done
+            @client.put "albums/#{store.albumid}", update, done
 
         it 'should reply with the updated album', ->
             expect(@body.description).to.equal 'newdescription'
@@ -73,7 +79,7 @@ describe 'Write operations', ->
             expect(@body.id).to.exist
 
         it 'when I GET the album', (done) ->
-            @client.get "albums/#{@albumid}", done
+            @client.get "albums/#{store.albumid}", done
 
         it 'then it is changed', ->
             expect(@body.description).to.equal 'newdescription'
@@ -83,13 +89,16 @@ describe 'Write operations', ->
 
         update =
             title: "newtitle<div><br></div>"
-            id: @albumid
+            id: store.albumid
+
+        it 'should allow requests', (done) ->
+            @client.put "albums/#{store.albumid}", update, done
 
         it 'should reply with the updated album with a sanitized title', ->
             expect(@body.title).to.equal 'newtitle'
 
         it 'when I GET the album', (done) ->
-            @client.get "albums/#{@albumid}", done
+            @client.get "albums/#{store.albumid}", done
 
         it 'then it is changed', ->
             expect(@body.title).to.equal 'newtitle'
@@ -101,7 +110,7 @@ describe 'Write operations', ->
             title: 'newtitle'
 
         it 'should allow requests', (done) ->
-            @client.put "photos/#{@photoid}", update, done
+            @client.put "photos/#{store.photoid}", update, done
 
         it 'should reply with the updated photo', ->
             expect(@body.title).to.equal 'newtitle'
@@ -114,13 +123,13 @@ describe 'Write operations', ->
     describe 'Delete Photo - DELETE /photos/:id', ->
 
         it 'should allow requests', (done) ->
-            @client.del "photos/#{@photoid}", done
+            @client.del "photos/#{store.photoid}", done
 
         it 'should reply with nothing', ->
             expect(@body.success).to.be.ok
 
         it 'should not be GETable', (done) ->
-            @client.get "photos/#{@photoid}.jpg", (err) ->
+            @client.get "photos/#{store.photoid}.jpg", (err) ->
                 expect(err).to.be.not.null
                 done()
 
@@ -128,12 +137,12 @@ describe 'Write operations', ->
     describe 'Delete Album - DELETE /albums/:id', ->
 
         it 'should allow requests', (done) ->
-            @client.del "albums/#{@albumid}", done
+            @client.del "albums/#{store.albumid}", done
 
         it 'should reply with a success msg', ->
             expect(@body.success).to.be.ok
 
         it 'should not be GETable', (done) ->
-            @client.get 'albums/#{@albumid}', (err) ->
+            @client.get 'albums/#{store.albumid}', (err) ->
                 expect(err).to.be.not.null
                 done()
