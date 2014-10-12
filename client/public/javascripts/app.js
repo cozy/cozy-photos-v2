@@ -1745,35 +1745,17 @@ module.exports = AlbumView = (function(_super) {
     this.galery.album = this.model;
     this.galery.render();
     if (this.options.editable) {
-      this.makeEditable();
+      return this.makeEditable();
     } else {
       this.title.addClass('disabled');
-      this.description.addClass('disabled');
+      return this.description.addClass('disabled');
     }
-    return this.model.on('change', (function(_this) {
-      return function() {
-        var data;
-        data = _.extend({}, _this.options, _this.getRenderData());
-        _this.$el.html(_this.template(data));
-        _this.$el.find("#photos").append(_this.galery.$el);
-        if (_this.options.editable) {
-          return _this.makeEditable();
-        } else {
-          _this.title.addClass('disabled');
-          return _this.description.addClass('disabled');
-        }
-      };
-    })(this));
   };
 
   AlbumView.prototype.beforePhotoUpload = function(callback) {
-    return this.saveModel().then((function(_this) {
-      return function() {
-        return callback({
-          albumid: _this.model.id
-        });
-      };
-    })(this));
+    return callback({
+      albumid: this.model.id
+    });
   };
 
   AlbumView.prototype.onTitleChanged = function() {
@@ -1848,18 +1830,8 @@ module.exports = AlbumView = (function(_super) {
     }
   };
 
-  AlbumView.prototype.saveModel = function(hash) {
-    var promise;
-    promise = this.model.save(hash);
-    if (this.model.isNew()) {
-      promise = promise.then((function(_this) {
-        return function() {
-          app.albums.add(_this.model);
-          return app.router.navigate("albums/" + _this.model.id + "/edit");
-        };
-      })(this));
-    }
-    return promise;
+  AlbumView.prototype.saveModel = function(data) {
+    return this.model.save(data);
   };
 
   return AlbumView;
@@ -2295,7 +2267,7 @@ module.exports = Galery = (function(_super) {
   Galery.prototype.handleFiles = function(files) {
     return this.options.beforeUpload((function(_this) {
       return function(photoAttributes) {
-        var file, key, photo, view, _i, _len, _ref, _results;
+        var file, key, photo, view, _i, _len, _ref;
         for (_i = 0, _len = files.length; _i < _len; _i++) {
           file = files[_i];
           photoAttributes.title = file.name;
@@ -2305,12 +2277,17 @@ module.exports = Galery = (function(_super) {
           photoprocessor.process(photo);
         }
         _ref = _this.views;
-        _results = [];
         for (key in _ref) {
           view = _ref[key];
-          _results.push(view.collection = _this.collection);
+          view.collection = _this.collection;
         }
-        return _results;
+        return photo.on('uploadComplete', function() {
+          if (_this.album.get('coverPicture') == null) {
+            return _this.album.save({
+              coverPicture: photo.get('id')
+            });
+          }
+        });
       };
     })(this));
   };

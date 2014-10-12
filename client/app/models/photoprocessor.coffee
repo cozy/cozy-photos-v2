@@ -1,7 +1,7 @@
 # read the file from photo.file using a FileReader
 # create photo.img : an Image object
 readFile = (photo, next) ->
-    if photo.file.size > 10*1024*1024
+    if photo.file.size > 10 * 1024 * 1024
         return next t 'is too big (max 10Mo)'
 
     if not photo.file.type.match /image\/.*/
@@ -147,7 +147,7 @@ uploadWorker = (photo, done) ->
         else
             photo.trigger 'uploadComplete'
 
-        done(err)
+        done err
 
 
 class PhotoProcessor

@@ -65,23 +65,8 @@ module.exports = class AlbumView extends BaseView
             @title.addClass 'disabled'
             @description.addClass 'disabled'
 
-
-        # Do not run afterRender again when model changed.
-        @model.on 'change', =>
-            data = _.extend {}, @options, @getRenderData()
-            @$el.html @template(data)
-            @$el.find("#photos").append @galery.$el
-            if @options.editable
-                @makeEditable()
-            else
-                @title.addClass 'disabled'
-                @description.addClass 'disabled'
-
-    # save album before photos are uploaded to it
-    # store albumid in the photo
     beforePhotoUpload: (callback) =>
-        @saveModel().then =>
-            callback albumid: @model.id
+        callback albumid: @model.id
 
     onTitleChanged: =>
         @saveModel title: @title.val().trim()
@@ -110,14 +95,11 @@ module.exports = class AlbumView extends BaseView
             @model.destroy().then ->
                 app.router.navigate 'albums', true
 
-
-
     # Change sharing state of the album.
     changeClearance: (event) =>
         @model.set 'clearance', [] unless @model.get('clearance')?
         @model.set 'type', 'album'
         new ShareModal model: @model
-
 
     # Temporary tool to allow people to rebuild the thumbnails with size
     # set recently. New size is larger, so older thumbs looks blurry.
@@ -139,10 +121,5 @@ module.exports = class AlbumView extends BaseView
         if TAB_KEY_CODE in [event.keyCode, event.which]
             $('.stopediting').focus()
 
-    saveModel: (hash) ->
-        promise = @model.save(hash)
-        if @model.isNew()
-            promise = promise.then =>
-                app.albums.add @model
-                app.router.navigate "albums/#{@model.id}/edit"
-        return promise
+    saveModel: (data) ->
+        @model.save data

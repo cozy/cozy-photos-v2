@@ -207,6 +207,10 @@ module.exports = class Galery extends ViewCollection
             for key, view of @views
                 view.collection = @collection
 
+            photo.on 'uploadComplete', =>
+                unless @album.get('coverPicture')?
+                    @album.save coverPicture: photo.get 'id'
+
     displayBrowser: ->
         new FilesBrowser
             model: @album
