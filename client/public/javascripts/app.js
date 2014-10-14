@@ -2409,15 +2409,18 @@ module.exports = PhotoView = (function(_super) {
   };
 
   PhotoView.prototype.destroyModel = function() {
-    this.$('.delete').spin();
-    return this.model.destroy({
-      success: (function(_this) {
-        return function() {
-          _this.collection.remove(_this.model);
-          return _this.remove();
-        };
-      })(this)
-    });
+    this.$('.delete').html('&nbsp;&nbsp;&nbsp;&nbsp;');
+    this.$('.delete').spin('small');
+    return this.$el.fadeOut((function(_this) {
+      return function() {
+        return _this.model.destroy({
+          success: function() {
+            _this.collection.remove(_this.model);
+            return _this.remove();
+          }
+        });
+      };
+    })(this));
   };
 
   return PhotoView;

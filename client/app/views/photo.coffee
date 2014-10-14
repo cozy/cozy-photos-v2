@@ -52,16 +52,9 @@ module.exports = class PhotoView extends BaseView
         # detach-reatach so photobox can pick up the object
         preload = new Image()
         preload.onerror = preload.onload = =>
-            # col = @model.collection
-            # col.remove @model
-            # col.add @model
             @render()
 
         preload.src = "photos/thumbs/#{@model.id}.jpg"
-
-        # @setProgress 0
-        # @link.attr 'href', "photos/#{@model.id}.jpg"
-        # @image.attr 'src', "photos/thumbs/#{@model.id}.jpg"
 
     # when an error occured, the photo is marked with error image.
     onError: (err) ->
@@ -80,8 +73,10 @@ module.exports = class PhotoView extends BaseView
             return false
 
     destroyModel: ->
-        @$('.delete').spin()
-        @model.destroy
-            success: =>
-                @collection.remove @model
-                @remove()
+        @$('.delete').html '&nbsp;&nbsp;&nbsp;&nbsp;'
+        @$('.delete').spin 'small'
+        @$el.fadeOut =>
+            @model.destroy
+                success: =>
+                    @collection.remove @model
+                    @remove()
