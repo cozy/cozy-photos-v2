@@ -219,7 +219,7 @@ module.exports.raw = (req, res, next) ->
     else if req.photo.binary?.raw then 'raw'
     else if req.photo.binary?.file then 'file'
     else 'file'
-    doPipe req, 'file', true, res, next
+    doPipe req, which, true, res, next
 
 module.exports.update = (req, res) ->
     req.photo.updateAttributes req.body, (err) ->
