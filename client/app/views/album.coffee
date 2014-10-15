@@ -40,6 +40,12 @@ module.exports = class AlbumView extends BaseView
         'mouseup #description': @onFieldClicked
         'keydown #description': @onDescriptionKeyUp
 
+
+    initialize: (options) ->
+        super options
+
+        @listenTo @model.photos, 'add remove', @onPhotoCollectionChange
+
     getRenderData: ->
         res = _.extend
             photosNumber: @model.photos.length
@@ -123,3 +129,7 @@ module.exports = class AlbumView extends BaseView
 
     saveModel: (data) ->
         @model.save data
+
+    onPhotoCollectionChange: ->
+        # updates the photo counter
+        @$('.photo-number').html @model.photos.length
