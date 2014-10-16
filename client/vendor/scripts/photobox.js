@@ -557,6 +557,9 @@
 
 	function updateIndexes(idx){
 		lastActive = activeImage;
+        if (idx < 0) {
+          idx = -1;
+        }
         activeImage = idx;
         activeURL = images[idx][0];
         prevImage = (activeImage || (options.loop ? images.length : 0)) - 1;
