@@ -4,6 +4,7 @@ americano = require 'americano-cozy'
 module.exports = americano.getModel 'Contact',
     id : String
     fn : String
+    n : String
     datapoints : [Object]
     note : String
     _attachments : Object
