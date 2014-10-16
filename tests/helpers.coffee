@@ -16,7 +16,7 @@ module.exports =
       @app.server.close()
 
   clearDb: (done) ->
-      @timeout 5000
+      @timeout 15000
       root = require('path').join __dirname, '..'
       require('americano-cozy').configure root, null, (err) ->
         return done err if err

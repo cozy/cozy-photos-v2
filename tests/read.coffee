@@ -3,6 +3,8 @@ fs = require 'fs'
 helpers = require './helpers'
 expect = require('chai').expect
 
+store = {}
+
 describe 'Read operations', ->
 
     before helpers.clearDb
@@ -25,7 +27,7 @@ describe 'Read operations', ->
             expect(@body).to.have.length 1
             expect(@body[0].id).to.exist
             expect(@body[0].title).to.equal fixtures.baseAlbum.title
-            @id = @body[0].id
+            store.id = @body[0].id
 
         it 'should not include photos', ->
             expect(@body[0].photos).to.not.exist
@@ -33,7 +35,7 @@ describe 'Read operations', ->
     describe 'Read - GET /albums/:id', ->
 
         it 'should allow requests', (done) ->
-            @client.get "albums/#{@id}", done
+            @client.get "albums/#{store.id}", done
 
         it 'should reply with one album', ->
             expect(@body.description).to.equal fixtures.baseAlbum.description
@@ -43,7 +45,7 @@ describe 'Read operations', ->
         it 'should include photos', ->
             expect(@body.photos).to.be.an 'array'
             expect(@body.photos).to.have.length 2
-            @photoid = @body.photos[0].id
+            store.photoid = @body.photos[0].id
 
     describe 'Show photos - GET /photos/:id.jpg', ->
 
@@ -51,7 +53,7 @@ describe 'Read operations', ->
         after: (done) -> fs.unlink downloadPath, done
 
         it "should allow requests", (done) ->
-            @client.saveFile "photos/#{@photoid}.jpg", downloadPath, done
+            @client.saveFile "photos/#{store.photoid}.jpg", downloadPath, done
 
         it "should not change the file", ->
             fileStats = fs.statSync(fixtures.basePhoto1.screenpath)
@@ -64,7 +66,7 @@ describe 'Read operations', ->
         after: (done) -> fs.unlink downloadPath, done
 
         it "should allow requests", (done) ->
-            url = "photos/thumbs/#{@photoid}.jpg"
+            url = "photos/thumbs/#{store.photoid}.jpg"
             @client.saveFile url, downloadPath, done
 
         it "should not change the file", ->

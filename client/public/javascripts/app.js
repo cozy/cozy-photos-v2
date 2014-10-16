@@ -1725,6 +1725,11 @@ module.exports = AlbumView = (function(_super) {
     };
   };
 
+  AlbumView.prototype.initialize = function(options) {
+    AlbumView.__super__.initialize.call(this, options);
+    return this.listenTo(this.model.photos, 'add remove', this.onPhotoCollectionChange);
+  };
+
   AlbumView.prototype.getRenderData = function() {
     var res;
     res = _.extend({
@@ -1832,6 +1837,10 @@ module.exports = AlbumView = (function(_super) {
 
   AlbumView.prototype.saveModel = function(data) {
     return this.model.save(data);
+  };
+
+  AlbumView.prototype.onPhotoCollectionChange = function() {
+    return this.$('.photo-number').html(this.model.photos.length);
   };
 
   return AlbumView;

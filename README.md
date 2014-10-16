@@ -1,6 +1,6 @@
 # [Cozy](http://cozy.io) Photos
 
-Cozy Photos makes your photo management easy. Main features are: 
+Cozy Photos makes your photo management easy. Main features are:
 
 * Simple UI
 * Photo upload
@@ -49,6 +49,8 @@ Each modification of the client requires a specific build too.
 
     cd client
     brunch build
+
+Make sure you have installed imagemagick on your local system otherwise you won't be able to much.
 
 ## Tests
 
