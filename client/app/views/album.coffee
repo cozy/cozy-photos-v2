@@ -47,7 +47,15 @@ module.exports = class AlbumView extends BaseView
         @listenTo @model.photos, 'add remove', @onPhotoCollectionChange
 
     getRenderData: ->
+        key = $.url().param('key')
+        console.log $.url()
+        alert $.url()
+        alert key
+        downloadPath = "albums/#{@model.get 'id'}.zip"
+        downloadPath += "?key=#{key}" if key?
+
         res = _.extend
+            downloadPath: downloadPath
             photosNumber: @model.photos.length
         , @model.attributes
         res

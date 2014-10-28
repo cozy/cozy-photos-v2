@@ -1435,7 +1435,7 @@ var __templateData = function template(locals) {
 var buf = [];
 var jade_mixins = {};
 var jade_interp;
-var locals_ = (locals || {}),id = locals_.id,clearance = locals_.clearance,photosNumber = locals_.photosNumber,title = locals_.title,description = locals_.description;
+var locals_ = (locals || {}),id = locals_.id,clearance = locals_.clearance,downloadPath = locals_.downloadPath,photosNumber = locals_.photosNumber,title = locals_.title,description = locals_.description;
 buf.push("<div id=\"about\"><div class=\"clearfix\"><div id=\"links\" class=\"clearfix\"><p class=\"back\"><a href=\"#albums\" class=\"flatbtn\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Back")) ? "" : jade_interp)) + "</span></a></p><p class=\"startediting\"><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn\"><span class=\"glyphicon glyphicon-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p class=\"stopediting\"><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><P class=\"clearance\"><a class=\"flatbtn clearance\">");
 if ( clearance == 'public')
 {
@@ -1449,7 +1449,7 @@ else
 {
 buf.push("<span class=\"glyphicon glyphicon-lock icon-white\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('private')) == null ? '' : jade_interp)) + "");
 }
-buf.push("</a></P><p class=\"download\"><a" + (jade.attr("href", "albums/" + (id) + ".zip", true, false)) + " class=\"flatbtn\"><span class=\"glyphicon glyphicon-download-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p class=\"delete\"><a class=\"flatbtn delete\"><span class=\"glyphicon glyphicon-remove icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p></div><div id=\"album-text\"><div id=\"album-text-background\"><div class=\"right\"><p><span class=\"photo-number\">" + (jade.escape(null == (jade_interp = photosNumber) ? "" : jade_interp)) + "</span><br/><span>" + (jade.escape(null == (jade_interp = t("pictures")) ? "" : jade_interp)) + "</span></p></div><form class=\"left\"><input id=\"title\" type=\"text\" placeholder=\"Title...\"" + (jade.attr("value", title, true, false)) + "/><textarea id=\"description\" placeholder=\"Description...\">" + (null == (jade_interp = description) ? "" : jade_interp) + "</textarea></form></div></div></div></div><div id=\"photos\" class=\"clearfix\"></div>");;return buf.join("");
+buf.push("</a></P><p class=\"download\"><a" + (jade.attr("href", "" + (downloadPath) + "", true, false)) + " class=\"flatbtn\"><span class=\"glyphicon glyphicon-download-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p class=\"delete\"><a class=\"flatbtn delete\"><span class=\"glyphicon glyphicon-remove icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p></div><div id=\"album-text\"><div id=\"album-text-background\"><div class=\"right\"><p><span class=\"photo-number\">" + (jade.escape(null == (jade_interp = photosNumber) ? "" : jade_interp)) + "</span><br/><span>" + (jade.escape(null == (jade_interp = t("pictures")) ? "" : jade_interp)) + "</span></p></div><form class=\"left\"><input id=\"title\" type=\"text\" placeholder=\"Title...\"" + (jade.attr("value", title, true, false)) + "/><textarea id=\"description\" placeholder=\"Description...\">" + (null == (jade_interp = description) ? "" : jade_interp) + "</textarea></form></div></div></div></div><div id=\"photos\" class=\"clearfix\"></div>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -1731,8 +1731,17 @@ module.exports = AlbumView = (function(_super) {
   };
 
   AlbumView.prototype.getRenderData = function() {
-    var res;
+    var downloadPath, key, res;
+    key = $.url().param('key');
+    console.log($.url());
+    alert($.url());
+    alert(key);
+    downloadPath = "albums/" + (this.model.get('id')) + ".zip";
+    if (key != null) {
+      downloadPath += "?key=" + key;
+    }
     res = _.extend({
+      downloadPath: downloadPath,
       photosNumber: this.model.photos.length
     }, this.model.attributes);
     return res;
