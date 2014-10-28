@@ -48,9 +48,6 @@ module.exports = class AlbumView extends BaseView
 
     getRenderData: ->
         key = $.url().param('key')
-        console.log $.url()
-        alert $.url()
-        alert key
         downloadPath = "albums/#{@model.get 'id'}.zip"
         downloadPath += "?key=#{key}" if key?
 
