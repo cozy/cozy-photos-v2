@@ -446,7 +446,8 @@ button.delete
         height: 60px
 
 .modal-body
-    max-height: 73%
+    max-height: calc(100vh - 210px);
+    overflow-y: auto;
 
     img.selected
         border: 5px solid blue
