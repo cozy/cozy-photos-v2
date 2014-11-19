@@ -74,6 +74,7 @@ module.exports.createPhoto = (req, res, next) ->
         description  : ""
         orientation  : 1
         albumid      : "#{req.body.albumid}"
+        binary       : file.binary
 
     Photo.create photo, (err, photo) ->
         return next err if err
@@ -85,12 +86,10 @@ module.exports.createPhoto = (req, res, next) ->
         stream.pipe fs.createWriteStream rawFile
         stream.on 'error', next
         stream.on 'end', =>
-            photo.attachBinary rawFile, name: 'raw', (err) ->
+            resize rawFile, photo, 'thumb', (err) ->
                 return next err if err
-                resize rawFile, photo, 'thumb', (err) ->
-                    return next err if err
-                    resize rawFile, photo, 'screen', (err) ->
-                        fs.unlink rawFile, ->
-                            res.send 201, photo
+                resize rawFile, photo, 'screen', (err) ->
+                    fs.unlink rawFile, ->
+                        res.send 201, photo
 
 

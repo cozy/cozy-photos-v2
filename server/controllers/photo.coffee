@@ -227,7 +227,7 @@ module.exports.update = (req, res) ->
         res.send req.photo
 
 module.exports.delete = (req, res) ->
-    req.photo.destroyWithBinary (err) ->
+    req.photo.destroy (err) ->
         return res.error 500, "Deletion failed." if err
         res.success "Deletion succeded."
 

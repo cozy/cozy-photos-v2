@@ -389,7 +389,6 @@ button.delete {
   filter: alpha(opacity=0);
   display: block;
   width: 90%;
-  line-height: 100px;
   position: absolute;
   border: 0;
 }
