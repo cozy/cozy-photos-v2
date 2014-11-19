@@ -47,6 +47,21 @@ h1, h4
     i
         vertical-align baseline
 
+
+.files
+    img
+        border: 5px solid transparent
+        height: 120px
+        margin-bottom: 2.5px
+        margin-right: 2.5px
+        opacity: 0.8
+
+    img.selected
+        border: 5px solid blue
+        height: 120px
+        border-radius: 8px
+        opacity: 1
+
 .flatbtn:hover
     background-color orange
     color white
@@ -284,6 +299,8 @@ button.delete
     text-align: center
     text-transform: lowercase
     float: left
+    border: none 1px
+    margin-bottom: 1px
 
     span
         padding: 10px
@@ -292,6 +309,9 @@ button.delete
     transform scale(1)
     -webkit-transform scale(1)
     cursor: pointer
+
+.editing #browseFiles
+    display block
 
 .editing #uploadblock
     display block

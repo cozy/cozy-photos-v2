@@ -177,6 +177,24 @@ h4 {
 .flatbtn i {
   vertical-align: baseline;
 }
+.files img {
+  border: 5px solid transparent;
+  height: 120px;
+  margin-bottom: 2.5px;
+  margin-right: 2.5px;
+  opacity: 0.8;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+  filter: alpha(opacity=80);
+}
+.files img.selected {
+  border: 5px solid #34a6ff;
+  height: 120px;
+  -webkit-border-radius: 8px;
+  border-radius: 8px;
+  opacity: 1;
+  -ms-filter: none;
+  filter: none;
+}
 .flatbtn:hover {
   background-color: #fe8800;
   color: #fff;
@@ -463,6 +481,8 @@ button.delete {
   text-align: center;
   text-transform: lowercase;
   float: left;
+  border: none 1px;
+  margin-bottom: 1px;
 }
 #uploadblock span,
 #browseFiles span {
@@ -476,6 +496,9 @@ button.delete {
   transform: scale(1);
   -webkit-transform: scale(1);
   cursor: pointer;
+}
+.editing #browseFiles {
+  display: block;
 }
 .editing #uploadblock {
   display: block;
