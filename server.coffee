@@ -1,5 +1,6 @@
 americano = require 'americano'
 fs = require 'fs'
+init = require './init'
 
 module.exports = start = (options, cb) ->
     options.name = 'cozy-photos'
@@ -7,6 +8,7 @@ module.exports = start = (options, cb) ->
     options.host ?= '127.0.0.1'
     americano.start options, (app, server) ->
         app.server = server
+        init.convert()
 
         # notification events should be proxied to client
         # RealtimeAdapter = require 'cozy-realtime-adapter'
