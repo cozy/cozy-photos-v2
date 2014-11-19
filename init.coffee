@@ -21,7 +21,7 @@ convertImage = (cb) ->
 
 createThumb = (cb) ->
     File.all (err, files) ->
-        async.each files, thumb, cb
+        async.eachSeries files, thumb, cb
 
 # Create all requests and upload directory
 module.exports.convert = (done = ->) ->
