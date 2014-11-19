@@ -22,7 +22,9 @@ module.exports.list = (req, res, next) ->
         else
             for photo in photos
                 date = new Date(photo.lastModification)
-                date = "#{date.getFullYear()}-#{date.getMonth()+1}"
+                mounth = date.getMonth() + 1
+                mounth = if mounth > 9 then "#{mounth}" else "0#{mounth}"
+                date = "#{date.getFullYear()}-#{mounth}"
                 if dates[date]?
                     dates[date].push photo
                 else
