@@ -1,4 +1,6 @@
 Photo = require './server/models/photo'
+File = require './server/models/file'
+thumb = require('./server/controllers/file').createThumb
 async = require 'async'
 
 convertImage = (cb) ->
@@ -17,7 +19,12 @@ convertImage = (cb) ->
     Photo.all (err, docs) ->
         async.each(docs, convert, cb)
 
+createThumb = (cb) ->
+    File.all (err, files) ->
+        async.each files, thumb, cb
+
 # Create all requests and upload directory
 module.exports.convert = (done = ->) ->
     convertImage (err) ->
-        done()
+        createThumb () ->
+            done()

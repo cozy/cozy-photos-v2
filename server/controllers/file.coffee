@@ -39,7 +39,6 @@ module.exports.thumb = (req, res, next) ->
 
 
 resize = (raw, photo, name, callback) ->
-
     options = if name is 'thumb'
         mode: 'crop'
         width: 300
@@ -86,10 +85,31 @@ module.exports.createPhoto = (req, res, next) ->
         stream.pipe fs.createWriteStream rawFile
         stream.on 'error', next
         stream.on 'end', =>
-            resize rawFile, photo, 'thumb', (err) ->
-                return next err if err
+            if not photo.binary.thumb?
+                resize rawFile, photo, 'thumb', (err) ->
+                    return next err if err
+                    resize rawFile, photo, 'screen', (err) ->
+                        fs.unlink rawFile, ->
+                            res.send 201, photo
+            else
                 resize rawFile, photo, 'screen', (err) ->
                     fs.unlink rawFile, ->
                         res.send 201, photo
 
 
+module.exports.createThumb = (file, callback) ->
+    return callback new Error('no binary') unless file.binary?
+    if file.binary?.thumb?
+        callback()
+    else
+        rawFile = "/tmp/#{file.id}"
+        fs.openSync rawFile, 'w'
+        stream = file.getBinary 'file', (err) ->
+            return callback err if err
+        stream.pipe fs.createWriteStream rawFile
+        stream.on 'error', callback
+        stream.on 'end', =>
+            resize rawFile, file, 'thumb', (err) ->
+                return callback err if err
+                fs.unlink rawFile, ->
+                    callback()
