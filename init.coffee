@@ -9,7 +9,7 @@ convertImage = (cb) ->
                 doc.convertBinary (err, res, body) ->
                     console.log err if err?
                     callback err
-            catch
+            catch error
                 console.log "Cannot convert #{doc.title}"
                 callback()
         else
