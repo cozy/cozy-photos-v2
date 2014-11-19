@@ -4,10 +4,14 @@ async = require 'async'
 convertImage = (cb) ->
     convert = (doc, callback) ->
         if doc._attachments?
-            console.log "Convert #{doc.title} ..."
-            doc.convertBinary (err, res, body) ->
-                console.log err if err?
-                callback err
+            try
+                console.log "Convert #{doc.title} ..."
+                doc.convertBinary (err, res, body) ->
+                    console.log err if err?
+                    callback err
+            catch
+                console.log "Cannot convert #{doc.title}"
+                callback()
         else
             callback()
     Photo.all (err, docs) ->
