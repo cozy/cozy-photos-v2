@@ -13,7 +13,7 @@ resize = (raw, file, name, callback) ->
         height: 800
 
     options.srcPath = raw
-    options.dstPath = "/tmp/#{photo.id}2"
+    options.dstPath = "/tmp/#{file.id}2"
 
     # create files
     fs.openSync options.dstPath, 'w'
@@ -21,15 +21,15 @@ resize = (raw, file, name, callback) ->
     # create a resized file and push it to db
     im[options.mode] options, (err, stdout, stderr) =>
         return callback err if err
-        photo.attachBinary options.dstPath, {name}, (err) ->
+        file.attachBinary options.dstPath, {name}, (err) ->
             fs.unlink options.dstPath, ->
                 callback err
 
 
 module.exports.create = (file, callback) ->
-    console.log "createThumb #{file.id}"
     return callback new Error('no binary') unless file.binary?
     if file.binary?.thumb?
+        console.log "createThumb #{file.id} : already done"
         callback()
     else
         rawFile = "/tmp/#{file.id}"
@@ -42,4 +42,5 @@ module.exports.create = (file, callback) ->
             resize rawFile, file, 'thumb', (err) ->
                 return callback err if err
                 fs.unlink rawFile, ->
+                    console.log "createThumb #{file.id} : done"
                     callback()
