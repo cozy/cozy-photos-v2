@@ -20,7 +20,7 @@ convertImage = (cb) ->
         async.each(docs, convert, cb)
 
 createThumb = (cb) ->
-    File.all (err, files) ->
+    File.imageByDate (err, files) ->
         async.eachSeries files, thumb, cb
 
 # Create all requests and upload directory
