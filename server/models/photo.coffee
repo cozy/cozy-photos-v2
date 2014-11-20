@@ -37,3 +37,14 @@ Photo.albumsThumbs = (callback) ->
             out[result.key] = result.value
 
         callback null, out
+
+Photo::destroyWithBinary = (callback) ->
+    if @binary? and typeof(@binary) is 'object'
+        async.eachSeries Object.keys(@binary), (bin, cb) =>
+            @removeBinary bin, (err) =>
+                console.log "Cannot destroy binary linked to photo #{@id}" if err
+                cb()
+        , (err) =>
+            @destroy callback
+    else
+        @destroy callback

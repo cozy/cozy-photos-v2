@@ -38,8 +38,20 @@ module.exports = class FilesBrowser extends Modal
         console.log "AND THERE", confirmed
         return unless confirmed
         @options.beforeUpload (attrs) =>
+            tmp = []
             for img in @$('.selected')
                 fileid = img.id
+
+                # Create a temporary photo
+                attrs.title = img.name
+                phototmp = new Photo attrs
+                phototmp.file = img
+                tmp.push phototmp
+                @collection.add phototmp
+
                 Photo.makeFromFile fileid, attrs, (err, photo) =>
                     return console.log err if err
+                    # Replace temporary photo
+                    phototmp = tmp.pop()
+                    @collection.remove phototmp, parse: true
                     @collection.add photo, parse: true

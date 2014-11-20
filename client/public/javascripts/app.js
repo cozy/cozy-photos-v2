@@ -2036,16 +2036,26 @@ module.exports = FilesBrowser = (function(_super) {
     }
     return this.options.beforeUpload((function(_this) {
       return function(attrs) {
-        var fileid, img, _i, _len, _ref, _results;
+        var fileid, img, phototmp, tmp, _i, _len, _ref, _results;
+        tmp = [];
         _ref = _this.$('.selected');
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           img = _ref[_i];
           fileid = img.id;
+          attrs.title = img.name;
+          phototmp = new Photo(attrs);
+          phototmp.file = img;
+          tmp.push(phototmp);
+          _this.collection.add(phototmp);
           _results.push(Photo.makeFromFile(fileid, attrs, function(err, photo) {
             if (err) {
               return console.log(err);
             }
+            phototmp = tmp.pop();
+            _this.collection.remove(phototmp, {
+              parse: true
+            });
             return _this.collection.add(photo, {
               parse: true
             });
