@@ -2,18 +2,13 @@ fs = require 'fs'
 im = require 'imagemagick'
 
 resize = (raw, file, name, callback) ->
-    options = if name is 'thumb'
+    options =
         mode: 'crop'
         width: 300
         height: 300
 
-    else #screen
-        mode: 'resize'
-        width: 1200
-        height: 800
-
     options.srcPath = raw
-    options.dstPath = "/tmp/#{file.id}2"
+    options.dstPath = "/tmp/2-#{file.name}"
 
     # create files
     fs.openSync options.dstPath, 'w'
@@ -32,15 +27,14 @@ module.exports.create = (file, callback) ->
         console.log "createThumb #{file.id} : already done"
         callback()
     else
-        rawFile = "/tmp/#{file.id}"
+        rawFile = "/tmp/#{file.name}"
         fs.openSync rawFile, 'w'
         stream = file.getBinary 'file', (err) ->
             return callback err if err
         stream.pipe fs.createWriteStream rawFile
         stream.on 'error', callback
         stream.on 'end', =>
-            resize rawFile, file, 'thumb', (err) ->
-                return callback err if err
+            resize rawFile, file, 'thumb', (err) =>
                 fs.unlink rawFile, ->
                     console.log "createThumb #{file.id} : done"
-                    callback()
+                    callback(err)
