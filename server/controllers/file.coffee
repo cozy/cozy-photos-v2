@@ -96,21 +96,3 @@ module.exports.createPhoto = (req, res, next) ->
                     fs.unlink rawFile, ->
                         res.send 201, photo
 
-
-module.exports.createThumb = (file, callback) ->
-    console.log "createThumb #{file.id}"
-    return callback new Error('no binary') unless file.binary?
-    if file.binary?.thumb?
-        callback()
-    else
-        rawFile = "/tmp/#{file.id}"
-        fs.openSync rawFile, 'w'
-        stream = file.getBinary 'file', (err) ->
-            return callback err if err
-        stream.pipe fs.createWriteStream rawFile
-        stream.on 'error', callback
-        stream.on 'end', =>
-            resize rawFile, file, 'thumb', (err) ->
-                return callback err if err
-                fs.unlink rawFile, ->
-                    callback()

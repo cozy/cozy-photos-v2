@@ -1,6 +1,9 @@
 americano = require 'americano'
 fs = require 'fs'
 init = require './init'
+thumb = require('./server/helpers/thumb').create
+File = require './server/models/file'
+RealtimeAdapter = require('cozy-realtime-adapter')
 
 module.exports = start = (options, cb) ->
     options.name = 'cozy-photos'
@@ -22,6 +25,15 @@ module.exports = start = (options, cb) ->
         catch err then if err.code isnt 'EEXIST'
             console.log "Something went wrong while creating uploads folder"
             console.log err
+
+        realtime = RealtimeAdapter(app, ['notification.*']);
+
+        realtime.on 'file.*', (event, msg) ->
+            if not (event is "file.delete")
+                File.find msg, (err, file) ->
+                    if file.binary?.file? and not file.binary.thumb
+                        thumb file, (err) ->
+                            console.log err if err?
 
         cb?(null, app, server)
 
