@@ -1,6 +1,6 @@
 Photo = require './server/models/photo'
 File = require './server/models/file'
-thumb = require('./server/controllers/file').createThumb
+thumb = require('./server/helpers/thumb').create
 async = require 'async'
 
 convertImage = (cb) ->

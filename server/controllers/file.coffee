@@ -98,6 +98,7 @@ module.exports.createPhoto = (req, res, next) ->
 
 
 module.exports.createThumb = (file, callback) ->
+    console.log "createThumb #{file.id}"
     return callback new Error('no binary') unless file.binary?
     if file.binary?.thumb?
         callback()
