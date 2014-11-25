@@ -1483,16 +1483,25 @@ button.delete {
   }
 }
 .photo a,
-.photo img,
-#uploadblock {
+.photo img {
   width: 100%;
 }
-#uploadblock {
+#uploadblock,
+#browseFiles {
+  width: 50%;
+  border: 1px solid #fff;
   height: 65px;
   cursor: pointer;
 }
-#uploadblock input#uploader,
+#uploadblock input#uploader {
+  width: 48%;
+  height: 65px;
+  cursor: pointer;
+}
 #uploadblock div {
+  cursor: pointer;
+}
+#browseFiles div {
   cursor: pointer;
 }
 .photo {
