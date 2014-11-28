@@ -11,7 +11,7 @@
   "description": "A cozy application to store, browse and share your photos.",
   "main": "server.coffee",
   "dependencies": {
-    "americano-cozy": "0.2.7",
+    "americano-cozy": "0.2.11",
     "americano": "0.3.10",
     "multiparty": "3.2.9",
     "async": "0.9.0",
