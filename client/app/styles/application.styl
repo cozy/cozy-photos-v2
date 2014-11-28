@@ -47,6 +47,21 @@ h1, h4
     i
         vertical-align baseline
 
+
+.files
+    img
+        border: 5px solid transparent
+        height: 120px
+        margin-bottom: 2.5px
+        margin-right: 2.5px
+        opacity: 0.8
+
+    img.selected
+        border: 5px solid blue
+        height: 120px
+        border-radius: 8px
+        opacity: 1
+
 .flatbtn:hover
     background-color orange
     color white
@@ -209,7 +224,6 @@ button.delete
         opacity 0.0001
         display block
         width: 90%
-        line-height 100px
         position absolute
         border: 0
 
@@ -284,6 +298,8 @@ button.delete
     text-align: center
     text-transform: lowercase
     float: left
+    border: none 1px
+    margin-bottom: 1px
 
     span
         padding: 10px
@@ -292,6 +308,9 @@ button.delete
     transform scale(1)
     -webkit-transform scale(1)
     cursor: pointer
+
+.editing #browseFiles
+    display block
 
 .editing #uploadblock
     display block
@@ -427,7 +446,8 @@ button.delete
         height: 60px
 
 .modal-body
-    max-height: 73%
+    max-height: calc(100vh - 210px);
+    overflow-y: auto;
 
     img.selected
         border: 5px solid blue
@@ -574,15 +594,22 @@ for t in exifTransforms
 
 .photo a
 .photo img
-#uploadblock
-    width: 100%
+    width : 100%
 
-#uploadblock
+#uploadblock, #browseFiles
+    width: 50%
+    border: 1px solid white
     height: 65px
     cursor: pointer
 
 #uploadblock input#uploader
+    width: 48%
+    height: 65px
+    cursor: pointer
 #uploadblock div
+    cursor: pointer
+
+#browseFiles div
     cursor: pointer
 
 .photo

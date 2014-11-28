@@ -1,11 +1,12 @@
-if dates.length === 0
-    p= t("Recherche des photos ...")
-else if dates === "No photos found"
-    p= t("Pas de photos trouvées")
-else
-    for date in dates
-        h4 #{t(date.split('-')[1])} #{date.split('-')[0]}
-        br
-        for photo in photos[date]
-            img(src="files/thumbs/#{photo.id}.jpg", id="#{photo.id}")
-        br
+.files
+    if dates.length === 0
+        p= t("Recherche des photos ...")
+    else if dates === "No photos found"
+        p= t("Pas de photos trouvées")
+    else
+        for date in dates
+            h4 #{t(date.split('-')[1])} #{date.split('-')[0]}
+            br
+            for photo in photos[date]
+                img(src="files/thumbs/#{photo.id}.jpg", id="#{photo.id}")
+            br

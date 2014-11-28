@@ -55,6 +55,18 @@ module.exports =
     """
     "rebuild thumbnails": "Rebuild thumbnails"
 
+    '01': 'January'
+    '02': 'February'
+    '03': 'March'
+    '04': 'April'
+    '05': 'May'
+    '06': 'June'
+    '07': 'July'
+    '08': 'August'
+    '09': 'September'
+    '10': 'October'
+    '11': 'November'
+    '12': 'Décember'
     # clearance modal
     "cancel" : "Cancel"
     "copy paste link" : "To give access to your contact send him/her the link below:"

@@ -9,7 +9,7 @@ byTitleMap = (doc) -> emit doc.title, doc
 byAlbumMap = (photo) -> emit [photo.albumid, photo.title], photo
 
 imageByDate = (doc) ->
-    if doc.class is "image"
+    if doc.class is "image" and doc.binary?.file?
         emit doc.lastModification, doc
 
 # MapReduce to fetch thumbs for every album

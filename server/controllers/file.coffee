@@ -22,7 +22,9 @@ module.exports.list = (req, res, next) ->
         else
             for photo in photos
                 date = new Date(photo.lastModification)
-                date = "#{date.getFullYear()}-#{date.getMonth()+1}"
+                mounth = date.getMonth() + 1
+                mounth = if mounth > 9 then "#{mounth}" else "0#{mounth}"
+                date = "#{date.getFullYear()}-#{mounth}"
                 if dates[date]?
                     dates[date].push photo
                 else
@@ -37,7 +39,6 @@ module.exports.thumb = (req, res, next) ->
 
 
 resize = (raw, photo, name, callback) ->
-
     options = if name is 'thumb'
         mode: 'crop'
         width: 300
@@ -72,6 +73,7 @@ module.exports.createPhoto = (req, res, next) ->
         description  : ""
         orientation  : 1
         albumid      : "#{req.body.albumid}"
+        binary       : file.binary
 
     Photo.create photo, (err, photo) ->
         return next err if err
@@ -83,12 +85,14 @@ module.exports.createPhoto = (req, res, next) ->
         stream.pipe fs.createWriteStream rawFile
         stream.on 'error', next
         stream.on 'end', =>
-            photo.attachBinary rawFile, name: 'raw', (err) ->
-                return next err if err
+            if not photo.binary.thumb?
                 resize rawFile, photo, 'thumb', (err) ->
                     return next err if err
                     resize rawFile, photo, 'screen', (err) ->
                         fs.unlink rawFile, ->
                             res.send 201, photo
-
+            else
+                resize rawFile, photo, 'screen', (err) ->
+                    fs.unlink rawFile, ->
+                        res.send 201, photo
 
