@@ -726,6 +726,18 @@ module.exports = {
   "hidden-description": "It will not appears on your homepage.\nBut you can share it with the following url :",
   "It cannot be accessed from the public side": "It cannot be accessed from the public side\"",
   "rebuild thumbnails": "Rebuild thumbnails",
+  '01': 'January',
+  '02': 'February',
+  '03': 'March',
+  '04': 'April',
+  '05': 'May',
+  '06': 'June',
+  '07': 'July',
+  '08': 'August',
+  '09': 'September',
+  '10': 'October',
+  '11': 'November',
+  '12': 'Décember',
   "cancel": "Cancel",
   "copy paste link": "To give access to your contact send him/her the link below:",
   "details": "Details",
@@ -801,6 +813,18 @@ module.exports = {
   "hidden-description": "Il n'apparaîtra pas sur votre page d'accueil,\nMais vous pouvez partager cet url :",
   "It cannot be accessed from the public side": "Il ne peut pas être vu depuis le côté public",
   "rebuild thumbnails": "Regénérer les vignettes",
+  '01': 'Janvier',
+  '02': 'Février',
+  '03': 'Mars',
+  '04': 'Avril',
+  '05': 'Mai',
+  '06': 'Juin',
+  '07': 'Juillet',
+  '08': 'Août',
+  '09': 'Septembre',
+  '10': 'Octobre',
+  '11': 'Novembre',
+  '12': 'Décembre',
   "also have access": "Ces personnes ont égalment accès, car elles ont accès à un dossier parent",
   "cancel": "Annuler",
   "copy paste link": "Pour donner accès à votre contact envoyez-lui ce lien : ",
@@ -1515,6 +1539,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 var locals_ = (locals || {}),dates = locals_.dates,photos = locals_.photos;
+buf.push("<div class=\"files\">");
 if ( dates.length === 0)
 {
 buf.push("<p>" + (jade.escape(null == (jade_interp = t("Recherche des photos ...")) ? "" : jade_interp)) + "</p>");
@@ -1593,7 +1618,8 @@ buf.push("<br/>");
   }
 }).call(this);
 
-};return buf.join("");
+}
+buf.push("</div>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -1612,7 +1638,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 
-buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = t('There is no photos in this album')) ? "" : jade_interp)) + "</p><div id=\"uploadblock\" class=\"flatbtn\"><input id=\"uploader\" type=\"file\" multiple=\"multiple\"/><div class=\"pa2\">" + (jade.escape(null == (jade_interp = t('pick from computer')) ? "" : jade_interp)) + "</div></div><div id=\"browseFiles\" class=\"flatbtn\">" + (jade.escape(null == (jade_interp = t('pick from files')) ? "" : jade_interp)) + "</div>");;return buf.join("");
+buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = t('There is no photos in this album')) ? "" : jade_interp)) + "</p><div id=\"uploadblock\" class=\"flatbtn\"><input id=\"uploader\" type=\"file\" multiple=\"multiple\"/><div class=\"pa2\">" + (jade.escape(null == (jade_interp = t('pick from computer')) ? "" : jade_interp)) + "</div></div><div id=\"browseFiles\" class=\"flatbtn\"><div class=\"pa2\">" + (jade.escape(null == (jade_interp = t('pick from files')) ? "" : jade_interp)) + "</div></div>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -2010,16 +2036,26 @@ module.exports = FilesBrowser = (function(_super) {
     }
     return this.options.beforeUpload((function(_this) {
       return function(attrs) {
-        var fileid, img, _i, _len, _ref, _results;
+        var fileid, img, phototmp, tmp, _i, _len, _ref, _results;
+        tmp = [];
         _ref = _this.$('.selected');
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           img = _ref[_i];
           fileid = img.id;
+          attrs.title = img.name;
+          phototmp = new Photo(attrs);
+          phototmp.file = img;
+          tmp.push(phototmp);
+          _this.collection.add(phototmp);
           _results.push(Photo.makeFromFile(fileid, attrs, function(err, photo) {
             if (err) {
               return console.log(err);
             }
+            phototmp = tmp.pop();
+            _this.collection.remove(phototmp, {
+              parse: true
+            });
             return _this.collection.add(photo, {
               parse: true
             });

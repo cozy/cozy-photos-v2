@@ -16,7 +16,6 @@ log = require('printit')
     date: false
     prefix: "album"
 
-
 # Get all albums and their covers then put data into the index template.
 # (For faster rendering).
 module.exports.index = (req, res) ->
