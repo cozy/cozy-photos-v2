@@ -768,7 +768,11 @@ module.exports = {
   "yes": "Yes",
   "no": "No",
   "pictures": "pictures",
-  "are you sure you want to delete this album": "Are you sure you want to delete this album?"
+  "are you sure you want to delete this album": "Are you sure you want to delete this album?",
+  "photos search": "Loading ...",
+  "no photos found": "No photos found",
+  "thumb creation": "Application create thumb for files, can you restry in few minutes.",
+  "progress": "Progression"
 };
 });
 
@@ -858,7 +862,11 @@ module.exports = {
   "yes": "Oui",
   "no": "Non",
   "pictures": "photos",
-  "are you sure you want to delete this album": "Etes vous sûr de vouloir effacer cet album?"
+  "are you sure you want to delete this album": "Etes vous sûr de vouloir effacer cet album?",
+  "photos search": "Recherche des photos ...",
+  "no photos found": "Aucune photos trouvées ...",
+  "thumb creation": "L'application est entrain de créé des minatures pour vos photos afin d'améliorer votre navigation. Veuillez réessayer d'ici quelques minutes.",
+  "progress": "Progession"
 };
 });
 
@@ -1538,15 +1546,19 @@ var __templateData = function template(locals) {
 var buf = [];
 var jade_mixins = {};
 var jade_interp;
-var locals_ = (locals || {}),dates = locals_.dates,photos = locals_.photos;
+var locals_ = (locals || {}),dates = locals_.dates,percent = locals_.percent,photos = locals_.photos;
 buf.push("<div class=\"files\">");
 if ( dates.length === 0)
 {
-buf.push("<p>" + (jade.escape(null == (jade_interp = t("Recherche des photos ...")) ? "" : jade_interp)) + "</p>");
+buf.push("<p>" + (jade.escape(null == (jade_interp = t("photos search")) ? "" : jade_interp)) + "</p>");
 }
 else if ( dates === "No photos found")
 {
-buf.push("<p>" + (jade.escape(null == (jade_interp = t("Pas de photos trouvées")) ? "" : jade_interp)) + "</p>");
+buf.push("<p>" + (jade.escape(null == (jade_interp = t("no photos found")) ? "" : jade_interp)) + "</p>");
+}
+else if ( dates === "Thumb creation")
+{
+buf.push("<p>" + (jade.escape(null == (jade_interp = t("thumb creation")) ? "" : jade_interp)) + "</p><p>" + (jade.escape((jade_interp = t('progress')) == null ? '' : jade_interp)) + ": " + (jade.escape((jade_interp = percent) == null ? '' : jade_interp)) + "%</p>");
 }
 else
 {
@@ -2012,18 +2024,19 @@ module.exports = FilesBrowser = (function(_super) {
     FilesBrowser.__super__.initialize.call(this, {});
     return Photo.listFromFiles((function(_this) {
       return function(err, dates) {
-        if (err) {
+        if (err && err.status === 400) {
+          _this.options.dates = "Thumb creation";
+          _this.options.percent = JSON.parse(err.responseText).percent;
+        } else if (err) {
           return console.log(err);
-        }
-        console.log("WE GET HERE");
-        if (dates.length === 0) {
+        } else if (Object.keys(dates).length === 0) {
           _this.options.dates = "No photos found";
         } else {
           _this.options.dates = dates;
+          _this.options.dates = Object.keys(dates);
+          (_this.options.dates.sort()).reverse();
+          _this.options.photos = dates;
         }
-        _this.options.dates = Object.keys(dates);
-        (_this.options.dates.sort()).reverse();
-        _this.options.photos = dates;
         return _this.$('.modal-body').html(_this.template_content(_this.getRenderData()));
       };
     })(this));

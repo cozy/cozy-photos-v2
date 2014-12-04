@@ -20,18 +20,20 @@ module.exports = class FilesBrowser extends Modal
     initialize: (options) ->
         super {}
         Photo.listFromFiles (err, dates) =>
-            if err
+            if err and err.status is 400
+                @options.dates = "Thumb creation"
+                @options.percent = JSON.parse(err.responseText).percent
+
+            else if err
                 return console.log err
 
-            console.log "WE GET HERE"
-
-            if dates.length is 0
+            else if Object.keys(dates).length is 0
                 @options.dates = "No photos found"
             else
                 @options.dates = dates
-            @options.dates = Object.keys(dates)
-            (@options.dates.sort()).reverse()
-            @options.photos = dates
+                @options.dates = Object.keys(dates)
+                (@options.dates.sort()).reverse()
+                @options.photos = dates
             @$('.modal-body').html @template_content @getRenderData()
 
     cb: (confirmed) ->

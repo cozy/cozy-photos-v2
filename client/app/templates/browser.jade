@@ -1,8 +1,11 @@
 .files
     if dates.length === 0
-        p= t("Recherche des photos ...")
+        p= t("photos search")
     else if dates === "No photos found"
-        p= t("Pas de photos trouvées")
+        p= t("no photos found")
+    else if dates === "Thumb creation"
+        p= t("thumb creation")
+        p #{t('progress')}: #{percent}%
     else
         for date in dates
             h4 #{t(date.split('-')[1])} #{date.split('-')[0]}

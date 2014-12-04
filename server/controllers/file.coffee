@@ -3,6 +3,7 @@ Photo = require '../models/photo'
 async = require 'async'
 fs = require 'fs'
 im = require 'imagemagick'
+onThumbCreation = require('../../init').onThumbCreation
 
 # Get given file, returns 404 if photo is not found.
 module.exports.fetch = (req, res, next, id) ->
@@ -15,21 +16,25 @@ module.exports.fetch = (req, res, next, id) ->
         next()
 
 module.exports.list = (req, res, next) ->
-    dates = {}
-    File.imageByDate (err, photos) =>
-        if err
-            return res.error 500, 'An error occured', err
-        else
-            for photo in photos
-                date = new Date(photo.lastModification)
-                mounth = date.getMonth() + 1
-                mounth = if mounth > 9 then "#{mounth}" else "0#{mounth}"
-                date = "#{date.getFullYear()}-#{mounth}"
-                if dates[date]?
-                    dates[date].push photo
-                else
-                    dates[date] = [photo]
-            res.send dates, 201
+    [onCreation, percent] = onThumbCreation()
+    if onCreation
+        res.send "percent": percent, 400
+    else
+        dates = {}
+        File.imageByDate (err, photos) =>
+            if err
+                return res.error 500, 'An error occured', err
+            else
+                for photo in photos
+                    date = new Date(photo.lastModification)
+                    mounth = date.getMonth() + 1
+                    mounth = if mounth > 9 then "#{mounth}" else "0#{mounth}"
+                    date = "#{date.getFullYear()}-#{mounth}"
+                    if dates[date]?
+                        dates[date].push photo
+                    else
+                        dates[date] = [photo]
+                res.send dates, 201
 
 module.exports.thumb = (req, res, next) ->
     which = if req.file.binary.thumb then 'thumb' else 'file'
