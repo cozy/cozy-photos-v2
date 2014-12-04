@@ -28,13 +28,13 @@ module.exports.create = (file, callback) ->
         callback()
     else
         rawFile = "/tmp/#{file.name}"
-        fs.openSync rawFile, 'w'
-        stream = file.getBinary 'file', (err) ->
-            return callback err if err
-        stream.pipe fs.createWriteStream rawFile
-        stream.on 'error', callback
-        stream.on 'end', =>
-            resize rawFile, file, 'thumb', (err) =>
-                fs.unlink rawFile, ->
-                    console.log "createThumb #{file.id} : done"
-                    callback(err)
+        fs.open rawFile, 'w', (err) ->
+            stream = file.getBinary 'file', (err) ->
+                return callback err if err
+            stream.pipe fs.createWriteStream rawFile
+            stream.on 'error', callback
+            stream.on 'end', =>
+                resize rawFile, file, 'thumb', (err) =>
+                    fs.unlink rawFile, ->
+                        console.log "createThumb #{file.id} : done"
+                        callback(err)

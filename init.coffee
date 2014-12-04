@@ -25,6 +25,6 @@ createThumb = (cb) ->
 
 # Create all requests and upload directory
 module.exports.convert = (done = ->) ->
-    convertImage (err) ->
-        createThumb () ->
-            done()
+    #convertImage (err) ->
+    createThumb () ->
+        done()
