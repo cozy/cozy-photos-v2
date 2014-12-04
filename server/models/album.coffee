@@ -14,11 +14,11 @@ module.exports = Album = americano.getModel 'Album',
     folderid      : String
 
 Album.beforeSave = (next, data) ->
-    data.title ?= ''
-    data.title = data.title
-                    .replace /<br>/g, ""
-                    .replace /<div>/g, ""
-                    .replace /<\/div>/g, ""
+    if data.title?
+        data.title = data.title
+                        .replace /<br>/g, ""
+                        .replace /<div>/g, ""
+                        .replace /<\/div>/g, ""
     next()
 
 Album::getPublicURL = (callback) ->
