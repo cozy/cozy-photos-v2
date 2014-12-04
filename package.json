@@ -23,7 +23,9 @@
     "qs": "0.6.6",
     "cozy-clearance": "0.1.11",
     "node-polyglot": "0.4.0",
-    "cozy-realtime-adapter": "0.11.3"
+    "cozy-realtime-adapter": "0.11.3",
+    "socket.io": "0.9.14",
+    "axon": "0.6.1"
   },
   "devDependencies": {
     "chai": "1.9.1",

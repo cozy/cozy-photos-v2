@@ -771,7 +771,7 @@ module.exports = {
   "are you sure you want to delete this album": "Are you sure you want to delete this album?",
   "photos search": "Loading ...",
   "no photos found": "No photos found",
-  "thumb creation": "Application create thumb for files, can you restry in few minutes.",
+  "thumb creation": "Application creates thumbs for files.",
   "progress": "Progression"
 };
 });
@@ -865,7 +865,7 @@ module.exports = {
   "are you sure you want to delete this album": "Etes vous sûr de vouloir effacer cet album?",
   "photos search": "Recherche des photos ...",
   "no photos found": "Aucune photos trouvées ...",
-  "thumb creation": "L'application est entrain de créé des minatures pour vos photos afin d'améliorer votre navigation. Veuillez réessayer d'ici quelques minutes.",
+  "thumb creation": "L'application est entrain de créer des minatures pour vos photos afin d'améliorer votre navigation.",
   "progress": "Progession"
 };
 });
@@ -2024,9 +2024,22 @@ module.exports = FilesBrowser = (function(_super) {
     FilesBrowser.__super__.initialize.call(this, {});
     return Photo.listFromFiles((function(_this) {
       return function(err, dates) {
+        var pathToSocketIO, socket;
         if (err && err.status === 400) {
           _this.options.dates = "Thumb creation";
           _this.options.percent = JSON.parse(err.responseText).percent;
+          pathToSocketIO = "" + (window.location.pathname.substring(1)) + "socket.io";
+          socket = io.connect(window.location.origin, {
+            resource: pathToSocketIO
+          });
+          socket.on('progress', function(e) {
+            _this.options.percent = e.percent;
+            if (_this.options.percent === 100) {
+              return _this.initialize(options);
+            } else {
+              return _this.$('.modal-body').html(_this.template_content(_this.getRenderData()));
+            }
+          });
         } else if (err) {
           return console.log(err);
         } else if (Object.keys(dates).length === 0) {

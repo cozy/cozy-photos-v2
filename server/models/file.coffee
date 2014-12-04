@@ -10,3 +10,6 @@ module.exports = File = americano.getModel 'File',
 
 File.imageByDate = (callback) ->
     File.request 'imageByDate', {}, callback
+
+File.withoutThumb = (callback) ->
+    File.request 'withoutThumb', {}, callback

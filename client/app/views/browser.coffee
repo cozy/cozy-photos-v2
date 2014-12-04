@@ -23,7 +23,15 @@ module.exports = class FilesBrowser extends Modal
             if err and err.status is 400
                 @options.dates = "Thumb creation"
                 @options.percent = JSON.parse(err.responseText).percent
-
+                pathToSocketIO = "#{window.location.pathname.substring(1)}socket.io"
+                socket = io.connect window.location.origin,
+                    resource: pathToSocketIO
+                socket.on 'progress', (e) =>
+                    @options.percent = e.percent
+                    if @options.percent is 100
+                        @initialize(options)
+                    else
+                        @$('.modal-body').html @template_content @getRenderData()
             else if err
                 return console.log err
 

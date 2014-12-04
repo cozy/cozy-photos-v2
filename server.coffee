@@ -4,6 +4,8 @@ init = require './init'
 thumb = require('./server/helpers/thumb').create
 File = require './server/models/file'
 RealtimeAdapter = require('cozy-realtime-adapter')
+sio = require 'socket.io'
+axon = require 'axon'
 
 module.exports = start = (options, cb) ->
     options.name = 'cozy-photos'
@@ -11,11 +13,6 @@ module.exports = start = (options, cb) ->
     options.host ?= '127.0.0.1'
     americano.start options, (app, server) ->
         app.server = server
-        init.convert()
-
-        # notification events should be proxied to client
-        # RealtimeAdapter = require 'cozy-realtime-adapter'
-        # realtime = RealtimeAdapter app, ['album.*', 'photo.*', 'contact.*']
 
         # pass reference to photo controller for socket.io upload progress
         require('./server/controllers/photo').setApp app
@@ -26,15 +23,21 @@ module.exports = start = (options, cb) ->
             console.log "Something went wrong while creating uploads folder"
             console.log err
 
-        realtime = RealtimeAdapter(app, ['notification.*']);
+        socket = axon.socket 'sub-emitter'
+        socket.connect 9105
 
-        realtime.on 'file.*', (event, msg) ->
-            if not (event is "file.delete")
+        io = sio.listen app.server, {}
+        io.set 'log level', 2
+        io.set 'transports', ['websocket']
+
+        socket.on 'file.*', (event, msg) ->
+            if not (event is "delete")
                 File.find msg, (err, file) ->
                     if file.binary?.file? and not file.binary.thumb
                         thumb file, (err) ->
                             console.log err if err?
 
+        init.convert(io.sockets)
         cb?(null, app, server)
 
 if not module.parent

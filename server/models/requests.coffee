@@ -12,6 +12,10 @@ imageByDate = (doc) ->
     if doc.class is "image" and doc.binary?.file?
         emit doc.lastModification, doc
 
+withoutThumb = (doc) ->
+    if doc.class is "image" and doc.binary?.file? and (not doc.binary.thumb?)
+        emit doc._id, doc
+
 # MapReduce to fetch thumbs for every album
 albumPhotosRequest =
     map: (photo) -> emit photo.albumid, [photo._id, photo.orientation]
@@ -31,3 +35,4 @@ module.exports =
         'all': allMap
     'file':
         'imageByDate': imageByDate
+        'withoutThumb': withoutThumb

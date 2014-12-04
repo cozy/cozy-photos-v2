@@ -26,21 +26,23 @@ convertImage = (cb) ->
         else
             callback()
     Photo.all (err, docs) ->
-        async.each(docs, convert, cb)
+        async.eachSeries(docs, convert, cb)
 
-createThumb = (cb) =>
-    File.imageByDate (err, files) =>
+createThumb = (socket, cb) =>
+    File.withoutThumb (err, files) =>
         total_files = files.length
         async.eachSeries files, (file, callback) =>
             thumb file, () =>
                 thumb_files += 1
+                percent = Math.floor((thumb_files/total_files)*100)
+                socket.emit 'progress', {"percent": percent}
                 callback()
         , cb
 
 # Create all requests and upload directory
-module.exports.convert = (done = ->) =>
+module.exports.convert = (socket, done=->null) =>
     #convertImage (err) ->
     onThumbCreation = true
-    createThumb () =>
+    createThumb socket, () =>
         onThumbCreation = false
         done()
