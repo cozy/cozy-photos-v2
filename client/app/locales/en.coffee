@@ -6,7 +6,7 @@ module.exports =
     "Download" : "Download"
     "Edit" : "Edit"
     "Stop editing" : "Save Changes"
-    "It will appear on your homepage." : "It will appear on your homepage."
+    "It will appear on your homepage." : "It will be displayed on the album page."
     "Make it Hidden" : "hidden"
     "Make it Private" : "private"
     "Make it Public" : "public"
@@ -15,7 +15,7 @@ module.exports =
     "public" : "public"
     "hidden" : "hidden"
     "There is no photos in this album" : "There is no photo in this album. Click on Edit button to add new ones."
-    "There is no public albums." : "There are no albums."
+    "There is no public albums." : "There are no album."
     "This album is private" : "This album is private"
     "This album is hidden" : "This album is hidden"
     "This album is public" : "This album is public"
@@ -25,7 +25,7 @@ module.exports =
     "is too big (max 10Mo)":"is too big (max 10Mo)"
     "is not an image": "is not an image"
     "Share album by mail": "Share album by mail"
-    "Upload your contacts ...": "Upload your contacts ..."
+    "Upload your contacts...": "Upload your contacts..."
     "Share album": "Share album"
     "Add contact": "Add contact"
     "Send mail": "Send mail"
@@ -39,19 +39,19 @@ module.exports =
 
 
     "pick from computer":"""
-        Click Here or drag your photos below to add them to the album.
+        Click here or drag your photos below to add them to the album.
     """
     "pick from files":"""
-        Click Here to pick from cozy files
+        Click here to pick pictures from the Files app.
     """
 
     "hidden-description": """
-      It will not appears on your homepage.
-      But you can share it with the following url :
+      It will not appear on your homepage.
+      But you can share it with the following url:
     """
 
     "It cannot be accessed from the public side" : """
-      It cannot be accessed from the public side"
+      It is not a public resource."
     """
     "rebuild thumbnails": "Rebuild thumbnails"
 
@@ -66,7 +66,7 @@ module.exports =
     '09': 'September'
     '10': 'October'
     '11': 'November'
-    '12': 'Décember'
+    '12': 'December'
     # clearance modal
     "cancel" : "Cancel"
     "copy paste link" : "To give access to your contact send him/her the link below:"
@@ -90,7 +90,7 @@ module.exports =
 Looks like you forgot to click the Add button
 """
     "share confirm save" : """
-The changes you made to the permissions will not be saved. Is that what you want ?
+The changes you made to the permissions will not be saved. Do you want to continue?
 """
     "yes forgot" : "Back"
     "no forgot" : "It's ok"
@@ -99,7 +99,7 @@ The changes you made to the permissions will not be saved. Is that what you want
     "perm rw album" : "browse and upload photos"
     "change notif" : """
 Check this box to be notified when a contact
-adds a photo to this album."""
+will add a photo to this album."""
     "send email hint": "Notification emails will be sent one time on save"
     "yes" : "Yes"
     "no" : "No"

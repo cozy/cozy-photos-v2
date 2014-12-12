@@ -18,13 +18,13 @@ module.exports =
     "This album is private" : "Cet album est privé"
     "This album is hidden" : "Cet album est masqué"
     "This album is public" : "Cet album est public"
-    "Title ..." : "Titre ..."
-    "Write some more ..." : "Description ..."
+    "Title ..." : "Titre..."
+    "Write some more ..." : "Description..."
     "View" : "Voir"
     "is too big (max 10Mo)":"est trop grosse (max 10Mo)"
     "is not an image": "n'est pas une image"
     "Share album by mail": "Partagez par mail"
-    "Upload your contacts ...": "Uploadez vos contacts…"
+    "Upload your contacts ...": "Uploadez vos contacts..."
     "Share album": "Partagez l'album"
     "Add contact": "Ajouter contact"
     "Send mail": "Envoyez mail"
@@ -38,15 +38,15 @@ module.exports =
         l'album.'''
 
     "pick from computer":"""
-        Cliquez ici ou glissez-déposez vos photos pour uploader
+        Cliquez ici ou glissez-déposez vos photos pour ajouter des images
     """
     "pick from files":"""
-        Cliquez ici pour choisir dans vos fichiers de cozy
+        Cliquez ici pour importer des images de l'application Files
     """
 
     "hidden-description": """
       Il n'apparaîtra pas sur votre page d'accueil,
-      Mais vous pouvez partager cet url :
+      Mais vous pouvez partager cette URL :
     """
 
     "It cannot be accessed from the public side" : """
@@ -68,7 +68,7 @@ module.exports =
     '11': 'Novembre'
     '12': 'Décembre'
      # clearance modal
-    "also have access" : "Ces personnes ont égalment accès, car elles ont accès à un dossier parent"
+    "also have access" : "Ces personnes ont également accès, car elles ont accès à un dossier parent"
     "cancel" : "Annuler"
     "copy paste link" : "Pour donner accès à votre contact envoyez-lui ce lien : "
     "details" : "Détails"
@@ -86,7 +86,7 @@ module.exports =
     "revoke" : "Révoquer la permission"
     "send mails question" : "Envoyer un email de notification à : "
     "modal send mails" : "Envoyer une notification"
-    "forced public" : "Ce dossier est public car un parent est public : "
+    "forced public" : "Ce dossier est public car un dossier parent est public : "
     "confirm" : "Confirmer"
     "share forgot add" : """
 Il semble que vous ayez oublié d'appuyer sur le boutton Ajouter
@@ -107,8 +107,8 @@ ajoute une photo à cet album."""
     "yes" : "Oui"
     "no" : "Non"
     "pictures": "photos"
-    "are you sure you want to delete this album": "Etes vous sûr de vouloir effacer cet album?"
-    "photos search"   : "Recherche des photos ..."
-    "no photos found" : "Aucune photos trouvées ..."
+    "are you sure you want to delete this album": "Etes vous sûr de vouloir effacer cet album ?"
+    "photos search"   : "Recherche des photos..."
+    "no photos found" : "Aucune photo trouvée..."
     "thumb creation"  : "L'application est entrain de créer des minatures pour vos photos afin d'améliorer votre navigation."
-    "progress"        : "Progession"
+    "progress"        : "Progression"
