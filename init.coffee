@@ -36,7 +36,7 @@ createThumb = (socket, cb) =>
         async.eachSeries files, (file, callback) =>
             thumb file, () =>
                 thumb_files += 1
-                percent = (thumb_files / total_files) * 100
+                percent = Math.floor((thumb_files / total_files) * 100)
                 # Emit thumb creation progress
                 socket.emit 'progress', {"percent": percent}
                 callback()
