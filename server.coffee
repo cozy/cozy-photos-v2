@@ -23,13 +23,14 @@ module.exports = start = (options, cb) ->
             console.log "Something went wrong while creating uploads folder"
             console.log err
 
+        # Initialize realtime
         socket = axon.socket 'sub-emitter'
         socket.connect 9105
-
         io = sio.listen app.server, {}
         io.set 'log level', 2
         io.set 'transports', ['websocket']
 
+        # Recover file modification (event sent by data-system)
         socket.on 'file.*', (event, msg) ->
             if not (event is "delete")
                 File.find msg, (err, file) ->
@@ -37,6 +38,7 @@ module.exports = start = (options, cb) ->
                         thumb file, (err) ->
                             console.log err if err?
 
+        # Init thumb (emit progress)
         init.convert(io.sockets)
         cb?(null, app, server)
 
