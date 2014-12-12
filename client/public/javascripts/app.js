@@ -2047,7 +2047,7 @@ module.exports = FilesBrowser = (function(_super) {
         if ((body != null ? body.files : void 0) != null) {
           dates = body.files;
         }
-        if (err && err.status === 400) {
+        if (body.percent != null) {
           _this.options.dates = "Thumb creation";
           _this.options.percent = JSON.parse(err.responseText).percent;
           pathToSocketIO = "" + (window.location.pathname.substring(1)) + "socket.io";
@@ -2055,16 +2055,18 @@ module.exports = FilesBrowser = (function(_super) {
             resource: pathToSocketIO
           });
           socket.on('progress', function(e) {
+            var template;
             _this.options.percent = e.percent;
             if (_this.options.percent === 100) {
               return _this.initialize(options);
             } else {
-              return _this.$('.modal-body').html(_this.template_content(_this.getRenderData()));
+              template = _this.template_content(_this.getRenderData());
+              return _this.$('.modal-body').html(template);
             }
           });
         } else if (err) {
           return console.log(err);
-        } else if (Object.keys(dates).length === 0) {
+        } else if ((dates != null) && Object.keys(dates).length === 0) {
           _this.options.dates = "No photos found";
         } else {
           if ((body != null ? body.hasNext : void 0) != null) {

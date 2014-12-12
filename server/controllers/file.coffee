@@ -25,8 +25,10 @@ module.exports.list = (req, res, next) ->
         skip = 0
 
     [onCreation, percent] = onThumbCreation()
+
     if onCreation
         res.send "percent": percent
+
     else
 
         dates = {}

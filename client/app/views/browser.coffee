@@ -28,14 +28,17 @@ module.exports = class FilesBrowser extends Modal
         if not options.selected?
             @options.selected = []
         @options.page = options.page
+
         # Recover files
         Photo.listFromFiles options.page, (err, body) =>
             dates = body.files if body?.files?
+
             # If server create thumb : doesn't display files.
-            if err and err.status is 400
+            if body.percent?
                 @options.dates = "Thumb creation"
                 @options.percent = JSON.parse(err.responseText).percent
-                pathToSocketIO = "#{window.location.pathname.substring(1)}socket.io"
+                pathToSocketIO = \
+                    "#{window.location.pathname.substring(1)}socket.io"
                 socket = io.connect window.location.origin,
                     resource: pathToSocketIO
                 socket.on 'progress', (e) =>
@@ -43,18 +46,22 @@ module.exports = class FilesBrowser extends Modal
                     if @options.percent is 100
                         @initialize(options)
                     else
-                        @$('.modal-body').html @template_content @getRenderData()
+                        template = @template_content @getRenderData()
+                        @$('.modal-body').html template
             else if err
                 return console.log err
+
             # If there is no photos in Cozy
-            else if Object.keys(dates).length is 0
+            else if dates? and Object.keys(dates).length is 0
                 @options.dates = "No photos found"
+
             else
                 # Add next/prev button
                 @options.hasNext = body.hasNext if body?.hasNext?
                 @options.hasPrev = options.page isnt 0
                 @options.dates = Object.keys(dates)
                 @options.photos = dates
+
             @$('.modal-body').html @template_content @getRenderData()
             @$('.modal-body').scrollTop(0)
             # Add selected files
