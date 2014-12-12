@@ -4,6 +4,7 @@ async = require 'async'
 fs = require 'fs'
 im = require 'imagemagick'
 onThumbCreation = require('../../init').onThumbCreation
+fileByPage = 4 * 10
 
 # Get given file, returns 404 if photo is not found.
 module.exports.fetch = (req, res, next, id) ->
@@ -16,15 +17,28 @@ module.exports.fetch = (req, res, next, id) ->
         next()
 
 module.exports.list = (req, res, next) ->
+    if req.params.page?
+        skip = parseInt(req.params.page) * fileByPage
+    else
+        skip = 0
     [onCreation, percent] = onThumbCreation()
     if onCreation
         res.send "percent": percent, 400
     else
         dates = {}
-        File.imageByDate (err, photos) =>
+        options =
+            limit: fileByPage + 1
+            skip: skip
+            descending: true
+        File.imageByDate options, (err, photos) =>
             if err
                 return res.error 500, 'An error occured', err
             else
+                if photos.length is fileByPage + 1
+                    hasNext = true
+                else
+                    hasNext = false
+                photos.splice(fileByPage,1)
                 for photo in photos
                     date = new Date(photo.lastModification)
                     mounth = date.getMonth() + 1
@@ -34,7 +48,7 @@ module.exports.list = (req, res, next) ->
                         dates[date].push photo
                     else
                         dates[date] = [photo]
-                res.send dates, 201
+                res.send {files: dates, hasNext: hasNext}, 201
 
 module.exports.thumb = (req, res, next) ->
     which = if req.file.binary.thumb then 'thumb' else 'file'

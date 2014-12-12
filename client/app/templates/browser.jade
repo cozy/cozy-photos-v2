@@ -13,3 +13,9 @@
             for photo in photos[date]
                 img(src="files/thumbs/#{photo.id}.jpg", id="#{photo.id}")
             br
+        if hasPrev
+            a.btn.btn-cozy.left.prev
+                p &#12296 Prev
+        if hasNext
+            a.btn.btn-cozy.right.next
+                p Next &#12297

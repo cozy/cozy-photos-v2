@@ -219,6 +219,15 @@ button.delete {
   padding: 5px;
   width: auto;
 }
+a.btn.btn-cozy.right.next {
+  height: 40px;
+  position: absolute;
+  right: 60px;
+}
+a.btn.btn-cozy.left.prev {
+  height: 40px;
+  margin-left: 5px;
+}
 .albumitem {
   float: left;
 }

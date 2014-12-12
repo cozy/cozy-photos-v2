@@ -8,8 +8,8 @@ module.exports = File = americano.getModel 'File',
     binary            : Object
     class              : String
 
-File.imageByDate = (callback) ->
-    File.request 'imageByDate', {}, callback
+File.imageByDate = (options, callback) ->
+    File.request 'imageByDate', options, callback
 
 File.withoutThumb = (callback) ->
     File.request 'withoutThumb', {}, callback

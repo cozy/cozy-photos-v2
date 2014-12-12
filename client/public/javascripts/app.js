@@ -1004,8 +1004,8 @@ module.exports = Photo = (function(_super) {
 
 })(Backbone.Model);
 
-Photo.listFromFiles = function(callback) {
-  return client.get("files/", callback);
+Photo.listFromFiles = function(page, callback) {
+  return client.get("files/" + page, callback);
 };
 
 Photo.makeFromFile = function(fileid, attr, callback) {
@@ -1546,7 +1546,7 @@ var __templateData = function template(locals) {
 var buf = [];
 var jade_mixins = {};
 var jade_interp;
-var locals_ = (locals || {}),dates = locals_.dates,percent = locals_.percent,photos = locals_.photos;
+var locals_ = (locals || {}),dates = locals_.dates,percent = locals_.percent,photos = locals_.photos,hasPrev = locals_.hasPrev,hasNext = locals_.hasNext;
 buf.push("<div class=\"files\">");
 if ( dates.length === 0)
 {
@@ -1630,6 +1630,14 @@ buf.push("<br/>");
   }
 }).call(this);
 
+if ( hasPrev)
+{
+buf.push("<a class=\"btn btn-cozy left prev\"><p>&#12296 Prev</p></a>");
+}
+if ( hasNext)
+{
+buf.push("<a class=\"btn btn-cozy right next\"><p>Next &#12297</p></a>");
+}
 }
 buf.push("</div>");;return buf.join("");
 };
@@ -2008,7 +2016,9 @@ module.exports = FilesBrowser = (function(_super) {
 
   FilesBrowser.prototype.events = function() {
     return _.extend(FilesBrowser.__super__.events.apply(this, arguments), {
-      'click img': 'toggleSelected'
+      'click img': 'toggleSelected',
+      'click a.next': 'displayNextPage',
+      'click a.prev': 'displayPrevPage'
     });
   };
 
@@ -2021,10 +2031,22 @@ module.exports = FilesBrowser = (function(_super) {
   };
 
   FilesBrowser.prototype.initialize = function(options) {
-    FilesBrowser.__super__.initialize.call(this, {});
-    return Photo.listFromFiles((function(_this) {
-      return function(err, dates) {
-        var pathToSocketIO, socket;
+    if (options.page == null) {
+      FilesBrowser.__super__.initialize.call(this, {});
+    }
+    if (options.page == null) {
+      options.page = 0;
+    }
+    if (options.selected == null) {
+      this.options.selected = [];
+    }
+    this.options.page = options.page;
+    return Photo.listFromFiles(options.page, (function(_this) {
+      return function(err, body) {
+        var dates, img, pathToSocketIO, socket, _i, _len, _ref, _results;
+        if ((body != null ? body.files : void 0) != null) {
+          dates = body.files;
+        }
         if (err && err.status === 400) {
           _this.options.dates = "Thumb creation";
           _this.options.percent = JSON.parse(err.responseText).percent;
@@ -2045,51 +2067,93 @@ module.exports = FilesBrowser = (function(_super) {
         } else if (Object.keys(dates).length === 0) {
           _this.options.dates = "No photos found";
         } else {
-          _this.options.dates = dates;
+          if ((body != null ? body.hasNext : void 0) != null) {
+            _this.options.hasNext = body.hasNext;
+          }
+          _this.options.hasPrev = options.page !== 0;
           _this.options.dates = Object.keys(dates);
-          (_this.options.dates.sort()).reverse();
           _this.options.photos = dates;
         }
-        return _this.$('.modal-body').html(_this.template_content(_this.getRenderData()));
+        _this.$('.modal-body').html(_this.template_content(_this.getRenderData()));
+        _this.$('.modal-body').scrollTop(0);
+        if (_this.options.selected[_this.options.page] != null) {
+          _ref = _this.options.selected[_this.options.page];
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            img = _ref[_i];
+            _results.push(_this.$("#" + img.id).toggleClass('selected'));
+          }
+          return _results;
+        }
       };
     })(this));
   };
 
   FilesBrowser.prototype.cb = function(confirmed) {
-    console.log("AND THERE", confirmed);
     if (!confirmed) {
       return;
     }
     return this.options.beforeUpload((function(_this) {
       return function(attrs) {
-        var fileid, img, phototmp, tmp, _i, _len, _ref, _results;
+        var fileid, img, page, phototmp, tmp, _i, _len, _ref, _results;
         tmp = [];
-        _ref = _this.$('.selected');
+        _this.options.selected[_this.options.page] = _this.$('.selected');
+        _ref = _this.options.selected;
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          img = _ref[_i];
-          fileid = img.id;
-          attrs.title = img.name;
-          phototmp = new Photo(attrs);
-          phototmp.file = img;
-          tmp.push(phototmp);
-          _this.collection.add(phototmp);
-          _results.push(Photo.makeFromFile(fileid, attrs, function(err, photo) {
-            if (err) {
-              return console.log(err);
+          page = _ref[_i];
+          _results.push((function() {
+            var _j, _len1, _results1;
+            _results1 = [];
+            for (_j = 0, _len1 = page.length; _j < _len1; _j++) {
+              img = page[_j];
+              fileid = img.id;
+              attrs.title = img.name;
+              phototmp = new Photo(attrs);
+              phototmp.file = img;
+              tmp.push(phototmp);
+              this.collection.add(phototmp);
+              _results1.push(Photo.makeFromFile(fileid, attrs, (function(_this) {
+                return function(err, photo) {
+                  if (err) {
+                    return console.log(err);
+                  }
+                  phototmp = tmp.pop();
+                  _this.collection.remove(phototmp, {
+                    parse: true
+                  });
+                  return _this.collection.add(photo, {
+                    parse: true
+                  });
+                };
+              })(this)));
             }
-            phototmp = tmp.pop();
-            _this.collection.remove(phototmp, {
-              parse: true
-            });
-            return _this.collection.add(photo, {
-              parse: true
-            });
-          }));
+            return _results1;
+          }).call(_this));
         }
         return _results;
       };
     })(this));
+  };
+
+  FilesBrowser.prototype.displayNextPage = function() {
+    var options;
+    this.options.selected[this.options.page] = this.$('.selected');
+    options = {
+      page: this.options.page + 1,
+      selected: this.options.selected
+    };
+    return this.initialize(options);
+  };
+
+  FilesBrowser.prototype.displayPrevPage = function() {
+    var options;
+    this.options.selected[this.options.page] = this.$('.selected');
+    options = {
+      page: this.options.page - 1,
+      selected: this.options.selected
+    };
+    return this.initialize(options);
   };
 
   return FilesBrowser;

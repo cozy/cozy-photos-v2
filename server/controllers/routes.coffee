@@ -30,6 +30,8 @@ module.exports =
     #
     'files/':
         get: file.list
+    'files/:page':
+        get: file.list
     'files/thumbs/:fileid':
         get: file.thumb
     'files/:fileid/toPhoto':
