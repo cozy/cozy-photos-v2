@@ -4,7 +4,7 @@ async = require 'async'
 fs = require 'fs'
 im = require 'imagemagick'
 onThumbCreation = require('../../init').onThumbCreation
-fileByPage = 4 * 10
+fileByPage = 5 * 12
 
 # Get given file, returns 404 if photo is not found.
 module.exports.fetch = (req, res, next, id) ->
