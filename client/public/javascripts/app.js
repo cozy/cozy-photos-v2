@@ -2074,6 +2074,9 @@ module.exports = FilesBrowser = (function(_super) {
           }
           _this.options.hasPrev = options.page !== 0;
           _this.options.dates = Object.keys(dates);
+          _this.options.date.sort(function(a, b) {
+            return -1 * a.localeCompare(b);
+          });
           _this.options.photos = dates;
         }
         _this.$('.modal-body').html(_this.template_content(_this.getRenderData()));
