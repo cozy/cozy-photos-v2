@@ -1990,6 +1990,182 @@ module.exports = AlbumItem = (function(_super) {
 })(BaseView);
 });
 
+;require.register("views/browser", function(exports, require, module) {
+var FilesBrowser, Modal, Photo,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+Modal = require('cozy-clearance/modal');
+
+Photo = require('../models/photo');
+
+module.exports = FilesBrowser = (function(_super) {
+  __extends(FilesBrowser, _super);
+
+  function FilesBrowser() {
+    return FilesBrowser.__super__.constructor.apply(this, arguments);
+  }
+
+  FilesBrowser.prototype.id = 'files-browser-modal';
+
+  FilesBrowser.prototype.template_content = require('../templates/browser');
+
+  FilesBrowser.prototype.title = t('pick from files');
+
+  FilesBrowser.prototype.content = '<p>Loading ...</p>';
+
+  FilesBrowser.prototype.events = function() {
+    return _.extend(FilesBrowser.__super__.events.apply(this, arguments), {
+      'click img': 'toggleSelected',
+      'click a.next': 'displayNextPage',
+      'click a.prev': 'displayPrevPage'
+    });
+  };
+
+  FilesBrowser.prototype.toggleSelected = function(e) {
+    return $(e.target).toggleClass('selected');
+  };
+
+  FilesBrowser.prototype.getRenderData = function() {
+    return this.options;
+  };
+
+  FilesBrowser.prototype.initialize = function(options) {
+    if (options.page == null) {
+      FilesBrowser.__super__.initialize.call(this, {});
+    }
+    if (options.page == null) {
+      options.page = 0;
+    }
+    if (options.selected == null) {
+      this.options.selected = [];
+    }
+    this.options.page = options.page;
+    return Photo.listFromFiles(options.page, (function(_this) {
+      return function(err, body) {
+        var dates, img, pathToSocketIO, socket, _i, _len, _ref, _results;
+        if ((body != null ? body.files : void 0) != null) {
+          dates = body.files;
+        }
+        if (err) {
+          return console.log(err);
+        } else if (body.percent != null) {
+          _this.options.dates = "Thumb creation";
+          _this.options.percent = body.percent;
+          pathToSocketIO = "" + (window.location.pathname.substring(1)) + "socket.io";
+          socket = io.connect(window.location.origin, {
+            resource: pathToSocketIO
+          });
+          socket.on('progress', function(event) {
+            var template;
+            _this.options.percent = event.percent;
+            if (_this.options.percent === 100) {
+              return _this.initialize(options);
+            } else {
+              template = _this.template_content(_this.getRenderData());
+              return _this.$('.modal-body').html(template);
+            }
+          });
+        } else if ((dates != null) && Object.keys(dates).length === 0) {
+          _this.options.dates = "No photos found";
+        } else {
+          if ((body != null ? body.hasNext : void 0) != null) {
+            _this.options.hasNext = body.hasNext;
+          }
+          _this.options.hasPrev = options.page !== 0;
+          _this.options.dates = Object.keys(dates);
+          _this.options.dates.sort(function(a, b) {
+            return -1 * a.localeCompare(b);
+          });
+          _this.options.photos = dates;
+        }
+        _this.$('.modal-body').html(_this.template_content(_this.getRenderData()));
+        _this.$('.modal-body').scrollTop(0);
+        if (_this.options.selected[_this.options.page] != null) {
+          _ref = _this.options.selected[_this.options.page];
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            img = _ref[_i];
+            _results.push(_this.$("#" + img.id).toggleClass('selected'));
+          }
+          return _results;
+        }
+      };
+    })(this));
+  };
+
+  FilesBrowser.prototype.cb = function(confirmed) {
+    if (!confirmed) {
+      return;
+    }
+    return this.options.beforeUpload((function(_this) {
+      return function(attrs) {
+        var fileid, img, page, phototmp, tmp, _i, _len, _ref, _results;
+        tmp = [];
+        _this.options.selected[_this.options.page] = _this.$('.selected');
+        _ref = _this.options.selected;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          page = _ref[_i];
+          _results.push((function() {
+            var _j, _len1, _results1;
+            _results1 = [];
+            for (_j = 0, _len1 = page.length; _j < _len1; _j++) {
+              img = page[_j];
+              fileid = img.id;
+              attrs.title = img.name;
+              phototmp = new Photo(attrs);
+              phototmp.file = img;
+              tmp.push(phototmp);
+              this.collection.add(phototmp);
+              _results1.push(Photo.makeFromFile(fileid, attrs, (function(_this) {
+                return function(err, photo) {
+                  if (err) {
+                    return console.log(err);
+                  }
+                  phototmp = tmp.pop();
+                  _this.collection.remove(phototmp, {
+                    parse: true
+                  });
+                  return _this.collection.add(photo, {
+                    parse: true
+                  });
+                };
+              })(this)));
+            }
+            return _results1;
+          }).call(_this));
+        }
+        return _results;
+      };
+    })(this));
+  };
+
+  FilesBrowser.prototype.displayNextPage = function() {
+    var options;
+    this.options.selected[this.options.page] = this.$('.selected');
+    options = {
+      page: this.options.page + 1,
+      selected: this.options.selected
+    };
+    return this.initialize(options);
+  };
+
+  FilesBrowser.prototype.displayPrevPage = function() {
+    var options;
+    this.options.selected[this.options.page] = this.$('.selected');
+    options = {
+      page: this.options.page - 1,
+      selected: this.options.selected
+    };
+    return this.initialize(options);
+  };
+
+  return FilesBrowser;
+
+})(Modal);
+});
+
 ;require.register("views/galery", function(exports, require, module) {
 var FilesBrowser, Galery, Photo, PhotoView, ViewCollection, app, helpers, photoprocessor,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },

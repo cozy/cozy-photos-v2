@@ -637,7 +637,6 @@ a.btn.btn-cozy.left.prev {
 }
 .modal-body {
   max-height: calc(100vh - 210px);
-  overflow-y: auto;
 }
 .modal-body img.selected {
   border: 5px solid #34a6ff;
