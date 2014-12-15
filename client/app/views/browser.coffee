@@ -61,7 +61,7 @@ module.exports = class FilesBrowser extends Modal
                 @options.hasNext = body.hasNext if body?.hasNext?
                 @options.hasPrev = options.page isnt 0
                 @options.dates = Object.keys(dates)
-                @options.date.sort (a, b) ->
+                @options.dates.sort (a, b) ->
                     -1 * a.localeCompare b
                 @options.photos = dates
 
