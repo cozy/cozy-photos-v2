@@ -34,15 +34,8 @@ module.exports = class Router extends Backbone.Router
                 @mainView.makeNonEditable()
 
         else
-            album = app.albums.get(id)
-
-            if album?
-                @displayView new AlbumView
-                    model: album
-                    editable: editable
-            else
-                album = new Album id:id
-                album.fetch()
+            album = app.albums.get(id) or new Album id: id
+            album.fetch()
                 .done =>
                     @displayView new AlbumView
                         model: album
