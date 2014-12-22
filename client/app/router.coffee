@@ -34,16 +34,22 @@ module.exports = class Router extends Backbone.Router
                 @mainView.makeNonEditable()
 
         else
-            album = app.albums.get(id) or new Album id:id
-            album.fetch()
-            .done =>
+            album = app.albums.get(id)
+
+            if album?
                 @displayView new AlbumView
                     model: album
                     editable: editable
-
-            .fail =>
-                alert t 'this album does not exist'
-                @navigate 'albums', true
+            else
+                new Album id:id
+                album.fetch()
+                .done =>
+                    @displayView new AlbumView
+                        model: album
+                        editable: editable
+                .fail =>
+                    alert t 'this album does not exist'
+                    @navigate 'albums', true
 
     # display the album view in edit mode
     albumedit: (id) ->
