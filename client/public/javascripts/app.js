@@ -1399,30 +1399,22 @@ module.exports = Router = (function(_super) {
         return this.mainView.makeNonEditable();
       }
     } else {
-      album = app.albums.get(id);
-      if (album != null) {
-        return this.displayView(new AlbumView({
-          model: album,
-          editable: editable
-        }));
-      } else {
-        album = new Album({
-          id: id
-        });
-        return album.fetch().done((function(_this) {
-          return function() {
-            return _this.displayView(new AlbumView({
-              model: album,
-              editable: editable
-            }));
-          };
-        })(this)).fail((function(_this) {
-          return function() {
-            alert(t('this album does not exist'));
-            return _this.navigate('albums', true);
-          };
-        })(this));
-      }
+      album = app.albums.get(id) || new Album({
+        id: id
+      });
+      return album.fetch().done((function(_this) {
+        return function() {
+          return _this.displayView(new AlbumView({
+            model: album,
+            editable: editable
+          }));
+        };
+      })(this)).fail((function(_this) {
+        return function() {
+          alert(t('this album does not exist'));
+          return _this.navigate('albums', true);
+        };
+      })(this));
     }
   };
 
