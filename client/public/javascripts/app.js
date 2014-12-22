@@ -1406,7 +1406,7 @@ module.exports = Router = (function(_super) {
           editable: editable
         }));
       } else {
-        new Album({
+        album = new Album({
           id: id
         });
         return album.fetch().done((function(_this) {
