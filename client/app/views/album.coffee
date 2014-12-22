@@ -30,6 +30,7 @@ module.exports = class AlbumView extends BaseView
         'click a.clearance': @changeClearance
         'click a.sendmail': @sendMail
         'click a#rebuild-th-btn': @rebuildThumbs
+        'click a.stopediting': @checkNew
         'blur #title': @onTitleChanged
         'blur #description': @onDescriptionChanged
         'click #title': @onFieldClicked
@@ -105,6 +106,15 @@ module.exports = class AlbumView extends BaseView
         if confirm t "are you sure you want to delete this album"
             @model.destroy().then ->
                 app.router.navigate 'albums', true
+
+    checkNew: (event) =>
+        if @model.get('title') is '' and
+           @model.get('description') is '' and
+           @model.photos.length is 0
+            if confirm t 'delete empty album'
+                event.preventDefault()
+                @model.destroy().then ->
+                    app.router.navigate 'albums', true
 
     # Change sharing state of the album.
     changeClearance: (event) =>

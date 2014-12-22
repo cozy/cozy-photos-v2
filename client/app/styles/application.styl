@@ -306,7 +306,6 @@ a.btn.btn-cozy.left.prev
     padding: 0px
     text-align: center
     text-transform: lowercase
-    float: left
     border: none 1px
     margin-bottom: 1px
 
@@ -319,10 +318,10 @@ a.btn.btn-cozy.left.prev
     cursor: pointer
 
 .editing #browseFiles
-    display block
+    display table-cell
 
 .editing #uploadblock
-    display block
+    display table-cell
 
  .pbCaptionText
      .btn-group
@@ -604,16 +603,22 @@ for t in exifTransforms
 .photo img
     width : 100%
 
+#uploadActions
+    display: table
+    border-spacing: 1em
+    width: 100%
+    margin: auto
+
 #uploadblock, #browseFiles
     width: 50%
-    border: 1px solid white
-    height: 65px
+    height: 100%
     cursor: pointer
 
 #uploadblock input#uploader
     width: 48%
     height: 65px
     cursor: pointer
+
 #uploadblock div
     cursor: pointer
 
