@@ -481,8 +481,12 @@ a.btn.btn-cozy.left.prev {
   border: 1px solid #fe8800;
 }
 #upload-actions {
+  display: none;
   width: 100%;
-  margin: auto;
+  margin-bottom: 10px;
+}
+.editing #upload-actions {
+  display: table;
 }
 #upload-block,
 #browse-files {
@@ -495,10 +499,6 @@ a.btn.btn-cozy.left.prev {
   width: 47%;
   height: 65px;
   cursor: pointer;
-}
-#upload-actions {
-  display: table;
-  margin-bottom: 10px;
 }
 #upload-block,
 #browse-files {
