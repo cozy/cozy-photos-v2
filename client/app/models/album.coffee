@@ -16,6 +16,7 @@ module.exports = class Album extends Backbone.Model
         clearance: []
         thumbsrc: 'img/nophotos.gif'
         orientation: 1
+        updated: null
 
     url: -> super + app.urlKey
 

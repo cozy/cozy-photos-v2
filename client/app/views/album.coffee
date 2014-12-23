@@ -143,8 +143,10 @@ module.exports = class AlbumView extends BaseView
             $('.stopediting').focus()
 
     saveModel: (data) ->
+        data.updated = Date.now()
         @model.save data
 
     onPhotoCollectionChange: ->
+        @model.save updated: Date.now()
         # updates the photo counter
         @$('.photo-number').html @model.photos.length
