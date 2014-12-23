@@ -115,7 +115,7 @@ module.exports = class Galery extends ViewCollection
 
     # Extract photo id from its URL. It's useful to get the id of the current
     # picture when the user browses them via photobox.
-    getIdPhoto: (url) =>
+    getIdPhoto: (url) ->
         url ?= $('#pbOverlay .wrapper img.zoomable').attr 'src'
         parts = url.split('/')
         id = parts[parts.length - 1]
@@ -130,7 +130,7 @@ module.exports = class Galery extends ViewCollection
             helpers.rotateLeft orientation, $('.wrapper img.zoomable')
         helpers.rotate newOrientation, $('.wrapper img.zoomable')
         @collection.get(id)?.save orientation: newOrientation,
-            success : () =>
+            success : () ->
                 helpers.rotate newOrientation, $('.pbThumbs .active img')
 
     # Rotate 90° right the picture by updating css and orientation.
@@ -141,7 +141,7 @@ module.exports = class Galery extends ViewCollection
             helpers.rotateRight orientation, $('.wrapper img.zoomable')
         helpers.rotate newOrientation, $('.wrapper img.zoomable')
         @collection.get(id)?.save orientation: newOrientation,
-            success : () =>
+            success : () ->
                 helpers.rotate newOrientation, $('.pbThumbs .active img')
 
     # When cover button is clicked, the current picture is set on the current
@@ -202,6 +202,8 @@ module.exports = class Galery extends ViewCollection
                 photo = new Photo photoAttributes
                 photo.file = file
                 @collection.add photo
+                # set a 'dirty' flag on mainView until photo is uploaded
+                app.router.mainView.dirty = true
                 photoprocessor.process photo
 
             for key, view of @views

@@ -19,6 +19,9 @@ module.exports =
 
         @router = new Router()
 
+        $(window).on "hashchange", @router.hashChange
+        $(window).on "beforeunload", @router.beforeUnload
+
         # Base data
         @albums = new AlbumCollection()
 

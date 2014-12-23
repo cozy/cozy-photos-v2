@@ -70,3 +70,25 @@ module.exports = class Router extends Backbone.Router
         el = @mainView.render().$el
         el.addClass "mode-#{app.mode}"
         $('body').append el
+
+    hashChange: (event) =>
+        if @cancelNavigate
+            event.stopImmediatePropagation()
+            @cancelNavigate = false
+        else
+            if @mainView and @mainView.dirty
+                if not(window.confirm t("Navigate before upload"))
+                    event.stopImmediatePropagation()
+                    @cancelNavigate = true
+                    window.location.href = event.originalEvent.oldURL
+                else
+                    @mainView.dirty = false
+
+    beforeUnload: (event) =>
+        if @mainView and @mainView.dirty
+            # Chrome will display this message, Firefox won't
+            confirm = t("Navigate before upload")
+        else
+            confirm = undefined
+        event.returnValue = confirm
+        return confirm

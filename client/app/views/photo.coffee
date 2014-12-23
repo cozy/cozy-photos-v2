@@ -19,7 +19,7 @@ module.exports = class PhotoView extends BaseView
         @listenTo @model, 'uploadComplete',  @onServer
         @listenTo @model, 'change',          => @render()
 
-    events: =>
+    events: ->
         'click' : 'onClickListener'
         'click .delete' : 'destroyModel'
 
@@ -55,6 +55,8 @@ module.exports = class PhotoView extends BaseView
             @render()
 
         preload.src = "photos/thumbs/#{@model.id}.jpg"
+        # image loaded, we can navigate away
+        app.router.mainView.dirty = false
 
     # when an error occured, the photo is marked with error image.
     onError: (err) ->
@@ -63,7 +65,7 @@ module.exports = class PhotoView extends BaseView
         @link.attr 'title', @error
         @image.attr 'src', 'img/error.gif'
 
-    # Prevent opeNing the gallery if the photos
+    # Prevent opening the gallery if the photos
     # hasn't been upload yet
     onClickListener: (evt) =>
         if @model.isNew()
