@@ -138,6 +138,23 @@ textarea:active {
 .modal-footer button {
   font-family: styled;
 }
+p.disabled {
+  color: #999;
+}
+#public-url.disabled {
+  color: #ddd;
+  background: #ddd;
+  cursor: default;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+#public-url.disabled:hover,
+#public-url.disabled:active,
+#public-url.disabled:focus {
+  border: 1px solid #ccc;
+}
 glyphicon-reverted {
   -moz-transform: scaleX(-1);
   -o-transform: scaleX(-1);
