@@ -152,6 +152,10 @@ module.exports = AlbumCollection = (function(_super) {
 
   AlbumCollection.prototype.url = 'albums' + app.urlKey;
 
+  AlbumCollection.prototype.comparator = function(model) {
+    return model.get('title');
+  };
+
   return AlbumCollection;
 
 })(Backbone.Collection);
@@ -746,6 +750,10 @@ module.exports = {
   "modal shared album custom msg": "Enter email and press enter",
   "modal shared album link msg": "Send this link to let people access this album",
   "modal send mails": "Send a notification",
+  "modal next": "Next",
+  "modal prev": "Previous",
+  "modal ok": "Ok",
+  "modal cancel": "Cancel",
   "only you can see": "Only you and the people listed below can access this resource",
   "public": "Public",
   "private": "Private",
@@ -768,6 +776,7 @@ module.exports = {
   "yes": "Yes",
   "no": "No",
   "pictures": "pictures",
+  "delete empty album": "This album is empty, do you want to delete it?",
   "are you sure you want to delete this album": "Are you sure you want to delete this album?",
   "photos search": "Loading ...",
   "no photos found": "No photos found",
@@ -783,7 +792,7 @@ module.exports = {
   "Delete": "Supprimer",
   "Download": "Télécharger",
   "Edit": "Modifier",
-  "Stop editing": "Enregistrer les modifications",
+  "Stop editing": "Enregistrer",
   "It will appears on your homepage.": "Il apparaîtra sur votre page d'accueil",
   "Make it Hidden": "masqué",
   "Make it Private": "privé",
@@ -837,6 +846,11 @@ module.exports = {
   "modal question album shareable": "Choisissez le mode de partage pour cet album",
   "modal shared album custom msg": "Entrez un email et appuyez sur Entrée",
   "modal shared album link msg": "Envoyez ce lien pour donner accès à cet album",
+  "modal send mails": "Envoyer une notification",
+  "modal next": "Suivant",
+  "modal prev": "Précédent",
+  "modal ok": "Ok",
+  "modal cancel": "Annuler",
   "only you can see": "Seuls vous et les personnes ci-dessous peuvent accéder à cette ressource.",
   "public": "Public",
   "private": "Privé",
@@ -846,7 +860,6 @@ module.exports = {
   "sharing": "Partage",
   "revoke": "Révoquer la permission",
   "send mails question": "Envoyer un email de notification à : ",
-  "modal send mails": "Envoyer une notification",
   "forced public": "Ce dossier est public car un dossier parent est public : ",
   "confirm": "Confirmer",
   "share forgot add": "Il semble que vous ayez oublié d'appuyer sur le boutton Ajouter",
@@ -862,6 +875,7 @@ module.exports = {
   "yes": "Oui",
   "no": "Non",
   "pictures": "photos",
+  "delete empty album": "L'album est vide, voulez-vous le supprimer?",
   "are you sure you want to delete this album": "Etes vous sûr de vouloir effacer cet album ?",
   "photos search": "Recherche des photos...",
   "no photos found": "Aucune photo trouvée...",
@@ -1375,7 +1389,7 @@ module.exports = Router = (function(_super) {
       editable = false;
     }
     return this.displayView(new AlbumsListView({
-      collection: app.albums,
+      collection: app.albums.sort(),
       editable: editable
     }));
   };
@@ -1468,7 +1482,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 var locals_ = (locals || {}),id = locals_.id,clearance = locals_.clearance,downloadPath = locals_.downloadPath,photosNumber = locals_.photosNumber,title = locals_.title,description = locals_.description;
-buf.push("<div id=\"about\"><div class=\"clearfix\"><div id=\"links\" class=\"clearfix\"><p class=\"back\"><a href=\"#albums\" class=\"flatbtn\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Back")) ? "" : jade_interp)) + "</span></a></p><p class=\"startediting\"><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn\"><span class=\"glyphicon glyphicon-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p class=\"stopediting\"><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><P class=\"clearance\"><a class=\"flatbtn clearance\">");
+buf.push("<div id=\"about\"><div class=\"clearfix\"><div id=\"links\" class=\"clearfix\"><p class=\"back\"><a href=\"#albums\" class=\"flatbtn\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Back")) ? "" : jade_interp)) + "</span></a></p><p class=\"startediting\"><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn\"><span class=\"glyphicon glyphicon-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p class=\"stopediting\"><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn stopediting\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><P class=\"clearance\"><a class=\"flatbtn clearance\">");
 if ( clearance == 'public')
 {
 buf.push("<span class=\"glyphicon glyphicon-globe icon-white\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('public')) == null ? '' : jade_interp)) + "");
@@ -1632,11 +1646,11 @@ buf.push("<br/>");
 
 if ( hasPrev)
 {
-buf.push("<a class=\"btn btn-cozy left prev\"><p>&#12296 Prev</p></a>");
+buf.push("<a class=\"btn btn-cozy left prev\"><p>&#12296 " + (jade.escape((jade_interp = t('modal prev')) == null ? '' : jade_interp)) + "</p></a>");
 }
 if ( hasNext)
 {
-buf.push("<a class=\"btn btn-cozy right next\"><p>Next &#12297</p></a>");
+buf.push("<a class=\"btn btn-cozy right next\"><p>" + (jade.escape((jade_interp = t('modal next')) == null ? '' : jade_interp)) + " &#12297</p></a>");
 }
 }
 buf.push("</div>");;return buf.join("");
@@ -1658,7 +1672,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 
-buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = t('There is no photos in this album')) ? "" : jade_interp)) + "</p><div id=\"uploadblock\" class=\"flatbtn\"><input id=\"uploader\" type=\"file\" multiple=\"multiple\"/><div class=\"pa2\">" + (jade.escape(null == (jade_interp = t('pick from computer')) ? "" : jade_interp)) + "</div></div><div id=\"browseFiles\" class=\"flatbtn\"><div class=\"pa2\">" + (jade.escape(null == (jade_interp = t('pick from files')) ? "" : jade_interp)) + "</div></div>");;return buf.join("");
+buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = t('There is no photos in this album')) ? "" : jade_interp)) + "</p><div id=\"upload-actions\"><div id=\"upload-block\" class=\"flatbtn\"><input id=\"uploader\" type=\"file\" multiple=\"multiple\"/><div class=\"pa2\">" + (jade.escape(null == (jade_interp = t('pick from computer')) ? "" : jade_interp)) + "</div></div><div id=\"browse-files\" class=\"flatbtn\"><div class=\"pa2\">" + (jade.escape(null == (jade_interp = t('pick from files')) ? "" : jade_interp)) + "</div></div></div>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -1737,6 +1751,7 @@ module.exports = AlbumView = (function(_super) {
 
   function AlbumView() {
     this.changeClearance = __bind(this.changeClearance, this);
+    this.checkNew = __bind(this.checkNew, this);
     this.onFieldClicked = __bind(this.onFieldClicked, this);
     this.makeNonEditable = __bind(this.makeNonEditable, this);
     this.makeEditable = __bind(this.makeEditable, this);
@@ -1759,6 +1774,7 @@ module.exports = AlbumView = (function(_super) {
       'click a.clearance': this.changeClearance,
       'click a.sendmail': this.sendMail,
       'click a#rebuild-th-btn': this.rebuildThumbs,
+      'click a.stopediting': this.checkNew,
       'blur #title': this.onTitleChanged,
       'blur #description': this.onDescriptionChanged,
       'click #title': this.onFieldClicked,
@@ -1851,6 +1867,17 @@ module.exports = AlbumView = (function(_super) {
       return this.model.destroy().then(function() {
         return app.router.navigate('albums', true);
       });
+    }
+  };
+
+  AlbumView.prototype.checkNew = function(event) {
+    if (this.model.get('title') === '' && this.model.get('description') === '' && this.model.photos.length === 0) {
+      if (confirm(t('delete empty album'))) {
+        event.preventDefault();
+        return this.model.destroy().then(function() {
+          return app.router.navigate('albums', true);
+        });
+      }
     }
   };
 
@@ -2031,6 +2058,8 @@ module.exports = FilesBrowser = (function(_super) {
   };
 
   FilesBrowser.prototype.initialize = function(options) {
+    this.yes = t('modal ok');
+    this.no = t('modal cancel');
     if (options.page == null) {
       FilesBrowser.__super__.initialize.call(this, {});
     }
@@ -2268,7 +2297,7 @@ module.exports = Galery = (function(_super) {
       'dragover': 'onDragOver',
       'dragleave': 'onDragLeave',
       'change #uploader': 'onFilesChanged',
-      'click #browseFiles': 'displayBrowser'
+      'click #browse-files': 'displayBrowser'
     };
   };
 

@@ -20,13 +20,19 @@ module.exports = class FilesBrowser extends Modal
     getRenderData: -> @options
 
     initialize: (options) ->
+        @yes = t 'modal ok'
+        @no = t 'modal cancel'
+
         # Prepare option
         if not options.page?
             super {}
+
         if not options.page?
             options.page = 0
+
         if not options.selected?
             @options.selected = []
+
         @options.page = options.page
 
         # Recover files
@@ -60,7 +66,7 @@ module.exports = class FilesBrowser extends Modal
                 # Add next/prev button
                 @options.hasNext = body.hasNext if body?.hasNext?
                 @options.hasPrev = options.page isnt 0
-                @options.dates = Object.keys(dates)
+                @options.dates = Object.keys dates
                 @options.dates.sort (a, b) ->
                     -1 * a.localeCompare b
                 @options.photos = dates

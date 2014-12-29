@@ -36,7 +36,6 @@ h1, h4
     background-color blue
     color white
     cursor pointer
-    text-transform capitalize
     width 100%
     border 0
 
@@ -308,33 +307,46 @@ a.btn.btn-cozy.left.prev
 .editing #photos.empty
     border 1px solid orange
 
+#upload-actions
+    display: none
+    width: 100%
+    margin-bottom: 10px
 
+.editing
+    #upload-actions
+        display: table
 
-#uploadblock, #browseFiles
+#upload-block, #browse-files
+    width: 50%
+    height: 100%
+    cursor: pointer
+    margin: 10px 0
+
+#upload-block input#uploader
+    width: 47%
+    height: 65px
+    cursor: pointer
+
+#upload-block, #browse-files
+    display: table-cell
     box-sizing: border-box
     overflow: hidden
-    display: none
     margin: 0px
     padding: 0px
     text-align: center
-    text-transform: lowercase
-    float: left
-    border: none 1px
-    margin-bottom: 1px
+    cursor: pointer
+    height: 100%
 
     span
         padding: 10px
 
-#uploadblock.photo:hover
+#browse-files
+    border-left: 10px solid bgcolor
+
+#upload-block.photo:hover
     transform scale(1)
     -webkit-transform scale(1)
     cursor: pointer
-
-.editing #browseFiles
-    display block
-
-.editing #uploadblock
-    display block
 
  .pbCaptionText
      .btn-group
@@ -622,21 +634,6 @@ for t in exifTransforms
 .photo img
     width : 100%
 
-#uploadblock, #browseFiles
-    width: 50%
-    border: 1px solid white
-    height: 65px
-    cursor: pointer
-
-#uploadblock input#uploader
-    width: 48%
-    height: 65px
-    cursor: pointer
-#uploadblock div
-    cursor: pointer
-
-#browseFiles div
-    cursor: pointer
 
 .photo
     width: 10%

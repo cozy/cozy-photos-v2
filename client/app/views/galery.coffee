@@ -87,7 +87,7 @@ module.exports = class Galery extends ViewCollection
         'dragover' : 'onDragOver'
         'dragleave' : 'onDragLeave'
         'change #uploader': 'onFilesChanged'
-        'click #browseFiles': 'displayBrowser'
+        'click #browse-files': 'displayBrowser'
 
     # event listeners for D&D events
     onFilesDropped: (evt) ->
