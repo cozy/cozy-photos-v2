@@ -58,13 +58,14 @@ module.exports = class Galery extends ViewCollection
         @uploader = @$('#uploader')
 
         # Cover button to select cover
-        @coverBtn = $('#pbOverlay .pbCaptionText .btn-group .cover-btn')
-        @coverBtn.unbind 'click'
-        @coverBtn.remove()
-        @coverBtn = $('<a id="cover-btn" class="btn cover-btn">
-                       <i class="glyphicon glyphicon-picture" </i> </a>')
-            .appendTo '#pbOverlay .pbCaptionText .btn-group'
-        @coverBtn.on 'click', @onCoverClicked
+        if app.mode isnt 'public'
+            @coverBtn = $('#pbOverlay .pbCaptionText .btn-group .cover-btn')
+            @coverBtn.unbind 'click'
+            @coverBtn.remove()
+            @coverBtn = $('<a id="cover-btn" class="btn cover-btn">
+                           <i class="glyphicon glyphicon-picture" </i> </a>')
+                .appendTo '#pbOverlay .pbCaptionText .btn-group'
+            @coverBtn.on 'click', @onCoverClicked
 
         # Add button to return photo to right
         @turnRight = $('#pbOverlay .pbCaptionText .btn-group .right')
