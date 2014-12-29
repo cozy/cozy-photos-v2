@@ -31,6 +31,10 @@ module.exports = class PhotoView extends BaseView
         @progressbar = @$ '.progressfill'
         helpers.rotate @model.get('orientation'), @image
         @link.addClass 'server' unless @model.isNew()
+        if @image.get(0).complete
+            @onImageLoaded
+        else
+            @image.on 'load', @onImageLoaded
 
     setProgress: (percent) ->
         @progressbar.css 'width', percent + '%'
@@ -82,3 +86,6 @@ module.exports = class PhotoView extends BaseView
                 success: =>
                     @collection.remove @model
                     @remove()
+
+    onImageLoaded: ->
+        @.classList.add 'loaded'
