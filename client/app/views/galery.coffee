@@ -40,13 +40,13 @@ module.exports = class Galery extends ViewCollection
         else
             transform = "-webkit-transform"
         @turnLeft = $('<a id="left" class="btn left" type="button">
-                       <i class="glyphicon glyphicon-share-alt glyphicon-reverted"
-                        style="' + transform + ': scale(-1,1)"> </i> </a>')
+                     <i class="glyphicon glyphicon-share-alt glyphicon-reverted"
+                      style="' + transform + ': scale(-1,1)"> </i> </a>')
             .appendTo '#pbOverlay .pbCaptionText .btn-group'
         @turnLeft.on 'click', @onTurnLeft
 
         # Add link to download photo
-        @downloadLink = $('#pbOverlay .pbCaptionText  .btn-group .download-link')
+        @downloadLink = $('#pbOverlay .pbCaptionText .btn-group .download-link')
         @downloadLink.unbind 'click'
         @downloadLink.remove()
         unless @downloadLink.length
@@ -116,7 +116,7 @@ module.exports = class Galery extends ViewCollection
     # Extract photo id from its URL. It's useful to get the id of the current
     # picture when the user browses them via photobox.
     getIdPhoto: (url) ->
-        url ?= $('#pbOverlay .wrapper img.zoomable').attr 'src'
+        url ?= $('#pbOverlay .wrapper img').attr 'src'
         parts = url.split('/')
         id = parts[parts.length - 1]
         id = id.split('.')[0]
@@ -127,8 +127,8 @@ module.exports = class Galery extends ViewCollection
         id = @getIdPhoto()
         orientation = @collection.get(id)?.attributes.orientation
         newOrientation =
-            helpers.rotateLeft orientation, $('.wrapper img.zoomable')
-        helpers.rotate newOrientation, $('.wrapper img.zoomable')
+            helpers.rotateLeft orientation, $('.wrapper img')
+        helpers.rotate newOrientation, $('.wrapper img')
         @collection.get(id)?.save orientation: newOrientation,
             success : () ->
                 helpers.rotate newOrientation, $('.pbThumbs .active img')
@@ -138,8 +138,8 @@ module.exports = class Galery extends ViewCollection
         id = @getIdPhoto()
         orientation = @collection.get(id)?.attributes.orientation
         newOrientation =
-            helpers.rotateRight orientation, $('.wrapper img.zoomable')
-        helpers.rotate newOrientation, $('.wrapper img.zoomable')
+            helpers.rotateRight orientation, $('.wrapper img')
+        helpers.rotate newOrientation, $('.wrapper img')
         @collection.get(id)?.save orientation: newOrientation,
             success : () ->
                 helpers.rotate newOrientation, $('.pbThumbs .active img')
