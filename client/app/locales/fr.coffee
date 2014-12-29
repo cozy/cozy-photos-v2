@@ -31,11 +31,11 @@ module.exports =
     "Select your friends": "Choisissez vos amis"
     "Add": "Ajouter"
     "Cancel": "Annuler"
-    'photo successfully set as cover': '''
-        L'image est maintenant la couverture de l'album.'''
-    'problem occured while setting cover': '''
+    "photo successfully set as cover": """
+        L'image est maintenant la couverture de l'album."""
+    "problem occured while setting cover": """
         Un problème est survenu en positionnant l'image comme couverture de
-        l'album.'''
+        l'album."""
 
     "pick from computer":"""
         Cliquez ici ou glissez-déposez vos photos pour ajouter des images
@@ -55,18 +55,18 @@ module.exports =
 
     "rebuild thumbnails": "Regénérer les vignettes"
 
-    '01': 'Janvier'
-    '02': 'Février'
-    '03': 'Mars'
-    '04': 'Avril'
-    '05': 'Mai'
-    '06': 'Juin'
-    '07': 'Juillet'
-    '08': 'Août'
-    '09': 'Septembre'
-    '10': 'Octobre'
-    '11': 'Novembre'
-    '12': 'Décembre'
+    "01": "Janvier"
+    "02": "Février"
+    "03": "Mars"
+    "04": "Avril"
+    "05": "Mai"
+    "06": "Juin"
+    "07": "Juillet"
+    "08": "Août"
+    "09": "Septembre"
+    "10": "Octobre"
+    "11": "Novembre"
+    "12": "Décembre"
      # clearance modal
     "also have access" : "Ces personnes ont également accès, car elles ont accès à un dossier parent"
     "cancel" : "Annuler"
@@ -75,13 +75,16 @@ module.exports =
     "inherited from" : "hérité de"
     "modal question album shareable" : "Choisissez le mode de partage pour cet album"
     "modal shared album custom msg" : "Entrez un email et appuyez sur Entrée"
-    "modal shared album link msg" : "Envoyez ce lien pour donner accès à cet album"
+    "modal shared public link msg"    : "Envoyez ce lien pour partager cet album"
+    "modal shared with people msg"    : """
+        OU invitez une sélection de contacts à y accéder. Taper l'email
+         dans le champ et appuyez sur entrée (un email pour les prévenir leur sera envoyé):"""
+    "only you can see"                : "Seul vous pouvez accéder à cette ressource."
     "modal send mails" : "Envoyer une notification"
     "modal next": "Suivant"
     "modal prev": "Précédent"
     "modal ok": "Ok"
     "modal cancel": "Annuler"
-    "only you can see" : "Seuls vous et les personnes ci-dessous peuvent accéder à cette ressource."
     "public" : "Public"
     "private" : "Privé"
     "shared" : "Partagé"
@@ -93,11 +96,11 @@ module.exports =
     "forced public" : "Ce dossier est public car un dossier parent est public : "
     "confirm" : "Confirmer"
     "share forgot add" : """
-Il semble que vous ayez oublié d'appuyer sur le boutton Ajouter
-"""
+        Il semble que vous ayez oublié d'appuyer sur le boutton Ajouter
+    """
     "share confirm save" : """
-Les changements effectués sur les permissions ne seront pas sauvegardées. Etes vous sûr ?
-"""
+        Les changements effectués sur les permissions ne seront pas sauvegardées. Etes vous sûr ?
+    """
     "yes forgot" : "Retour"
     "no forgot" : "Ok"
     "perm" : "peut "
@@ -105,8 +108,9 @@ Les changements effectués sur les permissions ne seront pas sauvegardées. Etes
     "perm r album" : "parcourir cet album"
     "perm rw album" : "parcourir cet album et ajouter des photos"
     "change notif" : """
-Cocher cette case pour recevoir une notification cozy quand un contact
-ajoute une photo à cet album."""
+        Cocher cette case pour recevoir une notification cozy quand un contact
+         ajoute une photo à cet album.
+    """
     "send email hint": "Des emails de notification seront envoyés lors de la première sauvegarde."
     "yes" : "Oui"
     "no" : "Non"

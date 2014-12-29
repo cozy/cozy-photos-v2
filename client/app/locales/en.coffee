@@ -32,10 +32,10 @@ module.exports =
     "Select your friends": "Select your friends"
     "Add": "Add"
     "Cancel": "Cancel"
-    'photo successfully set as cover': '''
-        The picture has been successfully set as album cover'''
-    'problem occured while setting cover': '''
-        A problem occured while setting picture as cover'''
+    "photo successfully set as cover": """
+        The picture has been successfully set as album cover"""
+    "problem occured while setting cover": """
+        A problem occured while setting picture as cover"""
 
 
     "pick from computer":"""
@@ -55,18 +55,18 @@ module.exports =
     """
     "rebuild thumbnails": "Rebuild thumbnails"
 
-    '01': 'January'
-    '02': 'February'
-    '03': 'March'
-    '04': 'April'
-    '05': 'May'
-    '06': 'June'
-    '07': 'July'
-    '08': 'August'
-    '09': 'September'
-    '10': 'October'
-    '11': 'November'
-    '12': 'December'
+    "01": "January"
+    "02": "February"
+    "03": "March"
+    "04": "April"
+    "05": "May"
+    "06": "June"
+    "07": "July"
+    "08": "August"
+    "09": "September"
+    "10": "October"
+    "11": "November"
+    "12": "December"
     # clearance modal
     "cancel" : "Cancel"
     "copy paste link" : "To give access to your contact send him/her the link below:"
@@ -75,12 +75,16 @@ module.exports =
     "modal question album shareable" : "Select share mode for this album"
     "modal shared album custom msg" : "Enter email and press enter"
     "modal shared album link msg" : "Send this link to let people access this album"
+    "modal shared public link msg"    : "Send this link to let people access this folder:"
+    "modal shared with people msg"    : """
+        OR invite a selection of contacts to access it. Type
+         email in the field and press enter (An email will be sent to them):"""
     "modal send mails" : "Send a notification"
     "modal next": "Next"
     "modal prev": "Previous"
     "modal ok": "Ok"
     "modal cancel": "Cancel"
-    "only you can see" : "Only you and the people listed below can access this resource"
+    "only you can see" : "Only you can access this resource"
     "public" : "Public"
     "private" : "Private"
     "shared" : "Shared"
@@ -91,19 +95,17 @@ module.exports =
     "revoke" : "Revoke"
     "confirm" : "Confirm"
     "share forgot add" : """
-Looks like you forgot to click the Add button
-"""
+        Looks like you forgot to click the Add button"""
     "share confirm save" : """
-The changes you made to the permissions will not be saved. Do you want to continue?
-"""
+        The changes you made to the permissions will not be saved. Do you want to continue?"""
     "yes forgot" : "Back"
     "no forgot" : "It's ok"
     "perm" : "can "
     "perm r album" : "browse this album"
     "perm rw album" : "browse and upload photos"
     "change notif" : """
-Check this box to be notified when a contact
-will add a photo to this album."""
+        Check this box to be notified when a contact
+        will add a photo to this album."""
     "send email hint": "Notification emails will be sent one time on save"
     "yes" : "Yes"
     "no" : "No"
