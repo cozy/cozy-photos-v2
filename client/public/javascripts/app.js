@@ -108,6 +108,8 @@ module.exports = {
     AlbumCollection = require('collections/album');
     Router = require('router');
     this.router = new Router();
+    $(window).on("hashchange", this.router.hashChange);
+    $(window).on("beforeunload", this.router.beforeUnload);
     this.albums = new AlbumCollection();
     this.urlKey = "";
     if (window.location.search) {
@@ -781,7 +783,8 @@ module.exports = {
   "photos search": "Loading ...",
   "no photos found": "No photos found",
   "thumb creation": "Application creates thumbs for files.",
-  "progress": "Progression"
+  "progress": "Progression",
+  "Navigate before upload": "Some upload are in progress, do you really want to leave this page?"
 };
 });
 
@@ -880,7 +883,8 @@ module.exports = {
   "photos search": "Recherche des photos...",
   "no photos found": "Aucune photo trouvée...",
   "thumb creation": "L'application est entrain de créer des minatures pour vos photos afin d'améliorer votre navigation.",
-  "progress": "Progression"
+  "progress": "Progression",
+  "Navigate before upload": "Certaines photos n'ont pas encore été envoyées au serveur, voulez-vous vraiment quitter cette page ?"
 };
 });
 
@@ -904,7 +908,8 @@ module.exports = Album = (function(_super) {
       description: '',
       clearance: [],
       thumbsrc: 'img/nophotos.gif',
-      orientation: 1
+      orientation: 1,
+      updated: null
     };
   };
 
@@ -1371,6 +1376,8 @@ module.exports = Router = (function(_super) {
   __extends(Router, _super);
 
   function Router() {
+    this.beforeUnload = __bind(this.beforeUnload, this);
+    this.hashChange = __bind(this.hashChange, this);
     this.displayView = __bind(this.displayView, this);
     return Router.__super__.constructor.apply(this, arguments);
   }
@@ -1471,6 +1478,34 @@ module.exports = Router = (function(_super) {
     return $('body').append(el);
   };
 
+  Router.prototype.hashChange = function(event) {
+    if (this.cancelNavigate) {
+      event.stopImmediatePropagation();
+      return this.cancelNavigate = false;
+    } else {
+      if (this.mainView && this.mainView.dirty) {
+        if (!(window.confirm(t("Navigate before upload")))) {
+          event.stopImmediatePropagation();
+          this.cancelNavigate = true;
+          return window.location.href = event.originalEvent.oldURL;
+        } else {
+          return this.mainView.dirty = false;
+        }
+      }
+    }
+  };
+
+  Router.prototype.beforeUnload = function(event) {
+    var confirm;
+    if (this.mainView && this.mainView.dirty) {
+      confirm = t("Navigate before upload");
+    } else {
+      confirm = void 0;
+    }
+    event.returnValue = confirm;
+    return confirm;
+  };
+
   return Router;
 
 })(Backbone.Router);
@@ -1532,8 +1567,8 @@ var __templateData = function template(locals) {
 var buf = [];
 var jade_mixins = {};
 var jade_interp;
-var locals_ = (locals || {}),id = locals_.id,thumbsrc = locals_.thumbsrc,folderid = locals_.folderid,title = locals_.title;
-buf.push("<a" + (jade.attr("id", "" + (id) + "", true, false)) + (jade.attr("href", "#albums/" + (id) + "", true, false)) + "><img" + (jade.attr("src", "" + (thumbsrc) + ")", true, false)) + "/><span class=\"title\">");
+var locals_ = (locals || {}),id = locals_.id,isRecent = locals_.isRecent,thumbsrc = locals_.thumbsrc,folderid = locals_.folderid,title = locals_.title;
+buf.push("<a" + (jade.attr("id", "" + (id) + "", true, false)) + (jade.attr("href", "#albums/" + (id) + "", true, false)) + (jade.cls([isRecent], [true])) + "><img" + (jade.attr("src", "" + (thumbsrc) + "", true, false)) + "/><span class=\"title\">");
 if ( folderid == "all")
 {
 buf.push(jade.escape(null == (jade_interp = title) ? "" : jade_interp));
@@ -1915,10 +1950,14 @@ module.exports = AlbumView = (function(_super) {
   };
 
   AlbumView.prototype.saveModel = function(data) {
+    data.updated = Date.now();
     return this.model.save(data);
   };
 
   AlbumView.prototype.onPhotoCollectionChange = function() {
+    this.model.save({
+      updated: Date.now()
+    });
     return this.$('.photo-number').html(this.model.photos.length);
   };
 
@@ -2003,6 +2042,7 @@ module.exports = AlbumItem = (function(_super) {
     out = _.clone(this.model.attributes);
     out.description = limitLength(out.description, 250);
     out.thumbsrc = this.model.getThumbSrc();
+    out.isRecent = (out.updated != null) && out.updated - Date.now() < 60000 ? 'recent' : '';
     return out;
   };
 
@@ -2226,7 +2266,6 @@ module.exports = Galery = (function(_super) {
     this.onCoverClicked = __bind(this.onCoverClicked, this);
     this.onTurnRight = __bind(this.onTurnRight, this);
     this.onTurnLeft = __bind(this.onTurnLeft, this);
-    this.getIdPhoto = __bind(this.getIdPhoto, this);
     this.checkIfEmpty = __bind(this.checkIfEmpty, this);
     return Galery.__super__.constructor.apply(this, arguments);
   }
@@ -2261,7 +2300,7 @@ module.exports = Galery = (function(_super) {
     }
     this.turnLeft = $('<a id="left" class="btn left" type="button"> <i class="glyphicon glyphicon-share-alt glyphicon-reverted" style="' + transform + ': scale(-1,1)"> </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
     this.turnLeft.on('click', this.onTurnLeft);
-    this.downloadLink = $('#pbOverlay .pbCaptionText  .btn-group .download-link');
+    this.downloadLink = $('#pbOverlay .pbCaptionText .btn-group .download-link');
     this.downloadLink.unbind('click');
     this.downloadLink.remove();
     if (!this.downloadLink.length) {
@@ -2332,7 +2371,7 @@ module.exports = Galery = (function(_super) {
   Galery.prototype.getIdPhoto = function(url) {
     var id, parts;
     if (url == null) {
-      url = $('#pbOverlay .wrapper img.zoomable').attr('src');
+      url = $('#pbOverlay .wrapper img').attr('src');
     }
     parts = url.split('/');
     id = parts[parts.length - 1];
@@ -2344,16 +2383,14 @@ module.exports = Galery = (function(_super) {
     var id, newOrientation, orientation, _ref, _ref1;
     id = this.getIdPhoto();
     orientation = (_ref = this.collection.get(id)) != null ? _ref.attributes.orientation : void 0;
-    newOrientation = helpers.rotateLeft(orientation, $('.wrapper img.zoomable'));
-    helpers.rotate(newOrientation, $('.wrapper img.zoomable'));
+    newOrientation = helpers.rotateLeft(orientation, $('.wrapper img'));
+    helpers.rotate(newOrientation, $('.wrapper img'));
     return (_ref1 = this.collection.get(id)) != null ? _ref1.save({
       orientation: newOrientation
     }, {
-      success: (function(_this) {
-        return function() {
-          return helpers.rotate(newOrientation, $('.pbThumbs .active img'));
-        };
-      })(this)
+      success: function() {
+        return helpers.rotate(newOrientation, $('.pbThumbs .active img'));
+      }
     }) : void 0;
   };
 
@@ -2361,16 +2398,14 @@ module.exports = Galery = (function(_super) {
     var id, newOrientation, orientation, _ref, _ref1;
     id = this.getIdPhoto();
     orientation = (_ref = this.collection.get(id)) != null ? _ref.attributes.orientation : void 0;
-    newOrientation = helpers.rotateRight(orientation, $('.wrapper img.zoomable'));
-    helpers.rotate(newOrientation, $('.wrapper img.zoomable'));
+    newOrientation = helpers.rotateRight(orientation, $('.wrapper img'));
+    helpers.rotate(newOrientation, $('.wrapper img'));
     return (_ref1 = this.collection.get(id)) != null ? _ref1.save({
       orientation: newOrientation
     }, {
-      success: (function(_this) {
-        return function() {
-          return helpers.rotate(newOrientation, $('.pbThumbs .active img'));
-        };
-      })(this)
+      success: function() {
+        return helpers.rotate(newOrientation, $('.pbThumbs .active img'));
+      }
     }) : void 0;
   };
 
@@ -2449,6 +2484,7 @@ module.exports = Galery = (function(_super) {
           photo = new Photo(photoAttributes);
           photo.file = file;
           _this.collection.add(photo);
+          app.router.mainView.dirty = true;
           photoprocessor.process(photo);
         }
         _ref = _this.views;
@@ -2497,7 +2533,6 @@ module.exports = PhotoView = (function(_super) {
 
   function PhotoView() {
     this.onClickListener = __bind(this.onClickListener, this);
-    this.events = __bind(this.events, this);
     return PhotoView.__super__.constructor.apply(this, arguments);
   }
 
@@ -2535,7 +2570,12 @@ module.exports = PhotoView = (function(_super) {
     this.progressbar = this.$('.progressfill');
     helpers.rotate(this.model.get('orientation'), this.image);
     if (!this.model.isNew()) {
-      return this.link.addClass('server');
+      this.link.addClass('server');
+    }
+    if (this.image.get(0).complete) {
+      return this.onImageLoaded;
+    } else {
+      return this.image.on('load', this.onImageLoaded);
     }
   };
 
@@ -2562,7 +2602,8 @@ module.exports = PhotoView = (function(_super) {
         return _this.render();
       };
     })(this);
-    return preload.src = "photos/thumbs/" + this.model.id + ".jpg";
+    preload.src = "photos/thumbs/" + this.model.id + ".jpg";
+    return app.router.mainView.dirty = false;
   };
 
   PhotoView.prototype.onError = function(err) {
@@ -2596,6 +2637,10 @@ module.exports = PhotoView = (function(_super) {
         });
       };
     })(this));
+  };
+
+  PhotoView.prototype.onImageLoaded = function() {
+    return this.classList.add('loaded');
   };
 
   return PhotoView;

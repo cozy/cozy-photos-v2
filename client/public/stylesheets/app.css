@@ -282,6 +282,13 @@ a.btn.btn-cozy.left.prev {
   -ms-filter: none;
   filter: none;
 }
+.albumitem a.recent {
+  -webkit-animation: recentAnim 2s ease-in-out infinite alternate;
+  -moz-animation: recentAnim 2s ease-in-out infinite alternate;
+  -o-animation: recentAnim 2s ease-in-out infinite alternate;
+  -ms-animation: recentAnim 2s ease-in-out infinite alternate;
+  animation: recentAnim 2s ease-in-out infinite alternate;
+}
 .albumitem a:active {
   -webkit-transition: 0s ease-out;
   -moz-transition: 0s ease-out;
@@ -426,16 +433,22 @@ a.btn.btn-cozy.left.prev {
   border: 0;
   padding: 0;
   outline: 0;
-}
-#photos .photo a img {
   width: 100%;
   height: 100%;
-  background: url("../images/loading.gif") no-repeat;
+}
+#photos .photo a img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: url("../img/loading.gif") 50% 50% no-repeat;
 }
 #photos .photo a img.thumbed {
   opacity: 0.5;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
   filter: alpha(opacity=50);
+}
+#photos .photo a img.loaded {
+  background: transparent;
 }
 #photos .photo .progressfill {
   width: 0%;
@@ -624,6 +637,11 @@ a.btn.btn-cozy.left.prev {
   color: #444;
   width: 70%;
 }
+.typeahead.dropdown-menu {
+  position: fixed;
+  top: auto !important;
+  left: 32px !important;
+}
 .typeahead.dropdown-menu > li > a {
   padding: 3px 6px 3px 3px;
 }
@@ -655,6 +673,7 @@ a.btn.btn-cozy.left.prev {
 }
 .modal-body {
   max-height: calc(100vh - 210px);
+  overflow: auto;
 }
 .modal-body img.selected {
   border: 5px solid #34a6ff;
@@ -1608,6 +1627,9 @@ a.btn.btn-cozy.left.prev {
   width: 100%;
   height: 100%;
 }
+.albumitem img {
+  background: url("../img/loading.gif") 50% 50% no-repeat;
+}
 .albumitem a {
   height: auto;
 }
@@ -1625,7 +1647,8 @@ a.btn.btn-cozy.left.prev {
 }
 @media (max-width: 1600px) {
   .photo {
-    width: 12.5%;
+    height: 12.5vw;
+    width: 12.5vw;
   }
   #about #links {
     width: 25%;
@@ -1639,7 +1662,8 @@ a.btn.btn-cozy.left.prev {
 }
 @media (max-width: 1200px) {
   .photo {
-    width: 16.66666%;
+    height: 16.66666vw;
+    width: 16.66666vw;
   }
   #about #links {
     width: 33.333333%;
@@ -1653,7 +1677,8 @@ a.btn.btn-cozy.left.prev {
 }
 @media (max-width: 900px) {
   .photo {
-    width: 33.333%;
+    height: 33.333vw;
+    width: 33.333vw;
   }
   #about #links {
     width: 33.333%;
@@ -1664,7 +1689,8 @@ a.btn.btn-cozy.left.prev {
 }
 @media (max-width: 600px) {
   .photo {
-    width: 50%;
+    height: 50vw;
+    width: 50vw;
   }
   #photos {
     padding-left: 0;
@@ -1692,6 +1718,54 @@ a.btn.btn-cozy.left.prev {
   }
   .albumitem {
     width: 50%;
+  }
+}
+@-moz-keyframes recentAnim {
+  from {
+    opacity: 0.5;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter: alpha(opacity=50);
+  }
+  to {
+    opacity: 1;
+    -ms-filter: none;
+    filter: none;
+  }
+}
+@-webkit-keyframes recentAnim {
+  from {
+    opacity: 0.5;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter: alpha(opacity=50);
+  }
+  to {
+    opacity: 1;
+    -ms-filter: none;
+    filter: none;
+  }
+}
+@-o-keyframes recentAnim {
+  from {
+    opacity: 0.5;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter: alpha(opacity=50);
+  }
+  to {
+    opacity: 1;
+    -ms-filter: none;
+    filter: none;
+  }
+}
+@keyframes recentAnim {
+  from {
+    opacity: 0.5;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter: alpha(opacity=50);
+  }
+  to {
+    opacity: 1;
+    -ms-filter: none;
+    filter: none;
   }
 }
 
