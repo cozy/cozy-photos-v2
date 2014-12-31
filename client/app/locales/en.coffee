@@ -80,6 +80,7 @@ module.exports =
     "modal prev": "Previous"
     "modal ok": "Ok"
     "modal cancel": "Cancel"
+    "modal error": "Erreur"
     "only you can see" : "Only you and the people listed below can access this resource"
     "public" : "Public"
     "private" : "Private"
@@ -101,6 +102,9 @@ The changes you made to the permissions will not be saved. Do you want to contin
     "perm" : "can "
     "perm r album" : "browse this album"
     "perm rw album" : "browse and upload photos"
+    "mail not send"        : "Mail not send"
+    "server error occured" : "Error occured on server side, please try again later"
+
     "change notif" : """
 Check this box to be notified when a contact
 will add a photo to this album."""
