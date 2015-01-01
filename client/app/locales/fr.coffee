@@ -27,7 +27,7 @@ module.exports =
     "Share album by mail": "Partagez par mail"
     "Upload your contacts ...": "Uploadez vos contacts..."
     "Share album": "Partagez l'album"
-    "Add contact": "Ajouter contact"
+    "Add contact": "Ajoutez un contact"
     "Send mail": "Envoyez mail"
     "Select your friends": "Choisissez vos amis"
     "Add": "Ajouter"
@@ -100,10 +100,10 @@ module.exports =
     "forced public" : "Ce dossier est public car un dossier parent est public : "
     "confirm" : "Confirmer"
     "share forgot add" : """
-        Il semble que vous ayez oublié d'appuyer sur le boutton Ajouter
+        Il semble que vous ayez oublié d'appuyer sur le bouton Ajouter
     """
     "share confirm save" : """
-        Les changements effectués sur les permissions ne seront pas sauvegardées. Etes vous sûr ?
+        Les changements effectués sur les permissions ne seront pas sauvegardés. Vous confirmez ?
     """
     "yes forgot" : "Retour"
     "no forgot" : "Ok"
@@ -112,7 +112,7 @@ module.exports =
     "perm r album" : "parcourir cet album"
     "perm rw album" : "parcourir cet album et ajouter des photos"
     "mail not send" : "Le message n'a pas pu être envoyé"
-    "server error occured"            : "Une erreur est survenue sur le serveur, veuillez ré-essayer"
+    "server error occured"            : "Une erreur est survenue sur le serveur, veuillez réessayer"
 
     "change notif" : """
         Cocher cette case pour recevoir une notification cozy quand un contact
@@ -123,9 +123,9 @@ module.exports =
     "no" : "Non"
     "pictures": "photos"
     "delete empty album": "L'album est vide, voulez-vous le supprimer?"
-    "are you sure you want to delete this album": "Etes vous sûr de vouloir effacer cet album ?"
+    "are you sure you want to delete this album": "Voulez-vous vraiment effacer cet album ?"
     "photos search"   : "Recherche des photos..."
     "no photos found" : "Aucune photo trouvée..."
-    "thumb creation"  : "L'application est entrain de créer des minatures pour vos photos afin d'améliorer votre navigation."
+    "thumb creation"  : "L'application est en train de créer des minatures pour vos photos afin d'améliorer votre navigation."
     "progress"        : "Progression"
     "Navigate before upload" : "Certaines photos n'ont pas encore été envoyées au serveur, voulez-vous vraiment quitter cette page ?"
