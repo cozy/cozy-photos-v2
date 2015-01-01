@@ -13,31 +13,18 @@ div#about
             a.flatbtn.stopediting(href="#albums/#{id}")
                 span.glyphicon.glyphicon-arrow-left.icon-white
                 span= t("Stop editing")
-        P.clearance
-            a.flatbtn.clearance
-                if clearance == 'public'
-                  span.glyphicon.glyphicon-globe.icon-white
-                  | &nbsp;
-                  | #{t('shared')}
-                else if clearance && clearance.length > 0
-                  span= clearance.length
-                  span.glyphicon.glyphicon-share.icon-white
-                  | &nbsp;
-                  | #{t('shared')}
-                else
-                  span.glyphicon.glyphicon-lock.icon-white
-                  | &nbsp;
-                  | #{t('private')}
         p.download
             a.flatbtn(href="#{downloadPath}")
                 span.glyphicon.glyphicon-download-alt.icon-white
                 span= t("Download")
-
         p.delete
             a.flatbtn.delete
                 span.glyphicon.glyphicon-remove.icon-white
                 span= t("Delete")
-
+        p.clearance
+            a.flatbtn.clearance
+                span.glyphicon.glyphicon-share-alt.icon-white
+                span= t("share")
     div#album-text
         div#album-text-background
 
@@ -48,6 +35,18 @@ div#about
                     span= t("pictures")
  
             form.left
+                div
+                    span.clearance-state
+                        if clearance == 'public'
+                            span.glyphicon.glyphicon-globe
+                            | &nbsp;
+                            | #{t('shared')}
+                        else if clearance && clearance.length > 0
+                            span.glyphicon.glyphicon-share-alt
+                            | &nbsp;
+                            | #{t('shared')}
+                            if clearance.length
+                                span &nbsp;(#{clearance.length})
                 input#title(type="text", placeholder="Title...", value=title)
                 textarea#description(placeholder="Description...")!= description
            

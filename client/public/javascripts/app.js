@@ -758,10 +758,12 @@ module.exports = {
   "modal prev": "Previous",
   "modal ok": "Ok",
   "modal cancel": "Cancel",
-  "only you can see": "Only you can access this resource",
+  "modal error": "Error",
+  "only you can see": "Only you and the people listed below can access this resource",
   "public": "Public",
   "private": "Private",
   "shared": "Shared",
+  "share": "Share",
   "save": "Save",
   "see link": "See link",
   "send mails question": "Send a notification email to:",
@@ -775,6 +777,8 @@ module.exports = {
   "perm": "can ",
   "perm r album": "browse this album",
   "perm rw album": "browse and upload photos",
+  "mail not send": "Mail not send",
+  "server error occured": "Error occured on server side, please try again later",
   "change notif": "Check this box to be notified when a contact\nwill add a photo to this album.",
   "send email hint": "Notification emails will be sent one time on save",
   "yes": "Yes",
@@ -858,9 +862,12 @@ module.exports = {
   "modal prev": "Précédent",
   "modal ok": "Ok",
   "modal cancel": "Annuler",
+  "modal error": "Erreur",
+  "only you can see": "Seuls vous et les personnes ci-dessous peuvent accéder à cette ressource.",
   "public": "Public",
   "private": "Privé",
   "shared": "Partagé",
+  "share": "Partager",
   "save": "Sauvegarder",
   "see link": "Voir le lien",
   "sharing": "Partage",
@@ -876,6 +883,8 @@ module.exports = {
   "r": "lire cet album",
   "perm r album": "parcourir cet album",
   "perm rw album": "parcourir cet album et ajouter des photos",
+  "mail not send": "Le message n'a pas pu être envoyé",
+  "server error occured": "Une erreur est survenue sur le serveur, veuillez ré-essayer",
   "change notif": "Cocher cette case pour recevoir une notification cozy quand un contact\n ajoute une photo à cet album.",
   "send email hint": "Des emails de notification seront envoyés lors de la première sauvegarde.",
   "yes": "Oui",
@@ -1519,21 +1528,21 @@ var __templateData = function template(locals) {
 var buf = [];
 var jade_mixins = {};
 var jade_interp;
-var locals_ = (locals || {}),id = locals_.id,clearance = locals_.clearance,downloadPath = locals_.downloadPath,photosNumber = locals_.photosNumber,title = locals_.title,description = locals_.description;
-buf.push("<div id=\"about\"><div class=\"clearfix\"><div id=\"links\" class=\"clearfix\"><p class=\"back\"><a href=\"#albums\" class=\"flatbtn\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Back")) ? "" : jade_interp)) + "</span></a></p><p class=\"startediting\"><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn\"><span class=\"glyphicon glyphicon-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p class=\"stopediting\"><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn stopediting\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><P class=\"clearance\"><a class=\"flatbtn clearance\">");
+var locals_ = (locals || {}),id = locals_.id,downloadPath = locals_.downloadPath,photosNumber = locals_.photosNumber,clearance = locals_.clearance,title = locals_.title,description = locals_.description;
+buf.push("<div id=\"about\"><div class=\"clearfix\"><div id=\"links\" class=\"clearfix\"><p class=\"back\"><a href=\"#albums\" class=\"flatbtn\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Back")) ? "" : jade_interp)) + "</span></a></p><p class=\"startediting\"><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn\"><span class=\"glyphicon glyphicon-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p class=\"stopediting\"><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn stopediting\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><p class=\"download\"><a" + (jade.attr("href", "" + (downloadPath) + "", true, false)) + " class=\"flatbtn\"><span class=\"glyphicon glyphicon-download-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p class=\"delete\"><a class=\"flatbtn delete\"><span class=\"glyphicon glyphicon-remove icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p><p class=\"clearance\"><a class=\"flatbtn clearance\"><span class=\"glyphicon glyphicon-share-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("share")) ? "" : jade_interp)) + "</span></a></p></div><div id=\"album-text\"><div id=\"album-text-background\"><div class=\"right\"><p><span class=\"photo-number\">" + (jade.escape(null == (jade_interp = photosNumber) ? "" : jade_interp)) + "</span><br/><span>" + (jade.escape(null == (jade_interp = t("pictures")) ? "" : jade_interp)) + "</span></p></div><form class=\"left\"><div><span class=\"clearance-state\">");
 if ( clearance == 'public')
 {
-buf.push("<span class=\"glyphicon glyphicon-globe icon-white\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('shared')) == null ? '' : jade_interp)) + "");
+buf.push("<span class=\"glyphicon glyphicon-globe\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('shared')) == null ? '' : jade_interp)) + "");
 }
 else if ( clearance && clearance.length > 0)
 {
-buf.push("<span>" + (jade.escape(null == (jade_interp = clearance.length) ? "" : jade_interp)) + "</span><span class=\"glyphicon glyphicon-share icon-white\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('shared')) == null ? '' : jade_interp)) + "");
-}
-else
+buf.push("<span class=\"glyphicon glyphicon-share-alt\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('shared')) == null ? '' : jade_interp)) + "");
+if ( clearance.length)
 {
-buf.push("<span class=\"glyphicon glyphicon-lock icon-white\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('private')) == null ? '' : jade_interp)) + "");
+buf.push("<span>&nbsp;(" + (jade.escape((jade_interp = clearance.length) == null ? '' : jade_interp)) + ")</span>");
 }
-buf.push("</a></P><p class=\"download\"><a" + (jade.attr("href", "" + (downloadPath) + "", true, false)) + " class=\"flatbtn\"><span class=\"glyphicon glyphicon-download-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p class=\"delete\"><a class=\"flatbtn delete\"><span class=\"glyphicon glyphicon-remove icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p></div><div id=\"album-text\"><div id=\"album-text-background\"><div class=\"right\"><p><span class=\"photo-number\">" + (jade.escape(null == (jade_interp = photosNumber) ? "" : jade_interp)) + "</span><br/><span>" + (jade.escape(null == (jade_interp = t("pictures")) ? "" : jade_interp)) + "</span></p></div><form class=\"left\"><input id=\"title\" type=\"text\" placeholder=\"Title...\"" + (jade.attr("value", title, true, false)) + "/><textarea id=\"description\" placeholder=\"Description...\">" + (null == (jade_interp = description) ? "" : jade_interp) + "</textarea></form></div></div></div></div><div id=\"photos\" class=\"clearfix\"></div>");;return buf.join("");
+}
+buf.push("</span></div><input id=\"title\" type=\"text\" placeholder=\"Title...\"" + (jade.attr("value", title, true, false)) + "/><textarea id=\"description\" placeholder=\"Description...\">" + (null == (jade_interp = description) ? "" : jade_interp) + "</textarea></form></div></div></div></div><div id=\"photos\" class=\"clearfix\"></div>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -1827,7 +1836,9 @@ module.exports = AlbumView = (function(_super) {
 
   AlbumView.prototype.initialize = function(options) {
     AlbumView.__super__.initialize.call(this, options);
-    return this.listenTo(this.model.photos, 'add remove', this.onPhotoCollectionChange);
+    this.listenTo(this.model.photos, 'add remove', this.onPhotoCollectionChange);
+    this.listenTo(this.model, 'change:clearance', this.render);
+    return this.listenTo(this.model, 'sync', this.render);
   };
 
   AlbumView.prototype.getRenderData = function() {

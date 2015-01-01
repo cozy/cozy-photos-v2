@@ -1579,6 +1579,9 @@ a.btn.btn-cozy.left.prev {
   padding: 20px;
   margin: 0;
 }
+#about #album-text .clearance-state {
+  margin-left: 10px;
+}
 #about #album-text h1#title {
   margin-top: 0;
   font-family: main;

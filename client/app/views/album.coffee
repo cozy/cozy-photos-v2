@@ -19,6 +19,7 @@ class ShareModal extends CozyClearanceModal
     # see: models/album:getPublicURL
     makeURL: (key) -> @model.getPublicURL key
 
+
 module.exports = class AlbumView extends BaseView
     template: require 'templates/album'
 
@@ -46,6 +47,8 @@ module.exports = class AlbumView extends BaseView
         super options
 
         @listenTo @model.photos, 'add remove', @onPhotoCollectionChange
+        @listenTo @model, 'change:clearance', @render
+        @listenTo @model, 'sync', @render
 
     getRenderData: ->
         key = $.url().param('key')
@@ -120,7 +123,8 @@ module.exports = class AlbumView extends BaseView
     changeClearance: (event) =>
         @model.set 'clearance', [] unless @model.get('clearance')?
         @model.set 'type', 'album'
-        new ShareModal model: @model
+        new ShareModal
+            model: @model
 
     # Temporary tool to allow people to rebuild the thumbnails with size
     # set recently. New size is larger, so older thumbs looks blurry.

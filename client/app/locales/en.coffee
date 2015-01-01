@@ -84,10 +84,12 @@ module.exports =
     "modal prev": "Previous"
     "modal ok": "Ok"
     "modal cancel": "Cancel"
-    "only you can see" : "Only you can access this resource"
+    "modal error": "Error"
+    "only you can see" : "Only you and the people listed below can access this resource"
     "public" : "Public"
     "private" : "Private"
     "shared" : "Shared"
+    "share" : "Share"
     "save" : "Save"
     "see link" : "See link"
     "send mails question" : "Send a notification email to:"
@@ -103,6 +105,9 @@ module.exports =
     "perm" : "can "
     "perm r album" : "browse this album"
     "perm rw album" : "browse and upload photos"
+    "mail not send"        : "Mail not send"
+    "server error occured" : "Error occured on server side, please try again later"
+
     "change notif" : """
         Check this box to be notified when a contact
         will add a photo to this album."""

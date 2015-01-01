@@ -1,4 +1,5 @@
 module.exports =
+
     "Back" : "Retour"
     "Create a new album" : "Créer un nouvel album"
     "Delete" : "Supprimer"
@@ -85,9 +86,12 @@ module.exports =
     "modal prev": "Précédent"
     "modal ok": "Ok"
     "modal cancel": "Annuler"
+    "modal error": "Erreur"
+    "only you can see" : "Seuls vous et les personnes ci-dessous peuvent accéder à cette ressource."
     "public" : "Public"
     "private" : "Privé"
     "shared" : "Partagé"
+    "share" : "Partager"
     "save" : "Sauvegarder"
     "see link" : "Voir le lien"
     "sharing" : "Partage"
@@ -107,6 +111,9 @@ module.exports =
     "r" : "lire cet album"
     "perm r album" : "parcourir cet album"
     "perm rw album" : "parcourir cet album et ajouter des photos"
+    "mail not send" : "Le message n'a pas pu être envoyé"
+    "server error occured"            : "Une erreur est survenue sur le serveur, veuillez ré-essayer"
+
     "change notif" : """
         Cocher cette case pour recevoir une notification cozy quand un contact
          ajoute une photo à cet album.
