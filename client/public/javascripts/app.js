@@ -725,25 +725,25 @@ module.exports = {
   "Select your friends": "Select your friends",
   "Add": "Add",
   "Cancel": "Cancel",
-  'photo successfully set as cover': 'The picture has been successfully set as album cover',
-  'problem occured while setting cover': 'A problem occured while setting picture as cover',
+  "photo successfully set as cover": "The picture has been successfully set as album cover",
+  "problem occured while setting cover": "A problem occured while setting picture as cover",
   "pick from computer": "Click here or drag your photos below to add them to the album.",
   "pick from files": "Click here to pick pictures from the Files app.",
   "hidden-description": "It will not appear on your homepage.\nBut you can share it with the following url:",
   "It cannot be accessed from the public side": "It is not a public resource.\"",
   "rebuild thumbnails": "Rebuild thumbnails",
-  '01': 'January',
-  '02': 'February',
-  '03': 'March',
-  '04': 'April',
-  '05': 'May',
-  '06': 'June',
-  '07': 'July',
-  '08': 'August',
-  '09': 'September',
-  '10': 'October',
-  '11': 'November',
-  '12': 'December',
+  "01": "January",
+  "02": "February",
+  "03": "March",
+  "04": "April",
+  "05": "May",
+  "06": "June",
+  "07": "July",
+  "08": "August",
+  "09": "September",
+  "10": "October",
+  "11": "November",
+  "12": "December",
   "cancel": "Cancel",
   "copy paste link": "To give access to your contact send him/her the link below:",
   "details": "Details",
@@ -751,12 +751,14 @@ module.exports = {
   "modal question album shareable": "Select share mode for this album",
   "modal shared album custom msg": "Enter email and press enter",
   "modal shared album link msg": "Send this link to let people access this album",
+  "modal shared public link msg": "Send this link to let people access this folder:",
+  "modal shared with people msg": "OR invite a selection of contacts to access it. Type\n email in the field and press enter (An email will be sent to them):",
   "modal send mails": "Send a notification",
   "modal next": "Next",
   "modal prev": "Previous",
   "modal ok": "Ok",
   "modal cancel": "Cancel",
-  "only you can see": "Only you and the people listed below can access this resource",
+  "only you can see": "Only you can access this resource",
   "public": "Public",
   "private": "Private",
   "shared": "Shared",
@@ -822,25 +824,25 @@ module.exports = {
   "Select your friends": "Choisissez vos amis",
   "Add": "Ajouter",
   "Cancel": "Annuler",
-  'photo successfully set as cover': 'L\'image est maintenant la couverture de l\'album.',
-  'problem occured while setting cover': 'Un problème est survenu en positionnant l\'image comme couverture de\nl\'album.',
+  "photo successfully set as cover": "L'image est maintenant la couverture de l'album.",
+  "problem occured while setting cover": "Un problème est survenu en positionnant l'image comme couverture de\nl'album.",
   "pick from computer": "Cliquez ici ou glissez-déposez vos photos pour ajouter des images",
   "pick from files": "Cliquez ici pour importer des images de l'application Files",
   "hidden-description": "Il n'apparaîtra pas sur votre page d'accueil,\nMais vous pouvez partager cette URL :",
   "It cannot be accessed from the public side": "Il ne peut pas être vu depuis le côté public",
   "rebuild thumbnails": "Regénérer les vignettes",
-  '01': 'Janvier',
-  '02': 'Février',
-  '03': 'Mars',
-  '04': 'Avril',
-  '05': 'Mai',
-  '06': 'Juin',
-  '07': 'Juillet',
-  '08': 'Août',
-  '09': 'Septembre',
-  '10': 'Octobre',
-  '11': 'Novembre',
-  '12': 'Décembre',
+  "01": "Janvier",
+  "02": "Février",
+  "03": "Mars",
+  "04": "Avril",
+  "05": "Mai",
+  "06": "Juin",
+  "07": "Juillet",
+  "08": "Août",
+  "09": "Septembre",
+  "10": "Octobre",
+  "11": "Novembre",
+  "12": "Décembre",
   "also have access": "Ces personnes ont également accès, car elles ont accès à un dossier parent",
   "cancel": "Annuler",
   "copy paste link": "Pour donner accès à votre contact envoyez-lui ce lien : ",
@@ -848,13 +850,14 @@ module.exports = {
   "inherited from": "hérité de",
   "modal question album shareable": "Choisissez le mode de partage pour cet album",
   "modal shared album custom msg": "Entrez un email et appuyez sur Entrée",
-  "modal shared album link msg": "Envoyez ce lien pour donner accès à cet album",
+  "modal shared public link msg": "Envoyez ce lien pour partager cet album",
+  "modal shared with people msg": "OU invitez une sélection de contacts à y accéder. Taper l'email\n dans le champ et appuyez sur entrée (un email pour les prévenir leur sera envoyé):",
+  "only you can see": "Seul vous pouvez accéder à cette ressource.",
   "modal send mails": "Envoyer une notification",
   "modal next": "Suivant",
   "modal prev": "Précédent",
   "modal ok": "Ok",
   "modal cancel": "Annuler",
-  "only you can see": "Seuls vous et les personnes ci-dessous peuvent accéder à cette ressource.",
   "public": "Public",
   "private": "Privé",
   "shared": "Partagé",
@@ -873,7 +876,7 @@ module.exports = {
   "r": "lire cet album",
   "perm r album": "parcourir cet album",
   "perm rw album": "parcourir cet album et ajouter des photos",
-  "change notif": "Cocher cette case pour recevoir une notification cozy quand un contact\najoute une photo à cet album.",
+  "change notif": "Cocher cette case pour recevoir une notification cozy quand un contact\n ajoute une photo à cet album.",
   "send email hint": "Des emails de notification seront envoyés lors de la première sauvegarde.",
   "yes": "Oui",
   "no": "Non",
@@ -1520,7 +1523,7 @@ var locals_ = (locals || {}),id = locals_.id,clearance = locals_.clearance,downl
 buf.push("<div id=\"about\"><div class=\"clearfix\"><div id=\"links\" class=\"clearfix\"><p class=\"back\"><a href=\"#albums\" class=\"flatbtn\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Back")) ? "" : jade_interp)) + "</span></a></p><p class=\"startediting\"><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn\"><span class=\"glyphicon glyphicon-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p class=\"stopediting\"><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn stopediting\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><P class=\"clearance\"><a class=\"flatbtn clearance\">");
 if ( clearance == 'public')
 {
-buf.push("<span class=\"glyphicon glyphicon-globe icon-white\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('public')) == null ? '' : jade_interp)) + "");
+buf.push("<span class=\"glyphicon glyphicon-globe icon-white\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('shared')) == null ? '' : jade_interp)) + "");
 }
 else if ( clearance && clearance.length > 0)
 {
@@ -2307,11 +2310,13 @@ module.exports = Galery = (function(_super) {
       this.downloadLink = $('<a class="btn download-link" download> <i class="glyphicon glyphicon-arrow-down"></i></a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
     }
     this.uploader = this.$('#uploader');
-    this.coverBtn = $('#pbOverlay .pbCaptionText .btn-group .cover-btn');
-    this.coverBtn.unbind('click');
-    this.coverBtn.remove();
-    this.coverBtn = $('<a id="cover-btn" class="btn cover-btn"> <i class="glyphicon glyphicon-picture" </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
-    this.coverBtn.on('click', this.onCoverClicked);
+    if (app.mode !== 'public') {
+      this.coverBtn = $('#pbOverlay .pbCaptionText .btn-group .cover-btn');
+      this.coverBtn.unbind('click');
+      this.coverBtn.remove();
+      this.coverBtn = $('<a id="cover-btn" class="btn cover-btn"> <i class="glyphicon glyphicon-picture" </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
+      this.coverBtn.on('click', this.onCoverClicked);
+    }
     this.turnRight = $('#pbOverlay .pbCaptionText .btn-group .right');
     this.turnRight.unbind('click');
     this.turnRight.remove();
