@@ -78,9 +78,8 @@ module.exports =
     "modal question album shareable" : "Choisissez le mode de partage pour cet album"
     "modal shared album custom msg" : "Entrez un email et appuyez sur Entrée"
     "modal shared public link msg"    : "Envoyez ce lien pour partager cet album"
-    "modal shared with people msg"    : """
-        OU invitez une sélection de contacts à y accéder. Taper l'email
-         dans le champ et appuyez sur entrée (un email pour les prévenir leur sera envoyé):"""
+    "modal shared with people msg"    : """Invitez une sélection de contacts à y accéder. Taper l'email
+         dans le champ et appuyez sur entrée (un email pour les prévenir leur sera envoyé) :"""
     "only you can see"                : "Seul vous pouvez accéder à cette ressource."
     "modal send mails" : "Envoyer une notification"
     "modal next": "Suivant"

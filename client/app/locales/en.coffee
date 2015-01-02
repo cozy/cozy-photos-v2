@@ -78,7 +78,7 @@ module.exports =
     "modal shared album link msg" : "Send this link to let people access this album"
     "modal shared public link msg"    : "Send this link to let people access this folder:"
     "modal shared with people msg"    : """
-        OR invite a selection of contacts to access it. Type
+        Invite a selection of contacts to access it. Type
          email in the field and press enter (An email will be sent to them):"""
     "modal send mails" : "Send a notification"
     "modal next": "Next"
