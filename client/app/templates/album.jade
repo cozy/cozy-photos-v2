@@ -33,7 +33,7 @@ div#about
                     span.photo-number= photosNumber
                     br
                     span= t("pictures")
- 
+
             form.left
                 div
                     span.clearance-state
@@ -47,9 +47,9 @@ div#about
                             | #{t('shared')}
                             if clearance.length
                                 span &nbsp;(#{clearance.length})
-                input#title(type="text", placeholder="Title...", value=title)
-                textarea#description(placeholder="Description...")!= description
-           
+                input#title(type="text", placeholder="#{t('title placeholder')}", value=title)
+                textarea#description(placeholder="#{t('description placeholder')}")!= description
+
 div#photos.clearfix
   //-div#rebuild-th
       //-a#rebuild-th-btn= t("rebuild thumbnails")
