@@ -1,5 +1,6 @@
 module.exports =
 
+    "or": "or"
     "Back" : "Back"
     "Create a new album" : "Create a new album"
     "Delete" : "Delete"
