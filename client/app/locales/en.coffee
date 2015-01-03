@@ -1,5 +1,6 @@
 module.exports =
 
+    "or": "or"
     "Back" : "Back"
     "Create a new album" : "Create a new album"
     "Delete" : "Delete"
@@ -19,9 +20,9 @@ module.exports =
     "This album is private" : "This album is private"
     "This album is hidden" : "This album is hidden"
     "This album is public" : "This album is public"
-    "Title ..." : "Set a title for this album..."
+    "title placeholder" : "Set a title for this album..."
     "View" : "View"
-    "Write some more ..." : "Write a description..."
+    "description placeholder" : "Write a description..."
     "is too big (max 10Mo)":"is too big (max 10Mo)"
     "is not an image": "is not an image"
     "Share album by mail": "Share album by mail"
@@ -77,7 +78,7 @@ module.exports =
     "modal shared album link msg" : "Send this link to let people access this album"
     "modal shared public link msg"    : "Send this link to let people access this folder:"
     "modal shared with people msg"    : """
-        OR invite a selection of contacts to access it. Type
+        Invite a selection of contacts to access it. Type
          email in the field and press enter (An email will be sent to them):"""
     "modal send mails" : "Send a notification"
     "modal next": "Next"

@@ -693,6 +693,7 @@ module.exports = ViewCollection = (function(_super) {
 
 ;require.register("locales/en", function(exports, require, module) {
 module.exports = {
+  "or": "or",
   "Back": "Back",
   "Create a new album": "Create a new album",
   "Delete": "Delete",
@@ -712,9 +713,9 @@ module.exports = {
   "This album is private": "This album is private",
   "This album is hidden": "This album is hidden",
   "This album is public": "This album is public",
-  "Title ...": "Set a title for this album...",
+  "title placeholder": "Set a title for this album...",
   "View": "View",
-  "Write some more ...": "Write a description...",
+  "description placeholder": "Write a description...",
   "is too big (max 10Mo)": "is too big (max 10Mo)",
   "is not an image": "is not an image",
   "Share album by mail": "Share album by mail",
@@ -752,7 +753,7 @@ module.exports = {
   "modal shared album custom msg": "Enter email and press enter",
   "modal shared album link msg": "Send this link to let people access this album",
   "modal shared public link msg": "Send this link to let people access this folder:",
-  "modal shared with people msg": "OR invite a selection of contacts to access it. Type\n email in the field and press enter (An email will be sent to them):",
+  "modal shared with people msg": "Invite a selection of contacts to access it. Type\n email in the field and press enter (An email will be sent to them):",
   "modal send mails": "Send a notification",
   "modal next": "Next",
   "modal prev": "Previous",
@@ -796,6 +797,7 @@ module.exports = {
 
 ;require.register("locales/fr", function(exports, require, module) {
 module.exports = {
+  "or": "ou",
   "Back": "Retour",
   "Create a new album": "Créer un nouvel album",
   "Delete": "Supprimer",
@@ -815,15 +817,15 @@ module.exports = {
   "This album is private": "Cet album est privé",
   "This album is hidden": "Cet album est masqué",
   "This album is public": "Cet album est public",
-  "Title ...": "Titre...",
-  "Write some more ...": "Description...",
+  "title placeholder": "Titre...",
+  "description placeholder": "Description...",
   "View": "Voir",
   "is too big (max 10Mo)": "est trop grosse (max 10Mo)",
   "is not an image": "n'est pas une image",
   "Share album by mail": "Partagez par mail",
   "Upload your contacts ...": "Uploadez vos contacts...",
   "Share album": "Partagez l'album",
-  "Add contact": "Ajouter contact",
+  "Add contact": "Ajoutez un contact",
   "Send mail": "Envoyez mail",
   "Select your friends": "Choisissez vos amis",
   "Add": "Ajouter",
@@ -855,7 +857,7 @@ module.exports = {
   "modal question album shareable": "Choisissez le mode de partage pour cet album",
   "modal shared album custom msg": "Entrez un email et appuyez sur Entrée",
   "modal shared public link msg": "Envoyez ce lien pour partager cet album",
-  "modal shared with people msg": "OU invitez une sélection de contacts à y accéder. Taper l'email\n dans le champ et appuyez sur entrée (un email pour les prévenir leur sera envoyé):",
+  "modal shared with people msg": "Invitez une sélection de contacts à y accéder. Taper l'email\ndans le champ et appuyez sur entrée (un email pour les prévenir leur sera envoyé) :",
   "only you can see": "Seul vous pouvez accéder à cette ressource.",
   "modal send mails": "Envoyer une notification",
   "modal next": "Suivant",
@@ -875,8 +877,8 @@ module.exports = {
   "send mails question": "Envoyer un email de notification à : ",
   "forced public": "Ce dossier est public car un dossier parent est public : ",
   "confirm": "Confirmer",
-  "share forgot add": "Il semble que vous ayez oublié d'appuyer sur le boutton Ajouter",
-  "share confirm save": "Les changements effectués sur les permissions ne seront pas sauvegardées. Etes vous sûr ?",
+  "share forgot add": "Il semble que vous ayez oublié d'appuyer sur le bouton Ajouter",
+  "share confirm save": "Les changements effectués sur les permissions ne seront pas sauvegardés. Vous confirmez ?",
   "yes forgot": "Retour",
   "no forgot": "Ok",
   "perm": "peut ",
@@ -884,17 +886,17 @@ module.exports = {
   "perm r album": "parcourir cet album",
   "perm rw album": "parcourir cet album et ajouter des photos",
   "mail not send": "Le message n'a pas pu être envoyé",
-  "server error occured": "Une erreur est survenue sur le serveur, veuillez ré-essayer",
+  "server error occured": "Une erreur est survenue sur le serveur, veuillez réessayer",
   "change notif": "Cocher cette case pour recevoir une notification cozy quand un contact\n ajoute une photo à cet album.",
   "send email hint": "Des emails de notification seront envoyés lors de la première sauvegarde.",
   "yes": "Oui",
   "no": "Non",
   "pictures": "photos",
   "delete empty album": "L'album est vide, voulez-vous le supprimer?",
-  "are you sure you want to delete this album": "Etes vous sûr de vouloir effacer cet album ?",
+  "are you sure you want to delete this album": "Voulez-vous vraiment effacer cet album ?",
   "photos search": "Recherche des photos...",
   "no photos found": "Aucune photo trouvée...",
-  "thumb creation": "L'application est entrain de créer des minatures pour vos photos afin d'améliorer votre navigation.",
+  "thumb creation": "L'application est en train de créer des minatures pour vos photos afin d'améliorer votre navigation.",
   "progress": "Progression",
   "Navigate before upload": "Certaines photos n'ont pas encore été envoyées au serveur, voulez-vous vraiment quitter cette page ?"
 };
@@ -1542,7 +1544,7 @@ if ( clearance.length)
 buf.push("<span>&nbsp;(" + (jade.escape((jade_interp = clearance.length) == null ? '' : jade_interp)) + ")</span>");
 }
 }
-buf.push("</span></div><input id=\"title\" type=\"text\" placeholder=\"Title...\"" + (jade.attr("value", title, true, false)) + "/><textarea id=\"description\" placeholder=\"Description...\">" + (null == (jade_interp = description) ? "" : jade_interp) + "</textarea></form></div></div></div></div><div id=\"photos\" class=\"clearfix\"></div>");;return buf.join("");
+buf.push("</span></div><input id=\"title\" type=\"text\"" + (jade.attr("placeholder", "" + (t('title placeholder')) + "", true, false)) + (jade.attr("value", title, true, false)) + "/><textarea id=\"description\"" + (jade.attr("placeholder", "" + (t('description placeholder')) + "", true, false)) + ">" + (null == (jade_interp = description) ? "" : jade_interp) + "</textarea></form></div></div></div></div><div id=\"photos\" class=\"clearfix\"></div>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
