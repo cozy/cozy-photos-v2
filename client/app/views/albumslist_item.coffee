@@ -22,3 +22,11 @@ module.exports = class AlbumItem extends BaseView
         @image = @$ 'img'
         @image.attr 'src', @model.getThumbSrc()
         helpers.rotate @model.attributes.orientation, @image
+        if @image.get(0).complete
+            @onImageLoaded()
+        else
+            @image.on 'load', =>
+                @onImageLoaded()
+
+    onImageLoaded: ->
+        @image.addClass 'loaded'
