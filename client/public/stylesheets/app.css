@@ -1650,6 +1650,9 @@ a.btn.btn-cozy.left.prev {
 .albumitem img {
   background: url("../img/loading.gif") 50% 50% no-repeat;
 }
+.albumitem img.loaded {
+  background: transparent;
+}
 .albumitem a {
   height: auto;
 }
@@ -1668,7 +1671,7 @@ a.btn.btn-cozy.left.prev {
 @media (max-width: 1600px) {
   .photo {
     height: 12.5vw;
-    width: 12.5vw;
+    width: 12.5%;
   }
   #about #links {
     width: 25%;
@@ -1683,7 +1686,7 @@ a.btn.btn-cozy.left.prev {
 @media (max-width: 1200px) {
   .photo {
     height: 16.66666vw;
-    width: 16.66666vw;
+    width: 16.66666%;
   }
   #about #links {
     width: 33.333333%;
@@ -1698,7 +1701,7 @@ a.btn.btn-cozy.left.prev {
 @media (max-width: 900px) {
   .photo {
     height: 33.333vw;
-    width: 33.333vw;
+    width: 33.333%;
   }
   #about #links {
     width: 33.333%;
@@ -1710,7 +1713,7 @@ a.btn.btn-cozy.left.prev {
 @media (max-width: 600px) {
   .photo {
     height: 50vw;
-    width: 50vw;
+    width: 50%;
   }
   #photos {
     padding-left: 0;

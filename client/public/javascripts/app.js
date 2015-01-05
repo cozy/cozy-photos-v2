@@ -791,7 +791,8 @@ module.exports = {
   "no photos found": "No photos found",
   "thumb creation": "Application creates thumbs for files.",
   "progress": "Progression",
-  "Navigate before upload": "Some upload are in progress, do you really want to leave this page?"
+  "Navigate before upload": "Some upload are in progress, do you really want to leave this page?",
+  "application title": "Cozy - photos"
 };
 });
 
@@ -898,7 +899,8 @@ module.exports = {
   "no photos found": "Aucune photo trouvée...",
   "thumb creation": "L'application est en train de créer des minatures pour vos photos afin d'améliorer votre navigation.",
   "progress": "Progression",
-  "Navigate before upload": "Certaines photos n'ont pas encore été envoyées au serveur, voulez-vous vraiment quitter cette page ?"
+  "Navigate before upload": "Certaines photos n'ont pas encore été envoyées au serveur, voulez-vous vraiment quitter cette page ?",
+  "application title": "Cozy - photos"
 };
 });
 
@@ -1497,6 +1499,7 @@ module.exports = Router = (function(_super) {
       event.stopImmediatePropagation();
       return this.cancelNavigate = false;
     } else {
+      document.title = t('application title');
       if (this.mainView && this.mainView.dirty) {
         if (!(window.confirm(t("Navigate before upload")))) {
           event.stopImmediatePropagation();
@@ -1868,6 +1871,7 @@ module.exports = AlbumView = (function(_super) {
     this.description = this.$('#description');
     this.galery.album = this.model;
     this.galery.render();
+    document.title = "" + (t('application title')) + " - " + (this.model.get('title'));
     if (this.options.editable) {
       return this.makeEditable();
     } else {
@@ -2065,7 +2069,20 @@ module.exports = AlbumItem = (function(_super) {
   AlbumItem.prototype.afterRender = function() {
     this.image = this.$('img');
     this.image.attr('src', this.model.getThumbSrc());
-    return helpers.rotate(this.model.attributes.orientation, this.image);
+    helpers.rotate(this.model.attributes.orientation, this.image);
+    if (this.image.get(0).complete) {
+      return this.onImageLoaded();
+    } else {
+      return this.image.on('load', (function(_this) {
+        return function() {
+          return _this.onImageLoaded();
+        };
+      })(this));
+    }
+  };
+
+  AlbumItem.prototype.onImageLoaded = function() {
+    return this.image.addClass('loaded');
   };
 
   return AlbumItem;
@@ -2591,9 +2608,13 @@ module.exports = PhotoView = (function(_super) {
       this.link.addClass('server');
     }
     if (this.image.get(0).complete) {
-      return this.onImageLoaded;
+      return this.onImageLoaded();
     } else {
-      return this.image.on('load', this.onImageLoaded);
+      return this.image.on('load', (function(_this) {
+        return function() {
+          return _this.onImageLoaded();
+        };
+      })(this));
     }
   };
 
@@ -2658,7 +2679,7 @@ module.exports = PhotoView = (function(_super) {
   };
 
   PhotoView.prototype.onImageLoaded = function() {
-    return this.classList.add('loaded');
+    return this.image.addClass('loaded');
   };
 
   return PhotoView;
