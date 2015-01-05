@@ -121,7 +121,7 @@ module.exports =
     "send email hint": "Des emails de notification seront envoyés lors de la première sauvegarde."
     "yes" : "Oui"
     "no" : "Non"
-    "pictures": "photos"
+    "picture": "photo |||| photos"
     "delete empty album": "L'album est vide, voulez-vous le supprimer?"
     "are you sure you want to delete this album": "Voulez-vous vraiment effacer cet album ?"
     "photos search"   : "Recherche des photos..."

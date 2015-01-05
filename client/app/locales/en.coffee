@@ -115,7 +115,7 @@ module.exports =
     "send email hint": "Notification emails will be sent one time on save"
     "yes" : "Yes"
     "no" : "No"
-    "pictures": "pictures"
+    "picture": "picture |||| pictures"
     "delete empty album": "This album is empty, do you want to delete it?"
     "are you sure you want to delete this album": "Are you sure you want to delete this album?"
     "photos search"   : "Loading ..."
