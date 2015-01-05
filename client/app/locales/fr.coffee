@@ -129,3 +129,4 @@ module.exports =
     "thumb creation"  : "L'application est en train de créer des minatures pour vos photos afin d'améliorer votre navigation."
     "progress"        : "Progression"
     "Navigate before upload" : "Certaines photos n'ont pas encore été envoyées au serveur, voulez-vous vraiment quitter cette page ?"
+    "application title": "Cozy - photos"

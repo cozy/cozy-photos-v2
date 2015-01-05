@@ -725,6 +725,8 @@ for t in exifTransforms
     height: 100%
 .albumitem img
     background: url('../img/loading.gif') 50% 50% no-repeat
+    &.loaded
+      background: transparent
 
 .albumitem a
     height: auto
@@ -743,7 +745,7 @@ for t in exifTransforms
 
     .photo
         height: 12.5vw
-        width: 12.5vw
+        width: 12.5%
 
     #about
         #links
@@ -758,7 +760,7 @@ for t in exifTransforms
 
     .photo
         height: 16.66666vw
-        width: 16.66666vw
+        width: 16.66666%
 
     #about
         #links
@@ -773,7 +775,7 @@ for t in exifTransforms
 
     .photo
         height: 33.333vw
-        width: 33.333vw
+        width: 33.333%
 
     #about
         #links
@@ -786,7 +788,7 @@ for t in exifTransforms
 
     .photo
         height: 50vw
-        width: 50vw
+        width: 50%
 
     #photos
         padding-left: 0
