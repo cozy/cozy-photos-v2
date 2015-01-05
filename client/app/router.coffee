@@ -75,6 +75,9 @@ module.exports = class Router extends Backbone.Router
             event.stopImmediatePropagation()
             @cancelNavigate = false
         else
+
+            document.title = t 'application title'
+
             if @mainView and @mainView.dirty
                 if not(window.confirm t("Navigate before upload"))
                     event.stopImmediatePropagation()
