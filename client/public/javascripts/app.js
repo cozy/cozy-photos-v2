@@ -91,6 +91,10 @@
   globals.require.brunch = true;
 })();
 require.register("application", function(exports, require, module) {
+var SocketListener;
+
+SocketListener = require('./lib/socket_listener');
+
 module.exports = {
   initialize: function() {
     var AlbumCollection, Router, e, key, locales, param, value, _i, _len, _ref, _ref1;
@@ -108,6 +112,7 @@ module.exports = {
     AlbumCollection = require('collections/album');
     Router = require('router');
     this.router = new Router();
+    this.socketListener = new SocketListener();
     $(window).on("hashchange", this.router.hashChange);
     $(window).on("beforeunload", this.router.beforeUnload);
     this.albums = new AlbumCollection();
@@ -589,6 +594,33 @@ module.exports = ModalView = (function(_super) {
 module.exports.error = function(code, cb) {
   return new ModalView(t("modal error"), code, t("modal ok"), false, cb);
 };
+});
+
+;require.register("lib/socket_listener", function(exports, require, module) {
+var ContactListener, contactCollection,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+contactCollection = require('cozy-clearance/contact_collection');
+
+module.exports = ContactListener = (function(_super) {
+  __extends(ContactListener, _super);
+
+  function ContactListener() {
+    return ContactListener.__super__.constructor.apply(this, arguments);
+  }
+
+  ContactListener.prototype.events = ['contact.create', 'contact.update', 'contact.delete'];
+
+  ContactListener.prototype.process = function(event) {
+    if (event.doctype === 'contact') {
+      return contactCollection.handleRealtimeContactEvent(event);
+    }
+  };
+
+  return ContactListener;
+
+})(CozySocketListener);
 });
 
 ;require.register("lib/view_collection", function(exports, require, module) {
