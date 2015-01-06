@@ -87,7 +87,9 @@ module.exports = class Galery extends ViewCollection
         'drop'     : 'onFilesDropped'
         'dragover' : 'onDragOver'
         'dragleave' : 'onDragLeave'
-        'change #uploader': 'onFilesChanged'
+        # change isn't fired on first click ???
+        #'change #uploader': 'onFilesChanged'
+        'click #uploader': 'onFilesClick'
         'click #browse-files': 'displayBrowser'
 
     # event listeners for D&D events
@@ -167,10 +169,13 @@ module.exports = class Galery extends ViewCollection
 
     onFilesChanged: (evt) =>
         @handleFiles @uploader[0].files
-        # reset the iNput
+        # reset the input
         old = @uploader
         @uploader = old.clone true
         old.replaceWith @uploader
+
+    onFilesClick: (evt) ->
+        document.getElementById('uploader').addEventListener 'change', @onFilesChanged
 
     beforeImageDisplayed: (link) =>
         id = @getIdPhoto link.href
