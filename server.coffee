@@ -24,22 +24,19 @@ module.exports = start = (options, cb) ->
             console.log err
 
         # Initialize realtime
-        socket = axon.socket 'sub-emitter'
-        socket.connect 9105
-        io = sio.listen app.server, {}
-        io.set 'log level', 2
-        io.set 'transports', ['websocket']
+        # contact, album & photo events are sent to client
+        realtime = RealtimeAdapter app, ['contact.*', 'album.*', 'photo.*']
 
-        # Recover file modification (event sent by data-system)
-        socket.on 'file.*', (event, msg) ->
-            if not (event is "delete")
+        # file are re-thumbed
+        realtime.on 'file.*', (event, msg) ->
+            if event isnt "file.delete"
                 File.find msg, (err, file) ->
                     if file.binary?.file? and not file.binary.thumb
                         thumb file, (err) ->
                             console.log err if err?
 
         # Init thumb (emit progress)
-        init.convert(io.sockets)
+        init.convert(app.io.sockets)
         cb?(null, app, server)
 
 if not module.parent
