@@ -1,3 +1,5 @@
+SocketListener = require './lib/socket_listener'
+
 module.exports =
 
     initialize: ->
@@ -18,6 +20,7 @@ module.exports =
         Router = require('router')
 
         @router = new Router()
+        @socketListener = new SocketListener()
 
         $(window).on "hashchange", @router.hashChange
         $(window).on "beforeunload", @router.beforeUnload

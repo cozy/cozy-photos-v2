@@ -83,4 +83,5 @@ module.exports.change = (req, res, next) ->
 
 module.exports.sendAll = clearanceCtl.sendAll
 module.exports.contactList = clearanceCtl.contactList
+module.exports.contact = clearanceCtl.contact
 module.exports.contactPicture = clearanceCtl.contactPicture
