@@ -123,6 +123,12 @@ module.exports = class Galery extends ViewCollection
         parts = url.split('/')
         id = parts[parts.length - 1]
         id = id.split('.')[0]
+        # if collection has not been saved, we must search by url
+        if not @collection.get(id)?
+            photo = @collection.find (e) ->
+                return e.attributes.src.split('/').pop().split('.')[0] is id
+            if photo?
+                id = photo.cid
         return id
 
     # Rotate 90° left the picture by updating css and orientation.
