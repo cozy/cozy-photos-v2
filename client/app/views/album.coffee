@@ -74,6 +74,7 @@ module.exports = class AlbumView extends BaseView
         @galery.album = @model
         @galery.render()
 
+        # Use title of album as window title
         document.title = "#{t 'application title'} - #{@model.get 'title'}"
 
         if @options.editable

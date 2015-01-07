@@ -31,6 +31,7 @@ module.exports = class PhotoView extends BaseView
         @progressbar = @$ '.progressfill'
         helpers.rotate @model.get('orientation'), @image
         @link.addClass 'server' unless @model.isNew()
+        # remove loading background one image is loaded
         if @image.get(0).complete
             @onImageLoaded()
         else
