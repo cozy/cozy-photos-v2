@@ -111,13 +111,14 @@ module.exports.zip = (req, res, err) ->
                     else
                         path = "/data/#{photo.id}/attachments/raw"
 
-                    downloader.download path, (stream) ->
+                    request = downloader.download path, (stream) ->
                         if stream.statusCode is 200
                             extension = photo.title.substr(
                                 photo.title.lastIndexOf '.')
                             photoname = photo.title.substr(
                                 0, photo.title.lastIndexOf '.')
                             photoname = slugify(photoname) + extension
+                            req.on 'close', -> request.abort()
                             zip.entry stream, name: photoname, cb
                         else
                             cb()
