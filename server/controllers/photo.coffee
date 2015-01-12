@@ -174,16 +174,18 @@ doPipe = (req, which, download, res, next) ->
 
         if req.photo._attachments?[which]
             path = "/data/#{req.photo.id}/attachments/#{which}"
-            downloader.download path, (stream) ->
+            request = downloader.download path, (stream) ->
                 if stream.statusCode is 200
+                    req.on 'close', -> request.abort()
                     stream.pipe res
                 else
                     return res.sendfile './server/img/error.gif'
 
         else if req.photo.binary?[which]
             path = "/data/#{req.photo.id}/binaries/#{which}"
-            downloader.download path, (stream) ->
+            request = downloader.download path, (stream) ->
                 if stream.statusCode is 200
+                    req.on 'close', -> request.abort()
                     stream.pipe res
                 else
                     return res.sendfile './server/img/error.gif'
