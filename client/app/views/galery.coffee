@@ -87,7 +87,9 @@ module.exports = class Galery extends ViewCollection
         'drop'     : 'onFilesDropped'
         'dragover' : 'onDragOver'
         'dragleave' : 'onDragLeave'
-        'change #uploader': 'onFilesChanged'
+        # change isn't fired on first click ???
+        #'change #uploader': 'onFilesChanged'
+        'click #uploader': 'onFilesClick'
         'click #browse-files': 'displayBrowser'
 
     # event listeners for D&D events
@@ -121,6 +123,12 @@ module.exports = class Galery extends ViewCollection
         parts = url.split('/')
         id = parts[parts.length - 1]
         id = id.split('.')[0]
+        # if collection has not been saved, we must search by url
+        if not @collection.get(id)?
+            photo = @collection.find (e) ->
+                return e.attributes.src.split('/').pop().split('.')[0] is id
+            if photo?
+                id = photo.cid
         return id
 
     # Rotate 90° left the picture by updating css and orientation.
@@ -167,10 +175,13 @@ module.exports = class Galery extends ViewCollection
 
     onFilesChanged: (evt) =>
         @handleFiles @uploader[0].files
-        # reset the iNput
+        # reset the input
         old = @uploader
         @uploader = old.clone true
         old.replaceWith @uploader
+
+    onFilesClick: (evt) ->
+        document.getElementById('uploader').addEventListener 'change', @onFilesChanged
 
     beforeImageDisplayed: (link) =>
         id = @getIdPhoto link.href

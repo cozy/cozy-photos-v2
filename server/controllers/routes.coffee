@@ -68,6 +68,8 @@ module.exports =
         get: sharing.contactList
     'clearance/contacts/:contactid.jpg':
         get: sharing.contactPicture
+    'clearance/contacts/:contactid':
+        get: sharing.contact
     'clearance/:shareid':
         put: sharing.change
     'clearance/:shareid/send':

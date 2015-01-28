@@ -76,6 +76,7 @@ module.exports = class Router extends Backbone.Router
             @cancelNavigate = false
         else
 
+            # default window title
             document.title = t 'application title'
 
             if @mainView and @mainView.dirty
