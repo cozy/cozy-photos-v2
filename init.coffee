@@ -8,10 +8,13 @@ percent = null
 total_files = 0
 thumb_files = 0
 
+
 module.exports.onThumbCreation = () ->
     return [thumb_files isnt total_files, (thumb_files / total_files) * 100]
 
+
 convertImage = (cb) ->
+
     convert = (doc, callback) ->
         if doc._attachments?
             try
@@ -24,25 +27,39 @@ convertImage = (cb) ->
                 callback()
         else
             callback()
+
     Photo.all (err, docs) ->
-        async.eachSeries(docs, convert, cb)
+        if err
+            cb err
+        else
+            async.eachSeries docs, convert, cb
+
 
 createThumb = (socket, cb) ->
+
     # Recover all file without thumb
     File.withoutThumb (err, files) ->
-        total_files = files.length
-        # Create thumb and check progress
-        async.eachSeries files, (file, callback) ->
-            thumb file, () ->
-                thumb_files += 1
-                percent = Math.floor((thumb_files / total_files) * 100)
-                # Emit thumb creation progress
-                socket.emit 'progress', {"percent": percent}
-                callback()
-        , cb
+        if err
+            cb err
+
+        else if files?
+            total_files = files.length
+            # Create thumb and check progress
+            async.eachSeries files, (file, callback) ->
+                thumb file, () ->
+                    thumb_files += 1
+                    percent = Math.floor((thumb_files / total_files) * 100)
+                    # Emit thumb creation progress
+                    socket.emit 'progress', {"percent": percent}
+                    callback()
+            , cb
+
+        else
+            cb()
+
 
 # Create all requests and upload directory
-module.exports.convert = (socket, done=->null) ->
+module.exports.convert = (socket, done= -> null) ->
     #convertImage (err) ->
     onThumbCreation = true
     createThumb socket, ->
