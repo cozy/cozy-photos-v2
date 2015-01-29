@@ -11,7 +11,7 @@ process.on 'uncaughtException', (err) ->
     console.log err
     console.log err.stack
 
-    if typeof(err) isnt TypeError
+    if typeof(err) isnt 'TypeError'
         setTimeout ->
             process.exit 1
         , 1000
