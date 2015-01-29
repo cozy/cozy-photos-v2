@@ -2,7 +2,8 @@ File = require '../models/file'
 Photo = require '../models/photo'
 async = require 'async'
 fs = require 'fs'
-im = require 'imagemagick'
+thumbHelpers = require '../helpers/thumb'
+
 onThumbCreation = require('../../init').onThumbCreation
 fileByPage = 5 * 12
 
@@ -68,34 +69,6 @@ module.exports.thumb = (req, res, next) ->
     stream.pipe res
 
 
-# Resize picture
-resize = (raw, photo, name, callback) ->
-    options = if name is 'thumb'
-        mode: 'crop'
-        width: 300
-        height: 300
-
-    else #screen
-        mode: 'resize'
-        width: 1200
-        height: 800
-
-    options.srcPath = raw
-    options.dstPath = "/tmp/#{photo.id}2"
-
-    # create files
-    fs.open options.dstPath, 'w', (err) ->
-        if err
-            callback err
-        else
-            # create a resized file and push it to db
-            im[options.mode] options, (err, stdout, stderr) ->
-                return callback err if err
-                photo.attachBinary options.dstPath, {name}, (err) ->
-                    fs.unlink options.dstPath, ->
-                        callback err
-
-
 module.exports.createPhoto = (req, res, next) ->
     file = req.file
 
@@ -121,12 +94,12 @@ module.exports.createPhoto = (req, res, next) ->
 
         stream.on 'end', =>
             if not photo.binary.thumb?
-                resize rawFile, photo, 'thumb', (err) ->
+                thumbHelpers.resize rawFile, photo, 'thumb', (err) ->
                     return next err if err
-                    resize rawFile, photo, 'screen', (err) ->
+                    thumbHelpers.resize rawFile, photo, 'screen', (err) ->
                         fs.unlink rawFile, ->
                             res.send 201, photo
             else
-                resize rawFile, photo, 'screen', (err) ->
+                thumbHelpers.resize rawFile, photo, 'screen', (err) ->
                     fs.unlink rawFile, ->
                         res.send 201, photo

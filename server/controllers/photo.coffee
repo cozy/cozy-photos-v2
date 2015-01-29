@@ -1,10 +1,10 @@
 async = require 'async'
 fs = require 'fs'
 qs = require 'qs'
-im = require 'imagemagick'
 multiparty = require 'multiparty'
 
 Photo = require '../models/photo'
+thumbHelpers = require '../helpers/thumb'
 sharing = require './sharing'
 downloader = require '../helpers/downloader'
 
@@ -114,7 +114,7 @@ module.exports.create = (req, res, next) =>
             return res.error 401, "Not allowed", err
 
 
-        im.readMetadata raw.path, (err, metadata) ->
+        thumbHelpers.readMetadata raw.path, (err, metadata) ->
             if err?
                 console.log "[Create photo - Exif metadata extraction]"
                 console.log "Are you sure imagemagick is installed ?"
