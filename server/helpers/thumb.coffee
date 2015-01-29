@@ -54,19 +54,14 @@ file.
 
         else
             rawFile = "/tmp/#{file.name}"
-            fs.open rawFile, 'w', (err) ->
-                if err
-                    callback err
-
-                else
-                    stream = file.getBinary 'file', (err) ->
-                        return callback err if err
-                    stream.pipe fs.createWriteStream rawFile
-                    stream.on 'error', callback
-                    stream.on 'end', =>
-                        resize rawFile, file, 'thumb', (err) =>
-                            fs.unlink rawFile, ->
-                                log.info """
+            stream = file.getBinary 'file', (err) ->
+                return callback err if err
+            stream.pipe fs.createWriteStream rawFile
+            stream.on 'error', callback
+            stream.on 'end', =>
+                resize rawFile, file, 'thumb', (err) =>
+                    fs.unlink rawFile, ->
+                        log.info """
 createThumb #{file.id} / #{file.name}: Thumbnail created
 """
-                                callback err
+                        callback err
