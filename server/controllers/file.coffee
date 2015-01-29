@@ -96,10 +96,10 @@ module.exports.createPhoto = (req, res, next) ->
             if not photo.binary.thumb?
                 thumbHelpers.resize rawFile, photo, 'thumb', (err) ->
                     return next err if err
-                    thumb.resize resize rawFile, photo, 'screen', (err) ->
+                    thumbHelpers.resize rawFile, photo, 'screen', (err) ->
                         fs.unlink rawFile, ->
                             res.send 201, photo
             else
-                thumb.resize rawFile, photo, 'screen', (err) ->
+                thumbHelpers.resize rawFile, photo, 'screen', (err) ->
                     fs.unlink rawFile, ->
                         res.send 201, photo
