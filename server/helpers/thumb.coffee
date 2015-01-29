@@ -65,7 +65,9 @@ module.exports = thumb =
             gmRunner = gm(srcPath).options(imageMagick: true)
 
             if name is 'thumb'
-                gmRunner.crop(300, 300, 0, 0)
+                gmRunner
+                .resize(300)
+                .crop(300, 300, 0, 0)
                 .write dstPath, (err) ->
                     if err
                         callback err
@@ -73,7 +75,7 @@ module.exports = thumb =
                         thumb.attachFile file, dstPath, name, callback
 
             else if name is 'screen'
-                gmRunner.resize(1200, 800, 0, 0)
+                gmRunner.resize(1200, 800)
                 .write dstPath, (err) ->
                     if err
                         callback err
