@@ -13,7 +13,8 @@ imageByDate = (doc) ->
         emit doc.lastModification, doc
 
 withoutThumb = (doc) ->
-    if doc.class is "image" and doc.binary?.file? and (not doc.binary.thumb?)
+    if doc.class is "image"
+        and doc.binary?.file? and (not doc.binary.thumb?)
         emit doc._id, doc
 
 # MapReduce to fetch thumbs for every album

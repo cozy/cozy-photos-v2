@@ -1,5 +1,14 @@
 fs = require 'fs'
 im = require 'imagemagick'
+mime = require 'mime'
+log = require('printit')
+    prefix: 'thumbnails'
+
+
+whiteList = [
+    'image/jpeg'
+    'image/png'
+]
 
 
 resize = (raw, file, name, callback) ->
@@ -29,9 +38,20 @@ resize = (raw, file, name, callback) ->
 module.exports.create = (file, callback) ->
     return callback new Error('no binary') unless file.binary?
 
+    mimetype = mime.lookup file.name
+
     if file.binary?.thumb?
-        console.log "createThumb #{file.id} : already done"
+        log.info "createThumb #{file.id} / #{file.name}: already created."
         callback()
+
+    if mimetype not in whiteList
+        if file.binary?
+            file.binary.thumb
+        else
+            log.info """
+createThumb: #{file.id} / #{file.name}: No thumb for this kind of file.
+"""
+            callback()
 
     else
         rawFile = "/tmp/#{file.name}"
@@ -47,5 +67,7 @@ module.exports.create = (file, callback) ->
                 stream.on 'end', =>
                     resize rawFile, file, 'thumb', (err) =>
                         fs.unlink rawFile, ->
-                            console.log "createThumb #{file.id} : done"
+                            log.info """
+createThumb #{file.id} / #{file.name}: Thumbnail created
+"""
                             callback err
