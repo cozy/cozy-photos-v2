@@ -54,7 +54,7 @@ createThumb = (socket, cb) ->
                     percent = Math.floor((thumb_files / total_files) * 100)
                     # Emit thumb creation progress
                     socket.emit 'progress', {"percent": percent}
-                    setTimeout callback, 1000
+                    setTimeout callback, 200
             , cb
 
         else
