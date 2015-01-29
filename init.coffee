@@ -46,12 +46,15 @@ createThumb = (socket, cb) ->
             total_files = files.length
             # Create thumb and check progress
             async.eachSeries files, (file, callback) ->
-                thumb file, () ->
+                thumb file, (err) ->
+                    if err
+                        console.log err
+
                     thumb_files += 1
                     percent = Math.floor((thumb_files / total_files) * 100)
                     # Emit thumb creation progress
                     socket.emit 'progress', {"percent": percent}
-                    callback()
+                    setTimeout callback, 1000
             , cb
 
         else
