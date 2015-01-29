@@ -10,9 +10,11 @@ axon = require 'axon'
 process.on 'uncaughtException', (err) ->
     console.log err
     console.log err.stack
-    setTimeout ->
-        process.exit 1
-    , 1000
+
+    if typeof(err) isnt TypeError
+        setTimeout ->
+            process.exit 1
+        , 1000
 
 module.exports = start = (options, cb) ->
     options.name = 'cozy-photos'
