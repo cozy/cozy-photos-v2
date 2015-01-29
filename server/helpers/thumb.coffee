@@ -38,36 +38,35 @@ resize = (raw, file, name, callback) ->
 module.exports.create = (file, callback) ->
     return callback new Error('no binary') unless file.binary?
 
-    mimetype = mime.lookup file.name
-
     if file.binary?.thumb?
         log.info "createThumb #{file.id} / #{file.name}: already created."
         callback()
 
-    if mimetype not in whiteList
-        if file.binary?
-            file.binary.thumb
-        else
+    else
+        mimetype = mime.lookup file.name
+
+        if mimetype not in whiteList
             log.info """
-createThumb: #{file.id} / #{file.name}: No thumb for this kind of file.
+createThumb: #{file.id} / #{file.name}: No thumb to create for this kind of
+file.
 """
             callback()
 
-    else
-        rawFile = "/tmp/#{file.name}"
-        fs.open rawFile, 'w', (err) ->
-            if err
-                callback err
+        else
+            rawFile = "/tmp/#{file.name}"
+            fs.open rawFile, 'w', (err) ->
+                if err
+                    callback err
 
-            else
-                stream = file.getBinary 'file', (err) ->
-                    return callback err if err
-                stream.pipe fs.createWriteStream rawFile
-                stream.on 'error', callback
-                stream.on 'end', =>
-                    resize rawFile, file, 'thumb', (err) =>
-                        fs.unlink rawFile, ->
-                            log.info """
+                else
+                    stream = file.getBinary 'file', (err) ->
+                        return callback err if err
+                    stream.pipe fs.createWriteStream rawFile
+                    stream.on 'error', callback
+                    stream.on 'end', =>
+                        resize rawFile, file, 'thumb', (err) =>
+                            fs.unlink rawFile, ->
+                                log.info """
 createThumb #{file.id} / #{file.name}: Thumbnail created
 """
-                            callback err
+                                callback err
