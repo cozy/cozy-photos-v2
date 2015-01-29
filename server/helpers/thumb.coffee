@@ -65,14 +65,24 @@ module.exports = thumb =
             gmRunner = gm(srcPath).options(imageMagick: true)
 
             if name is 'thumb'
-                gmRunner
-                .resize(300)
-                .crop(300, 300, 0, 0)
-                .write dstPath, (err) ->
+                buildThumb = (width, height) ->
+                    gmRunner
+                    .resize(width, height)
+                    .crop(300, 300, 0, 0)
+                    .write dstPath, (err) ->
+                        if err
+                            callback err
+                        else
+                            thumb.attachFile file, dstPath, name, callback
+
+                gmRunner.size (err, data) ->
                     if err
                         callback err
                     else
-                        thumb.attachFile file, dstPath, name, callback
+                        if data.width > data.height
+                            buildThumb null, 300
+                        else
+                            buildThumb 300, null
 
             else if name is 'screen'
                 gmRunner.resize(1200, 800)
@@ -118,7 +128,10 @@ createThumb: #{file.id} / #{file.name}: Creation started...
                 stream.on 'end', =>
                     thumb.resize rawFile, file, 'thumb', (err) =>
                         fs.unlink rawFile, ->
-                            log.info """
-createThumb #{file.id} / #{file.name}: Thumbnail created
-"""
+                            if err
+                                console.log err
+                            else
+                                log.info """
+    createThumb #{file.id} / #{file.name}: Thumbnail created
+    """
                             callback err
