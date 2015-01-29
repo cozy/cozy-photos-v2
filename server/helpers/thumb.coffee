@@ -23,18 +23,24 @@ resize = (raw, file, name, callback) ->
 
 module.exports.create = (file, callback) ->
     return callback new Error('no binary') unless file.binary?
+
     if file.binary?.thumb?
         console.log "createThumb #{file.id} : already done"
         callback()
+
     else
         rawFile = "/tmp/#{file.name}"
         fs.open rawFile, 'w', (err) ->
-            stream = file.getBinary 'file', (err) ->
-                return callback err if err
-            stream.pipe fs.createWriteStream rawFile
-            stream.on 'error', callback
-            stream.on 'end', =>
-                resize rawFile, file, 'thumb', (err) =>
-                    fs.unlink rawFile, ->
-                        console.log "createThumb #{file.id} : done"
-                        callback(err)
+            if err
+                callback err
+
+            else
+                stream = file.getBinary 'file', (err) ->
+                    return callback err if err
+                stream.pipe fs.createWriteStream rawFile
+                stream.on 'error', callback
+                stream.on 'end', =>
+                    resize rawFile, file, 'thumb', (err) =>
+                        fs.unlink rawFile, ->
+                            console.log "createThumb #{file.id} : done"
+                            callback err
