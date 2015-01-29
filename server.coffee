@@ -7,6 +7,12 @@ RealtimeAdapter = require('cozy-realtime-adapter')
 sio = require 'socket.io'
 axon = require 'axon'
 
+process.on 'uncaughtException', (err) ->
+    console.log err
+    setTimeout ->
+        process.exit 1
+    , 1000
+
 module.exports = start = (options, cb) ->
     options.name = 'cozy-photos'
     options.port ?= 9119
