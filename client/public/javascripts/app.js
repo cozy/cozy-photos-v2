@@ -741,17 +741,17 @@ module.exports = {
   "public": "public",
   "hidden": "hidden",
   "There is no photos in this album": "There is no photo in this album. Click on Edit button to add new ones.",
-  "There is no public albums.": "There are no album.",
+  "There is no public albums.": "There are no albums.",
   "This album is private": "This album is private",
   "This album is hidden": "This album is hidden",
   "This album is public": "This album is public",
-  "title placeholder": "Set a title for this album...",
+  "title placeholder": "Set a title for this album…",
   "View": "View",
-  "description placeholder": "Write a description...",
+  "description placeholder": "Write a description…",
   "is too big (max 10Mo)": "is too big (max 10Mo)",
   "is not an image": "is not an image",
   "Share album by mail": "Share album by mail",
-  "Upload your contacts...": "Upload your contacts...",
+  "Upload your contacts...": "Upload your contacts…",
   "Share album": "Share album",
   "Add contact": "Add contact",
   "Send mail": "Send mail",
@@ -810,7 +810,7 @@ module.exports = {
   "perm": "can ",
   "perm r album": "browse this album",
   "perm rw album": "browse and upload photos",
-  "mail not send": "Mail not send",
+  "mail not send": "Mail not sent",
   "server error occured": "Error occured on server side, please try again later",
   "change notif": "Check this box to be notified when a contact\nwill add a photo to this album.",
   "send email hint": "Notification emails will be sent one time on save",
@@ -2402,7 +2402,7 @@ module.exports = Galery = (function(_super) {
       'drop': 'onFilesDropped',
       'dragover': 'onDragOver',
       'dragleave': 'onDragLeave',
-      'change #uploader': 'onFilesChanged',
+      'click #uploader': 'onFilesClick',
       'click #browse-files': 'displayBrowser'
     };
   };
@@ -2436,13 +2436,21 @@ module.exports = Galery = (function(_super) {
   };
 
   Galery.prototype.getIdPhoto = function(url) {
-    var id, parts;
+    var id, parts, photo;
     if (url == null) {
       url = $('#pbOverlay .wrapper img').attr('src');
     }
     parts = url.split('/');
     id = parts[parts.length - 1];
     id = id.split('.')[0];
+    if (this.collection.get(id) == null) {
+      photo = this.collection.find(function(e) {
+        return e.attributes.src.split('/').pop().split('.')[0] === id;
+      });
+      if (photo != null) {
+        id = photo.cid;
+      }
+    }
     return id;
   };
 
@@ -2513,6 +2521,10 @@ module.exports = Galery = (function(_super) {
     old = this.uploader;
     this.uploader = old.clone(true);
     return old.replaceWith(this.uploader);
+  };
+
+  Galery.prototype.onFilesClick = function(evt) {
+    return document.getElementById('uploader').addEventListener('change', this.onFilesChanged);
   };
 
   Galery.prototype.beforeImageDisplayed = function(link) {
