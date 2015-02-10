@@ -132,14 +132,17 @@ module.exports = class Galery extends ViewCollection
         return id
 
     # Rotate 90° left the picture by updating css and orientation.
+    # Save result to Cozy database.
     onTurnLeft: () =>
         id = @getIdPhoto()
         orientation = @collection.get(id)?.attributes.orientation
+        orientation = 1 unless orientation?
         newOrientation =
             helpers.rotateLeft orientation, $('.wrapper img')
         helpers.rotate newOrientation, $('.wrapper img')
         @collection.get(id)?.save orientation: newOrientation,
             success : () ->
+                console.log 'orientation saved'
                 helpers.rotate newOrientation, $('.pbThumbs .active img')
 
     # Rotate 90° right the picture by updating css and orientation.
@@ -181,7 +184,8 @@ module.exports = class Galery extends ViewCollection
         old.replaceWith @uploader
 
     onFilesClick: (evt) ->
-        document.getElementById('uploader').addEventListener 'change', @onFilesChanged
+        element = document.getElementById('uploader')
+        element.addEventListener 'change', @onFilesChanged
 
     beforeImageDisplayed: (link) =>
         id = @getIdPhoto link.href
