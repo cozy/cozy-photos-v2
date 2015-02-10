@@ -142,7 +142,6 @@ module.exports = class Galery extends ViewCollection
         helpers.rotate newOrientation, $('.wrapper img')
         @collection.get(id)?.save orientation: newOrientation,
             success : () ->
-                console.log 'orientation saved'
                 helpers.rotate newOrientation, $('.pbThumbs .active img')
 
     # Rotate 90° right the picture by updating css and orientation.
