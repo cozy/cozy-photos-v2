@@ -48,7 +48,6 @@ module.exports = class AlbumView extends BaseView
 
         @listenTo @model.photos, 'add remove', @onPhotoCollectionChange
         @listenTo @model, 'change:clearance', @render
-        @listenTo @model, 'sync', @render
 
     getRenderData: ->
         key = $.url().param('key')
