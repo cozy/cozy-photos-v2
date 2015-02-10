@@ -257,4 +257,5 @@ module.exports = class Galery extends ViewCollection
 
     # Close galery via photobox close button.
     closePhotobox: ->
-        $('#pbCloseBtn').click()
+        if $('#pbCloseBtn').is(':visible')
+            $('#pbCloseBtn').click()
