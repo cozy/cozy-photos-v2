@@ -161,3 +161,12 @@ module.exports = class AlbumView extends BaseView
         @model.save updated: Date.now()
         # updates the photo counter
         @$('.photo-number').html @model.photos.length
+
+    # Force display of given photo.
+    showPhoto: (photoid) ->
+        @galery.showPhoto photoid
+
+    # Force galery to close.
+    closeGallery: ->
+        @galery.closePhotobox()
+

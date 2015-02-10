@@ -12,6 +12,16 @@ module.exports = class Galery extends ViewCollection
 
     template: require 'templates/galery'
 
+    # D&D events
+    events: ->
+        'drop'     : 'onFilesDropped'
+        'dragover' : 'onDragOver'
+        'dragleave' : 'onDragLeave'
+        # change isn't fired on first click ???
+        #'change #uploader': 'onFilesChanged'
+        'click #uploader': 'onFilesClick'
+        'click #browse-files': 'displayBrowser'
+
     initialize: ->
         super
         # when the cover picture is deleted, we remove it from the album
@@ -24,6 +34,7 @@ module.exports = class Galery extends ViewCollection
             thumbs: true
             history: false
             beforeShow: @beforeImageDisplayed
+            afterClose: @onAfterClosed
         , @onImageDisplayed
 
         # Addition to photobox ui to give more control to the user.
@@ -81,16 +92,6 @@ module.exports = class Galery extends ViewCollection
 
     checkIfEmpty: =>
         @$('.help').toggle _.size(@views) is 0 and app.mode is 'public'
-
-    # D&D events
-    events: ->
-        'drop'     : 'onFilesDropped'
-        'dragover' : 'onDragOver'
-        'dragleave' : 'onDragLeave'
-        # change isn't fired on first click ???
-        #'change #uploader': 'onFilesChanged'
-        'click #uploader': 'onFilesClick'
-        'click #browse-files': 'displayBrowser'
 
     # event listeners for D&D events
     onFilesDropped: (evt) ->
@@ -195,6 +196,12 @@ module.exports = class Galery extends ViewCollection
         # Initialize download link
         url = $('.pbThumbs .active img').attr 'src'
         id = @getIdPhoto()
+
+        if @options.editable
+            app.router.navigate "albums/#{@album.id}/edit/photo/#{id}", false
+        else
+            app.router.navigate "albums/#{@album.id}/photo/#{id}", false
+
         @downloadLink.attr 'href', url.replace 'thumbs', 'raws'
 
         # Rotate thumbs
@@ -207,6 +214,13 @@ module.exports = class Galery extends ViewCollection
             orientation = @collection.get(id)?.attributes.orientation
             helpers.rotate orientation, $(thumb)
 
+    onAfterClosed: =>
+        if @options.editable
+            app.router.navigate "albums/#{@album.id}/edit", true
+        else
+            app.router.navigate "albums/#{@album.id}", true
+
+
     handleFiles: (files) ->
         # allow parent view to set some attributes on the photo
         # (current usage = albumid + save album if it is new)
@@ -217,6 +231,7 @@ module.exports = class Galery extends ViewCollection
                 photo = new Photo photoAttributes
                 photo.file = file
                 @collection.add photo
+
                 # set a 'dirty' flag on mainView until photo is uploaded
                 app.router.mainView.dirty = true
                 photoprocessor.process photo
@@ -233,3 +248,13 @@ module.exports = class Galery extends ViewCollection
             model: @album
             collection: @collection
             beforeUpload: @options.beforeUpload
+
+    # Display photo given in URL by triggering a photobox click event on the
+    # given photo.
+    showPhoto: (photoid) ->
+        url = "photos/#{photoid}.jpg"
+        $('a[href="' + url + '"]').trigger('click.photobox')
+
+    # Close galery via photobox close button.
+    closePhotobox: ->
+        $('#pbCloseBtn').click()
