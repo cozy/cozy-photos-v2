@@ -121,10 +121,13 @@ module.exports.create = (req, res, next) =>
                 next err
             else
                 # Add date and orientation from EXIF data.
+                req.body.orientation = 1
                 if metadata?.exif?.orientation?
-                    req.body.orientation = metadata.exif.orientation
-                else
-                    req.body.orientation = 1
+                    if metadata.exif.orientation is 'LeftBottom'
+                        req.body.orientation = 8
+                    else if metadata.exif.orientation is 8
+                        req.body.orientation = 8
+
                 if metadata?.exif?.dateTime?
                     req.body.date = metadata.exif.dateTime
             photo = new Photo req.body
