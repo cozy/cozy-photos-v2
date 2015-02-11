@@ -29,4 +29,4 @@ CozyInstance.getURL = (callback) ->
             .replace('https://', '')
             callback null, "https://#{url}/"
         else
-            callback new Error 'No instance domain set'
+            callback null, "http://localhost:9119/"
