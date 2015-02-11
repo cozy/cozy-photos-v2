@@ -557,13 +557,14 @@
 
 	function updateIndexes(idx){
 		lastActive = activeImage;
-        if (idx < 0) {
-          idx = -1;
-        }
-        activeImage = idx;
-        activeURL = images[idx][0];
-        prevImage = (activeImage || (options.loop ? images.length : 0)) - 1;
-        nextImage = ((activeImage + 1) % images.length) || (options.loop ? 0 : -1);
+    if (idx < 0) {
+      idx = -1;
+    }
+    activeImage = idx;
+    if (images[idx] !== undefined)
+      activeURL = images[idx][0];
+    prevImage = (activeImage || (options.loop ? images.length : 0)) - 1;
+    nextImage = ((activeImage + 1) % images.length) || (options.loop ? 0 : -1);
 	}
 
     function changeImage(imageIndex, firstTime, thumbClick){
@@ -695,6 +696,8 @@
 	// Shows the content (image/video) on the screen
     function showContent(firstTime){
 		var out, showSaftyTimer;
+    if (imageLinks[lastActive] === undefined) firstTime = true;
+
 		showSaftyTimer = setTimeout(show, 2000);
 
 		overlay.removeClass("pbLoading").addClass('hide');

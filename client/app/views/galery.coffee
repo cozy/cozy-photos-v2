@@ -33,6 +33,7 @@ module.exports = class Galery extends ViewCollection
         @$el.photobox 'a.server',
             thumbs: true
             history: false
+            zoomable: false
             beforeShow: @beforeImageDisplayed
             afterClose: @onAfterClosed
         , @onImageDisplayed
@@ -40,21 +41,22 @@ module.exports = class Galery extends ViewCollection
         # Addition to photobox ui to give more control to the user.
 
         # Add button to return photo to left
-        if $('#pbOverlay .pbCaptionText .btn-group').length is 0
-            $('#pbOverlay .pbCaptionText')
-                .append('<div class="btn-group"></div>')
-        @turnLeft = $('#pbOverlay .pbCaptionText .btn-group .left')
-        @turnLeft.unbind 'click'
-        @turnLeft.remove()
-        if navigator.userAgent.search("Firefox") isnt -1
-            transform = "transform"
-        else
-            transform = "-webkit-transform"
-        @turnLeft = $('<a id="left" class="btn left" type="button">
-                     <i class="glyphicon glyphicon-share-alt glyphicon-reverted"
-                      style="' + transform + ': scale(-1,1)"> </i> </a>')
-            .appendTo '#pbOverlay .pbCaptionText .btn-group'
-        @turnLeft.on 'click', @onTurnLeft
+        if app.mode isnt 'public'
+            if $('#pbOverlay .pbCaptionText .btn-group').length is 0
+                $('#pbOverlay .pbCaptionText')
+                    .append('<div class="btn-group"></div>')
+            @turnLeft = $('#pbOverlay .pbCaptionText .btn-group .left')
+            @turnLeft.unbind 'click'
+            @turnLeft.remove()
+            if navigator.userAgent.search("Firefox") isnt -1
+                transform = "transform"
+            else
+                transform = "-webkit-transform"
+            @turnLeft = $('<a id="left" class="btn left" type="button">
+                         <i class="glyphicon glyphicon-share-alt glyphicon-reverted"
+                          style="' + transform + ': scale(-1,1)"> </i> </a>')
+                .appendTo '#pbOverlay .pbCaptionText .btn-group'
+            @turnLeft.on 'click', @onTurnLeft
 
         # Add link to download photo
         @downloadLink = $('#pbOverlay .pbCaptionText .btn-group .download-link')
@@ -78,17 +80,26 @@ module.exports = class Galery extends ViewCollection
                 .appendTo '#pbOverlay .pbCaptionText .btn-group'
             @coverBtn.on 'click', @onCoverClicked
 
-        # Add button to return photo to right
-        @turnRight = $('#pbOverlay .pbCaptionText .btn-group .right')
-        @turnRight.unbind 'click'
-        @turnRight.remove()
-        @turnRight = $('<a id="right" class="btn right">
-                       <i class="glyphicon glyphicon-share-alt" </i> </a>')
-            .appendTo '#pbOverlay .pbCaptionText .btn-group'
-        @turnRight.on 'click', @onTurnRight
+            # Add button to delete photo
+            @trashBtn = $('#pbOverlay .pbCaptionText .btn-group .trash-btn')
+            @trashBtn.unbind 'click'
+            @trashBtn.remove()
+            @trashBtn = $('<a id="trash-btn" class="btn trash-btn">
+                           <i class="glyphicon glyphicon-trash" </i> </a>')
+                .appendTo '#pbOverlay .pbCaptionText .btn-group'
+            @trashBtn.on 'click', @onTrashClicked
 
-        for key, view of @views
-            view.collection = @collection
+            # Add button to return photo to right
+            @turnRight = $('#pbOverlay .pbCaptionText .btn-group .right')
+            @turnRight.unbind 'click'
+            @turnRight.remove()
+            @turnRight = $('<a id="right" class="btn right">
+                           <i class="glyphicon glyphicon-share-alt" </i> </a>')
+                .appendTo '#pbOverlay .pbCaptionText .btn-group'
+            @turnRight.on 'click', @onTurnRight
+
+            for key, view of @views
+                view.collection = @collection
 
     checkIfEmpty: =>
         @$('.help').toggle _.size(@views) is 0 and app.mode is 'public'
@@ -187,12 +198,21 @@ module.exports = class Galery extends ViewCollection
         element = document.getElementById('uploader')
         element.addEventListener 'change', @onFilesChanged
 
+    # When trash button is clicked it proposes to delete the currently
+    # displayed picture. It asks for a confirmation before
+    onTrashClicked: =>
+      if confirm t 'photo delete confirm'
+          photo = @collection.get(@getIdPhoto())
+          console.log photo
+          photo.destroy()
+
     beforeImageDisplayed: (link) =>
         id = @getIdPhoto link.href
         orientation = @collection.get(id)?.attributes.orientation
         $('#pbOverlay .wrapper img')[0].dataset.orientation = orientation
 
     onImageDisplayed: (args) =>
+        @isViewing = true
         # Initialize download link
         url = $('.pbThumbs .active img').attr 'src'
         id = @getIdPhoto()
@@ -215,6 +235,7 @@ module.exports = class Galery extends ViewCollection
             helpers.rotate orientation, $(thumb)
 
     onAfterClosed: =>
+        @isViewing = false
         if @options.editable
             app.router.navigate "albums/#{@album.id}/edit", true
         else
@@ -257,5 +278,5 @@ module.exports = class Galery extends ViewCollection
 
     # Close galery via photobox close button.
     closePhotobox: ->
-        if $('#pbCloseBtn').is(':visible')
+        if @isViewing
             $('#pbCloseBtn').click()
