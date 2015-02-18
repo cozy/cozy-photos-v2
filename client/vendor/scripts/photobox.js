@@ -553,10 +553,10 @@
 
         changeImage(img);
         return false;
-    }
+  }
 
-	function updateIndexes(idx){
-		lastActive = activeImage;
+  function updateIndexes(idx){
+    lastActive = activeImage;
     if (idx < 0) {
       idx = -1;
     }
