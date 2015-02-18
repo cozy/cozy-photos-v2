@@ -203,7 +203,6 @@ module.exports = class Galery extends ViewCollection
     onTrashClicked: =>
       if confirm t 'photo delete confirm'
           photo = @collection.get(@getIdPhoto())
-          console.log photo
           photo.destroy()
 
     beforeImageDisplayed: (link) =>
