@@ -3,13 +3,6 @@ blue = #34A6FF
 bluegreen = #34A6BB
 green = #34a6ff
 
-@font-face
-    font-family: styled
-    src: url('../fonts/maven-pro-light-200.otf');
-
-@font-face
-    font-family: main
-    src: url('../fonts/source-sans-pro.ttf');
 
 a
     color: blue
@@ -22,7 +15,7 @@ select
 textarea
     border: 1px solid blue
     border-radius: 0
-    font-family: styled
+    font-family: 'Maven Pro', sans-serif
 
 input:focus
 select:focus
@@ -48,7 +41,7 @@ textarea:active
     box-shadow: none
     text-shadow: none
     border-radius: 0
-    font-family: main
+    font-family: 'Source Sans Pro', sans-serif
     font-weight: bold
     padding: 10px
     cursor: pointer
@@ -91,21 +84,21 @@ textarea:active
 
 
 .modal-header
-    font-family: styled
+    font-family: 'Maven Pro', sans-serif
     font-size: 26px
     padding: 20px
     border-top-left-radius: 5px
     border-top-right-radius: 5px
 
 .modal-body
-    font-family: main
+    font-family: 'Source Sans Pro', sans-serif
 
     input
     select
     textarea
         border: 1px solid #CCC
         border-radius: 0
-        font-family: styled
+        font-family: 'Maven Pro', sans-serif
 
         &:hover
             border: 1px solid orange
@@ -128,7 +121,7 @@ textarea:active
         margin-top: 10px
 
     button
-        font-family: styled
+        font-family: 'Maven Pro', sans-serif
 
 p.disabled
     color: #999
@@ -143,10 +136,3 @@ p.disabled
     &:active
     &:focus
         border: 1px solid #CCC
-
-glyphicon-reverted
-  -moz-transform: scaleX(-1)
-  -o-transform: scaleX(-1)
-  -webkit-transform: scaleX(-1)
-  transform: scaleX(-1)
-  filter: FlipH

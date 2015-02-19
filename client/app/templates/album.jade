@@ -3,27 +3,27 @@ div#about
     div#links.clearfix
         p.back
             a.flatbtn(href="#albums")
-                span.glyphicon.glyphicon-arrow-left.icon-white
+                span.fa.fa-arrow-left.icon-white
                 span= t("Back")
         p.startediting
              a.flatbtn(href="#albums/#{id}/edit")
-                span.glyphicon.glyphicon-edit.icon-white
+                span.fa.fa-edit.icon-white
                 span= t("Edit")
         p.stopediting
             a.flatbtn.stopediting(href="#albums/#{id}")
-                span.glyphicon.glyphicon-floppy-disk.icon-white
+                span.fa.fa-save.icon-white
                 span= t("Stop editing")
         p.download
             a.flatbtn(href="#{downloadPath}")
-                span.glyphicon.glyphicon-download-alt.icon-white
+                span.fa.fa-download.icon-white
                 span= t("Download")
         p.delete
             a.flatbtn.delete
-                span.glyphicon.glyphicon-remove.icon-white
+                span.fa.fa-trash.icon-white
                 span= t("Delete")
         p.clearance
             a.flatbtn.clearance
-                span.glyphicon.glyphicon-share-alt.icon-white
+                span.fa.fa-share-alt.icon-white
                 span= t("share")
     div#album-text
         div#album-text-background
@@ -38,11 +38,11 @@ div#about
                 div
                     span.clearance-state
                         if clearance == 'public'
-                            span.glyphicon.glyphicon-globe
+                            span.fa.fa-globe
                             | &nbsp;
                             | #{t('shared')}
                         else if clearance && clearance.length > 0
-                            span.glyphicon.glyphicon-share-alt
+                            span.fa.fa-share-alt
                             | &nbsp;
                             | #{t('shared')}
                             if clearance.length
