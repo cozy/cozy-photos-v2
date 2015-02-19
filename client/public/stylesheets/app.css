@@ -562,8 +562,14 @@ a.btn.btn-cozy.left.prev {
 .pbCaptionText .btn-group {
   margin-left: 30px;
 }
+.pbCaptionText .btn-group a:hover {
+  color: #fe8800;
+}
 .flatbtn.clearance {
   background: #5c5;
+}
+.flatbtn.clearance:hover {
+  background: #fe8800;
 }
 #clearancemanager label {
   font-weight: normal;
