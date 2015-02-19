@@ -29,4 +29,7 @@ CozyInstance.getURL = (callback) ->
             .replace('https://', '')
             callback null, "https://#{url}/"
         else
-            callback null, "http://localhost:9119/"
+            if process.env.NODE_ENV isnt 'production'
+                callback null, "http://localhost:9119/"
+            else
+                callback new Error 'No instance domain set'
