@@ -5,6 +5,7 @@ multiparty = require 'multiparty'
 
 Photo = require '../models/photo'
 thumbHelpers = require '../helpers/thumb'
+photoHelpers = require '../helpers/photo'
 sharing = require './sharing'
 downloader = require '../helpers/downloader'
 
@@ -121,12 +122,15 @@ module.exports.create = (req, res, next) =>
                 next err
             else
                 # Add date and orientation from EXIF data.
+                req.body.orientation = 1
                 if metadata?.exif?.orientation?
-                    req.body.orientation = metadata.exif.orientation
-                else
-                    req.body.orientation = 1
+                    orientation = metadata.exif.orientation
+                    req.body.orientation = \
+                        photoHelpers.getOrientation orientation
+
                 if metadata?.exif?.dateTime?
                     req.body.date = metadata.exif.dateTime
+
             photo = new Photo req.body
 
             Photo.create photo, (err, photo) ->

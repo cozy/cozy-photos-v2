@@ -74,6 +74,7 @@ module.exports = class PhotoView extends BaseView
     # Prevent opening the gallery if the photos
     # hasn't been upload yet
     onClickListener: (evt) =>
+
         if @model.isNew()
             alert @error if @error
             evt.stopPropagation()
