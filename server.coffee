@@ -21,7 +21,9 @@ module.exports = start = (options, cb) ->
     options.name = 'cozy-photos'
     options.port ?= 9119
     options.host ?= '127.0.0.1'
-    americano.start options, (app, server) ->
+    americano.start options, (err, app, server) ->
+        return cb err if err
+
         app.server = server
 
         # pass reference to photo controller for socket.io upload progress
