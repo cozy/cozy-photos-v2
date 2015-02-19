@@ -32,7 +32,6 @@ module.exports =
                 dumpExceptions: true
                 showStack: true
         ]
-
     development: [
         americano.logger 'dev'
     ]
