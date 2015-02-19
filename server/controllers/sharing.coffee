@@ -9,14 +9,14 @@ localization = new LocalizationManager
 
 clearanceCtl = clearance.controller
     mailTemplate: (options, callback) ->
-        console.log options
         localization.initialize ->
             mailTemplate = localization.getEmailTemplate 'sharemail.jade'
+            template = mailTemplate options
             User.getDisplayName (err, displayName) ->
                 options.displayName = displayName or \
                                       localization.t 'default user name'
                 options.localization = localization
-                callback null, mailTemplate options
+                callback null, template
 
     mailSubject: (options, callback) ->
         name = options.doc.title
