@@ -21,7 +21,7 @@ body
     background-color bgcolor
 
 h1, h4
-    font-family styled
+    font-family 'Maven Pro', sans-serif
 
 .pa2
     padding: 20px
@@ -146,7 +146,7 @@ a.btn.btn-cozy.left.prev
 // #### album page ###
 
 #album, #album-list
-    font-family main
+    font-family 'Source Sans Pro', sans-serif
 
 #album
     width: 100%
@@ -186,7 +186,7 @@ a.btn.btn-cozy.left.prev
         padding: 8px
         background: transparent
         cursor: default
-        font-family: main
+        font-family: 'Source Sans Pro', sans-serif
 
     #title
         box-sizing: border-box
@@ -349,13 +349,15 @@ a.btn.btn-cozy.left.prev
     -webkit-transform scale(1)
     cursor: pointer
 
- .pbCaptionText
-     .btn-group
-         margin-left: 30px
+.pbCaptionText
+    .btn-group
+        margin-left: 30px
 
-         a:hover
-            color: orange
+        a:hover
+           color: orange
 
+#pbCaption
+    background-color rgba(black, .65)
 
 // Clearance
 
@@ -475,11 +477,8 @@ a.btn.btn-cozy.left.prev
         margin-left: 50px
 
 .clearance-btn
-    font-size: 20px
+    font-size 16px
     margin-left: 10px
-
-.clearance-btn.revoke
-    font-size: 12px
 
 .clearance-line
     line-height: 47px
@@ -602,18 +601,6 @@ for t in exifTransforms
   padding: 0px
 
 
-// Dirty fix required for clearance modal that includes a weird style for its remove button.
-.icon-remove
-    position: relative
-
-.icon-remove:before
-    content: "";
-    font-family: "Glyphicons Halflings";
-    font-style: normal;
-    font-weight: normal;
-    text-decoration: inherit;
-    cursor: pointer
-
 // Responsive
 @media (max-width: 767px)
 
@@ -623,7 +610,7 @@ for t in exifTransforms
 
 @media (max-width: 600px)
 
-    #album-list 
+    #album-list
         .create
             a
                 font-size: 16px
@@ -652,7 +639,7 @@ for t in exifTransforms
 
     #links
         box-sizing: border-box
-        padding: 0 20px 
+        padding: 0 20px
         padding-top: 20px
         float: left
         width: 20%
@@ -672,7 +659,7 @@ for t in exifTransforms
 
         h1#title
             margin-top: 0
-            font-family: main
+            font-family: 'Source Sans Pro', sans-serif
             font-size: 40px
 
         #description
@@ -693,6 +680,9 @@ for t in exifTransforms
 
 .albumitem
     width: 16.6666%
+
+    .title
+        font-family: 'Maven Pro', sans-serif
 
 .create
     width: 100%
@@ -786,7 +776,7 @@ for t in exifTransforms
     #about
         #links
             width: 33.333%
-     
+
     .albumitem
         width: 33.333%
 
@@ -809,7 +799,7 @@ for t in exifTransforms
 
         #album-text
             padding: 0 0 20px 0
-            width: 100% 
+            width: 100%
 
             h1#title
                 margin-top: 0
