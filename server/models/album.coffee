@@ -19,6 +19,10 @@ Album.beforeSave = (next, data) ->
                         .replace /<br>/g, ""
                         .replace /<div>/g, ""
                         .replace /<\/div>/g, ""
+
+    # Set default date if not set.
+    data.date = new Date() unless data.date?
+
     next()
 
 Album::getPublicURL = (callback) ->
