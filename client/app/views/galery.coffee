@@ -53,30 +53,27 @@ module.exports = class Galery extends ViewCollection
             else
                 transform = "-webkit-transform"
             @turnLeft = $('<a id="left" class="btn left" type="button">
-                         <i class="glyphicon glyphicon-share-alt glyphicon-reverted"
-                          style="' + transform + ': scale(-1,1)"> </i> </a>')
+                         <i class="fa fa-undo"> </i> </a>')
                 .appendTo '#pbOverlay .pbCaptionText .btn-group'
             @turnLeft.on 'click', @onTurnLeft
 
-        # Add link to download photo
-        @downloadLink = $('#pbOverlay .pbCaptionText .btn-group .download-link')
-        @downloadLink.unbind 'click'
-        @downloadLink.remove()
-        unless @downloadLink.length
-            @downloadLink =
-                $('<a class="btn download-link" download>
-                  <i class="glyphicon glyphicon-arrow-down"></i></a>')
+            # Add button to return photo to right
+            @turnRight = $('#pbOverlay .pbCaptionText .btn-group .right')
+            @turnRight.unbind 'click'
+            @turnRight.remove()
+            @turnRight = $('<a id="right" class="btn right">
+                           <i class="fa fa-repeat" </i> </a>')
                 .appendTo '#pbOverlay .pbCaptionText .btn-group'
+            @turnRight.on 'click', @onTurnRight
 
-        @uploader = @$('#uploader')
 
-        # Cover button to select cover
-        if app.mode isnt 'public'
+
+            # Cover button to select cover
             @coverBtn = $('#pbOverlay .pbCaptionText .btn-group .cover-btn')
             @coverBtn.unbind 'click'
             @coverBtn.remove()
             @coverBtn = $('<a id="cover-btn" class="btn cover-btn">
-                           <i class="glyphicon glyphicon-picture" </i> </a>')
+                           <i class="fa fa-star" </i> </a>')
                 .appendTo '#pbOverlay .pbCaptionText .btn-group'
             @coverBtn.on 'click', @onCoverClicked
 
@@ -85,21 +82,29 @@ module.exports = class Galery extends ViewCollection
             @trashBtn.unbind 'click'
             @trashBtn.remove()
             @trashBtn = $('<a id="trash-btn" class="btn trash-btn">
-                           <i class="glyphicon glyphicon-trash" </i> </a>')
+                           <i class="fa fa-trash" </i> </a>')
                 .appendTo '#pbOverlay .pbCaptionText .btn-group'
             @trashBtn.on 'click', @onTrashClicked
 
-            # Add button to return photo to right
-            @turnRight = $('#pbOverlay .pbCaptionText .btn-group .right')
-            @turnRight.unbind 'click'
-            @turnRight.remove()
-            @turnRight = $('<a id="right" class="btn right">
-                           <i class="glyphicon glyphicon-share-alt" </i> </a>')
-                .appendTo '#pbOverlay .pbCaptionText .btn-group'
-            @turnRight.on 'click', @onTurnRight
 
+        # Add link to download photo
+        @downloadLink = $('#pbOverlay .pbCaptionText .btn-group .download-link')
+        @downloadLink.unbind 'click'
+        @downloadLink.remove()
+        unless @downloadLink.length
+            @downloadLink =
+                $('<a class="btn download-link" download>
+                  <i class="fa fa-download"></i></a>')
+                .appendTo '#pbOverlay .pbCaptionText .btn-group'
+
+        @uploader = @$('#uploader')
+
+
+        if app.mode isnt 'public'
             for key, view of @views
                 view.collection = @collection
+
+
 
     checkIfEmpty: =>
         @$('.help').toggle _.size(@views) is 0 and app.mode is 'public'
