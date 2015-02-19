@@ -141,9 +141,10 @@ module.exports = {
     }
   }
 };
+
 });
 
-;require.register("collections/album", function(exports, require, module) {
+require.register("collections/album", function(exports, require, module) {
 var AlbumCollection,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -166,9 +167,10 @@ module.exports = AlbumCollection = (function(_super) {
   return AlbumCollection;
 
 })(Backbone.Collection);
+
 });
 
-;require.register("collections/photo", function(exports, require, module) {
+require.register("collections/photo", function(exports, require, module) {
 var PhotoCollection,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -193,9 +195,10 @@ module.exports = PhotoCollection = (function(_super) {
   return PhotoCollection;
 
 })(Backbone.Collection);
+
 });
 
-;require.register("initialize", function(exports, require, module) {
+require.register("initialize", function(exports, require, module) {
 var app;
 
 app = require('application');
@@ -257,9 +260,10 @@ $(function() {
     }
   };
 });
+
 });
 
-;require.register("lib/base_view", function(exports, require, module) {
+require.register("lib/base_view", function(exports, require, module) {
 var BaseView,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
@@ -294,9 +298,10 @@ module.exports = BaseView = (function(_super) {
   return BaseView;
 
 })(Backbone.View);
+
 });
 
-;require.register("lib/client", function(exports, require, module) {
+require.register("lib/client", function(exports, require, module) {
 exports.request = function(type, url, data, callbacks) {
   var error, success;
   success = callbacks.success || function(res) {
@@ -329,9 +334,10 @@ exports.put = function(url, data, callbacks) {
 exports.del = function(url, callbacks) {
   return exports.request("DELETE", url, null, callbacks);
 };
+
 });
 
-;require.register("lib/clipboard", function(exports, require, module) {
+require.register("lib/clipboard", function(exports, require, module) {
 var Clipboard,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
@@ -376,9 +382,10 @@ module.exports = Clipboard = (function() {
   return Clipboard;
 
 })();
+
 });
 
-;require.register("lib/helpers", function(exports, require, module) {
+require.register("lib/helpers", function(exports, require, module) {
 module.exports = {
   limitLength: function(string, length) {
     if ((string != null) && string.length > length) {
@@ -485,9 +492,10 @@ module.exports = {
     }
   }
 };
+
 });
 
-;require.register("lib/modal", function(exports, require, module) {
+require.register("lib/modal", function(exports, require, module) {
 var BaseView, ModalView,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -594,9 +602,10 @@ module.exports = ModalView = (function(_super) {
 module.exports.error = function(code, cb) {
   return new ModalView(t("modal error"), code, t("modal ok"), false, cb);
 };
+
 });
 
-;require.register("lib/socket_listener", function(exports, require, module) {
+require.register("lib/socket_listener", function(exports, require, module) {
 var ContactListener, contactCollection,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -621,9 +630,10 @@ module.exports = ContactListener = (function(_super) {
   return ContactListener;
 
 })(CozySocketListener);
+
 });
 
-;require.register("lib/view_collection", function(exports, require, module) {
+require.register("lib/view_collection", function(exports, require, module) {
 var BaseView, ViewCollection,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
@@ -721,9 +731,10 @@ module.exports = ViewCollection = (function(_super) {
   return ViewCollection;
 
 })(BaseView);
+
 });
 
-;require.register("locales/en", function(exports, require, module) {
+require.register("locales/en", function(exports, require, module) {
 module.exports = {
   "or": "or",
   "Back": "Back",
@@ -826,9 +837,10 @@ module.exports = {
   "Navigate before upload": "Some upload are in progress, do you really want to leave this page?",
   "application title": "Cozy - photos"
 };
+
 });
 
-;require.register("locales/fr", function(exports, require, module) {
+require.register("locales/fr", function(exports, require, module) {
 module.exports = {
   "or": "ou",
   "Back": "Retour",
@@ -934,9 +946,10 @@ module.exports = {
   "Navigate before upload": "Certaines photos n'ont pas encore été envoyées au serveur, voulez-vous vraiment quitter cette page ?",
   "application title": "Cozy - photos"
 };
+
 });
 
-;require.register("models/album", function(exports, require, module) {
+require.register("models/album", function(exports, require, module) {
 var Album, PhotoCollection, client,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1023,9 +1036,10 @@ module.exports = Album = (function(_super) {
   return Album;
 
 })(Backbone.Model);
+
 });
 
-;require.register("models/photo", function(exports, require, module) {
+require.register("models/photo", function(exports, require, module) {
 var Photo, client,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1078,9 +1092,10 @@ Photo.listFromFiles = function(page, callback) {
 Photo.makeFromFile = function(fileid, attr, callback) {
   return client.post("files/" + fileid + "/toPhoto", attr, callback);
 };
+
 });
 
-;require.register("models/photoprocessor", function(exports, require, module) {
+require.register("models/photoprocessor", function(exports, require, module) {
 var PhotoProcessor, blobify, makeScreenBlob, makeScreenDataURI, makeThumbBlob, makeThumbDataURI, makeThumbWorker, readFile, resize, upload, uploadWorker;
 
 readFile = function(photo, next) {
@@ -1279,9 +1294,10 @@ PhotoProcessor = (function() {
 })();
 
 module.exports = new PhotoProcessor();
+
 });
 
-;require.register("models/thumbprocessor", function(exports, require, module) {
+require.register("models/thumbprocessor", function(exports, require, module) {
 var ThumbProcessor, blobify, makeThumbBlob, makeThumbDataURI, readFile, resize, upload, uploadWorker;
 
 readFile = function(photo, next) {
@@ -1403,9 +1419,10 @@ ThumbProcessor = (function() {
 })();
 
 module.exports = new ThumbProcessor();
+
 });
 
-;require.register("router", function(exports, require, module) {
+require.register("router", function(exports, require, module) {
 var Album, AlbumView, AlbumsListView, Router, app,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
@@ -1585,22 +1602,23 @@ module.exports = Router = (function(_super) {
   return Router;
 
 })(Backbone.Router);
+
 });
 
-;require.register("templates/album", function(exports, require, module) {
+require.register("templates/album", function(exports, require, module) {
 var __templateData = function template(locals) {
 var buf = [];
 var jade_mixins = {};
 var jade_interp;
 var locals_ = (locals || {}),id = locals_.id,downloadPath = locals_.downloadPath,photosNumber = locals_.photosNumber,clearance = locals_.clearance,title = locals_.title,description = locals_.description;
-buf.push("<div id=\"about\"><div class=\"clearfix\"><div id=\"links\" class=\"clearfix\"><p class=\"back\"><a href=\"#albums\" class=\"flatbtn\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Back")) ? "" : jade_interp)) + "</span></a></p><p class=\"startediting\"><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn\"><span class=\"glyphicon glyphicon-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p class=\"stopediting\"><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn stopediting\"><span class=\"glyphicon glyphicon-floppy-disk icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><p class=\"download\"><a" + (jade.attr("href", "" + (downloadPath) + "", true, false)) + " class=\"flatbtn\"><span class=\"glyphicon glyphicon-download-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p class=\"delete\"><a class=\"flatbtn delete\"><span class=\"glyphicon glyphicon-remove icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p><p class=\"clearance\"><a class=\"flatbtn clearance\"><span class=\"glyphicon glyphicon-share-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("share")) ? "" : jade_interp)) + "</span></a></p></div><div id=\"album-text\"><div id=\"album-text-background\"><div class=\"right\"><p><span class=\"photo-number\">" + (jade.escape(null == (jade_interp = photosNumber) ? "" : jade_interp)) + "</span><br/><span>" + (jade.escape(null == (jade_interp = t("picture", {smart_count: photosNumber})) ? "" : jade_interp)) + "</span></p></div><form class=\"left\"><div><span class=\"clearance-state\">");
+buf.push("<div id=\"about\"><div class=\"clearfix\"><div id=\"links\" class=\"clearfix\"><p class=\"back\"><a href=\"#albums\" class=\"flatbtn\"><span class=\"fa fa-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Back")) ? "" : jade_interp)) + "</span></a></p><p class=\"startediting\"><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn\"><span class=\"fa fa-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p class=\"stopediting\"><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn stopediting\"><span class=\"fa fa-save icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><p class=\"download\"><a" + (jade.attr("href", "" + (downloadPath) + "", true, false)) + " class=\"flatbtn\"><span class=\"fa fa-download icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p class=\"delete\"><a class=\"flatbtn delete\"><span class=\"fa fa-trash icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p><p class=\"clearance\"><a class=\"flatbtn clearance\"><span class=\"fa fa-share-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("share")) ? "" : jade_interp)) + "</span></a></p></div><div id=\"album-text\"><div id=\"album-text-background\"><div class=\"right\"><p><span class=\"photo-number\">" + (jade.escape(null == (jade_interp = photosNumber) ? "" : jade_interp)) + "</span><br/><span>" + (jade.escape(null == (jade_interp = t("picture", {smart_count: photosNumber})) ? "" : jade_interp)) + "</span></p></div><form class=\"left\"><div><span class=\"clearance-state\">");
 if ( clearance == 'public')
 {
-buf.push("<span class=\"glyphicon glyphicon-globe\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('shared')) == null ? '' : jade_interp)) + "");
+buf.push("<span class=\"fa fa-globe\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('shared')) == null ? '' : jade_interp)) + "");
 }
 else if ( clearance && clearance.length > 0)
 {
-buf.push("<span class=\"glyphicon glyphicon-share-alt\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('shared')) == null ? '' : jade_interp)) + "");
+buf.push("<span class=\"fa fa-share-alt\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('shared')) == null ? '' : jade_interp)) + "");
 if ( clearance.length)
 {
 buf.push("<span>&nbsp;(" + (jade.escape((jade_interp = clearance.length) == null ? '' : jade_interp)) + ")</span>");
@@ -1802,7 +1820,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 var locals_ = (locals || {}),src = locals_.src,title = locals_.title,thumbsrc = locals_.thumbsrc;
-buf.push("<a" + (jade.attr("href", "" + (src) + "", true, false)) + (jade.attr("title", "" + (title) + "", true, false)) + "><img" + (jade.attr("src", "" + (thumbsrc) + "", true, false)) + (jade.attr("alt", "" + (title) + "", true, false)) + "/><div class=\"progressfill\"></div></a><button class=\"delete flatbtn\"><i class=\"glyphicon glyphicon-trash icon-white\"></i></button>");;return buf.join("");
+buf.push("<a" + (jade.attr("href", "" + (src) + "", true, false)) + (jade.attr("title", "" + (title) + "", true, false)) + "><img" + (jade.attr("src", "" + (thumbsrc) + "", true, false)) + (jade.attr("alt", "" + (title) + "", true, false)) + "/><div class=\"progressfill\"></div></a><button class=\"delete flatbtn\"><i class=\"fa fa-times icon-white\"></i></button>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -2053,9 +2071,10 @@ module.exports = AlbumView = (function(_super) {
   return AlbumView;
 
 })(BaseView);
+
 });
 
-;require.register("views/albumslist", function(exports, require, module) {
+require.register("views/albumslist", function(exports, require, module) {
 var AlbumsList, ViewCollection, app,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
@@ -2094,9 +2113,10 @@ module.exports = AlbumsList = (function(_super) {
   return AlbumsList;
 
 })(ViewCollection);
+
 });
 
-;require.register("views/albumslist_item", function(exports, require, module) {
+require.register("views/albumslist_item", function(exports, require, module) {
 var AlbumItem, BaseView, helpers, limitLength,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -2157,9 +2177,10 @@ module.exports = AlbumItem = (function(_super) {
   return AlbumItem;
 
 })(BaseView);
+
 });
 
-;require.register("views/browser", function(exports, require, module) {
+require.register("views/browser", function(exports, require, module) {
 var FilesBrowser, Modal, Photo,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -2335,9 +2356,10 @@ module.exports = FilesBrowser = (function(_super) {
   return FilesBrowser;
 
 })(Modal);
+
 });
 
-;require.register("views/galery", function(exports, require, module) {
+require.register("views/galery", function(exports, require, module) {
 var FilesBrowser, Galery, Photo, PhotoView, ViewCollection, app, helpers, photoprocessor,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
@@ -2415,32 +2437,32 @@ module.exports = Galery = (function(_super) {
       } else {
         transform = "-webkit-transform";
       }
-      this.turnLeft = $('<a id="left" class="btn left" type="button"> <i class="glyphicon glyphicon-share-alt glyphicon-reverted" style="' + transform + ': scale(-1,1)"> </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
+      this.turnLeft = $('<a id="left" class="btn left" type="button"> <i class="fa fa-undo"> </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
       this.turnLeft.on('click', this.onTurnLeft);
+      this.turnRight = $('#pbOverlay .pbCaptionText .btn-group .right');
+      this.turnRight.unbind('click');
+      this.turnRight.remove();
+      this.turnRight = $('<a id="right" class="btn right"> <i class="fa fa-repeat" </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
+      this.turnRight.on('click', this.onTurnRight);
+      this.coverBtn = $('#pbOverlay .pbCaptionText .btn-group .cover-btn');
+      this.coverBtn.unbind('click');
+      this.coverBtn.remove();
+      this.coverBtn = $('<a id="cover-btn" class="btn cover-btn"> <i class="fa fa-star" </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
+      this.coverBtn.on('click', this.onCoverClicked);
+      this.trashBtn = $('#pbOverlay .pbCaptionText .btn-group .trash-btn');
+      this.trashBtn.unbind('click');
+      this.trashBtn.remove();
+      this.trashBtn = $('<a id="trash-btn" class="btn trash-btn"> <i class="fa fa-trash" </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
+      this.trashBtn.on('click', this.onTrashClicked);
     }
     this.downloadLink = $('#pbOverlay .pbCaptionText .btn-group .download-link');
     this.downloadLink.unbind('click');
     this.downloadLink.remove();
     if (!this.downloadLink.length) {
-      this.downloadLink = $('<a class="btn download-link" download> <i class="glyphicon glyphicon-arrow-down"></i></a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
+      this.downloadLink = $('<a class="btn download-link" download> <i class="fa fa-download"></i></a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
     }
     this.uploader = this.$('#uploader');
     if (app.mode !== 'public') {
-      this.coverBtn = $('#pbOverlay .pbCaptionText .btn-group .cover-btn');
-      this.coverBtn.unbind('click');
-      this.coverBtn.remove();
-      this.coverBtn = $('<a id="cover-btn" class="btn cover-btn"> <i class="glyphicon glyphicon-picture" </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
-      this.coverBtn.on('click', this.onCoverClicked);
-      this.trashBtn = $('#pbOverlay .pbCaptionText .btn-group .trash-btn');
-      this.trashBtn.unbind('click');
-      this.trashBtn.remove();
-      this.trashBtn = $('<a id="trash-btn" class="btn trash-btn"> <i class="glyphicon glyphicon-trash" </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
-      this.trashBtn.on('click', this.onTrashClicked);
-      this.turnRight = $('#pbOverlay .pbCaptionText .btn-group .right');
-      this.turnRight.unbind('click');
-      this.turnRight.remove();
-      this.turnRight = $('<a id="right" class="btn right"> <i class="glyphicon glyphicon-share-alt" </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
-      this.turnRight.on('click', this.onTurnRight);
       _ref = this.views;
       _results = [];
       for (key in _ref) {
@@ -2681,9 +2703,10 @@ module.exports = Galery = (function(_super) {
   return Galery;
 
 })(ViewCollection);
+
 });
 
-;require.register("views/photo", function(exports, require, module) {
+require.register("views/photo", function(exports, require, module) {
 var BaseView, PhotoView, helpers, transitionendEvents,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
@@ -2817,7 +2840,6 @@ module.exports = PhotoView = (function(_super) {
   return PhotoView;
 
 })(BaseView);
+
 });
 
-;
-//# sourceMappingURL=app.js.map
