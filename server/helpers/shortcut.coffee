@@ -6,7 +6,7 @@ module.exports = (req, res, next) ->
         if err
             console.log err
             console.log err.stack
-        res.send error:msg, code
+        res.status(code).send error:msg
         return msg
 
     res.success = (msg) ->
