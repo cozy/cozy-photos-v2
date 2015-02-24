@@ -53,6 +53,7 @@ blobify = (dataUrl, type) ->
 # create photo.thumb_du : a DataURL encoded thumbnail of photo.img
 makeThumbDataURI = (photo, next) ->
     photo.thumb_du = resize photo, 300, 300, true
+
     photo.trigger 'thumbed'
     next()
 
@@ -118,9 +119,7 @@ makeThumbWorker = (photo , done) ->
         if err
             done err
         else
-            console.log photo
             uploadWorker photo, done
-        #done(err)
 
 # make screen sized version and upload
 uploadWorker = (photo, done) ->
@@ -159,8 +158,6 @@ class PhotoProcessor
     uploadQueue: async.queue uploadWorker, 2
 
     process: (photo) ->
-        #@thumbsQueue.push photo, (err) =>
-        #    return console.log err if err
         @uploadQueue.push photo, (err) =>
              return console.log err if err
 

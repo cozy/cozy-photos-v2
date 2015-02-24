@@ -1221,7 +1221,6 @@ makeThumbWorker = function(photo, done) {
     if (err) {
       return done(err);
     } else {
-      console.log(photo);
       return uploadWorker(photo, done);
     }
   });
@@ -1436,7 +1435,9 @@ module.exports = Router = (function(_super) {
     'albums/edit': 'albumslistedit',
     'albums/new': 'newalbum',
     'albums/:albumid': 'album',
-    'albums/:albumid/edit': 'albumedit'
+    'albums/:albumid/edit': 'albumedit',
+    'albums/:albumid/photo/:photoid': 'photo',
+    'albums/:albumid/edit/photo/:photoid': 'photoedit'
   };
 
   Router.prototype.albumslist = function(editable) {
@@ -1456,16 +1457,21 @@ module.exports = Router = (function(_super) {
     return this.albumslist(true);
   };
 
-  Router.prototype.album = function(id, editable) {
+  Router.prototype.album = function(id, editable, callback) {
     var album, _ref, _ref1;
     if (editable == null) {
       editable = false;
     }
     if (((_ref = this.mainView) != null ? (_ref1 = _ref.model) != null ? _ref1.get('id') : void 0 : void 0) === id) {
       if (editable) {
-        return this.mainView.makeEditable();
+        this.mainView.makeEditable();
       } else {
-        return this.mainView.makeNonEditable();
+        this.mainView.makeNonEditable();
+      }
+      if (callback) {
+        return callback();
+      } else {
+        return this.mainView.closeGallery();
       }
     } else {
       album = app.albums.get(id) || new Album({
@@ -1473,10 +1479,15 @@ module.exports = Router = (function(_super) {
       });
       return album.fetch().done((function(_this) {
         return function() {
-          return _this.displayView(new AlbumView({
+          _this.displayView(new AlbumView({
             model: album,
             editable: editable
           }));
+          if (callback) {
+            return callback();
+          } else {
+            return _this.mainView.closeGallery();
+          }
         };
       })(this)).fail((function(_this) {
         return function() {
@@ -1485,6 +1496,22 @@ module.exports = Router = (function(_super) {
         };
       })(this));
     }
+  };
+
+  Router.prototype.photo = function(albumid, photoid) {
+    return this.album(albumid, false, (function(_this) {
+      return function() {
+        return _this.mainView.showPhoto(photoid);
+      };
+    })(this));
+  };
+
+  Router.prototype.photoedit = function(albumid, photoid) {
+    return this.album(albumid, true, (function(_this) {
+      return function() {
+        return _this.mainView.showPhoto(photoid);
+      };
+    })(this));
   };
 
   Router.prototype.albumedit = function(id) {
@@ -1566,14 +1593,14 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 var locals_ = (locals || {}),id = locals_.id,downloadPath = locals_.downloadPath,photosNumber = locals_.photosNumber,clearance = locals_.clearance,title = locals_.title,description = locals_.description;
-buf.push("<div id=\"about\"><div class=\"clearfix\"><div id=\"links\" class=\"clearfix\"><p class=\"back\"><a href=\"#albums\" class=\"flatbtn\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Back")) ? "" : jade_interp)) + "</span></a></p><p class=\"startediting\"><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn\"><span class=\"glyphicon glyphicon-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p class=\"stopediting\"><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn stopediting\"><span class=\"glyphicon glyphicon-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><p class=\"download\"><a" + (jade.attr("href", "" + (downloadPath) + "", true, false)) + " class=\"flatbtn\"><span class=\"glyphicon glyphicon-download-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p class=\"delete\"><a class=\"flatbtn delete\"><span class=\"glyphicon glyphicon-remove icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p><p class=\"clearance\"><a class=\"flatbtn clearance\"><span class=\"glyphicon glyphicon-share-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("share")) ? "" : jade_interp)) + "</span></a></p></div><div id=\"album-text\"><div id=\"album-text-background\"><div class=\"right\"><p><span class=\"photo-number\">" + (jade.escape(null == (jade_interp = photosNumber) ? "" : jade_interp)) + "</span><br/><span>" + (jade.escape(null == (jade_interp = t("picture", {smart_count: photosNumber})) ? "" : jade_interp)) + "</span></p></div><form class=\"left\"><div><span class=\"clearance-state\">");
+buf.push("<div id=\"about\"><div class=\"clearfix\"><div id=\"links\" class=\"clearfix\"><p class=\"back\"><a href=\"#albums\" class=\"flatbtn\"><span class=\"fa fa-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Back")) ? "" : jade_interp)) + "</span></a></p><p class=\"startediting\"><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn\"><span class=\"fa fa-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p class=\"stopediting\"><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn stopediting\"><span class=\"fa fa-save icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><p class=\"download\"><a" + (jade.attr("href", "" + (downloadPath) + "", true, false)) + " class=\"flatbtn\"><span class=\"fa fa-download icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p class=\"delete\"><a class=\"flatbtn delete\"><span class=\"fa fa-trash icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p><p class=\"clearance\"><a class=\"flatbtn clearance\"><span class=\"fa fa-share-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("share")) ? "" : jade_interp)) + "</span></a></p></div><div id=\"album-text\"><div id=\"album-text-background\"><div class=\"right\"><p><span class=\"photo-number\">" + (jade.escape(null == (jade_interp = photosNumber) ? "" : jade_interp)) + "</span><br/><span>" + (jade.escape(null == (jade_interp = t("picture", {smart_count: photosNumber})) ? "" : jade_interp)) + "</span></p></div><form class=\"left\"><div><span class=\"clearance-state\">");
 if ( clearance == 'public')
 {
-buf.push("<span class=\"glyphicon glyphicon-globe\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('shared')) == null ? '' : jade_interp)) + "");
+buf.push("<span class=\"fa fa-globe\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('shared')) == null ? '' : jade_interp)) + "");
 }
 else if ( clearance && clearance.length > 0)
 {
-buf.push("<span class=\"glyphicon glyphicon-share-alt\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('shared')) == null ? '' : jade_interp)) + "");
+buf.push("<span class=\"fa fa-share-alt\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('shared')) == null ? '' : jade_interp)) + "");
 if ( clearance.length)
 {
 buf.push("<span>&nbsp;(" + (jade.escape((jade_interp = clearance.length) == null ? '' : jade_interp)) + ")</span>");
@@ -1775,7 +1802,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 var locals_ = (locals || {}),src = locals_.src,title = locals_.title,thumbsrc = locals_.thumbsrc;
-buf.push("<a" + (jade.attr("href", "" + (src) + "", true, false)) + (jade.attr("title", "" + (title) + "", true, false)) + "><img" + (jade.attr("src", "" + (thumbsrc) + "", true, false)) + (jade.attr("alt", "" + (title) + "", true, false)) + "/><div class=\"progressfill\"></div></a><button class=\"delete flatbtn\"><i class=\"icon-remove icon-white\"></i></button>");;return buf.join("");
+buf.push("<a" + (jade.attr("href", "" + (src) + "", true, false)) + (jade.attr("title", "" + (title) + "", true, false)) + "><img" + (jade.attr("src", "" + (thumbsrc) + "", true, false)) + (jade.attr("alt", "" + (title) + "", true, false)) + "/><div class=\"progressfill\"></div></a><button class=\"delete flatbtn\"><i class=\"fa fa-times icon-white\"></i></button>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -1874,8 +1901,7 @@ module.exports = AlbumView = (function(_super) {
   AlbumView.prototype.initialize = function(options) {
     AlbumView.__super__.initialize.call(this, options);
     this.listenTo(this.model.photos, 'add remove', this.onPhotoCollectionChange);
-    this.listenTo(this.model, 'change:clearance', this.render);
-    return this.listenTo(this.model, 'sync', this.render);
+    return this.listenTo(this.model, 'change:clearance', this.render);
   };
 
   AlbumView.prototype.getRenderData = function() {
@@ -1893,17 +1919,17 @@ module.exports = AlbumView = (function(_super) {
   };
 
   AlbumView.prototype.afterRender = function() {
+    document.title = "" + (t('application title')) + " - " + (this.model.get('title'));
+    this.title = this.$('#title');
+    this.description = this.$('#description');
     this.galery = new Galery({
       el: this.$('#photos'),
       editable: this.options.editable,
       collection: this.model.photos,
       beforeUpload: this.beforePhotoUpload
     });
-    this.title = this.$('#title');
-    this.description = this.$('#description');
     this.galery.album = this.model;
     this.galery.render();
-    document.title = "" + (t('application title')) + " - " + (this.model.get('title'));
     if (this.options.editable) {
       return this.makeEditable();
     } else {
@@ -1931,12 +1957,14 @@ module.exports = AlbumView = (function(_super) {
   };
 
   AlbumView.prototype.makeEditable = function() {
+    document.title = "" + (t('application title')) + " - " + (this.model.get('title'));
     this.$el.addClass('editing');
     this.options.editable = true;
     return this.galery.options.editable = true;
   };
 
   AlbumView.prototype.makeNonEditable = function() {
+    document.title = "" + (t('application title')) + " - " + (this.model.get('title'));
     this.$el.removeClass('editing');
     this.options.editable = false;
     return this.galery.options.editable = false;
@@ -1961,11 +1989,12 @@ module.exports = AlbumView = (function(_super) {
     if (this.model.get('title') === '' && this.model.get('description') === '' && this.model.photos.length === 0) {
       if (confirm(t('delete empty album'))) {
         event.preventDefault();
-        return this.model.destroy().then(function() {
+        this.model.destroy().then(function() {
           return app.router.navigate('albums', true);
         });
       }
     }
+    return true;
   };
 
   AlbumView.prototype.changeClearance = function(event) {
@@ -2011,6 +2040,14 @@ module.exports = AlbumView = (function(_super) {
       updated: Date.now()
     });
     return this.$('.photo-number').html(this.model.photos.length);
+  };
+
+  AlbumView.prototype.showPhoto = function(photoid) {
+    return this.galery.showPhoto(photoid);
+  };
+
+  AlbumView.prototype.closeGallery = function() {
+    return this.galery.closePhotobox();
   };
 
   return AlbumView;
@@ -2324,8 +2361,10 @@ module.exports = Galery = (function(_super) {
   __extends(Galery, _super);
 
   function Galery() {
+    this.onAfterClosed = __bind(this.onAfterClosed, this);
     this.onImageDisplayed = __bind(this.onImageDisplayed, this);
     this.beforeImageDisplayed = __bind(this.beforeImageDisplayed, this);
+    this.onTrashClicked = __bind(this.onTrashClicked, this);
     this.onFilesChanged = __bind(this.onFilesChanged, this);
     this.onPictureDestroyed = __bind(this.onPictureDestroyed, this);
     this.onCoverClicked = __bind(this.onCoverClicked, this);
@@ -2339,6 +2378,16 @@ module.exports = Galery = (function(_super) {
 
   Galery.prototype.template = require('templates/galery');
 
+  Galery.prototype.events = function() {
+    return {
+      'drop': 'onFilesDropped',
+      'dragover': 'onDragOver',
+      'dragleave': 'onDragLeave',
+      'click #uploader': 'onFilesClick',
+      'click #browse-files': 'displayBrowser'
+    };
+  };
+
   Galery.prototype.initialize = function() {
     Galery.__super__.initialize.apply(this, arguments);
     return this.listenTo(this.collection, 'destroy', this.onPictureDestroyed);
@@ -2350,61 +2399,60 @@ module.exports = Galery = (function(_super) {
     this.$el.photobox('a.server', {
       thumbs: true,
       history: false,
-      beforeShow: this.beforeImageDisplayed
+      zoomable: false,
+      beforeShow: this.beforeImageDisplayed,
+      afterClose: this.onAfterClosed
     }, this.onImageDisplayed);
-    if ($('#pbOverlay .pbCaptionText .btn-group').length === 0) {
-      $('#pbOverlay .pbCaptionText').append('<div class="btn-group"></div>');
+    if (app.mode !== 'public') {
+      if ($('#pbOverlay .pbCaptionText .btn-group').length === 0) {
+        $('#pbOverlay .pbCaptionText').append('<div class="btn-group"></div>');
+      }
+      this.turnLeft = $('#pbOverlay .pbCaptionText .btn-group .left');
+      this.turnLeft.unbind('click');
+      this.turnLeft.remove();
+      if (navigator.userAgent.search("Firefox") !== -1) {
+        transform = "transform";
+      } else {
+        transform = "-webkit-transform";
+      }
+      this.turnLeft = $('<a id="left" class="btn left" type="button"> <i class="fa fa-undo"> </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
+      this.turnLeft.on('click', this.onTurnLeft);
+      this.turnRight = $('#pbOverlay .pbCaptionText .btn-group .right');
+      this.turnRight.unbind('click');
+      this.turnRight.remove();
+      this.turnRight = $('<a id="right" class="btn right"> <i class="fa fa-repeat" </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
+      this.turnRight.on('click', this.onTurnRight);
+      this.coverBtn = $('#pbOverlay .pbCaptionText .btn-group .cover-btn');
+      this.coverBtn.unbind('click');
+      this.coverBtn.remove();
+      this.coverBtn = $('<a id="cover-btn" class="btn cover-btn"> <i class="fa fa-star" </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
+      this.coverBtn.on('click', this.onCoverClicked);
+      this.trashBtn = $('#pbOverlay .pbCaptionText .btn-group .trash-btn');
+      this.trashBtn.unbind('click');
+      this.trashBtn.remove();
+      this.trashBtn = $('<a id="trash-btn" class="btn trash-btn"> <i class="fa fa-trash" </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
+      this.trashBtn.on('click', this.onTrashClicked);
     }
-    this.turnLeft = $('#pbOverlay .pbCaptionText .btn-group .left');
-    this.turnLeft.unbind('click');
-    this.turnLeft.remove();
-    if (navigator.userAgent.search("Firefox") !== -1) {
-      transform = "transform";
-    } else {
-      transform = "-webkit-transform";
-    }
-    this.turnLeft = $('<a id="left" class="btn left" type="button"> <i class="glyphicon glyphicon-share-alt glyphicon-reverted" style="' + transform + ': scale(-1,1)"> </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
-    this.turnLeft.on('click', this.onTurnLeft);
     this.downloadLink = $('#pbOverlay .pbCaptionText .btn-group .download-link');
     this.downloadLink.unbind('click');
     this.downloadLink.remove();
     if (!this.downloadLink.length) {
-      this.downloadLink = $('<a class="btn download-link" download> <i class="glyphicon glyphicon-arrow-down"></i></a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
+      this.downloadLink = $('<a class="btn download-link" download> <i class="fa fa-download"></i></a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
     }
     this.uploader = this.$('#uploader');
     if (app.mode !== 'public') {
-      this.coverBtn = $('#pbOverlay .pbCaptionText .btn-group .cover-btn');
-      this.coverBtn.unbind('click');
-      this.coverBtn.remove();
-      this.coverBtn = $('<a id="cover-btn" class="btn cover-btn"> <i class="glyphicon glyphicon-picture" </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
-      this.coverBtn.on('click', this.onCoverClicked);
+      _ref = this.views;
+      _results = [];
+      for (key in _ref) {
+        view = _ref[key];
+        _results.push(view.collection = this.collection);
+      }
+      return _results;
     }
-    this.turnRight = $('#pbOverlay .pbCaptionText .btn-group .right');
-    this.turnRight.unbind('click');
-    this.turnRight.remove();
-    this.turnRight = $('<a id="right" class="btn right"> <i class="glyphicon glyphicon-share-alt" </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
-    this.turnRight.on('click', this.onTurnRight);
-    _ref = this.views;
-    _results = [];
-    for (key in _ref) {
-      view = _ref[key];
-      _results.push(view.collection = this.collection);
-    }
-    return _results;
   };
 
   Galery.prototype.checkIfEmpty = function() {
     return this.$('.help').toggle(_.size(this.views) === 0 && app.mode === 'public');
-  };
-
-  Galery.prototype.events = function() {
-    return {
-      'drop': 'onFilesDropped',
-      'dragover': 'onDragOver',
-      'dragleave': 'onDragLeave',
-      'click #uploader': 'onFilesClick',
-      'click #browse-files': 'displayBrowser'
-    };
   };
 
   Galery.prototype.onFilesDropped = function(evt) {
@@ -2458,6 +2506,9 @@ module.exports = Galery = (function(_super) {
     var id, newOrientation, orientation, _ref, _ref1;
     id = this.getIdPhoto();
     orientation = (_ref = this.collection.get(id)) != null ? _ref.attributes.orientation : void 0;
+    if (orientation == null) {
+      orientation = 1;
+    }
     newOrientation = helpers.rotateLeft(orientation, $('.wrapper img'));
     helpers.rotate(newOrientation, $('.wrapper img'));
     return (_ref1 = this.collection.get(id)) != null ? _ref1.save({
@@ -2524,7 +2575,17 @@ module.exports = Galery = (function(_super) {
   };
 
   Galery.prototype.onFilesClick = function(evt) {
-    return document.getElementById('uploader').addEventListener('change', this.onFilesChanged);
+    var element;
+    element = document.getElementById('uploader');
+    return element.addEventListener('change', this.onFilesChanged);
+  };
+
+  Galery.prototype.onTrashClicked = function() {
+    var photo;
+    if (confirm(t('photo delete confirm'))) {
+      photo = this.collection.get(this.getIdPhoto());
+      return photo.destroy();
+    }
   };
 
   Galery.prototype.beforeImageDisplayed = function(link) {
@@ -2536,8 +2597,14 @@ module.exports = Galery = (function(_super) {
 
   Galery.prototype.onImageDisplayed = function(args) {
     var id, orientation, parts, thumb, thumbs, url, _i, _len, _ref, _results;
+    this.isViewing = true;
     url = $('.pbThumbs .active img').attr('src');
     id = this.getIdPhoto();
+    if (this.options.editable) {
+      app.router.navigate("albums/" + this.album.id + "/edit/photo/" + id, false);
+    } else {
+      app.router.navigate("albums/" + this.album.id + "/photo/" + id, false);
+    }
     this.downloadLink.attr('href', url.replace('thumbs', 'raws'));
     thumbs = $('#pbOverlay .pbThumbs img');
     _results = [];
@@ -2551,6 +2618,15 @@ module.exports = Galery = (function(_super) {
       _results.push(helpers.rotate(orientation, $(thumb)));
     }
     return _results;
+  };
+
+  Galery.prototype.onAfterClosed = function() {
+    this.isViewing = false;
+    if (this.options.editable) {
+      return app.router.navigate("albums/" + this.album.id + "/edit", true);
+    } else {
+      return app.router.navigate("albums/" + this.album.id, true);
+    }
   };
 
   Galery.prototype.handleFiles = function(files) {
@@ -2588,6 +2664,18 @@ module.exports = Galery = (function(_super) {
       collection: this.collection,
       beforeUpload: this.options.beforeUpload
     });
+  };
+
+  Galery.prototype.showPhoto = function(photoid) {
+    var url;
+    url = "photos/" + photoid + ".jpg";
+    return $('a[href="' + url + '"]').trigger('click.photobox');
+  };
+
+  Galery.prototype.closePhotobox = function() {
+    if (this.isViewing) {
+      return $('#pbCloseBtn').click();
+    }
   };
 
   return Galery;

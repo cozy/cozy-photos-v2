@@ -9688,7 +9688,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 
 })( window );
 
-// Underscore.js 1.4.4
+;// Underscore.js 1.4.4
 // ===================
 
 // > http://underscorejs.org
@@ -10916,7 +10916,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 
 }).call(this);
 
-//     Backbone.js 1.0.0
+;//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
 //     Backbone may be freely distributed under the MIT license.
@@ -12488,7 +12488,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 
 }).call(this);
 
-/*!
+;/*!
     photobox v1.8.6
     (c) 2013 Yair Even Or <http://dropthebit.com>
 
@@ -13043,17 +13043,18 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 
         changeImage(img);
         return false;
-    }
+  }
 
-	function updateIndexes(idx){
-		lastActive = activeImage;
-        if (idx < 0) {
-          idx = -1;
-        }
-        activeImage = idx;
-        activeURL = images[idx][0];
-        prevImage = (activeImage || (options.loop ? images.length : 0)) - 1;
-        nextImage = ((activeImage + 1) % images.length) || (options.loop ? 0 : -1);
+  function updateIndexes(idx){
+    lastActive = activeImage;
+    if (idx < 0) {
+      idx = -1;
+    }
+    activeImage = idx;
+    if (images[idx] !== undefined)
+      activeURL = images[idx][0];
+    prevImage = (activeImage || (options.loop ? images.length : 0)) - 1;
+    nextImage = ((activeImage + 1) % images.length) || (options.loop ? 0 : -1);
 	}
 
     function changeImage(imageIndex, firstTime, thumbClick){
@@ -13185,6 +13186,8 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 	// Shows the content (image/video) on the screen
     function showContent(firstTime){
 		var out, showSaftyTimer;
+    if (imageLinks[lastActive] === undefined) firstTime = true;
+
 		showSaftyTimer = setTimeout(show, 2000);
 
 		overlay.removeClass("pbLoading").addClass('hide');
@@ -13615,7 +13618,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 	};
 })(jQuery, document, window);
 
-/*global setImmediate: false, setTimeout: false, console: false */
+;/*global setImmediate: false, setTimeout: false, console: false */
 (function () {
 
     var async = {};
@@ -14598,7 +14601,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 
 }());
 
-/* ===================================================
+;/* ===================================================
  * bootstrap-transition.js v2.3.1
  * http://twitter.github.com/bootstrap/javascript.html#transitions
  * ===================================================
@@ -16874,7 +16877,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 
 
 }(window.jQuery);
-//     (c) 2012 Airbnb, Inc.
+;//     (c) 2012 Airbnb, Inc.
 //
 //     polyglot.js may be freely distributed under the terms of the BSD
 //     license. For all licensing information, details, and documention:
@@ -17128,7 +17131,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 }(this);
 
 
-require.register("cozy-clearance/contact_autocomplete", function(exports, require, module){
+;require.register("cozy-clearance/contact_autocomplete", function(exports, require, module){
   module.exports = function(input, onGuestAdded, extrafilter) {
   var contactCollection;
   contactCollection = require('./contact_collection');
@@ -17202,7 +17205,7 @@ require.register("cozy-clearance/contact_autocomplete", function(exports, requir
   });
 };
 
-  
+
 });
 
 require.register("cozy-clearance/contact_collection", function(exports, require, module){
@@ -17262,7 +17265,7 @@ collection.handleRealtimeContactEvent = function(event) {
 
 module.exports = collection;
 
-  
+
 });
 
 require.register("cozy-clearance/modal", function(exports, require, module){
@@ -17420,7 +17423,7 @@ Modal.error = function(text, cb) {
 
 module.exports = Modal;
 
-  
+
 });
 
 require.register("cozy-clearance/modal_share_template", function(exports, require, module){
@@ -17507,7 +17510,7 @@ else
 {
 buf.push(jade.escape(null == (jade.interp = ' ' + t('perm') + possible_permissions[keys[0]]) ? "" : jade.interp));
 }
-buf.push("<a" + (jade.attr("data-key", key, true, false)) + (jade.attr("title", t("revoke"), true, false)) + " class=\"clearance-btn pull-right revoke\"><i class=\"icon-remove\"></i></a><a" + (jade.attr("data-key", key, true, false)) + (jade.attr("title", t("see link"), true, false)) + (jade.attr("href", makeURL(key), true, false)) + " class=\"clearance-btn pull-right show-link\"><i class=\"glyphicon glyphicon-link\"></i></a></li>");
+buf.push("<a" + (jade.attr("data-key", key, true, false)) + (jade.attr("title", t("revoke"), true, false)) + " class=\"clearance-btn pull-right revoke\"><i class=\"fa fa-trash\"></i></a><a" + (jade.attr("data-key", key, true, false)) + (jade.attr("title", t("see link"), true, false)) + (jade.attr("href", makeURL(key), true, false)) + " class=\"clearance-btn pull-right show-link\"><i class=\"fa fa-link\"></i></a></li>");
 }
     }
 
@@ -17568,7 +17571,7 @@ else
 {
 buf.push(jade.escape(null == (jade.interp = ' ' + t('perm') + possible_permissions[keys[0]]) ? "" : jade.interp));
 }
-buf.push("<a" + (jade.attr("data-key", key, true, false)) + (jade.attr("title", t("revoke"), true, false)) + " class=\"clearance-btn pull-right revoke\"><i class=\"icon-remove\"></i></a><a" + (jade.attr("data-key", key, true, false)) + (jade.attr("title", t("see link"), true, false)) + (jade.attr("href", makeURL(key), true, false)) + " class=\"clearance-btn pull-right show-link\"><i class=\"glyphicon glyphicon-link\"></i></a></li>");
+buf.push("<a" + (jade.attr("data-key", key, true, false)) + (jade.attr("title", t("revoke"), true, false)) + " class=\"clearance-btn pull-right revoke\"><i class=\"fa fa-trash\"></i></a><a" + (jade.attr("data-key", key, true, false)) + (jade.attr("title", t("see link"), true, false)) + (jade.attr("href", makeURL(key), true, false)) + " class=\"clearance-btn pull-right show-link\"><i class=\"fa fa-link\"></i></a></li>");
 }
     }
 
@@ -17580,7 +17583,7 @@ buf.push("</ul>");
 };return buf.join("");
 }
 module.exports = template;
-  
+
 });
 
 require.register("cozy-clearance/modal_share_view", function(exports, require, module){
@@ -17992,10 +17995,10 @@ module.exports = CozyClearanceModal = (function(_super) {
 
 })(Modal);
 
-  
+
 });
 
-// Generated by CoffeeScript 1.6.2
+;// Generated by CoffeeScript 1.6.2
 (function() {
   var CozySocketListener, global,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -18243,7 +18246,7 @@ module.exports = CozyClearanceModal = (function(_super) {
 
 }).call(this);
 
-/*
+;/*
  * Purl (A JavaScript URL parser) v2.3.1
  * Developed and maintanined by Mark Perkins, mark@allmarkedup.com
  * Source repository: https://github.com/allmarkedup/jQuery-URL-Parser
@@ -18511,7 +18514,7 @@ module.exports = CozyClearanceModal = (function(_super) {
 
 });
 
-/*! Socket.IO.js build:0.9.11, development. Copyright(c) 2011 LearnBoost <dev@learnboost.com> MIT Licensed */
+;/*! Socket.IO.js build:0.9.11, development. Copyright(c) 2011 LearnBoost <dev@learnboost.com> MIT Licensed */
 
 var io = ('undefined' === typeof module ? {} : module.exports);
 (function() {
@@ -21015,7 +21018,7 @@ if (typeof define === "function" && define.amd) {
   define([], function () { return io; });
 }
 })();
-//fgnass.github.com/spin.js#v1.2.5
+;//fgnass.github.com/spin.js#v1.2.5
 (function(window, document, undefined) {
 
 /**
@@ -21322,7 +21325,7 @@ if (typeof define === "function" && define.amd) {
 
 })(window, document);
 
-!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.jade=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+;!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.jade=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
 /**
@@ -21532,5 +21535,5 @@ exports.rethrow = function rethrow(err, filename, lineno, str){
 },{}]},{},[1])
 (1)
 });
-
+;
 //# sourceMappingURL=vendor.js.map

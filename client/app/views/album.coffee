@@ -48,7 +48,6 @@ module.exports = class AlbumView extends BaseView
 
         @listenTo @model.photos, 'add remove', @onPhotoCollectionChange
         @listenTo @model, 'change:clearance', @render
-        @listenTo @model, 'sync', @render
 
     getRenderData: ->
         key = $.url().param('key')
@@ -62,26 +61,28 @@ module.exports = class AlbumView extends BaseView
         res
 
     afterRender: ->
+
+        # Use title of album as window title
+        document.title = "#{t 'application title'} - #{@model.get 'title'}"
+
+        @title = @$ '#title'
+        @description = @$ '#description'
+
         @galery = new Galery
             el: @$ '#photos'
             editable: @options.editable
             collection: @model.photos
             beforeUpload: @beforePhotoUpload
 
-        @title = @$ '#title'
-        @description = @$ '#description'
-
         @galery.album = @model
         @galery.render()
-
-        # Use title of album as window title
-        document.title = "#{t 'application title'} - #{@model.get 'title'}"
 
         if @options.editable
             @makeEditable()
         else
             @title.addClass 'disabled'
             @description.addClass 'disabled'
+
 
     beforePhotoUpload: (callback) =>
         callback albumid: @model.id
@@ -93,11 +94,13 @@ module.exports = class AlbumView extends BaseView
         @saveModel description: @description.val().trim()
 
     makeEditable: =>
+        document.title = "#{t 'application title'} - #{@model.get 'title'}"
         @$el.addClass 'editing'
         @options.editable = true
         @galery.options.editable = true
 
     makeNonEditable: =>
+        document.title = "#{t 'application title'} - #{@model.get 'title'}"
         @$el.removeClass 'editing'
         @options.editable = false
         @galery.options.editable = false
@@ -121,6 +124,7 @@ module.exports = class AlbumView extends BaseView
                 event.preventDefault()
                 @model.destroy().then ->
                     app.router.navigate 'albums', true
+        true
 
     # Change sharing state of the album.
     changeClearance: (event) =>
@@ -157,3 +161,12 @@ module.exports = class AlbumView extends BaseView
         @model.save updated: Date.now()
         # updates the photo counter
         @$('.photo-number').html @model.photos.length
+
+    # Force display of given photo.
+    showPhoto: (photoid) ->
+        @galery.showPhoto photoid
+
+    # Force galery to close.
+    closeGallery: ->
+        @galery.closePhotobox()
+

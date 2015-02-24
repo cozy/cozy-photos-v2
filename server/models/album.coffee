@@ -19,12 +19,16 @@ Album.beforeSave = (next, data) ->
                         .replace /<br>/g, ""
                         .replace /<div>/g, ""
                         .replace /<\/div>/g, ""
+
+    # Set default date if not set.
+    data.date = new Date() unless data.date?
+
     next()
 
 Album::getPublicURL = (callback) ->
     CozyInstance.getURL (err, domain) =>
         return callback err if err
-        url = "#{domain}public/album/#{@id}"
+        url = "#{domain}public/photos/#albums/#{@id}"
         callback null, url
 
 Album.listWithThumbs = (callback) ->

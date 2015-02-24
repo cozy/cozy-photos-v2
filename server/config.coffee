@@ -26,6 +26,8 @@ module.exports =
 
             shortcuts
             sharing.markPublicRequests
+        ]
+        useAfter: [
             americano.errorHandler
                 dumpExceptions: true
                 showStack: true
