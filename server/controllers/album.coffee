@@ -103,7 +103,7 @@ module.exports.zip = (req, res, err) ->
                 return res.error 401, 'The album is empty' unless photos.length
 
                 zip = new zipstream()
-                zipname = slugify req.album.title
+                zipname = slugify req.album.title or 'Album'
 
                 addToZip = (photo, cb) ->
                     if photo.binary?
@@ -114,9 +114,9 @@ module.exports.zip = (req, res, err) ->
                     request = downloader.download path, (stream) ->
                         if stream.statusCode is 200
                             extension = photo.title.substr(
-                                photo.title.lastIndexOf '.')
+                                photo.title.lastIndexOf '.') or '.jpg'
                             photoname = photo.title.substr(
-                                0, photo.title.lastIndexOf '.')
+                                0, photo.title.lastIndexOf '.') or photo.id
                             photoname = slugify(photoname) + extension
                             req.on 'close', -> request.abort()
                             zip.entry stream, name: photoname, cb
@@ -124,7 +124,7 @@ module.exports.zip = (req, res, err) ->
                             cb()
 
                 async.eachSeries photos, addToZip, (err) ->
-                    next err if err
+                    res.error 500, 'An error occured', err if err
                     zip.finalize()
 
                 disposition = "attachment; filename=\"#{zipname}.zip\""

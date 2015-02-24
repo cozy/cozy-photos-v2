@@ -73,3 +73,17 @@ describe 'Read operations', ->
             fileStats = fs.statSync(fixtures.basePhoto1.thumbpath)
             resultStats = fs.statSync(downloadPath)
             expect(resultStats.size).to.equal fileStats.size
+
+    describe 'ZIP - GET /albums/:id.zip', ->
+
+        downloadPath = './test-get.zip'
+        after: (done) -> fs.unlink downloadPath, done
+
+        it "should allow requests", (done) ->
+            url = "albums/#{store.id}.zip"
+            @client.saveFile url, downloadPath , done
+
+        it "should not change the album", ->
+            fileStats = fs.statSync(fixtures.baseAlbum.zip)
+            resultStats = fs.statSync(downloadPath)
+            expect(resultStats.size).to.equal fileStats.size
