@@ -106,8 +106,10 @@ module.exports.zip = (req, res, err) ->
                 # TODOS : Remove _attachment for photos
                 if photo.binary?
                     path = "/data/#{photo.id}/binaries/raw"
-                else
+                else if photo._attachments
                     path = "/data/#{photo.id}/attachments/raw"
+                else
+                    return cb()
 
                 name = photo.title or "#{photo.id}.jpg"
                 request = downloader.download path, (stream) ->
@@ -124,13 +126,16 @@ module.exports.zip = (req, res, err) ->
                 req.on 'close', ->
                     archive.abort()
 
+                res.on 'close', ->
+                    archive.abort()
+
                 # Set headers describing the final zip file.
                 disposition = "attachment; filename=\"#{zipName}.zip\""
                 res.setHeader 'Content-Disposition', disposition
                 res.setHeader 'Content-Type', 'application/zip'
 
                 async.eachSeries photos, addToArchive, (err) ->
-                    if err then res.error 500, 'An error occured', err
+                    if err then log.error "An error occured : #{err}"
                     else
                         archive.finalize (err, bytes) ->
                             if err then next err
