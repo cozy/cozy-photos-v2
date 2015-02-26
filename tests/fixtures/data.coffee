@@ -3,6 +3,7 @@ module.exports =
   baseAlbum:
       title: "Base"
       description: "Base Album"
+      zip: "./tests/fixtures/album.zip"
 
   basePhoto1:
       title: "Photo 1"

@@ -1,6 +1,6 @@
 async = require 'async'
 fs    = require 'fs'
-zipstream = require 'zip-stream'
+archiver = require 'archiver'
 
 Album = require '../models/album'
 Photo = require '../models/photo'
@@ -98,39 +98,53 @@ module.exports.zip = (req, res, err) ->
             return res.error 401, "You are not allowed to view this album."
 
         else
-            Photo.fromAlbum req.album, (err, photos) ->
-                return res.error 500, 'An error occured', err if err
-                return res.error 401, 'The album is empty' unless photos.length
+            album = req.album
+            archive = archiver 'zip'
+            zipName = slugify req.album.title or 'Album'
 
-                zip = new zipstream()
-                zipname = slugify req.album.title
+            addToArchive = (photo, cb) ->
+                # TODOS : Remove _attachment for photos
+                if photo.binary?
+                    path = "/data/#{photo.id}/binaries/raw"
+                else if photo._attachments
+                    path = "/data/#{photo.id}/attachments/raw"
+                else
+                    return cb()
 
-                addToZip = (photo, cb) ->
-                    if photo.binary?
-                        path = "/data/#{photo.id}/binaries/raw"
-                    else
-                        path = "/data/#{photo.id}/attachments/raw"
+                name = photo.title or "#{photo.id}.jpg"
+                request = downloader.download path, (stream) ->
+                    archive.append stream, name: name
+                    cb()
 
-                    request = downloader.download path, (stream) ->
-                        if stream.statusCode is 200
-                            extension = photo.title.substr(
-                                photo.title.lastIndexOf '.')
-                            photoname = photo.title.substr(
-                                0, photo.title.lastIndexOf '.')
-                            photoname = slugify(photoname) + extension
-                            req.on 'close', -> request.abort()
-                            zip.entry stream, name: photoname, cb
-                        else
-                            cb()
+            # Build zip from file list and pip the result in the response.
+            makeZip = (zipName, photos) ->
 
-                async.eachSeries photos, addToZip, (err) ->
-                    next err if err
-                    zip.finalize()
+                # Start the streaming.
+                archive.pipe res
 
-                disposition = "attachment; filename=\"#{zipname}.zip\""
+                # Arbort archiving process when request is closed.
+                req.on 'close', ->
+                    archive.abort()
+
+                res.on 'close', ->
+                    archive.abort()
+
+                # Set headers describing the final zip file.
+                disposition = "attachment; filename=\"#{zipName}.zip\""
                 res.setHeader 'Content-Disposition', disposition
                 res.setHeader 'Content-Type', 'application/zip'
-                zip.pipe res
+
+                async.eachSeries photos, addToArchive, (err) ->
+                    if err then log.error "An error occured : #{err}"
+                    else
+                        archive.finalize (err, bytes) ->
+                            if err then next err
+
+
+            Photo.fromAlbum req.album, (err, photos) ->
+                if err then res.error 500, 'An error occured', err
+                else
+                    makeZip zipName, photos
 
 
 # Destroy album and all its photos.
