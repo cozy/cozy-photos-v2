@@ -2,7 +2,6 @@ fixtures = require './fixtures/data'
 fs = require 'fs'
 helpers = require './helpers'
 expect = require('chai').expect
-
 store = {}
 
 describe 'Read operations', ->
@@ -70,8 +69,8 @@ describe 'Read operations', ->
             @client.saveFile url, downloadPath, done
 
         it "should not change the file", ->
-            fileStats = fs.statSync(fixtures.basePhoto1.thumbpath)
-            resultStats = fs.statSync(downloadPath)
+            fileStats = fs.statSync fixtures.basePhoto1.thumbpath
+            resultStats = fs.statSync downloadPath
             expect(resultStats.size).to.equal fileStats.size
 
     describe 'ZIP - GET /albums/:id.zip', ->
@@ -83,7 +82,6 @@ describe 'Read operations', ->
             url = "albums/#{store.id}.zip"
             @client.saveFile url, downloadPath , done
 
-        it "should not change the album", ->
-            fileStats = fs.statSync(fixtures.baseAlbum.zip)
-            resultStats = fs.statSync(downloadPath)
-            expect(resultStats.size).to.equal fileStats.size
+        it "should generate a zip", ->
+            exist = fs.existsSync downloadPath
+            expect(exist).to.equal true
