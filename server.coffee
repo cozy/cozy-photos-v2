@@ -37,7 +37,8 @@ module.exports = start = (options, cb) ->
 
         # Initialize realtime
         # contact, album & photo events are sent to client
-        realtime = RealtimeAdapter app, ['contact.*', 'album.*', 'photo.*']
+        patterns = ['contact.*', 'album.*', 'photo.*']
+        realtime = RealtimeAdapter server, patterns
 
         # file are re-thumbed
         realtime.on 'file.*', (event, msg) ->
@@ -48,7 +49,7 @@ module.exports = start = (options, cb) ->
                             console.log err if err?
 
         # Init thumb (emit progress)
-        init.convert(app.io.sockets)
+        init.convert(server.io.sockets)
         cb?(null, app, server)
 
 if not module.parent
