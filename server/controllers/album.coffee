@@ -122,10 +122,7 @@ module.exports.zip = (req, res, err) ->
                 # Start the streaming.
                 archive.pipe res
 
-                # Arbort archiving process when request is closed.
-                req.on 'close', ->
-                    archive.abort()
-
+                # Arbort archiving process when the user aborts his request.
                 res.on 'close', ->
                     archive.abort()
 
