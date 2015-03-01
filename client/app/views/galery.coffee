@@ -22,10 +22,12 @@ module.exports = class Galery extends ViewCollection
         'click #uploader': 'onFilesClick'
         'click #browse-files': 'displayBrowser'
 
+
     initialize: ->
         super
         # when the cover picture is deleted, we remove it from the album
         @listenTo @collection, 'destroy', @onPictureDestroyed
+
 
     # launch photobox after render
     afterRender: ->
@@ -105,9 +107,9 @@ module.exports = class Galery extends ViewCollection
                 view.collection = @collection
 
 
-
     checkIfEmpty: =>
         @$('.help').toggle _.size(@views) is 0 and app.mode is 'public'
+
 
     # event listeners for D&D events
     onFilesDropped: (evt) ->
@@ -118,6 +120,7 @@ module.exports = class Galery extends ViewCollection
             evt.preventDefault()
         return false
 
+
     # Display orange background telling that drag is active.
     onDragOver: (evt) ->
         if @options.editable
@@ -126,12 +129,14 @@ module.exports = class Galery extends ViewCollection
             evt.stopPropagation()
         return false
 
+
     onDragLeave: (evt) ->
         if @options.editable
             @$el.removeClass 'dragover'
             evt.preventDefault()
             evt.stopPropagation()
         return false
+
 
     # Extract photo id from its URL. It's useful to get the id of the current
     # picture when the user browses them via photobox.
@@ -148,6 +153,7 @@ module.exports = class Galery extends ViewCollection
                 id = photo.cid
         return id
 
+
     # Rotate 90° left the picture by updating css and orientation.
     # Save result to Cozy database.
     onTurnLeft: () =>
@@ -161,6 +167,7 @@ module.exports = class Galery extends ViewCollection
             success : () ->
                 helpers.rotate newOrientation, $('.pbThumbs .active img')
 
+
     # Rotate 90° right the picture by updating css and orientation.
     onTurnRight: () =>
         id = @getIdPhoto()
@@ -171,6 +178,7 @@ module.exports = class Galery extends ViewCollection
         @collection.get(id)?.save orientation: newOrientation,
             success : () ->
                 helpers.rotate newOrientation, $('.pbThumbs .active img')
+
 
     # When cover button is clicked, the current picture is set on the current
     # album as cover. Then information are saved.
@@ -188,9 +196,11 @@ module.exports = class Galery extends ViewCollection
                 @coverBtn.removeClass 'disabled'
                 alert t 'problem occured while setting cover'
 
+
     onPictureDestroyed: (destroyed) =>
         if destroyed.id is @album.get 'coverPicture'
             @album.save coverPicture: null
+
 
     onFilesChanged: (evt) =>
         @handleFiles @uploader[0].files
@@ -199,9 +209,11 @@ module.exports = class Galery extends ViewCollection
         @uploader = old.clone true
         old.replaceWith @uploader
 
+
     onFilesClick: (evt) ->
         element = document.getElementById('uploader')
         element.addEventListener 'change', @onFilesChanged
+
 
     # When trash button is clicked it proposes to delete the currently
     # displayed picture. It asks for a confirmation before
@@ -210,10 +222,12 @@ module.exports = class Galery extends ViewCollection
           photo = @collection.get(@getIdPhoto())
           photo.destroy()
 
+
     beforeImageDisplayed: (link) =>
         id = @getIdPhoto link.href
         orientation = @collection.get(id)?.attributes.orientation
         $('#pbOverlay .wrapper img')[0].dataset.orientation = orientation
+
 
     onImageDisplayed: (args) =>
         @isViewing = true
@@ -238,6 +252,7 @@ module.exports = class Galery extends ViewCollection
             orientation = @collection.get(id)?.attributes.orientation
             helpers.rotate orientation, $(thumb)
 
+
     onAfterClosed: =>
         @isViewing = false
         if @options.editable
@@ -246,33 +261,71 @@ module.exports = class Galery extends ViewCollection
             app.router.navigate "albums/#{@album.id}", true
 
 
+    # For each file, add a photo object to the galery, creates its thumbnails
+    # and save them to the server.
+    # When the process is finished, the first picture is set as the album cover
+    # if no cover is et.
     handleFiles: (files) ->
-        # allow parent view to set some attributes on the photo
-        # (current usage = albumid + save album if it is new)
+        # Set the view as dirty to warn users it will cancel the upload
+        # if he leaves the page during the upload.
+        app.router.mainView.dirty = true
+
+        # Prepare common attributes for all pictures.
         @options.beforeUpload (photoAttributes) =>
+            @uploadCounter = 0
 
-            for file in files
-                photoAttributes.title = file.name
-                photo = new Photo photoAttributes
-                photo.file = file
-                @collection.add photo
+            # Add a photo to the collection, to avoid browser freezing,
+            # after 20 pictures, it waits for 10ms (and release execution loop)
+            # before adding pictures to the collection and the view.
+            addPhotoAndBreath = (file, callback) =>
+                photo = @addPhoto file, photoAttributes
 
-                # set a 'dirty' flag on mainView until photo is uploaded
-                app.router.mainView.dirty = true
-                photoprocessor.process photo
+                # When the first photo is uploaded, it is set as the album
+                # cover.
+                if @uploadCounter is 0
+                    photo.on 'uploadComplete', =>
+                        @setCoverPicture photo
 
-            for key, view of @views
-                view.collection = @collection
+                if @uploadCounter > 20
+                    setTimeout callback, 10
+                else
+                    @uploadCounter++
+                    callback()
 
-            photo.on 'uploadComplete', =>
-                unless @album.get('coverPicture')?
-                    @album.save coverPicture: photo.get 'id'
+            # Process all file creations
+            async.eachSeries files, addPhotoAndBreath, =>
 
+                # save reference to the collection on each view.
+                view.collection = @collection for key, view of @views
+                app.router.mainView.dirty = false
+
+
+    # Add photo to current collection and enqueue its remote creation.
+    addPhoto: (file, photoAttributes) =>
+        photoAttributes.title = file.name
+        photo = new Photo photoAttributes
+        photo.file = file
+
+        @collection.add photo
+        photoprocessor.process photo
+
+        photo
+
+
+    # Set the first picture of the galery as the cover picture of the album.
+    setCoverPicture: (photo) =>
+        unless @album.get('coverPicture')?
+            @album.save coverPicture: photo.get 'id'
+
+
+    # Display photo picker that allows to select pictures from the Files
+    # application.
     displayBrowser: ->
         new FilesBrowser
             model: @album
             collection: @collection
             beforeUpload: @options.beforeUpload
+
 
     # Display photo given in URL by triggering a photobox click event on the
     # given photo.
@@ -280,7 +333,9 @@ module.exports = class Galery extends ViewCollection
         url = "photos/#{photoid}.jpg"
         $('a[href="' + url + '"]').trigger('click.photobox')
 
+
     # Close galery via photobox close button.
     closePhotobox: ->
         if @isViewing
             $('#pbCloseBtn').click()
+
