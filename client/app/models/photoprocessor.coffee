@@ -17,6 +17,7 @@ readFile = (photo, next) ->
         photo.img.onload = ->
             next()
 
+
 # resize an image into given dimensions
 # if fill, the image will be croped to fit in new dim
 resize = (photo, MAX_WIDTH, MAX_HEIGHT, fill) ->
@@ -41,6 +42,7 @@ resize = (photo, MAX_WIDTH, MAX_HEIGHT, fill) ->
     ctx.drawImage photo.img, 0, 0, newdims.width, newdims.height
     return canvas.toDataURL photo.file.type
 
+
 # transform a dataUrl into a Blob
 blobify = (dataUrl, type) ->
     binary = atob dataUrl.split(',')[1]
@@ -57,15 +59,18 @@ makeThumbDataURI = (photo, next) ->
     photo.trigger 'thumbed'
     next()
 
+
 # create photo.screen_du : a DataURL encoded thumbnail of photo.img
 makeScreenDataURI = (photo, next) ->
     photo.screen_du = resize photo, 1200, 800, false
     next()
 
+
 # create photo.thumb : a Blob(~File) copy of photo.thumb_du
 makeScreenBlob = (photo, next) ->
     photo.thumb = blobify photo.thumb_du, photo.file.type
     next()
+
 
 # create photo.screen : a Blob(~File) copy of photo.screen_du
 makeThumbBlob = (photo, next) ->
@@ -83,6 +88,7 @@ upload = (photo, next) ->
     formdata.append 'raw', photo.file
     formdata.append 'thumb', photo.thumb, "thumb_#{photo.file.name}"
     formdata.append 'screen', photo.screen, "screen_#{photo.file.name}"
+
     # need to call sync directly so we can change the data
     Backbone.sync 'create', photo,
         contentType: false # Prevent $.ajax from being smart
@@ -102,24 +108,6 @@ upload = (photo, next) ->
                 xhr.upload.addEventListener 'progress', progress, false
             xhr
 
-# make all thumbs fast
-makeThumbWorker = (photo , done) ->
-    async.waterfall [
-        (cb) -> readFile         photo, cb
-        (cb) -> makeThumbDataURI photo, cb
-        (cb) ->
-            delete photo.img
-            setTimeout cb, 200
-    ], (err) ->
-        if err
-            photo.trigger 'upError', err
-        else
-            photo.trigger 'thumbed'
-
-        if err
-            done err
-        else
-            uploadWorker photo, done
 
 # make screen sized version and upload
 uploadWorker = (photo, done) ->
@@ -150,9 +138,6 @@ uploadWorker = (photo, done) ->
 
 
 class PhotoProcessor
-
-    # create thumbs 3 by 3
-    #thumbsQueue: async.queue makeThumbWorker, 2
 
     # upload 2 by 2
     uploadQueue: async.queue uploadWorker, 2

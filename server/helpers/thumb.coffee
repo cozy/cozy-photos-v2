@@ -110,7 +110,7 @@ module.exports = thumb =
             mimetype = mime.lookup file.name
 
             if mimetype not in whiteList
-                log.info """
+                log.debug """
 createThumb: #{file.id} / #{file.name}: No thumb to create for this kind of file.
 """
                 callback()

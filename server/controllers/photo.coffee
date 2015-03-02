@@ -180,7 +180,7 @@ doPipe = (req, which, download, res, next) ->
             path = "/data/#{req.photo.id}/attachments/#{which}"
             request = downloader.download path, (stream) ->
                 if stream.statusCode is 200
-                    req.on 'close', -> request.abort()
+                    res.on 'close', -> request.abort()
                     stream.pipe res
                 else
                     return res.sendfile './server/img/error.gif'
@@ -189,7 +189,7 @@ doPipe = (req, which, download, res, next) ->
             path = "/data/#{req.photo.id}/binaries/#{which}"
             request = downloader.download path, (stream) ->
                 if stream.statusCode is 200
-                    req.on 'close', -> request.abort()
+                    res.on 'close', -> request.abort()
                     stream.pipe res
                 else
                     return res.sendfile './server/img/error.gif'
