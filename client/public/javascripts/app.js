@@ -1081,7 +1081,7 @@ Photo.makeFromFile = function(fileid, attr, callback) {
 });
 
 ;require.register("models/photoprocessor", function(exports, require, module) {
-var PhotoProcessor, blobify, makeScreenBlob, makeScreenDataURI, makeThumbBlob, makeThumbDataURI, makeThumbWorker, readFile, resize, upload, uploadWorker;
+var PhotoProcessor, blobify, makeScreenBlob, makeScreenDataURI, makeThumbBlob, makeThumbDataURI, readFile, resize, upload, uploadWorker;
 
 readFile = function(photo, next) {
   var reader;
@@ -1198,30 +1198,6 @@ upload = function(photo, next) {
         xhr.upload.addEventListener('progress', progress, false);
       }
       return xhr;
-    }
-  });
-};
-
-makeThumbWorker = function(photo, done) {
-  return async.waterfall([
-    function(cb) {
-      return readFile(photo, cb);
-    }, function(cb) {
-      return makeThumbDataURI(photo, cb);
-    }, function(cb) {
-      delete photo.img;
-      return setTimeout(cb, 200);
-    }
-  ], function(err) {
-    if (err) {
-      photo.trigger('upError', err);
-    } else {
-      photo.trigger('thumbed');
-    }
-    if (err) {
-      return done(err);
-    } else {
-      return uploadWorker(photo, done);
     }
   });
 };
@@ -2361,6 +2337,8 @@ module.exports = Galery = (function(_super) {
   __extends(Galery, _super);
 
   function Galery() {
+    this.setCoverPicture = __bind(this.setCoverPicture, this);
+    this.addPhoto = __bind(this.addPhoto, this);
     this.onAfterClosed = __bind(this.onAfterClosed, this);
     this.onImageDisplayed = __bind(this.onImageDisplayed, this);
     this.beforeImageDisplayed = __bind(this.beforeImageDisplayed, this);
@@ -2630,32 +2608,55 @@ module.exports = Galery = (function(_super) {
   };
 
   Galery.prototype.handleFiles = function(files) {
+    app.router.mainView.dirty = true;
     return this.options.beforeUpload((function(_this) {
       return function(photoAttributes) {
-        var file, key, photo, view, _i, _len, _ref;
-        for (_i = 0, _len = files.length; _i < _len; _i++) {
-          file = files[_i];
-          photoAttributes.title = file.name;
-          photo = new Photo(photoAttributes);
-          photo.file = file;
-          _this.collection.add(photo);
-          app.router.mainView.dirty = true;
-          photoprocessor.process(photo);
-        }
-        _ref = _this.views;
-        for (key in _ref) {
-          view = _ref[key];
-          view.collection = _this.collection;
-        }
-        return photo.on('uploadComplete', function() {
-          if (_this.album.get('coverPicture') == null) {
-            return _this.album.save({
-              coverPicture: photo.get('id')
+        var addPhotoAndBreath;
+        _this.uploadCounter = 0;
+        addPhotoAndBreath = function(file, callback) {
+          var photo;
+          photo = _this.addPhoto(file, photoAttributes);
+          if (_this.uploadCounter === 0) {
+            photo.on('uploadComplete', function() {
+              return _this.setCoverPicture(photo);
             });
           }
+          if (_this.uploadCounter > 20) {
+            return setTimeout(callback, 10);
+          } else {
+            _this.uploadCounter++;
+            return callback();
+          }
+        };
+        return async.eachSeries(files, addPhotoAndBreath, function() {
+          var key, view, _ref;
+          _ref = _this.views;
+          for (key in _ref) {
+            view = _ref[key];
+            view.collection = _this.collection;
+          }
+          return app.router.mainView.dirty = false;
         });
       };
     })(this));
+  };
+
+  Galery.prototype.addPhoto = function(file, photoAttributes) {
+    var photo;
+    photoAttributes.title = file.name;
+    photo = new Photo(photoAttributes);
+    photo.file = file;
+    this.collection.add(photo);
+    photoprocessor.process(photo);
+    return photo;
+  };
+
+  Galery.prototype.setCoverPicture = function(photo) {
+    if (this.album.get('coverPicture') == null) {
+      return this.album.save({
+        coverPicture: photo.get('id')
+      });
+    }
   };
 
   Galery.prototype.displayBrowser = function() {
