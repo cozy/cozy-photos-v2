@@ -54,7 +54,7 @@ module.exports = thumb =
     # the image to a 300x300 image. If it's a 'scree' preview, it is resize
     # as a 1200 x 800 image.
     resize: (srcPath, file, name, callback) ->
-        dstPath = "/tmp/2-#{file.name}"
+        dstPath = "/tmp/2-#{file.id}"
 
         try
             attachFile = (err) =>
@@ -120,7 +120,7 @@ createThumb: #{file.id} / #{file.name}: No thumb to create for this kind of file
                 log.info """
 createThumb: #{file.id} / #{file.name}: Creation started...
 """
-                rawFile = "/tmp/#{file.name}"
+                rawFile = "/tmp/#{file.id}"
                 stream = file.getBinary 'file', (err) ->
                     return callback err if err
                 stream.pipe fs.createWriteStream rawFile
