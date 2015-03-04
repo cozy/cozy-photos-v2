@@ -40,16 +40,6 @@ module.exports = start = (options, cb) ->
         patterns = ['contact.*', 'album.*', 'photo.*']
         realtime = RealtimeAdapter server, patterns
 
-        # file are re-thumbed
-        realtime.on 'file.*', (event, msg) ->
-            if event isnt "file.delete"
-                File.find msg, (err, file) ->
-                    if file.binary?.file? and not file.binary.thumb
-                        thumb file, (err) ->
-                            console.log err if err?
-
-        # Init thumb (emit progress)
-        init.convert(server.io.sockets)
         cb?(null, app, server)
 
 if not module.parent

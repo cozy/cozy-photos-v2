@@ -1647,7 +1647,7 @@ var __templateData = function template(locals) {
 var buf = [];
 var jade_mixins = {};
 var jade_interp;
-var locals_ = (locals || {}),dates = locals_.dates,percent = locals_.percent,photos = locals_.photos,hasPrev = locals_.hasPrev,hasNext = locals_.hasNext;
+var locals_ = (locals || {}),dates = locals_.dates,photos = locals_.photos,hasPrev = locals_.hasPrev,hasNext = locals_.hasNext;
 buf.push("<div class=\"files\">");
 if ( dates.length === 0)
 {
@@ -1656,10 +1656,6 @@ buf.push("<p>" + (jade.escape(null == (jade_interp = t("photos search")) ? "" : 
 else if ( dates === "No photos found")
 {
 buf.push("<p>" + (jade.escape(null == (jade_interp = t("no photos found")) ? "" : jade_interp)) + "</p>");
-}
-else if ( dates === "Thumb creation")
-{
-buf.push("<p>" + (jade.escape(null == (jade_interp = t("thumb creation")) ? "" : jade_interp)) + "</p><p>" + (jade.escape((jade_interp = t('progress')) == null ? '' : jade_interp)) + ": " + (jade.escape((jade_interp = percent) == null ? '' : jade_interp)) + "%</p>");
 }
 else
 {
@@ -2190,29 +2186,12 @@ module.exports = FilesBrowser = (function(_super) {
     this.options.page = options.page;
     return Photo.listFromFiles(options.page, (function(_this) {
       return function(err, body) {
-        var dates, img, pathToSocketIO, socket, _i, _len, _ref, _results;
+        var dates, img, _i, _len, _ref, _results;
         if ((body != null ? body.files : void 0) != null) {
           dates = body.files;
         }
         if (err) {
           return console.log(err);
-        } else if (body.percent != null) {
-          _this.options.dates = "Thumb creation";
-          _this.options.percent = body.percent;
-          pathToSocketIO = "" + (window.location.pathname.substring(1)) + "socket.io";
-          socket = io.connect(window.location.origin, {
-            resource: pathToSocketIO
-          });
-          socket.on('progress', function(event) {
-            var template;
-            _this.options.percent = event.percent;
-            if (_this.options.percent === 100) {
-              return _this.initialize(options);
-            } else {
-              template = _this.template_content(_this.getRenderData());
-              return _this.$('.modal-body').html(template);
-            }
-          });
         } else if ((dates != null) && Object.keys(dates).length === 0) {
           _this.options.dates = "No photos found";
         } else {

@@ -42,22 +42,6 @@ module.exports = class FilesBrowser extends Modal
             if err
                 return console.log err
 
-            # If server create thumb : doesn't display files.
-            else if body.percent?
-                @options.dates = "Thumb creation"
-                @options.percent = body.percent
-                pathToSocketIO = \
-                    "#{window.location.pathname.substring(1)}socket.io"
-                socket = io.connect window.location.origin,
-                    resource: pathToSocketIO
-                socket.on 'progress', (event) =>
-                    @options.percent = event.percent
-                    if @options.percent is 100
-                        @initialize options
-                    else
-                        template = @template_content @getRenderData()
-                        @$('.modal-body').html template
-
             # If there is no photos in Cozy
             else if dates? and Object.keys(dates).length is 0
                 @options.dates = "No photos found"
