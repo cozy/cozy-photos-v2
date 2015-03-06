@@ -26,6 +26,10 @@ module.exports.list = (req, res, next) ->
         skip = 0
 
     dates = {}
+    # We retrieve photos correspond to a modal page
+    # Retrieve one more photo to know if it exists photos after this page
+    # Skip is used to have the well photos (for page req.params.page)
+    # Descending is true to have photos sorted by date (more recent in first)
     options =
         limit: fileByPage + 1
         skip: skip
@@ -35,6 +39,7 @@ module.exports.list = (req, res, next) ->
             return res.error 500, 'An error occured', err
         else
 
+            # Check if it exists a page after
             if photos.length is fileByPage + 1
                 hasNext = true
             else
@@ -42,6 +47,7 @@ module.exports.list = (req, res, next) ->
 
             photos.splice fileByPage, 1
             for photo in photos
+                # Sort photos by month
                 date = new Date(photo.lastModification)
                 mounth = date.getMonth() + 1
                 mounth = if mounth > 9 then "#{mounth}" else "0#{mounth}"
@@ -67,6 +73,7 @@ module.exports.createPhoto = (req, res, next) ->
 
     return next new Error('no binary') unless file.binary?
 
+    # Create photo document
     photo =
         date         : file.lastModification
         title        : ""
@@ -81,6 +88,7 @@ module.exports.createPhoto = (req, res, next) ->
         if photo.binary?.thumb? and photo.binary.screen?
             res.send 201, photo
         else
+            # Add content thumb or screen if necessary
             rawFile = "/tmp/#{photo.id}"
             fs.openSync rawFile, 'w'
             stream = file.getBinary 'file', (err) ->
