@@ -1,10 +1,10 @@
-americano = require 'americano-cozy'
+cozydb = require 'cozydb'
 
 # Contacts are required to make sharing easier.
-module.exports = americano.getModel 'Contact',
-    id : String
-    fn : String
-    n : String
-    datapoints : [Object]
-    note : String
-    _attachments : Object
+module.exports = class Contact extends cozydb.CozyModel
+    id           : String
+    fn           : String
+    n            : String
+    datapoints   : cozydb.NoSchema
+    note         : String
+    _attachments : cozydb.NoSchema

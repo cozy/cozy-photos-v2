@@ -1,15 +1,16 @@
-americano = require 'americano-cozy'
+cozydb = require 'cozydb'
 
-module.exports = File = americano.getModel 'File',
-    id                : String
-    name              : String
-    path              : String
-    lastModification  : String
-    binary            : Object
-    class              : String
+module.exports = class File extends cozydb.CozyModel
+    @schema:
+        id                : String
+        name              : String
+        path              : String
+        lastModification  : String
+        binary            : cozydb.NoSchema
+        class             : String
 
-File.imageByDate = (options, callback) ->
-    File.request 'imageByDate', options, callback
+    @imageByDate: (options, callback) ->
+        File.request 'imageByDate', options, callback
 
-File.withoutThumb = (callback) ->
-    File.request 'withoutThumb', {}, callback
+    @withoutThumb: (callback) ->
+        File.request 'withoutThumb', {}, callback

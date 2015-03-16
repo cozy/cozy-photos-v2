@@ -24,7 +24,6 @@ module.exports =
             staticMiddleware
             publicStatic
 
-            shortcuts
             sharing.markPublicRequests
         ]
         useAfter: [
@@ -39,5 +38,5 @@ module.exports =
         americano.logger 'short'
     ]
     plugins: [
-        'americano-cozy'
+        'cozydb'
     ]

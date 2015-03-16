@@ -1,30 +1,34 @@
 async = require 'async'
 clearance = require 'cozy-clearance'
+cozydb = require 'cozydb'
 
 Album = require '../models/album'
-User = require '../models/user'
 
 LocalizationManager = require '../helpers/localization_manager'
 localization = new LocalizationManager
+
+
+getDisplayName = (callback) ->
+    cozydb.api.getCozyUser (err, user) ->
+        callback null, user?.public_name or \
+                              localization.t 'default user name'
 
 clearanceCtl = clearance.controller
     mailTemplate: (options, callback) ->
         localization.initialize ->
             mailTemplate = localization.getEmailTemplate 'sharemail.jade'
-            template = mailTemplate options
-            User.getDisplayName (err, displayName) ->
-                options.displayName = displayName or \
-                                      localization.t 'default user name'
+            getDisplayName (err, displayName) ->
+                options.displayName = displayName
+                template = mailTemplate options
                 options.localization = localization
                 callback null, template
 
     mailSubject: (options, callback) ->
-        name = options.doc.title
-        User.getDisplayName (err, displayName) ->
-            displayName = displayName or localization.t 'default user name'
+        getDisplayName (err, displayName) ->
+            options.displayName = displayName
             callback null, localization.t 'email sharing subject',
                 displayName: displayName
-                name: name
+                name: options.doc.title
 
 # fetch album, put it in req.doc
 module.exports.fetch = (req, res, next, id) ->
@@ -63,7 +67,8 @@ module.exports.checkPermissionsPhoto = (photo, perm, req, callback) ->
 
     # public request are handled by cozy-clearance
     albumid = photo.albumid
-    if incache = cache[albumid]
+    incache = cache[albumid]
+    if incache
         clearance.check {clearance: incache}, perm, req, callback
     else
         Album.find albumid, (err, album) ->

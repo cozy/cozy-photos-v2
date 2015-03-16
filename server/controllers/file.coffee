@@ -11,11 +11,15 @@ fileByPage = 5 * 12
 module.exports.fetch = (req, res, next, id) ->
     id = id.substring 0, id.length - 4 if id.indexOf('.jpg') > 0
     File.find id, (err, file) =>
-        return res.error 500, 'An error occured', err if err
-        return res.error 404, 'File not found' if not file
-
-        req.file = file
-        next()
+        if err
+            next err
+        else if not file
+            err = new Error "File #{id} not found"
+            err.status = 404
+            next err
+        else
+            req.file = file
+            next()
 
 # Return a list of file for a given month
 module.exports.list = (req, res, next) ->
@@ -38,27 +42,25 @@ module.exports.list = (req, res, next) ->
             skip: skip
             descending: true
         File.imageByDate options, (err, photos) =>
-            if err
-                return res.error 500, 'An error occured', err
+            return next err if err
+
+            if photos.length is fileByPage + 1
+                hasNext = true
             else
+                hasNext = false
 
-                if photos.length is fileByPage + 1
-                    hasNext = true
+            photos.splice fileByPage, 1
+            for photo in photos
+                date = new Date(photo.lastModification)
+                mounth = date.getMonth() + 1
+                mounth = if mounth > 9 then "#{mounth}" else "0#{mounth}"
+                date = "#{date.getFullYear()}-#{mounth}"
+                if dates[date]?
+                    dates[date].push photo
                 else
-                    hasNext = false
+                    dates[date] = [photo]
 
-                photos.splice fileByPage, 1
-                for photo in photos
-                    date = new Date(photo.lastModification)
-                    mounth = date.getMonth() + 1
-                    mounth = if mounth > 9 then "#{mounth}" else "0#{mounth}"
-                    date = "#{date.getFullYear()}-#{mounth}"
-                    if dates[date]?
-                        dates[date].push photo
-                    else
-                        dates[date] = [photo]
-
-                res.send {files: dates, hasNext: hasNext}, 200
+            res.send {files: dates, hasNext: hasNext}, 200
 
 
 # Return thumb for given file.
