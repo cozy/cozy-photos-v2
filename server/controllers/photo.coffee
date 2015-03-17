@@ -13,44 +13,6 @@ downloader = require '../helpers/downloader'
 app = null
 module.exports.setApp = (ref) -> app = ref
 
-
-# Dirty stuff while waiting that combined stream library get fixed and included
-# in every dependencies.
-# monkeypatch = (ctx, fn, after) ->
-#     old = ctx[fn]
-
-#     ctx[fn] = ->
-#         after.apply @, arguments
-
-
-# combinedStreamPath = 'americano-cozy/' + \
-#                      'node_modules/jugglingdb-cozy-adapter/' + \
-#                      'node_modules/request-json/' + \
-#                      'node_modules/request/' + \
-#                      'node_modules/form-data/' + \
-#                      'node_modules/combined-stream'
-
-# monkeypatch require(combinedStreamPath).prototype, 'pause', ->
-#     if not @pauseStreams
-#        return
-
-#     if(@pauseStreams and typeof(@_currentStream.pause) is 'function')
-#         @_currentStream.pause()
-#     @emit 'pause'
-
-# monkeypatch require(combinedStreamPath).prototype, 'resume', ->
-#     if not @_released
-#         @_released = true
-#         @writable = true
-#         @_getNext()
-
-#     if @pauseStreams and typeof(@_currentStream.resume) is 'function'
-#         @_currentStream.resume()
-
-#     @emit 'resume'
-# End of dirty stuff
-
-
 # Get given photo, returns 404 if photo is not found.
 module.exports.fetch = (req, res, next, id) ->
     id = id.substring 0, id.length - 4 if id.indexOf('.jpg') > 0
