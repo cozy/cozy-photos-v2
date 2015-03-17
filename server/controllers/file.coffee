@@ -88,6 +88,8 @@ module.exports.createPhoto = (req, res, next) ->
         if photo.binary?.thumb? and photo.binary.screen?
             res.send 201, photo
         else
+            res.on 'close', ->
+                stream.abort()
             # Add content thumb or screen if necessary
             rawFile = "/tmp/#{photo.id}"
             fs.openSync rawFile, 'w'
