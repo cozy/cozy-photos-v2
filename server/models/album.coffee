@@ -31,7 +31,7 @@ module.exports = class Album extends cozydb.CozyModel
         sanitize data
         super
 
-    @listWithThumbs = (callback) ->
+    @listWithThumbs: (callback) ->
         async.parallel [
             (cb) -> Album.request 'byTitle', cb
             (cb) -> Photo.albumsThumbs cb
@@ -45,8 +45,8 @@ module.exports = class Album extends cozydb.CozyModel
 
             callback null, albums
 
-    getPublicURL = (callback) ->
-        cozydb.api.getCozyURL (err, domain) =>
+    getPublicURL: (callback) ->
+        cozydb.api.getCozyDomain (err, domain) =>
             return callback err if err
             url = "#{domain}public/photos/#albums/#{@id}"
             callback null, url

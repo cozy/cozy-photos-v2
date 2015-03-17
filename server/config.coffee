@@ -1,5 +1,4 @@
 americano = require 'americano'
-shortcuts = require './helpers/shortcut'
 sharing = require './controllers/sharing'
 
 staticMiddleware = americano.static __dirname + '/../client/public',
