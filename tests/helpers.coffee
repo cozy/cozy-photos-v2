@@ -1,7 +1,7 @@
 TESTPORT = 8013
 Photo = Album = null
 Client = require('request-json').JsonClient
-intializeApp = require '../server.coffee'
+intializeApp = require('../server').start
 
 module.exports =
 
