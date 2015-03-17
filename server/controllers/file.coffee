@@ -4,7 +4,7 @@ async = require 'async'
 fs = require 'fs'
 thumbHelpers = require '../helpers/thumb'
 
-onThumbCreation = require('../../init').onThumbCreation
+onThumbCreation = require('../helpers/initializer').onThumbCreation
 fileByPage = 5 * 12
 
 # Get given file, returns 404 if photo is not found.

@@ -1,6 +1,6 @@
-Photo = require './server/models/photo'
-File = require './server/models/file'
-thumb = require('./server/helpers/thumb').create
+Photo = require '../models/photo'
+File = require '../models/file'
+thumb = require('./thumb').create
 async = require 'async'
 
 onThumbCreation = false

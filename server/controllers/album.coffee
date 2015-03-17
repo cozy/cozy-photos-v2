@@ -29,7 +29,7 @@ module.exports.index = (req, res, next) ->
                 callback null
 
         , (err) ->
-            res.render 'index.jade', imports: """
+            res.render 'index', imports: """
                     window.locale = "#{locale}";
                     window.initalbums = #{JSON.stringify(visible)};
                 """

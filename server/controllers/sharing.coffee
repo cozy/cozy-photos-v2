@@ -4,29 +4,26 @@ cozydb = require 'cozydb'
 
 Album = require '../models/album'
 
-LocalizationManager = require '../helpers/localization_manager'
-localization = new LocalizationManager
+localizationManager = require '../helpers/localization_manager'
 
 
 getDisplayName = (callback) ->
     cozydb.api.getCozyUser (err, user) ->
-        callback null, user?.public_name or \
-                              localization.t 'default user name'
+        if user?.public_name and user.public_name.length > 0
+            callback null, user.public_name
+        else
+            localizationManager.ensureReady (err) ->
+                callback null, localizationManager.t 'default user name'
 
 clearanceCtl = clearance.controller
     mailTemplate: (options, callback) ->
-        localization.initialize ->
-            mailTemplate = localization.getEmailTemplate 'sharemail.jade'
-            getDisplayName (err, displayName) ->
-                options.displayName = displayName
-                template = mailTemplate options
-                options.localization = localization
-                callback null, template
+        getDisplayName (err, displayName) ->
+            options.displayName = displayName
+            localizationManager.render 'sharemail', options, callback
 
     mailSubject: (options, callback) ->
         getDisplayName (err, displayName) ->
-            options.displayName = displayName
-            callback null, localization.t 'email sharing subject',
+            callback null, localizationManager.t 'email sharing subject',
                 displayName: displayName
                 name: options.doc.title
 
