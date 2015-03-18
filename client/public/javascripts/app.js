@@ -2180,7 +2180,24 @@ module.exports = FilesBrowser = (function(_super) {
   };
 
   FilesBrowser.prototype.toggleSelected = function(e) {
-    return $(e.target).toggleClass('selected');
+    var $el, first, index, last;
+    $el = $(e.target);
+    index = $el.parent().index();
+    if ((this.lastSelectedIndex != null) && e.shiftKey) {
+      if (index > this.lastSelectedIndex) {
+        first = this.lastSelectedIndex;
+        last = index;
+      } else if (index < this.lastSelectedIndex) {
+        first = index;
+        last = this.lastSelectedIndex;
+      }
+      this.$('.thumbs li').filter(function(index) {
+        return (first <= index && index <= last);
+      }).find('img').addClass('selected');
+    } else {
+      $el.toggleClass('selected');
+    }
+    return this.lastSelectedIndex = index;
   };
 
   FilesBrowser.prototype.getRenderData = function() {
@@ -2190,6 +2207,7 @@ module.exports = FilesBrowser = (function(_super) {
   FilesBrowser.prototype.initialize = function(options) {
     this.yes = t('modal ok');
     this.no = t('modal cancel');
+    this.lastSelectedIndex = null;
     if (options.page == null) {
       FilesBrowser.__super__.initialize.call(this, {});
     }
