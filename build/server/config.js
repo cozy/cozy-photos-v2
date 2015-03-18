@@ -71,22 +71,7 @@ module.exports = {
         }
       }
       patterns = ['contact.*', 'album.*', 'photo.*'];
-      realtime = RealtimeAdapter(server, patterns);
-      realtime.on('file.*', function(event, msg) {
-        if (event !== "file.delete") {
-          return File.find(msg, function(err, file) {
-            var ref;
-            if ((((ref = file.binary) != null ? ref.file : void 0) != null) && !file.binary.thumb) {
-              return thumb(file, function(err) {
-                if (err != null) {
-                  return console.log(err);
-                }
-              });
-            }
-          });
-        }
-      });
-      return init.convert(server.io.sockets);
+      return realtime = RealtimeAdapter(server, patterns);
     }
   },
   development: [americano.logger('dev')],
