@@ -15,13 +15,35 @@ module.exports = class FilesBrowser extends Modal
         'click a.prev': 'displayPrevPage'
 
     toggleSelected: (e) ->
-        $(e.target).toggleClass 'selected'
+        $el = $(e.target)
+        # Get the index of the selected element in the list
+        index = $el.parent().index()
+        # If shiftKey is pressed, then select the whole range of items
+        # between the last selected element and the current one
+        if @lastSelectedIndex? and e.shiftKey
+            if index > @lastSelectedIndex
+                first = @lastSelectedIndex
+                last = index
+            else if index < @lastSelectedIndex
+                first = index
+                last = @lastSelectedIndex
+            # Filter all elements to get those in range and select it too
+            @$('.thumbs li')
+            .filter (index) ->
+                return first <= index <= last
+            .find('img').addClass 'selected'
+        else
+            $el.toggleClass 'selected'
+        @lastSelectedIndex = index
 
     getRenderData: -> @options
 
     initialize: (options) ->
         @yes = t 'modal ok'
         @no = t 'modal cancel'
+
+        # stores index of the last selected element for range select w/ shiftKey
+        @lastSelectedIndex = null
 
         # Prepare option
         if not options.page?
