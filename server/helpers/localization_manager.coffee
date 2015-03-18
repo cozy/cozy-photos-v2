@@ -1,8 +1,5 @@
-jade = require 'jade'
-fs = require 'fs'
-
 Polyglot = require 'node-polyglot'
-Instance = require '../models/cozy_instance'
+cozydb = require 'cozydb'
 
 class LocalizationManager
 
@@ -10,40 +7,36 @@ class LocalizationManager
 
     # should be run when app starts
     initialize: (callback = () ->) ->
-        @retrieveLocale (err, locale) =>
-            if err?
-                @polyglot = @getPolyglotByLocale null
-            else
-                @polyglot = @getPolyglotByLocale locale
-            callback null, @polyglot
+        @ensureReady callback
+
+    setRenderer: (renderer) ->
+        @renderer = renderer
 
     retrieveLocale: (callback) ->
-        Instance.getLocale (err, locale) ->
+        cozydb.api.getCozyLocale (err, locale) ->
             if err? or not locale then locale = 'en' # default value
             callback null, locale
 
-    getPolyglotByLocale: (locale) ->
-        if locale?
-            try
-                phrases = require "../locales/#{locale}"
-            catch err
-                phrases = require '../locales/en'
-        else
-            phrases = require '../locales/en'
-        return new Polyglot locale: locale, phrases: phrases
+    ensureReady: (callback) ->
+        return callback null, @polyglot if @polyglot
+        # we are not ready, let's get ready
+        @retrieveLocale (err, locale) =>
+            return callback err if err
+            phrases = try require "../locales/#{locale}"
+            catch err then require '../locales/en'
+
+            @polyglot = new Polyglot locale: locale, phrases: phrases
+            callback null, @polyglot
 
     # execute polyglot.t, for server-side localization
-    t: (key, params = {}) -> return @polyglot?.t key, params
+    t: (key, params = {}) ->
+        console.log "NOW", key, params, @polyglot
+        return @polyglot?.t key, params
 
-    getEmailTemplate: (name) ->
-        if @polyglot?
-            filePath = "../views/#{@polyglot.currentLocale}/#{name}"
-            templatefile = require('path').join __dirname, filePath
-            return jade.compile fs.readFileSync templatefile, 'utf8'
-        else
-            return null
+    render: (name, options, callback) ->
+        @ensureReady (err) =>
+            return callback err if err
+            viewName = "#{@polyglot.currentLocale}_#{name}"
+            @renderer viewName, options, callback
 
-    # for template localization
-    getPolyglot: -> return @polyglot
-
-module.exports = LocalizationManager
+module.exports = new LocalizationManager()

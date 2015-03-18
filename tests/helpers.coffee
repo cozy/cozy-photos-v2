@@ -1,13 +1,14 @@
 TESTPORT = 8013
 Photo = Album = null
 Client = require('request-json').JsonClient
-intializeApp = require '../server.coffee'
+intializeApp = require('../server').start
 
 module.exports =
 
   startServer: (done) ->
       @timeout 5000
       intializeApp port: TESTPORT, (err, app, server) =>
+          return done err if err
           app.server = server
           @app = app
           done()
@@ -18,7 +19,7 @@ module.exports =
   clearDb: (done) ->
       @timeout 15000
       root = require('path').join __dirname, '..'
-      require('americano-cozy').configure root, null, (err) ->
+      require('cozydb').configure root, null, (err) ->
         return done err if err
         Photo = require '../server/models/photo'
         Album = require '../server/models/album'

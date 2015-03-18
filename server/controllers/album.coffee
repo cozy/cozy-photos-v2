@@ -4,13 +4,11 @@ archiver = require 'archiver'
 
 Album = require '../models/album'
 Photo = require '../models/photo'
-CozyInstance = require '../models/cozy_instance'
 sharing = require './sharing'
+cozydb = require 'cozydb'
 {slugify, noop} = require '../helpers/helpers'
 downloader = require '../helpers/downloader'
-
-try CozyAdapter = require 'americano-cozy/node_modules/jugglingdb-cozy-adapter'
-catch e then CozyAdapter = require 'jugglingdb-cozy-adapter'
+{NotFound, NotAllowed} = require '../helpers/errors'
 
 log = require('printit')
     date: false
@@ -18,10 +16,10 @@ log = require('printit')
 
 # Get all albums and their covers then put data into the index template.
 # (For faster rendering).
-module.exports.index = (req, res) ->
+module.exports.index = (req, res, next) ->
     async.parallel [
         (cb) -> Album.listWithThumbs cb
-        (cb) -> CozyInstance.getLocale cb
+        (cb) -> cozydb.api.getCozyLocale cb
     ], (err, results) ->
         [albums, locale] = results
         visible = []
@@ -31,7 +29,7 @@ module.exports.index = (req, res) ->
                 callback null
 
         , (err) ->
-            res.render 'index.jade', imports: """
+            res.render 'index', imports: """
                     window.locale = "#{locale}";
                     window.initalbums = #{JSON.stringify(visible)};
                 """
@@ -40,11 +38,13 @@ module.exports.index = (req, res) ->
 # Retrieve given album data.
 module.exports.fetch = (req, res, next, id) ->
     Album.find id, (err, album) ->
-        return res.error 500, 'An error occured', err if err
-        return res.error 404, 'Album not found' if not album
-
-        req.album = album
-        next()
+        if err
+            next err
+        else if not album
+            next NotFound "Album #{id}"
+        else
+            req.album = album
+            next()
 
 
 # Get all albums and their cover.
@@ -64,24 +64,24 @@ module.exports.list = (req, res, next) ->
             res.send visible
 
 # Create new photo album.
-module.exports.create = (req, res) ->
+module.exports.create = (req, res, next) ->
     album = new Album req.body
     Album.create album, (err, album) ->
-        return res.error 500, "Creation failed.", err if err
+        return next err if err
 
-        res.send album, 201
+        res.status(201).send album
 
 
 # Read given photo album if rights are not broken.
-module.exports.read = (req, res) ->
+module.exports.read = (req, res, next) ->
 
     sharing.checkPermissions req.album, req, (err, isAllowed) ->
         if not isAllowed
-            return res.error 401, "You are not allowed to view this album."
+            next NotAllowed()
 
         else
             Photo.fromAlbum req.album, (err, photos) ->
-                return res.error 500, 'An error occured', err if err
+                return next err if err
 
                 # JugglingDb doesn't let you add attributes to the model
                 out = req.album.toObject()
@@ -92,10 +92,10 @@ module.exports.read = (req, res) ->
 
 # Generate a zip archive containing all photo attached to photo docs of give
 # album.
-module.exports.zip = (req, res, err) ->
+module.exports.zip = (req, res, next) ->
     sharing.checkPermissions req.album, req, (err, isAllowed) ->
         if not isAllowed
-            return res.error 401, "You are not allowed to view this album."
+            next NotAllowed()
 
         else
             album = req.album
@@ -139,25 +139,25 @@ module.exports.zip = (req, res, err) ->
 
 
             Photo.fromAlbum req.album, (err, photos) ->
-                if err then res.error 500, 'An error occured', err
+                if err then next err
                 else
                     makeZip zipName, photos
 
 
 # Destroy album and all its photos.
-module.exports.update = (req, res) ->
+module.exports.update = (req, res, next) ->
     req.album.updateAttributes req.body, (err) ->
-        return res.error 500, "Update failed.", err if err
+        return next err if err
 
-        res.send 200, req.album
+        res.send req.album
 
 
 # Destroy album and all its photos.
-module.exports.delete = (req, res) ->
+module.exports.delete = (req, res, next) ->
     req.album.destroy (err) ->
-       return res.error 500, "Deletion failed.", err if err
+       return next err if err
 
        Photo.fromAlbum req.album, (err, photos) ->
            photo.destroy() for photo in photos
 
-       res.success "Deletion succeded."
+       res.send success: "Deletion succeded."

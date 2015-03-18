@@ -12,6 +12,10 @@ options =  # defaults, will be overwritten by command line options
     debug       : no
     'debug-brk' : no
 
+logger = require('printit')
+            date: false
+            prefix: 'cake'
+
 
 # Grab test files of a directory
 walk = (dir, fileList) ->
@@ -60,3 +64,33 @@ runTests = (fileList) ->
         console.log stdout
 
         process.exit if err then 1 else 0
+
+buildJade = ->
+    jade = require 'jade'
+    path = require 'path'
+    for file in fs.readdirSync './server/views/'
+        return unless path.extname(file) is '.jade'
+        filename = "./server/views/#{file}"
+        template = fs.readFileSync filename, 'utf8'
+        output = "var jade = require('jade/runtime');\n"
+        output += "module.exports = " + jade.compileClient template, {filename}
+        name = file.replace '.jade', '.js'
+        fs.writeFileSync "./build/server/views/#{name}", output
+
+task 'build', 'Build CoffeeScript to Javascript', ->
+    logger.options.prefix = 'cake:build'
+    logger.info "Start compilation..."
+    command = "coffee -cb --output build/server server && " + \
+              "coffee -cb --output build/ server.coffee && " + \
+              "rm -rf build/client && mkdir build/client && " + \
+              "cd client/ && brunch build --production && cd .. && " + \
+              "cp -r client/public build/client/public"
+
+    exec command, (err, stdout, stderr) ->
+        if err
+            logger.error "An error has occurred while compiling:\n" + err
+            process.exit 1
+        else
+            buildJade()
+            logger.info "Compilation succeeded."
+            process.exit 0
