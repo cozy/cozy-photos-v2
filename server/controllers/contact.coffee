@@ -2,9 +2,14 @@ Contact = require '../models/contact'
 async = require 'async'
 fs = require 'fs'
 
-module.exports.list = (req, res) ->
+module.exports.list = (req, res, next) ->
     Contact.all (err, contacts) =>
-        return res.error 500, 'An error occured', err if err
-        return res.error 404, 'Contact not found' if not contacts
+        if err
+            next err
+        else if not contacts
+            err = new Error "Contacts not found"
+            err.status = 404
+            next err
 
-        res.send contacts, 201
+        else
+            res.send contacts

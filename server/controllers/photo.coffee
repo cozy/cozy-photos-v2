@@ -8,57 +8,23 @@ thumbHelpers = require '../helpers/thumb'
 photoHelpers = require '../helpers/photo'
 sharing = require './sharing'
 downloader = require '../helpers/downloader'
+{NotFound, NotAllowed} = require '../helpers/errors'
 
 app = null
 module.exports.setApp = (ref) -> app = ref
-
-
-# Dirty stuff while waiting that combined stream library get fixed and included
-# in every dependencies.
-monkeypatch = (ctx, fn, after) ->
-    old = ctx[fn]
-
-    ctx[fn] = ->
-        after.apply @, arguments
-
-
-combinedStreamPath = 'americano-cozy/' + \
-                     'node_modules/jugglingdb-cozy-adapter/' + \
-                     'node_modules/request-json/' + \
-                     'node_modules/request/' + \
-                     'node_modules/form-data/' + \
-                     'node_modules/combined-stream'
-
-monkeypatch require(combinedStreamPath).prototype, 'pause', ->
-    if not @pauseStreams
-       return
-
-    if(@pauseStreams and typeof(@_currentStream.pause) is 'function')
-        @_currentStream.pause()
-    @emit 'pause'
-
-monkeypatch require(combinedStreamPath).prototype, 'resume', ->
-    if not @_released
-        @_released = true
-        @writable = true
-        @_getNext()
-
-    if @pauseStreams and typeof(@_currentStream.resume) is 'function'
-        @_currentStream.resume()
-
-    @emit 'resume'
-# End of dirty stuff
-
 
 # Get given photo, returns 404 if photo is not found.
 module.exports.fetch = (req, res, next, id) ->
     id = id.substring 0, id.length - 4 if id.indexOf('.jpg') > 0
     Photo.find id, (err, photo) =>
-        return res.error 500, 'An error occured', err if err
-        return res.error 404, 'Photo not found' if not photo
+        if err
+            next err
+        else if not photo
+            next NotFound "Photo #{id}"
 
-        req.photo = photo
-        next()
+        else
+            req.photo = photo
+            next()
 
 # Create a photo and save file, thumb and scree image as attachments of the
 # photo document.
@@ -67,6 +33,15 @@ module.exports.create = (req, res, next) =>
     lastPercent = 0
     files = {}
     isAllowed = not req.public
+
+
+    # unlink all files in req.files
+    cleanup = ->
+        async.each req.files, (file, cb) ->
+            fs.unlink file.path, (err) ->
+                console.log 'Could not delete %s', file.path if err
+                cb null # loop anyway
+        , -> # do nothing
 
     # Parse given form to extract image blobs.
     form = new multiparty.Form
@@ -81,6 +56,7 @@ module.exports.create = (req, res, next) =>
         req.body[name] = value
         if name is 'cid' then cid = value
         else if name is 'albumid' and req.public
+            albumid = value
             sharing.checkPermissionsPhoto {albumid}, 'w', req, (err, ok) ->
                 isAllowed = ok
 
@@ -109,10 +85,8 @@ module.exports.create = (req, res, next) =>
 
         # cleanup & 401
         unless isAllowed
-            for name, file of req.files
-                fs.unlink file.path, (err) ->
-                    console.log 'Could not delete %s', file.path if err
-            return res.error 401, "Not allowed", err
+            cleanup()
+            return next NotAllowed()
 
 
         thumbHelpers.readMetadata raw.path, (err, metadata) ->
@@ -150,15 +124,12 @@ module.exports.create = (req, res, next) =>
                         data = name: 'thumb', type: thumb.type
                         photo.attachBinary thumb.path, data, cb
                 ], (err) ->
-                    for name, file of req.files
-                        fs.unlink file.path, (err) ->
-                            if err
-                                console.log 'Could not delete %s', file.path
+                    cleanup()
 
                     if err
                         return next err
                     else
-                        res.send photo, 201
+                        res.status(201).send photo
 
 
 doPipe = (req, which, download, res, next) ->
@@ -166,7 +137,7 @@ doPipe = (req, which, download, res, next) ->
     sharing.checkPermissionsPhoto req.photo, 'r', req, (err, isAllowed) ->
 
         if err or not isAllowed
-            return res.error 401, "Not allowed", err
+            return next NotAllowed()
 
         if download
             disposition = 'attachment; filename=' + req.photo.title
@@ -227,15 +198,15 @@ module.exports.raw = (req, res, next) ->
     else 'file'
     doPipe req, which, true, res, next
 
-module.exports.update = (req, res) ->
+module.exports.update = (req, res, next) ->
     req.photo.updateAttributes req.body, (err) ->
-        return res.error 500, "Update failed." if err
+        return next err if err
         res.send req.photo
 
-module.exports.delete = (req, res) ->
+module.exports.delete = (req, res, next) ->
     req.photo.destroyWithBinary (err) ->
-        return res.error 500, "Deletion failed." if err
-        res.success "Deletion succeded."
+        return next err if err
+        res.send success: "Deletion succeded."
 
 
 # Thumbs can change a lot depending on UI. If a change occurs, previously built

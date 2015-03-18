@@ -1,3 +1,5 @@
+# lint
+emit = null
 
 # MapReduce's map for "all" request
 allMap = (doc) -> emit doc._id, doc
@@ -30,8 +32,6 @@ module.exports =
         'byalbum': byAlbumMap
         'albumphotos': albumPhotosRequest
     'contact':
-        'all': allMap
-    'cozy_instance':
         'all': allMap
     'file':
         'imageByDate': imageByDate

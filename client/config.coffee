@@ -1,8 +1,8 @@
-exports.config =
+path = require 'path'
 
-    # See http://brunch.readthedocs.org/en/latest/config.html for documentation.
-    paths:
-        public: 'public'
+console.log path.resolve __dirname, '../build/client/public'
+
+exports.config =
 
     plugins:
         coffeelint:
@@ -49,4 +49,14 @@ exports.config =
         templates:
             defaultExtension: 'jade'
             joinTo: 'javascripts/app.js'
+
     framework: 'backbone'
+
+    overrides:
+        production:
+            # re-enable when uglifyjs will handle properly in source maps
+            # with sourcesContent attribute
+            # optimize: false
+            sourceMaps: true
+            paths:
+                public: path.resolve __dirname, '../build/client/public'

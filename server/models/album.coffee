@@ -1,19 +1,8 @@
-americano = require 'americano-cozy'
+cozydb = require 'cozydb'
 async = require 'async'
-CozyInstance = require './cozy_instance'
 Photo = require './photo'
 
-module.exports = Album = americano.getModel 'Album',
-    id            : String
-    title         : String
-    description   : String
-    date          : Date
-    orientation   : Number
-    coverPicture  : String
-    clearance: (x) -> x
-    folderid      : String
-
-Album.beforeSave = (next, data) ->
+sanitize = (data) ->
     if data.title?
         data.title = data.title
                         .replace /<br>/g, ""
@@ -21,27 +10,43 @@ Album.beforeSave = (next, data) ->
                         .replace /<\/div>/g, ""
 
     # Set default date if not set.
-    data.date = new Date() unless data.date?
+    data.date ?= new Date()
 
-    next()
+module.exports = class Album extends cozydb.CozyModel
+    @schema:
+        id            : String
+        title         : String
+        description   : String
+        date          : Date
+        orientation   : Number
+        coverPicture  : String
+        clearance     : cozydb.NoSchema
+        folderid      : String
 
-Album::getPublicURL = (callback) ->
-    CozyInstance.getURL (err, domain) =>
-        return callback err if err
-        url = "#{domain}public/photos/#albums/#{@id}"
-        callback null, url
+    updateAttributes: (data) ->
+        sanitize data
+        super
 
-Album.listWithThumbs = (callback) ->
-    async.parallel [
-        (cb) -> Album.request 'byTitle', cb
-        (cb) -> Photo.albumsThumbs cb
-    ], (err, results) ->
-        [albums, defaultCovers] = results
-        async.map albums, (album, cb) =>
-            album = album.toObject()
-            if not album.coverPicture and defaultCover = defaultCovers[album.id]
-                [album.coverPicture, album.orientation] = defaultCover
+    @create: (data) ->
+        sanitize data
+        super
 
-            cb null, album
+    @listWithThumbs: (callback) ->
+        async.parallel [
+            (cb) -> Album.request 'byTitle', cb
+            (cb) -> Photo.albumsThumbs cb
+        ], (err, results) ->
+            return callback err if err
+            [albums, defaultCovers] = results
+            for album in albums
+                defaultCover = defaultCovers[album.id]
+                if defaultCover and not album.coverPicture
+                    [album.coverPicture, album.orientation] = defaultCover
 
-        , callback
+            callback null, albums
+
+    getPublicURL: (callback) ->
+        cozydb.api.getCozyDomain (err, domain) =>
+            return callback err if err
+            url = "#{domain}public/photos/#albums/#{@id}"
+            callback null, url

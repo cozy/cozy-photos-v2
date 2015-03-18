@@ -1,11 +1,5 @@
 Album = require '../models/album'
-CozyInstance = require '../models/cozy_instance'
-User = require '../models/user'
 clearance = require 'cozy-clearance'
-localization = require '../lib/localization_manager'
-
-try CozyAdapter = require('americano-cozy/node_modules/jugglingdb-cozy-adapter')
-catch e then CozyAdapter = require('jugglingdb-cozy-adapter')
 
 
 # check that doc is viewable by req
