@@ -177,24 +177,6 @@ h4 {
 .flatbtn i {
   vertical-align: baseline;
 }
-.files img {
-  border: 5px solid transparent;
-  height: 120px;
-  margin-bottom: 2.5px;
-  margin-right: 2.5px;
-  opacity: 0.8;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
-  filter: alpha(opacity=80);
-}
-.files img.selected {
-  border: 5px solid #34a6ff;
-  height: 120px;
-  -webkit-border-radius: 8px;
-  border-radius: 8px;
-  opacity: 1;
-  -ms-filter: none;
-  filter: none;
-}
 .flatbtn:hover {
   background-color: #fe8800;
   color: #fff;
@@ -211,6 +193,15 @@ h4 {
   -webkit-box-shadow: 1px 3px 2px rgba(0,0,0,0.2) inset;
   box-shadow: 1px 3px 2px rgba(0,0,0,0.2) inset;
 }
+.btn-cozy {
+  font-weight: normal;
+}
+.btn-cozy i:first-child {
+  margin-right: 1em;
+}
+.btn-cozy i:last-child {
+  margin-left: 1em;
+}
 button.delete {
   position: absolute;
   top: 1px;
@@ -218,15 +209,6 @@ button.delete {
   z-index: 2;
   padding: 5px;
   width: auto;
-}
-a.btn.btn-cozy.right.next {
-  height: 40px;
-  position: absolute;
-  right: 60px;
-}
-a.btn.btn-cozy.left.prev {
-  height: 40px;
-  margin-left: 5px;
 }
 .albumitem {
   float: left;
@@ -679,11 +661,89 @@ a.btn.btn-cozy.left.prev {
   max-height: calc(100vh - 210px);
   overflow: auto;
 }
-.modal-body img.selected {
-  border: 5px solid #34a6ff;
-  height: 120px;
-  -webkit-border-radius: 8px;
-  border-radius: 8px;
+.modal-body dl,
+.modal-body ul {
+  margin: 0;
+  padding: 0;
+}
+.modal-body nav {
+  float: right;
+}
+.modal-body nav a {
+  padding: 10px 5px;
+  background-color: transparent;
+  color: #34a6ff;
+}
+.modal-body nav a:hover {
+  background-color: transparent;
+  color: #fe8800;
+}
+.modal-body nav li {
+  list-style-type: none;
+  display: inline-block;
+}
+.modal-body nav li + li {
+  margin-left: 10px;
+}
+.modal-body dt {
+  padding: 7px 5px;
+  font-size: 18px;
+  font-weight: normal;
+}
+.modal-body dd {
+  clear: both;
+  margin: 10px 0;
+}
+.modal-body .thumbs {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: box;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+  -o-box-orient: horizontal;
+  -webkit-box-lines: multiple;
+  -moz-box-lines: multiple;
+  -o-box-lines: multiple;
+  -webkit-flex-flow: row wrap;
+  -ms-flex-flow: row wrap;
+  flex-flow: row wrap;
+  list-style-type: none;
+}
+.modal-body .thumbs li {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 5px;
+  width: 25%;
+}
+.modal-body .thumbs li:nth-child(4n+1) {
+  padding-left: 0;
+}
+.modal-body .thumbs li:nth-child(4n) {
+  padding-right: 0;
+}
+.modal-body .thumbs img {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 100%;
+  border: 5px solid transparent;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  opacity: 0.8;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+  filter: alpha(opacity=80);
+  -webkit-transition: opacity border-color 500ms;
+  -moz-transition: opacity border-color 500ms;
+  -o-transition: opacity border-color 500ms;
+  -ms-transition: opacity border-color 500ms;
+  transition: opacity border-color 500ms;
+}
+.modal-body .thumbs .selected {
+  border-color: #34a6ff;
   opacity: 1;
   -ms-filter: none;
   filter: none;

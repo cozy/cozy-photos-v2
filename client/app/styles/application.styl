@@ -46,21 +46,6 @@ h1, h4
     i
         vertical-align baseline
 
-
-.files
-    img
-        border: 5px solid transparent
-        height: 120px
-        margin-bottom: 2.5px
-        margin-right: 2.5px
-        opacity: 0.8
-
-    img.selected
-        border: 5px solid blue
-        height: 120px
-        border-radius: 8px
-        opacity: 1
-
 .flatbtn:hover
     background-color orange
     color white
@@ -76,6 +61,16 @@ h1, h4
     background orange
     box-shadow 1px 3px 2px rgba(0, 0, 0, 0.2) inset
 
+.btn-cozy
+    font-weight normal
+
+    i
+        &:first-child
+            margin-right 1em
+
+        &:last-child
+            margin-left 1em
+
 button.delete
     position absolute
     top 1px
@@ -84,14 +79,6 @@ button.delete
     padding 5px
     width: auto
 
-a.btn.btn-cozy.right.next
-    height: 40px
-    position absolute
-    right: 60px
-
-a.btn.btn-cozy.left.prev
-    height: 40px
-    margin-left: 5px
 
 // #### album list page ###
 
@@ -493,11 +480,67 @@ a.btn.btn-cozy.left.prev
     max-height: calc(100vh - 210px)
     overflow: auto
 
-    img.selected
-        border: 5px solid blue
-        height: 120px
-        border-radius: 8px
-        opacity: 1
+    dl
+    ul
+        margin 0
+        padding 0
+
+    nav
+        float right
+
+        a
+            padding 10px 5px
+            background-color transparent
+            color blue
+
+            &:hover
+                background-color transparent
+                color orange
+
+        li
+            list-style-type none
+            display inline-block
+
+            & + li
+                margin-left 10px
+
+    dt
+        padding 7px 5px
+        font-size 18px
+        font-weight normal
+
+    dd
+        clear both
+        margin 10px 0
+
+    .thumbs
+        display flex
+        flex-flow row wrap
+        list-style-type none
+
+        li
+            box-sizing border-box
+            padding 5px
+            width 25%
+
+            &:nth-child(4n+1)
+                padding-left 0
+
+            &:nth-child(4n)
+                padding-right 0
+
+        img
+            box-sizing border-box
+            width 100%
+            border 5px solid transparent
+            border-radius 4px
+            opacity 0.8
+            transition opacity border-color 500ms
+
+        .selected
+            border-color: blue
+            opacity: 1
+
 
 .notifs-label
     margin-top: 30px

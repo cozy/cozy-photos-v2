@@ -1647,7 +1647,7 @@ var __templateData = function template(locals) {
 var buf = [];
 var jade_mixins = {};
 var jade_interp;
-var locals_ = (locals || {}),dates = locals_.dates,photos = locals_.photos,hasPrev = locals_.hasPrev,hasNext = locals_.hasNext;
+var locals_ = (locals || {}),dates = locals_.dates,hasPrev = locals_.hasPrev,hasNext = locals_.hasNext,photos = locals_.photos;
 buf.push("<div class=\"files\">");
 if ( dates.length === 0)
 {
@@ -1659,6 +1659,16 @@ buf.push("<p>" + (jade.escape(null == (jade_interp = t("no photos found")) ? "" 
 }
 else
 {
+buf.push("<nav><ul>");
+if ( hasPrev)
+{
+buf.push("<li><a class=\"btn btn-cozy prev\"><i class=\"fa fa-angle-left\"></i><span>" + (jade.escape((jade_interp = t('modal prev')) == null ? '' : jade_interp)) + "</span></a></li>");
+}
+if ( hasNext)
+{
+buf.push("<li><a class=\"btn btn-cozy next\"><span>" + (jade.escape((jade_interp = t('modal next')) == null ? '' : jade_interp)) + "</span><i class=\"fa fa-angle-right\"></i></a></li>");
+}
+buf.push("</ul></nav><dl>");
 // iterate dates
 ;(function(){
   var $$obj = dates;
@@ -1667,7 +1677,7 @@ else
     for (var $index = 0, $$l = $$obj.length; $index < $$l; $index++) {
       var date = $$obj[$index];
 
-buf.push("<h4>" + (jade.escape((jade_interp = t(date.split('-')[1])) == null ? '' : jade_interp)) + " " + (jade.escape((jade_interp = date.split('-')[0]) == null ? '' : jade_interp)) + "</h4><br/>");
+buf.push("<dt>" + (jade.escape((jade_interp = t(date.split('-')[1])) == null ? '' : jade_interp)) + " " + (jade.escape((jade_interp = date.split('-')[0]) == null ? '' : jade_interp)) + "</dt><dd><ul class=\"thumbs\">");
 // iterate photos[date]
 ;(function(){
   var $$obj = photos[date];
@@ -1676,7 +1686,7 @@ buf.push("<h4>" + (jade.escape((jade_interp = t(date.split('-')[1])) == null ? '
     for (var $index = 0, $$l = $$obj.length; $index < $$l; $index++) {
       var photo = $$obj[$index];
 
-buf.push("<img" + (jade.attr("src", "files/thumbs/" + (photo.id) + ".jpg", true, false)) + (jade.attr("id", "" + (photo.id) + "", true, false)) + "/>");
+buf.push("<li><img" + (jade.attr("src", "files/thumbs/" + (photo.id) + ".jpg", true, false)) + (jade.attr("id", "" + (photo.id) + "", true, false)) + "/></li>");
     }
 
   } else {
@@ -1684,13 +1694,13 @@ buf.push("<img" + (jade.attr("src", "files/thumbs/" + (photo.id) + ".jpg", true,
     for (var $index in $$obj) {
       $$l++;      var photo = $$obj[$index];
 
-buf.push("<img" + (jade.attr("src", "files/thumbs/" + (photo.id) + ".jpg", true, false)) + (jade.attr("id", "" + (photo.id) + "", true, false)) + "/>");
+buf.push("<li><img" + (jade.attr("src", "files/thumbs/" + (photo.id) + ".jpg", true, false)) + (jade.attr("id", "" + (photo.id) + "", true, false)) + "/></li>");
     }
 
   }
 }).call(this);
 
-buf.push("<br/>");
+buf.push("</ul></dd>");
     }
 
   } else {
@@ -1698,7 +1708,7 @@ buf.push("<br/>");
     for (var $index in $$obj) {
       $$l++;      var date = $$obj[$index];
 
-buf.push("<h4>" + (jade.escape((jade_interp = t(date.split('-')[1])) == null ? '' : jade_interp)) + " " + (jade.escape((jade_interp = date.split('-')[0]) == null ? '' : jade_interp)) + "</h4><br/>");
+buf.push("<dt>" + (jade.escape((jade_interp = t(date.split('-')[1])) == null ? '' : jade_interp)) + " " + (jade.escape((jade_interp = date.split('-')[0]) == null ? '' : jade_interp)) + "</dt><dd><ul class=\"thumbs\">");
 // iterate photos[date]
 ;(function(){
   var $$obj = photos[date];
@@ -1707,7 +1717,7 @@ buf.push("<h4>" + (jade.escape((jade_interp = t(date.split('-')[1])) == null ? '
     for (var $index = 0, $$l = $$obj.length; $index < $$l; $index++) {
       var photo = $$obj[$index];
 
-buf.push("<img" + (jade.attr("src", "files/thumbs/" + (photo.id) + ".jpg", true, false)) + (jade.attr("id", "" + (photo.id) + "", true, false)) + "/>");
+buf.push("<li><img" + (jade.attr("src", "files/thumbs/" + (photo.id) + ".jpg", true, false)) + (jade.attr("id", "" + (photo.id) + "", true, false)) + "/></li>");
     }
 
   } else {
@@ -1715,26 +1725,28 @@ buf.push("<img" + (jade.attr("src", "files/thumbs/" + (photo.id) + ".jpg", true,
     for (var $index in $$obj) {
       $$l++;      var photo = $$obj[$index];
 
-buf.push("<img" + (jade.attr("src", "files/thumbs/" + (photo.id) + ".jpg", true, false)) + (jade.attr("id", "" + (photo.id) + "", true, false)) + "/>");
+buf.push("<li><img" + (jade.attr("src", "files/thumbs/" + (photo.id) + ".jpg", true, false)) + (jade.attr("id", "" + (photo.id) + "", true, false)) + "/></li>");
     }
 
   }
 }).call(this);
 
-buf.push("<br/>");
+buf.push("</ul></dd>");
     }
 
   }
 }).call(this);
 
+buf.push("</dl><nav><ul>");
 if ( hasPrev)
 {
-buf.push("<a class=\"btn btn-cozy left prev\"><p>&#12296 " + (jade.escape((jade_interp = t('modal prev')) == null ? '' : jade_interp)) + "</p></a>");
+buf.push("<li><a class=\"btn btn-cozy prev\"><i class=\"fa fa-angle-left\"></i><span>" + (jade.escape((jade_interp = t('modal prev')) == null ? '' : jade_interp)) + "</span></a></li>");
 }
 if ( hasNext)
 {
-buf.push("<a class=\"btn btn-cozy right next\"><p>" + (jade.escape((jade_interp = t('modal next')) == null ? '' : jade_interp)) + " &#12297</p></a>");
+buf.push("<li><a class=\"btn btn-cozy next\"><span>" + (jade.escape((jade_interp = t('modal next')) == null ? '' : jade_interp)) + "</span><i class=\"fa fa-angle-right\"></i></a></li>");
 }
+buf.push("</ul></nav>");
 }
 buf.push("</div>");;return buf.join("");
 };
@@ -2164,7 +2176,24 @@ module.exports = FilesBrowser = (function(_super) {
   };
 
   FilesBrowser.prototype.toggleSelected = function(e) {
-    return $(e.target).toggleClass('selected');
+    var $el, first, index, last;
+    $el = $(e.target);
+    index = $el.parent().index();
+    if ((this.lastSelectedIndex != null) && e.shiftKey) {
+      if (index > this.lastSelectedIndex) {
+        first = this.lastSelectedIndex;
+        last = index;
+      } else if (index < this.lastSelectedIndex) {
+        first = index;
+        last = this.lastSelectedIndex;
+      }
+      this.$('.thumbs li').filter(function(index) {
+        return (first <= index && index <= last);
+      }).find('img').addClass('selected');
+    } else {
+      $el.toggleClass('selected');
+    }
+    return this.lastSelectedIndex = index;
   };
 
   FilesBrowser.prototype.getRenderData = function() {
@@ -2174,6 +2203,7 @@ module.exports = FilesBrowser = (function(_super) {
   FilesBrowser.prototype.initialize = function(options) {
     this.yes = t('modal ok');
     this.no = t('modal cancel');
+    this.lastSelectedIndex = null;
     if (options.page == null) {
       FilesBrowser.__super__.initialize.call(this, {});
     }
