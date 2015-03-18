@@ -59,7 +59,7 @@ module.exports.list = (req, res, next) ->
             else
                 dates[date] = [photo]
 
-        res.send {files: dates, hasNext: hasNext}, 200
+        res.send {files: dates, hasNext: hasNext}
 
 
 # Return thumb for given file.
@@ -106,8 +106,8 @@ module.exports.createPhoto = (req, res, next) ->
                         return next err if err
                         thumbHelpers.resize rawFile, photo, 'screen', (err) ->
                             fs.unlink rawFile, ->
-                                res.send 201, photo
+                                res.status(201).send photo
                 else if not photo.binary.screen?
                     thumbHelpers.resize rawFile, photo, 'screen', (err) ->
                         fs.unlink rawFile, ->
-                            res.send 201, photo
+                            res.status(201).send photo
