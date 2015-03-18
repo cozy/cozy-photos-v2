@@ -46,7 +46,11 @@ module.exports = class AlbumView extends BaseView
     initialize: (options) ->
         super options
 
-        @listenTo @model.photos, 'add remove', @onPhotoCollectionChange
+        # debounce the call to `@onPhotoCollectionChange` to prevent spamming
+        # server with useless `PUT` on album just to update the `updated` date
+        # when bulk-adding items to collection.
+        onPhotoCollectionChange = _.debounce @onPhotoCollectionChange, 50
+        @listenTo @model.photos, 'add remove', onPhotoCollectionChange
         @listenTo @model, 'change:clearance', @render
 
     getRenderData: ->
@@ -157,7 +161,7 @@ module.exports = class AlbumView extends BaseView
         data.updated = Date.now()
         @model.save data
 
-    onPhotoCollectionChange: ->
+    onPhotoCollectionChange: =>
         @model.save updated: Date.now()
         # updates the photo counter
         @$('.photo-number').html @model.photos.length
