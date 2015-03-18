@@ -29,38 +29,37 @@ module.exports.list = (req, res, next) ->
     else
         skip = 0
 
-    [onCreation, percent] = onThumbCreation()
+    dates = {}
+    # We retrieve photos correspond to a modal page
+    # Retrieve one more photo to know if it exists photos after this page
+    # Skip is used to have the well photos (for page req.params.page)
+    # Descending is true to have photos sorted by date (more recent in first)
+    options =
+        limit: fileByPage + 1
+        skip: skip
+        descending: true
+    File.imageByDate options, (err, photos) =>
+        return next err if err
 
-    if onCreation
-        res.send "percent": percent
+        # Check if it exists a page after
+        if photos.length is fileByPage + 1
+            hasNext = true
+        else
+            hasNext = false
 
-    else
-
-        dates = {}
-        options =
-            limit: fileByPage + 1
-            skip: skip
-            descending: true
-        File.imageByDate options, (err, photos) =>
-            return next err if err
-
-            if photos.length is fileByPage + 1
-                hasNext = true
+        photos.splice fileByPage, 1
+        for photo in photos
+            # Sort photos by month
+            date = new Date(photo.lastModification)
+            mounth = date.getMonth() + 1
+            mounth = if mounth > 9 then "#{mounth}" else "0#{mounth}"
+            date = "#{date.getFullYear()}-#{mounth}"
+            if dates[date]?
+                dates[date].push photo
             else
-                hasNext = false
+                dates[date] = [photo]
 
-            photos.splice fileByPage, 1
-            for photo in photos
-                date = new Date(photo.lastModification)
-                mounth = date.getMonth() + 1
-                mounth = if mounth > 9 then "#{mounth}" else "0#{mounth}"
-                date = "#{date.getFullYear()}-#{mounth}"
-                if dates[date]?
-                    dates[date].push photo
-                else
-                    dates[date] = [photo]
-
-            res.send {files: dates, hasNext: hasNext}, 200
+        res.send {files: dates, hasNext: hasNext}, 200
 
 
 # Return thumb for given file.
@@ -76,6 +75,7 @@ module.exports.createPhoto = (req, res, next) ->
 
     return next new Error('no binary') unless file.binary?
 
+    # Create photo document
     photo =
         date         : file.lastModification
         title        : ""
@@ -87,21 +87,27 @@ module.exports.createPhoto = (req, res, next) ->
     Photo.create photo, (err, photo) ->
         return next err if err
 
-        rawFile = "/tmp/#{photo.id}"
-        fs.openSync rawFile, 'w'
-        stream = file.getBinary 'file', (err) ->
-            return next err if err
-        stream.pipe fs.createWriteStream rawFile
-        stream.on 'error', next
+        if photo.binary?.thumb? and photo.binary.screen?
+            res.send 201, photo
+        else
+            res.on 'close', ->
+                stream.abort()
+            # Add content thumb or screen if necessary
+            rawFile = "/tmp/#{photo.id}"
+            fs.openSync rawFile, 'w'
+            stream = file.getBinary 'file', (err) ->
+                return next err if err
+            stream.pipe fs.createWriteStream rawFile
+            stream.on 'error', next
 
-        stream.on 'end', =>
-            if not photo.binary.thumb?
-                thumbHelpers.resize rawFile, photo, 'thumb', (err) ->
-                    return next err if err
+            stream.on 'end', =>
+                if not photo.binary.thumb?
+                    thumbHelpers.resize rawFile, photo, 'thumb', (err) ->
+                        return next err if err
+                        thumbHelpers.resize rawFile, photo, 'screen', (err) ->
+                            fs.unlink rawFile, ->
+                                res.send 201, photo
+                else if not photo.binary.screen?
                     thumbHelpers.resize rawFile, photo, 'screen', (err) ->
                         fs.unlink rawFile, ->
                             res.send 201, photo
-            else
-                thumbHelpers.resize rawFile, photo, 'screen', (err) ->
-                    fs.unlink rawFile, ->
-                        res.send 201, photo

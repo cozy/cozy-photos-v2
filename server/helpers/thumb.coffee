@@ -54,7 +54,7 @@ module.exports = thumb =
     # the image to a 300x300 image. If it's a 'scree' preview, it is resize
     # as a 1200 x 800 image.
     resize: (srcPath, file, name, callback) ->
-        dstPath = "/tmp/2-#{file.name}"
+        dstPath = "/tmp/2-#{file.id}"
 
         try
             attachFile = (err) =>
@@ -95,43 +95,3 @@ module.exports = thumb =
         catch err
             console.log err
             callback err
-
-
-    # Create thumb for given file. Check that the thumb doesn't already exist
-    # and that file is from the right mimetype (see whitelist).
-    create: (file, callback) ->
-        return callback new Error('no binary') unless file.binary?
-
-        if file.binary?.thumb?
-            log.info "createThumb #{file.id}/#{file.name}: already created."
-            callback()
-
-        else
-            mimetype = mime.lookup file.name
-
-            if mimetype not in whiteList
-                log.debug """
-createThumb: #{file.id} / #{file.name}: No thumb to create for this kind of file.
-"""
-                callback()
-
-            else
-
-                log.info """
-createThumb: #{file.id} / #{file.name}: Creation started...
-"""
-                rawFile = "/tmp/#{file.name}"
-                stream = file.getBinary 'file', (err) ->
-                    return callback err if err
-                stream.pipe fs.createWriteStream rawFile
-                stream.on 'error', callback
-                stream.on 'end', =>
-                    thumb.resize rawFile, file, 'thumb', (err) =>
-                        fs.unlink rawFile, ->
-                            if err
-                                console.log err
-                            else
-                                log.info """
-    createThumb #{file.id} / #{file.name}: Thumbnail created
-    """
-                            callback err
