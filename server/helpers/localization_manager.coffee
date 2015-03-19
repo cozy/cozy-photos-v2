@@ -30,7 +30,6 @@ class LocalizationManager
 
     # execute polyglot.t, for server-side localization
     t: (key, params = {}) ->
-        console.log "NOW", key, params, @polyglot
         return @polyglot?.t key, params
 
     render: (name, options, callback) ->
