@@ -62,7 +62,6 @@ LocalizationManager = (function() {
     if (params == null) {
       params = {};
     }
-    console.log("NOW", key, params, this.polyglot);
     return (ref = this.polyglot) != null ? ref.t(key, params) : void 0;
   };
 
