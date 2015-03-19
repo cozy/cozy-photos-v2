@@ -84,28 +84,31 @@ module.exports = class FilesBrowser extends Modal
                 for img in @options.selected[@options.page]
                     @$("##{img.id}").toggleClass 'selected'
 
+
     cb: (confirmed) ->
         return unless confirmed
         @options.beforeUpload (attrs) =>
-            tmp = []
+            # flatten selection of photos accross pages
             @options.selected[@options.page] = @$('.selected')
-            for page in @options.selected
-                for img in page
-                    fileid = img.id
+            sel = [].concat.apply [], @options.selected.map (jq) -> jq.get()
 
-                    # Create a temporary photo
-                    attrs.title = img.name
-                    phototmp = new Photo attrs
-                    phototmp.file = img
-                    tmp.push phototmp
-                    @collection.add phototmp
+            addImageToCollection = (img) ->
+                attrs.title = img.name
+                # creates a tmp version with the selected image from the browser
+                photo      = new Photo attrs
+                photo.file = img
+                # in the mean time, trigger an update to the server to get the
+                # final version of the image
+                Photo.makeFromFile img.id, attrs, (err, attributes) ->
+                    if err
+                        console.error err
+                    else
+                        photo.save attributes
+                return photo
 
-                    Photo.makeFromFile fileid, attrs, (err, photo) =>
-                        return console.log err if err
-                        # Replace temporary photo
-                        phototmp = tmp.pop()
-                        @collection.remove phototmp, parse: true
-                        @collection.add photo, parse: true
+            # each (tmp) files processed, bulk-add them to the collection
+            @collection.add (addImageToCollection img for img in sel)
+
 
     displayNextPage: ->
         # Display next page: store selected files

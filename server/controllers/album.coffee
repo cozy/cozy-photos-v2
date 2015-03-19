@@ -144,11 +144,9 @@ module.exports.zip = (req, res, next) ->
                     makeZip zipName, photos
 
 
-# Destroy album and all its photos.
 module.exports.update = (req, res, next) ->
     req.album.updateAttributes req.body, (err) ->
         return next err if err
-
         res.send req.album
 
 
