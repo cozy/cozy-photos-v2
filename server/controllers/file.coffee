@@ -70,6 +70,13 @@ module.exports.thumb = (req, res, next) ->
     stream.pipe res
 
 
+
+download = (res, file, rawFile, callback) ->
+    fs.openSync rawFile, 'w'
+    stream = file.getBinary 'file', callback
+    stream.pipe fs.createWriteStream rawFile
+    res.on 'close', -> stream.abort()
+
 module.exports.createPhoto = (req, res, next) ->
     file = req.file
 
@@ -88,19 +95,12 @@ module.exports.createPhoto = (req, res, next) ->
         return next err if err
 
         if photo.binary?.thumb? and photo.binary.screen?
-            res.send 201, photo
+            res.status(201).send photo
         else
-            res.on 'close', ->
-                stream.abort()
             # Add content thumb or screen if necessary
             rawFile = "/tmp/#{photo.id}"
-            fs.openSync rawFile, 'w'
-            stream = file.getBinary 'file', (err) ->
+            download res, file, rawFile, (err) ->
                 return next err if err
-            stream.pipe fs.createWriteStream rawFile
-            stream.on 'error', next
-
-            stream.on 'end', =>
                 if not photo.binary.thumb?
                     thumbHelpers.resize rawFile, photo, 'thumb', (err) ->
                         return next err if err
