@@ -2,6 +2,8 @@ async = require 'async'
 fs = require 'fs'
 qs = require 'qs'
 multiparty = require 'multiparty'
+path = require 'path'
+os = require 'os'
 
 Photo = require '../models/photo'
 thumbHelpers = require '../helpers/thumb'
@@ -9,6 +11,7 @@ photoHelpers = require '../helpers/photo'
 sharing = require './sharing'
 downloader = require '../helpers/downloader'
 {NotFound, NotAllowed} = require '../helpers/errors'
+
 
 app = null
 module.exports.setApp = (ref) -> app = ref
@@ -45,7 +48,7 @@ module.exports.create = (req, res, next) =>
 
     # Parse given form to extract image blobs.
     form = new multiparty.Form
-        uploadDir: __dirname + '../../uploads'
+        uploadDir: path.join os.tmpdir(), 'uploads'
         defer: true # don't wait for full form. Needed for progress events
         keepExtensions: true
         maxFieldsSize: 10 * 1024 * 1024
