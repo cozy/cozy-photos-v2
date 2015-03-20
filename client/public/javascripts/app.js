@@ -1845,6 +1845,7 @@ module.exports = AlbumView = (function(_super) {
   __extends(AlbumView, _super);
 
   function AlbumView() {
+    this.onPhotoCollectionChange = __bind(this.onPhotoCollectionChange, this);
     this.changeClearance = __bind(this.changeClearance, this);
     this.checkNew = __bind(this.checkNew, this);
     this.onFieldClicked = __bind(this.onFieldClicked, this);
@@ -1883,8 +1884,10 @@ module.exports = AlbumView = (function(_super) {
   };
 
   AlbumView.prototype.initialize = function(options) {
+    var onPhotoCollectionChange;
     AlbumView.__super__.initialize.call(this, options);
-    this.listenTo(this.model.photos, 'add remove', this.onPhotoCollectionChange);
+    onPhotoCollectionChange = _.debounce(this.onPhotoCollectionChange, 50);
+    this.listenTo(this.model.photos, 'add remove', onPhotoCollectionChange);
     return this.listenTo(this.model, 'change:clearance', this.render);
   };
 
@@ -2256,43 +2259,34 @@ module.exports = FilesBrowser = (function(_super) {
     }
     return this.options.beforeUpload((function(_this) {
       return function(attrs) {
-        var fileid, img, page, phototmp, tmp, _i, _len, _ref, _results;
-        tmp = [];
+        var addImageToCollection, img, sel;
         _this.options.selected[_this.options.page] = _this.$('.selected');
-        _ref = _this.options.selected;
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          page = _ref[_i];
-          _results.push((function() {
-            var _j, _len1, _results1;
-            _results1 = [];
-            for (_j = 0, _len1 = page.length; _j < _len1; _j++) {
-              img = page[_j];
-              fileid = img.id;
-              attrs.title = img.name;
-              phototmp = new Photo(attrs);
-              phototmp.file = img;
-              tmp.push(phototmp);
-              this.collection.add(phototmp);
-              _results1.push(Photo.makeFromFile(fileid, attrs, (function(_this) {
-                return function(err, photo) {
-                  if (err) {
-                    return console.log(err);
-                  }
-                  phototmp = tmp.pop();
-                  _this.collection.remove(phototmp, {
-                    parse: true
-                  });
-                  return _this.collection.add(photo, {
-                    parse: true
-                  });
-                };
-              })(this)));
+        sel = [].concat.apply([], _this.options.selected.map(function(jq) {
+          return jq.get();
+        }));
+        addImageToCollection = function(img) {
+          var photo;
+          attrs.title = img.name;
+          photo = new Photo(attrs);
+          photo.file = img;
+          Photo.makeFromFile(img.id, attrs, function(err, attributes) {
+            if (err) {
+              return console.error(err);
+            } else {
+              return photo.save(attributes);
             }
-            return _results1;
-          }).call(_this));
-        }
-        return _results;
+          });
+          return photo;
+        };
+        return _this.collection.add((function() {
+          var _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = sel.length; _i < _len; _i++) {
+            img = sel[_i];
+            _results.push(addImageToCollection(img));
+          }
+          return _results;
+        })());
       };
     })(this));
   };
