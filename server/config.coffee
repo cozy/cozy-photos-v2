@@ -8,7 +8,7 @@ init = require './helpers/initializer'
 thumb = require('./helpers/thumb').create
 File = require './models/file'
 path = require 'path'
-
+os = require 'os'
 
 staticMiddleware = americano.static __dirname + '/../client/public',
                         maxAge: 86400000
@@ -58,7 +58,7 @@ module.exports =
             localizationManager.setRenderer viewEngine
 
             # create the uploads folder
-            try fs.mkdirSync path.join __dirname, 'uploads'
+            try fs.mkdirSync path.join os.tmpdir(), 'uploads'
             catch err then if err.code isnt 'EEXIST'
                 console.log "Something went wrong while creating uploads folder"
                 console.log err
