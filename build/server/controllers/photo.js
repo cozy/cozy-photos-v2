@@ -183,7 +183,7 @@ module.exports.create = (function(_this) {
 
 doPipe = function(req, which, download, res, next) {
   return sharing.checkPermissionsPhoto(req.photo, 'r', req, function(err, isAllowed) {
-    var disposition, onError, ref2, ref3, request;
+    var binaryPath, disposition, onError, ref2, ref3, request;
     if (err || !isAllowed) {
       return next(NotAllowed());
     }
@@ -197,8 +197,8 @@ doPipe = function(req, which, download, res, next) {
       }
     };
     if ((ref2 = req.photo._attachments) != null ? ref2[which] : void 0) {
-      path = "/data/" + req.photo.id + "/attachments/" + which;
-      return request = downloader.download(path, function(stream) {
+      binaryPath = "/data/" + req.photo.id + "/attachments/" + which;
+      return request = downloader.download(binaryPath, function(stream) {
         if (stream.statusCode === 200) {
           res.on('close', function() {
             return request.abort();
@@ -209,8 +209,8 @@ doPipe = function(req, which, download, res, next) {
         }
       });
     } else if ((ref3 = req.photo.binary) != null ? ref3[which] : void 0) {
-      path = "/data/" + req.photo.id + "/binaries/" + which;
-      return request = downloader.download(path, function(stream) {
+      binaryPath = "/data/" + req.photo.id + "/binaries/" + which;
+      return request = downloader.download(binaryPath, function(stream) {
         if (stream.statusCode === 200) {
           res.on('close', function() {
             return request.abort();
