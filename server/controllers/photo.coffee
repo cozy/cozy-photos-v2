@@ -151,8 +151,8 @@ doPipe = (req, which, download, res, next) ->
         onError = (err) -> next err if err
 
         if req.photo._attachments?[which]
-            path = "/data/#{req.photo.id}/attachments/#{which}"
-            request = downloader.download path, (stream) ->
+            binaryPath = "/data/#{req.photo.id}/attachments/#{which}"
+            request = downloader.download binaryPath, (stream) ->
                 if stream.statusCode is 200
                     res.on 'close', -> request.abort()
                     stream.pipe res
@@ -160,8 +160,8 @@ doPipe = (req, which, download, res, next) ->
                     return res.sendfile './server/img/error.gif'
 
         else if req.photo.binary?[which]
-            path = "/data/#{req.photo.id}/binaries/#{which}"
-            request = downloader.download path, (stream) ->
+            binaryPath = "/data/#{req.photo.id}/binaries/#{which}"
+            request = downloader.download binaryPath, (stream) ->
                 if stream.statusCode is 200
                     res.on 'close', -> request.abort()
                     stream.pipe res
