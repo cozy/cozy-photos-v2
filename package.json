@@ -42,13 +42,13 @@
   "readmeFilename": "README.md",
   "cozy-permissions": {
     "Photo": {
-      "description": "Creates and edits your photos"
+      "description": "Create and edit your photos"
     },
     "Album": {
-      "description": "Creates and edits your album which contains your photos."
+      "description": "Create and edit your album which contains your photos."
     },
     "Contact": {
-      "description": "Allows you to easily share an album"
+      "description": "Share your albums easily"
     },
     "CozyInstance": {
       "description": "Read language setting"
