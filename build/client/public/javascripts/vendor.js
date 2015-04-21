@@ -1,42 +1,59 @@
-(function(/*! Brunch !*/) {
+(function() {
   'use strict';
 
-  var globals = typeof window !== 'undefined' ? window : global;
+  var globals = typeof window === 'undefined' ? global : window;
   if (typeof globals.require === 'function') return;
 
   var modules = {};
   var cache = {};
+  var has = ({}).hasOwnProperty;
 
-  var has = function(object, name) {
-    return ({}).hasOwnProperty.call(object, name);
+  var aliases = {};
+
+  var endsWith = function(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
   };
 
-  var expand = function(root, name) {
-    var results = [], parts, part;
-    if (/^\.\.?(\/|$)/.test(name)) {
-      parts = [root, name].join('/').split('/');
-    } else {
-      parts = name.split('/');
-    }
-    for (var i = 0, length = parts.length; i < length; i++) {
-      part = parts[i];
-      if (part === '..') {
-        results.pop();
-      } else if (part !== '.' && part !== '') {
-        results.push(part);
+  var unalias = function(alias, loaderPath) {
+    var start = 0;
+    if (loaderPath) {
+      if (loaderPath.indexOf('components/' === 0)) {
+        start = 'components/'.length;
+      }
+      if (loaderPath.indexOf('/', start) > 0) {
+        loaderPath = loaderPath.substring(start, loaderPath.indexOf('/', start));
       }
     }
-    return results.join('/');
+    var result = aliases[alias + '/index.js'] || aliases[loaderPath + '/deps/' + alias + '/index.js'];
+    if (result) {
+      return 'components/' + result.substring(0, result.length - '.js'.length);
+    }
+    return alias;
   };
 
+  var expand = (function() {
+    var reg = /^\.\.?(\/|$)/;
+    return function(root, name) {
+      var results = [], parts, part;
+      parts = (reg.test(name) ? root + '/' + name : name).split('/');
+      for (var i = 0, length = parts.length; i < length; i++) {
+        part = parts[i];
+        if (part === '..') {
+          results.pop();
+        } else if (part !== '.' && part !== '') {
+          results.push(part);
+        }
+      }
+      return results.join('/');
+    };
+  })();
   var dirname = function(path) {
     return path.split('/').slice(0, -1).join('/');
   };
 
   var localRequire = function(path) {
     return function(name) {
-      var dir = dirname(path);
-      var absolute = expand(dir, name);
+      var absolute = expand(dirname(path), name);
       return globals.require(absolute, path);
     };
   };
@@ -51,21 +68,26 @@
   var require = function(name, loaderPath) {
     var path = expand(name, '.');
     if (loaderPath == null) loaderPath = '/';
+    path = unalias(name, loaderPath);
 
-    if (has(cache, path)) return cache[path].exports;
-    if (has(modules, path)) return initModule(path, modules[path]);
+    if (has.call(cache, path)) return cache[path].exports;
+    if (has.call(modules, path)) return initModule(path, modules[path]);
 
     var dirIndex = expand(path, './index');
-    if (has(cache, dirIndex)) return cache[dirIndex].exports;
-    if (has(modules, dirIndex)) return initModule(dirIndex, modules[dirIndex]);
+    if (has.call(cache, dirIndex)) return cache[dirIndex].exports;
+    if (has.call(modules, dirIndex)) return initModule(dirIndex, modules[dirIndex]);
 
     throw new Error('Cannot find module "' + name + '" from '+ '"' + loaderPath + '"');
   };
 
-  var define = function(bundle, fn) {
+  require.alias = function(from, to) {
+    aliases[to] = from;
+  };
+
+  require.register = require.define = function(bundle, fn) {
     if (typeof bundle === 'object') {
       for (var key in bundle) {
-        if (has(bundle, key)) {
+        if (has.call(bundle, key)) {
           modules[key] = bundle[key];
         }
       }
@@ -74,21 +96,18 @@
     }
   };
 
-  var list = function() {
+  require.list = function() {
     var result = [];
     for (var item in modules) {
-      if (has(modules, item)) {
+      if (has.call(modules, item)) {
         result.push(item);
       }
     }
     return result;
   };
 
+  require.brunch = true;
   globals.require = require;
-  globals.require.define = define;
-  globals.require.register = define;
-  globals.require.list = list;
-  globals.require.brunch = true;
 })();
 /*!
  * jQuery JavaScript Library v1.9.1
@@ -9688,7 +9707,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 
 })( window );
 
-;// Underscore.js 1.4.4
+// Underscore.js 1.4.4
 // ===================
 
 // > http://underscorejs.org
@@ -10916,7 +10935,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 
 }).call(this);
 
-;//     Backbone.js 1.0.0
+//     Backbone.js 1.0.0
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
 //     Backbone may be freely distributed under the MIT license.
@@ -12488,7 +12507,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 
 }).call(this);
 
-;/*!
+/*!
     photobox v1.8.6
     (c) 2013 Yair Even Or <http://dropthebit.com>
 
@@ -13618,7 +13637,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 	};
 })(jQuery, document, window);
 
-;/*global setImmediate: false, setTimeout: false, console: false */
+/*global setImmediate: false, setTimeout: false, console: false */
 (function () {
 
     var async = {};
@@ -14601,7 +14620,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 
 }());
 
-;/* ===================================================
+/* ===================================================
  * bootstrap-transition.js v2.3.1
  * http://twitter.github.com/bootstrap/javascript.html#transitions
  * ===================================================
@@ -16877,7 +16896,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 
 
 }(window.jQuery);
-;//     (c) 2012 Airbnb, Inc.
+//     (c) 2012 Airbnb, Inc.
 //
 //     polyglot.js may be freely distributed under the terms of the BSD
 //     license. For all licensing information, details, and documention:
@@ -17131,7 +17150,7 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 }(this);
 
 
-;require.register("cozy-clearance/contact_autocomplete", function(exports, require, module){
+require.register("cozy-clearance/contact_autocomplete", function(exports, require, module){
   module.exports = function(input, onGuestAdded, extrafilter) {
   var contactCollection;
   contactCollection = require('./contact_collection');
@@ -17998,7 +18017,7 @@ module.exports = CozyClearanceModal = (function(_super) {
 
 });
 
-;// Generated by CoffeeScript 1.9.1
+// Generated by CoffeeScript 1.9.1
 (function() {
   var CozySocketListener, global,
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -18247,7 +18266,7 @@ module.exports = CozyClearanceModal = (function(_super) {
 
 }).call(this);
 
-;!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.jade=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.jade=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 'use strict';
 
 /**
@@ -18457,7 +18476,7 @@ exports.rethrow = function rethrow(err, filename, lineno, str){
 },{}]},{},[1])
 (1)
 });
-;/*
+/*
  * Purl (A JavaScript URL parser) v2.3.1
  * Developed and maintanined by Mark Perkins, mark@allmarkedup.com
  * Source repository: https://github.com/allmarkedup/jQuery-URL-Parser
@@ -18725,7 +18744,7 @@ exports.rethrow = function rethrow(err, filename, lineno, str){
 
 });
 
-;!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.io=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.io=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
 module.exports = _dereq_('./lib/');
 
@@ -25664,7 +25683,7 @@ function toArray(list, index) {
 (1)
 });
 
-;//fgnass.github.com/spin.js#v1.2.5
+//fgnass.github.com/spin.js#v1.2.5
 (function(window, document, undefined) {
 
 /**
@@ -25971,7 +25990,7 @@ function toArray(list, index) {
 
 })(window, document);
 
-;!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.jade=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.jade=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
 /**
@@ -26181,5 +26200,5 @@ exports.rethrow = function rethrow(err, filename, lineno, str){
 },{}]},{},[1])
 (1)
 });
-;
+
 //# sourceMappingURL=vendor.js.map
