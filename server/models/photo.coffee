@@ -1,6 +1,5 @@
 cozydb = require 'cozydb'
 async = require 'async'
-cozydb = require 'cozydb'
 
 module.exports = class Photo extends cozydb.CozyModel
     @schema:
