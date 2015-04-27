@@ -7,8 +7,6 @@ cozydb = require('cozydb');
 
 async = require('async');
 
-cozydb = require('cozydb');
-
 module.exports = Photo = (function(superClass) {
   extend(Photo, superClass);
 
