@@ -7,7 +7,7 @@ module.exports =
     "Download" : "Télécharger"
     "Edit" : "Modifier"
     "Stop editing" : "Enregistrer"
-    "It will appears on your homepage." : "Il apparaîtra sur votre page d'accueil"
+    "It will appear on your homepage." : "Il sera affiché sur la page de l'album."
     "Make it Hidden" : "masqué"
     "Make it Private" : "privé"
     "Make it Public" : "public"
@@ -26,7 +26,7 @@ module.exports =
     "is too big (max 10Mo)":"est trop grosse (max 10Mo)"
     "is not an image": "n'est pas une image"
     "Share album by mail": "Partagez par mail"
-    "Upload your contacts ...": "Uploadez vos contacts..."
+    "Upload your contacts...": "Envoi de vos contacts"
     "Share album": "Partagez l'album"
     "Add contact": "Ajoutez un contact"
     "Send mail": "Envoyez mail"
@@ -70,13 +70,13 @@ module.exports =
     "11": "Novembre"
     "12": "Décembre"
      # clearance modal
-    "also have access" : "Ces personnes ont également accès, car elles ont accès à un dossier parent"
     "cancel" : "Annuler"
-    "copy paste link" : "Pour donner accès à votre contact envoyez-lui ce lien : "
+    "copy paste link" : "Pour donner accès à votre contact envoyez-lui ce lien :"
     "details" : "Détails"
     "inherited from" : "hérité de"
     "modal question album shareable" : "Choisissez le mode de partage pour cet album"
     "modal shared album custom msg" : "Entrez un email et appuyez sur Entrée"
+    "modal shared album link msg"   : "Envoyez ce lien pour permettre aux personnes d'accéder à l'album"
     "modal shared public link msg"    : "Envoyez ce lien pour partager cet album"
     "modal shared with people msg"    : """Invitez une sélection de contacts à y accéder. Taper l'email
          dans le champ et appuyez sur entrée (un email pour les prévenir leur sera envoyé) :"""
@@ -96,8 +96,7 @@ module.exports =
     "see link" : "Voir le lien"
     "sharing" : "Partage"
     "revoke" : "Révoquer la permission"
-    "send mails question" : "Envoyer un email de notification à : "
-    "forced public" : "Ce dossier est public car un dossier parent est public : "
+    "send mails question" : "Envoyer un email de notification à :"
     "confirm" : "Confirmer"
     "share forgot add" : """
         Il semble que vous ayez oublié d'appuyer sur le bouton Ajouter
@@ -108,7 +107,6 @@ module.exports =
     "yes forgot" : "Retour"
     "no forgot" : "Ok"
     "perm" : "peut "
-    "r" : "lire cet album"
     "perm r album" : "parcourir cet album"
     "perm rw album" : "parcourir cet album et ajouter des photos"
     "mail not send" : "Le message n'a pas pu être envoyé"
@@ -116,7 +114,7 @@ module.exports =
 
     "change notif" : """
         Cocher cette case pour recevoir une notification cozy quand un contact
-         ajoute une photo à cet album.
+ajoute une photo à cet album.
     """
     "send email hint": "Des emails de notification seront envoyés lors de la première sauvegarde."
     "yes" : "Oui"

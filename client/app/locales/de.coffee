@@ -51,8 +51,7 @@ module.exports =
       But you can share it with the following url:
     """
 
-    "It cannot be accessed from the public side" : """
-      Es is keine öffentlich Ressource."
+    "It cannot be accessed from the public side" : """Es is keine öffentlich Ressource.
     """
     "rebuild thumbnails": "Neuaufbau Thumbnails"
 
@@ -77,8 +76,7 @@ module.exports =
     "modal shared album custom msg" : "E-Mail Adresse eingeben und Enter drücken"
     "modal shared album link msg" : "Senden Sie diesen Link um Leuten Zugriff zu diesem Album zu gewähren"
     "modal shared public link msg"    : "Senden Sie diesen Link um Leuten Zugriff zu diesm Ordner zu gewähren:"
-    "modal shared with people msg"    : """
-        Eine Auswahl von Kontakten für Zugriff einladen. E-Mail
+    "modal shared with people msg"    : """Eine Auswahl von Kontakten für Zugriff einladen. E-Mail
          in das Feld eintragen und Enter drücken (Eine E-Mail wird zu Ihnen versand):"""
     "modal send mails" : "Eine Mitteilung versenden"
     "modal next": "Nächste"
