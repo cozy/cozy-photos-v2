@@ -131,16 +131,23 @@ module.exports.zip = function(req, res, next) {
       archive = archiver('zip');
       zipName = slugify(req.album.title || 'Album');
       addToArchive = function(photo, cb) {
-        var name, path, request;
-        if (photo.binary != null) {
-          path = "/data/" + photo.id + "/binaries/raw";
-        } else if (photo._attachments) {
-          path = "/data/" + photo.id + "/attachments/raw";
+        var laterStream, name, type;
+        if ((photo != null ? photo.binary.raw : void 0) != null) {
+          type = 'raw';
+        } else if ((photo != null ? photo.binary.file : void 0) != null) {
+          type = 'file';
         } else {
           return cb();
         }
         name = photo.title || (photo.id + ".jpg");
-        return request = downloader.download(path, function(stream) {
+        laterStream = photo.getBinary(type, function(err) {
+          if (err != null) {
+            log.error("An error occured while adding a photo to archive. Photo: " + photo.id + ".");
+            log.raw(err);
+            return cb();
+          }
+        });
+        return laterStream.on('ready', function(stream) {
           archive.append(stream, {
             name: name
           });
@@ -158,13 +165,9 @@ module.exports.zip = function(req, res, next) {
         res.setHeader('Content-Type', 'application/zip');
         return async.eachSeries(photos, addToArchive, function(err) {
           if (err) {
-            return log.error("An error occured : " + err);
+            return log.error("An error occured: " + err);
           } else {
-            return archive.finalize(function(err, bytes) {
-              if (err) {
-                return next(err);
-              }
-            });
+            return archive.finalize();
           }
         });
       };
