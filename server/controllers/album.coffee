@@ -103,17 +103,27 @@ module.exports.zip = (req, res, next) ->
             zipName = slugify req.album.title or 'Album'
 
             addToArchive = (photo, cb) ->
-                # TODOS : Remove _attachment for photos
-                if photo.binary?
-                    path = "/data/#{photo.id}/binaries/raw"
-                else if photo._attachments
-                    path = "/data/#{photo.id}/attachments/raw"
+
+                # Photo uploaded from the app.
+                if photo?.binary.raw?
+                    type = 'raw'
+
+                # Photo imported from Files.
+                else if photo?.binary.file?
+                    type = 'file'
                 else
                     return cb()
 
                 name = photo.title or "#{photo.id}.jpg"
-                request = downloader.download path, (stream) ->
-                    archive.append stream, name: name
+                laterStream = photo.getBinary type, (err) ->
+                    if err?
+                        log.error "An error occured while adding a photo to
+                                   archive. Photo: #{photo.id}."
+                        log.raw err
+                        cb()
+
+                laterStream.on 'ready', (stream) ->
+                    archive.append stream, {name}
                     cb()
 
             # Build zip from file list and pip the result in the response.
@@ -132,10 +142,10 @@ module.exports.zip = (req, res, next) ->
                 res.setHeader 'Content-Type', 'application/zip'
 
                 async.eachSeries photos, addToArchive, (err) ->
-                    if err then log.error "An error occured : #{err}"
+                    if err
+                        log.error "An error occured: #{err}"
                     else
-                        archive.finalize (err, bytes) ->
-                            if err then next err
+                        archive.finalize()
 
 
             Photo.fromAlbum req.album, (err, photos) ->

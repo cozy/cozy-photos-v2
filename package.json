@@ -12,7 +12,7 @@
   "main": "server.coffee",
   "dependencies": {
     "americano": "0.4.0",
-    "archiver": "0.14.3",
+    "archiver": "0.14.4",
     "async": "0.9.0",
     "axon": "0.6.1",
     "cozy-clearance": "0.1.19",
