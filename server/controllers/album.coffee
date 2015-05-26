@@ -112,9 +112,10 @@ module.exports.zip = (req, res, next) ->
                 else if photo?.binary.file?
                     type = 'file'
                 else
+                    # There is nothing to download for this photo.
                     return cb()
 
-                name = photo.title or "#{photo.id}.jpg"
+                # Get a stream  of the binary.
                 laterStream = photo.getBinary type, (err) ->
                     if err?
                         log.error "An error occured while adding a photo to
@@ -122,7 +123,10 @@ module.exports.zip = (req, res, next) ->
                         log.raw err
                         cb()
 
+                # Append the stream photo to the archive.
                 laterStream.on 'ready', (stream) ->
+                    # Get the file's name in the archive.
+                    name = photo.title or "#{photo.id}.jpg"
                     archive.append stream, {name}
                     cb()
 
@@ -132,7 +136,7 @@ module.exports.zip = (req, res, next) ->
                 # Start the streaming.
                 archive.pipe res
 
-                # Arbort archiving process when the user aborts his request.
+                # Abort archiving process when the user aborts his request.
                 res.on 'close', ->
                     archive.abort()
 
@@ -141,10 +145,12 @@ module.exports.zip = (req, res, next) ->
                 res.setHeader 'Content-Disposition', disposition
                 res.setHeader 'Content-Type', 'application/zip'
 
+                # Append all photos to the archive.
                 async.eachSeries photos, addToArchive, (err) ->
                     if err
                         log.error "An error occured: #{err}"
                     else
+                        # Make the archive as ready.
                         archive.finalize()
 
 
