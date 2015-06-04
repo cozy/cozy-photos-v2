@@ -1,3 +1,4 @@
+# Facilitator to allow user to copy url to clipboard in a easy way.
 module.exports = class Clipboard
 
     constructor: ->

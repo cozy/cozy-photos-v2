@@ -1,130 +1,177 @@
-Album = require '../models/album'
-Photo = require '../models/photo'
-CozyAdapter = require 'jugglingdb-cozy-adapter'
-i18n  = require 'cozy-i18n-helper'
 async = require 'async'
 fs    = require 'fs'
-zipstream = require 'zipstream'
+archiver = require 'archiver'
+
+Album = require '../models/album'
+Photo = require '../models/photo'
+sharing = require './sharing'
+cozydb = require 'cozydb'
 {slugify, noop} = require '../helpers/helpers'
+downloader = require '../helpers/downloader'
+{NotFound, NotAllowed} = require '../helpers/errors'
 
-module.exports = (app) ->
+log = require('printit')
+    date: false
+    prefix: "album"
 
-    index: (req, res) ->
-        request = if req.public then 'public' else 'all'
+# Get all albums and their covers then put data into the index template.
+# (For faster rendering).
+module.exports.index = (req, res, next) ->
+    async.parallel [
+        (cb) -> Album.listWithThumbs cb
+        (cb) -> cozydb.api.getCozyLocale cb
+    ], (err, results) ->
+        [albums, locale] = results
+        visible = []
+        async.each albums, (album, callback) =>
+            sharing.checkPermissions album, req, (err, isAllowed) =>
+                visible.push album if isAllowed and not err
+                callback null
 
-        async.parallel [
-            (cb) -> Photo.albumsThumbs cb
-            (cb) -> Album.request request, cb
-            (cb) -> i18n.getLocale null, cb
-        ], (err, results) ->
-
-            [photos, albums, locale] = results
-            out = []
-            for albumModel in albums
-                album = albumModel.toObject()
-                album.thumb = photos[album.id]
-                out.push album
-
-            imports = """
+        , (err) ->
+            res.render 'index', imports: """
                     window.locale = "#{locale}";
-                    window.initalbums = #{JSON.stringify(out)};
+                    window.initalbums = #{JSON.stringify(visible)};
                 """
 
-            res.render 'index.jade', imports: imports
 
-
-    fetch: (req, res, next, id) ->
-        Album.find id, (err, album) ->
-            return res.error 500, 'An error occured', err if err
-            return res.error 404, 'Album not found' if not album
-
+# Retrieve given album data.
+module.exports.fetch = (req, res, next, id) ->
+    Album.find id, (err, album) ->
+        if err
+            next err
+        else if not album
+            next NotFound "Album #{id}"
+        else
             req.album = album
             next()
 
-    list: (req, res) ->
 
-        request = if req.public then 'public' else 'all'
+# Get all albums and their cover.
+module.exports.list = (req, res, next) ->
 
-        async.parallel [
-            (cb) -> Photo.albumsThumbs cb
-            (cb) -> Album.request request, cb
-        ], (err, results) ->
-            [photos, albums] = results
-            out = []
-            for albumModel in albums
-                album = albumModel.toObject()
-                album.thumb = photos[album.id]
-                out.push album
+    Album.listWithThumbs (err, albums) ->
+        return next err if err
 
-            res.send out
+        visible = []
+        async.each albums, (album, callback) =>
+            sharing.checkPermissions album, req, (err, isAllowed) =>
+                visible.push album if isAllowed and not err
+                callback null
 
-    create: (req, res) ->
-        album = new Album req.body
-        Album.create album, (err, album) ->
-            return res.error 500, "Creation failed.", err if err
+        , (err) ->
+            return next err if err
+            res.send visible
 
-            res.send album, 201
+# Create new photo album.
+module.exports.create = (req, res, next) ->
+    album = new Album req.body
+    Album.create album, (err, album) ->
+        return next err if err
 
-    sendMail: (req, res) ->
-        data =
-            to: req.body.mails
-            subject: "I share an album with you"
-            content: "You can access to my album via this link : #{req.body.url}"
-        CozyAdapter.sendMailFromUser data, (err) ->
-            return res.error 500, "Server couldn't send mail.", err if err
-            res.send 200
-
-    read: (req, res) ->
-
-        if req.album.clearance is 'private' and req.public
-            return res.error 401, "You are not allowed to view this album."
-
-        Photo.fromAlbum req.album, (err, photos) ->
-            return res.error 500, 'An error occured', err if err
-
-            # JugglingDb doesn't let you add attributes to the model
-            out = req.album.toObject()
-            out.photos = photos
-            out.thumb = photos[0].id if photos.length
-
-            res.send out
-
-    zip: (req, res) ->
-        Photo.fromAlbum req.album, (err, photos) ->
-            return res.error 500, 'An error occured', err if err
-            return res.error 401, 'The album is empty' unless photos.length
-
-            zip = zipstream.createZip level: 1
-
-            addToZip = (photo, cb) ->
-                stream = photo.getFile 'raw', noop
-                extension = photo.title.substr photo.title.lastIndexOf '.'
-                photoname = photo.title.substr 0, photo.title.lastIndexOf '.'
-                photoname = slugify(photoname) + extension
-                zip.addFile stream, name: photoname, cb
-
-            async.eachSeries photos, addToZip, (err) ->
-                zip.finalize noop
-
-            zipname = slugify(req.album.title)
-            disposition = "attachment; filename=\"#{zipname}.zip\""
-            res.setHeader 'Content-Disposition', disposition
-            res.setHeader 'Content-Type', 'application/zip'
-            zip.pipe res
+        res.status(201).send album
 
 
+# Read given photo album if rights are not broken.
+module.exports.read = (req, res, next) ->
 
-    update: (req, res) ->
-        req.album.updateAttributes req.body, (err) ->
-            return res.error 500, "Update failed.", err if err
+    sharing.checkPermissions req.album, req, (err, isAllowed) ->
+        if not isAllowed
+            next NotAllowed()
 
-            res.send req.album
+        else
+            Photo.fromAlbum req.album, (err, photos) ->
+                return next err if err
 
-    delete: (req, res) ->
-        req.album.destroy (err) ->
-            return res.error 500, "Deletion failed.", err if err
+                # JugglingDb doesn't let you add attributes to the model
+                out = req.album.toObject()
+                out.photos = photos
+
+                res.send out
+
+
+# Generate a zip archive containing all photo attached to photo docs of give
+# album.
+module.exports.zip = (req, res, next) ->
+    sharing.checkPermissions req.album, req, (err, isAllowed) ->
+        if not isAllowed
+            next NotAllowed()
+
+        else
+            album = req.album
+            archive = archiver 'zip'
+            zipName = slugify req.album.title or 'Album'
+
+            addToArchive = (photo, cb) ->
+
+                # Photo uploaded from the app.
+                if photo?.binary.raw?
+                    type = 'raw'
+
+                # Photo imported from Files.
+                else if photo?.binary.file?
+                    type = 'file'
+                else
+                    # There is nothing to download for this photo.
+                    return cb()
+
+                # Get a stream  of the binary.
+                laterStream = photo.getBinary type, (err) ->
+                    if err?
+                        log.error "An error occured while adding a photo to
+                                   archive. Photo: #{photo.id}."
+                        log.raw err
+                        cb()
+
+                # Append the stream photo to the archive.
+                laterStream.on 'ready', (stream) ->
+                    # Get the file's name in the archive.
+                    name = photo.title or "#{photo.id}.jpg"
+                    archive.append stream, {name}
+                    cb()
+
+            # Build zip from file list and pip the result in the response.
+            makeZip = (zipName, photos) ->
+
+                # Start the streaming.
+                archive.pipe res
+
+                # Abort archiving process when the user aborts his request.
+                res.on 'close', ->
+                    archive.abort()
+
+                # Set headers describing the final zip file.
+                disposition = "attachment; filename=\"#{zipName}.zip\""
+                res.setHeader 'Content-Disposition', disposition
+                res.setHeader 'Content-Type', 'application/zip'
+
+                # Append all photos to the archive.
+                async.eachSeries photos, addToArchive, (err) ->
+                    if err
+                        log.error "An error occured: #{err}"
+                    else
+                        # Make the archive as ready.
+                        archive.finalize()
+
 
             Photo.fromAlbum req.album, (err, photos) ->
-                photo.destroy() for photo in photos
+                if err then next err
+                else
+                    makeZip zipName, photos
 
-            res.success "Deletion succeded."
+
+module.exports.update = (req, res, next) ->
+    req.album.updateAttributes req.body, (err) ->
+        return next err if err
+        res.send req.album
+
+
+# Destroy album and all its photos.
+module.exports.delete = (req, res, next) ->
+    req.album.destroy (err) ->
+       return next err if err
+
+       Photo.fromAlbum req.album, (err, photos) ->
+           photo.destroy() for photo in photos
+
+       res.send success: "Deletion succeded."

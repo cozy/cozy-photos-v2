@@ -1,12 +1,24 @@
 app = require 'application'
-BaseView = require 'lib/base_view'
-Gallery = require 'views/gallery'
-{editable} = require 'lib/helpers'
-Clipboard = require 'lib/clipboard'
-contactModel = require 'models/contact'
 
-Contact = new contactModel()
+BaseView = require 'lib/base_view'
+Galery = require 'views/galery'
+Clipboard = require 'lib/clipboard'
+
+thProcessor = require 'models/thumbprocessor'
+CozyClearanceModal = require 'cozy-clearance/modal_share_view'
 clipboard = new Clipboard()
+
+TAB_KEY_CODE = 9
+
+class ShareModal extends CozyClearanceModal
+    initialize: ->
+        super
+        @refresh()
+
+    # override makeURL to append the key in the middle of the url
+    # see: models/album:getPublicURL
+    makeURL: (key) -> @model.getPublicURL key
+
 
 module.exports = class AlbumView extends BaseView
     template: require 'templates/album'
@@ -15,138 +27,150 @@ module.exports = class AlbumView extends BaseView
     className: 'container-fluid'
 
     events: =>
-        'click   a.delete' : @destroyModel
-        'click   a.changeclearance' : @changeClearance
-        'click   a.addcontact' : @addcontact
-        'click   a.sendmail' : @sendMail
-        'click   a.add' : @prepareContact
+        'click a.delete': @destroyModel
+        'click a.clearance': @changeClearance
+        'click a.sendmail': @sendMail
+        'click a#rebuild-th-btn': @rebuildThumbs
+        'click a.stopediting': @checkNew
+        'blur #title': @onTitleChanged
+        'blur #description': @onDescriptionChanged
+        'click #title': @onFieldClicked
+        'click #description': @onFieldClicked
+        'mousedown #title': @onFieldClicked
+        'mousedown #description': @onFieldClicked
+        'mouseup #title': @onFieldClicked
+        'mouseup #description': @onFieldClicked
+        'keydown #description': @onDescriptionKeyUp
+
+
+    initialize: (options) ->
+        super options
+
+        # debounce the call to `@onPhotoCollectionChange` to prevent spamming
+        # server with useless `PUT` on album just to update the `updated` date
+        # when bulk-adding items to collection.
+        onPhotoCollectionChange = _.debounce @onPhotoCollectionChange, 50
+        @listenTo @model.photos, 'add remove', onPhotoCollectionChange
+        @listenTo @model, 'change:clearance', @render
 
     getRenderData: ->
-        clearanceHelpers = @clearanceHelpers(@model.get 'clearance')
-        _.extend
-            clearanceHelpers: clearanceHelpers
-            photosNumber: @model.photos.length
+        key = $.url().param('key')
+        downloadPath = "albums/#{@model.get 'id'}.zip"
+        downloadPath += "?key=#{key}" if key?
 
+        res = _.extend
+            downloadPath: downloadPath
+            photosNumber: @model.photos.length
         , @model.attributes
+        res
 
     afterRender: ->
-        @gallery = new Gallery
+
+        # Use title of album as window title
+        document.title = "#{t 'application title'} - #{@model.get 'title'}"
+
+        @title = @$ '#title'
+        @description = @$ '#description'
+
+        @galery = new Galery
             el: @$ '#photos'
             editable: @options.editable
             collection: @model.photos
             beforeUpload: @beforePhotoUpload
-            
-        @gallery.render()
 
-        @makeEditable() if @options.editable
+        @galery.album = @model
+        @galery.render()
 
-    # save album before photos are uploaded to it
-    # store albumid in the photo
+        if @options.editable
+            @makeEditable()
+        else
+            @title.addClass 'disabled'
+            @description.addClass 'disabled'
+
+
     beforePhotoUpload: (callback) =>
-        @saveModel().then =>
-            callback albumid: @model.id
+        callback albumid: @model.id
 
-    # make the divs editable
+    onTitleChanged: =>
+        @saveModel title: @title.val().trim()
+
+    onDescriptionChanged: =>
+        @saveModel description: @description.val().trim()
+
     makeEditable: =>
+        document.title = "#{t 'application title'} - #{@model.get 'title'}"
         @$el.addClass 'editing'
+        @options.editable = true
+        @galery.options.editable = true
 
-        @refreshPopOver @model.get 'clearance'
+    makeNonEditable: =>
+        document.title = "#{t 'application title'} - #{@model.get 'title'}"
+        @$el.removeClass 'editing'
+        @options.editable = false
+        @galery.options.editable = false
 
-        editable @$('#title'),
-            placeholder: t 'Title ...'
-            onChanged: (text) => @saveModel title: text
+    onFieldClicked: (event) =>
+        unless @options.editable
+            event.preventDefault()
+            false
 
-        editable @$('#description'),
-            placeholder: t 'Write some more ...'
-            onChanged: (text) => @saveModel description: text
-
+    # Ask for confirmation if album is not new.
     destroyModel: ->
-        if @model.isNew()
-            return app.router.navigate 'albums', true
-
-        if confirm t 'Are you sure ?'
+        if confirm t "are you sure you want to delete this album"
             @model.destroy().then ->
                 app.router.navigate 'albums', true
 
-    changeClearance: (event) ->
-        newclearance = event.target.id.replace 'change', ''
+    checkNew: (event) =>
+        if @model.get('title') is '' and
+           @model.get('description') is '' and
+           @model.photos.length is 0
+            if confirm t 'delete empty album'
+                event.preventDefault()
+                @model.destroy().then ->
+                    app.router.navigate 'albums', true
+        true
 
-        @saveModel(clearance: newclearance).then =>
-            @refreshPopOver newclearance
+    # Change sharing state of the album.
+    changeClearance: (event) =>
+        @model.set 'clearance', [] unless @model.get('clearance')?
+        @model.set 'type', 'album'
+        new ShareModal
+            model: @model
 
-    refreshPopOver: (clearance) ->
-        help =  @clearanceHelpers clearance
-        modal = @$('#clearance-modal')
+    # Temporary tool to allow people to rebuild the thumbnails with size
+    # set recently. New size is larger, so older thumbs looks blurry.
+    # This function recalculate them with the right size
+    rebuildThumbs: (event) ->
+        $("#rebuild-th p").remove()
+        models = @model.photos.models
 
-        @$('.clearance').find('span').text clearance
-        modal.find('h3').text help.title
-        modal.find('.modal-body').html help.content
-        modal.find('.changeclearance').show()
-        modal.find('#change' + clearance).hide()
-        if clearance is "hidden"
-            modal.find('.share').show()
-            clipboard.set @getPublicUrl()
-        else
-            modal.find('.share').hide()
-            clipboard.set ""
+        recFunc = ->
+            if models.length > -1
+                model = models.pop()
+                setTimeout ->
+                    thProcessor.process model
+                    recFunc()
+                , 500
+        recFunc()
 
-    addcontact: () ->
-        # Initialize user's contacts
-        modal = @$('#add-contact-modal')
-        @options.contacts = []
-        Contact.list
-            success: (body) =>
-                for contact in body
-                    for item in contact.datapoints
-                        if item.name is "email"
-                            @options.contacts.push contact
-                            break
-                @$('#add-contact-modal').modal('hide')
-                @render modal
-                @$('#add-contact-modal').modal('show')
-            error: (err) ->
-                console.log err
+    onDescriptionKeyUp: (event) ->
+        if TAB_KEY_CODE in [event.keyCode, event.which]
+            $('.stopediting').focus()
 
-    prepareContact: (event) ->
-        # Recover mails of selected contacts
-        modal = @$('#add-contact-modal')
-        mails = []
-        for contact in @options.contacts 
-            if @$("##{contact.fn}").is(':checked')
-                for item in contact.datapoints
-                    if item.name is "email"
-                        mails.push item.value
-        @$('#mails').val(mails)
+    saveModel: (data) ->
+        data.updated = Date.now()
+        @model.save data
 
-    sendMail: () ->
-        @model.sendMail @getPublicUrl(), @$('#mails').val(), 
-            error: (err) ->
-                alert JSON.stringify(err.responseText)
+    onPhotoCollectionChange: =>
+        @model.save updated: Date.now()
+        # updates the photo counter
+        @$('.photo-number').html @model.photos.length
 
-    saveModel: (hash) ->
-        promise = @model.save(hash)
-        if @model.isNew()
-            promise = promise.then =>
-                app.albums.add @model
-                app.router.navigate "albums/#{@model.id}/edit"
+    # Force display of given photo.
+    showPhoto: (photoid) ->
+        @galery.showPhoto photoid
 
-        return promise
+    # Force galery to close.
+    closeGallery: ->
+        @galery.closePhotobox()
 
-    getPublicUrl: ->
-        origin = window.location.origin
-        path = window.location.pathname.replace 'apps', 'public'
-        path = '/public/' if path is '/'
-        hash = window.location.hash.replace '/edit', ''
-        return origin + path + hash
-
-    clearanceHelpers: (clearance) ->
-        if clearance is 'public'
-            title: t 'This album is public'
-            content: t 'It will appears on your homepage.'
-        else if clearance is 'hidden'
-            title: t 'This album is hidden'
-            content: t("hidden-description") + " #{@getPublicUrl()}" + 
-                        "<p>If you want to copy url in your clipboard : just press Ctrl+C </p>"
-        else if clearance is 'private'
-            title: t 'This album is private'
-            content: t 'It cannot be accessed from the public side'

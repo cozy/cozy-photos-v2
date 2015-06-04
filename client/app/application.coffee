@@ -1,7 +1,11 @@
+SocketListener = require './lib/socket_listener'
+
 module.exports =
 
     initialize: ->
 
+        window.app = this
+        # Translation helpers.
         @locale = window.locale
         @polyglot = new Polyglot()
         try
@@ -15,12 +19,25 @@ module.exports =
         AlbumCollection = require('collections/album')
         Router = require('router')
 
-        @albums = new AlbumCollection()
         @router = new Router()
+        @socketListener = new SocketListener()
+
+        $(window).on "hashchange", @router.hashChange
+        $(window).on "beforeunload", @router.beforeUnload
+
+        # Base data
+        @albums = new AlbumCollection()
+
+        @urlKey = ""
+        if window.location.search
+            for param in window.location.search.substring(1).split '&'
+                [key, value] = param.split '='
+                @urlKey = "?key=#{value}" if key is 'key'
 
         @mode = if window.location.pathname.match /public/ then 'public'
         else 'owner'
 
+        # Display albums. Fetch data if no data were loaded via server index.
         if window.initalbums
             @albums.reset window.initalbums, parse: true
             delete window.initalbums

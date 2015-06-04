@@ -1,6 +1,7 @@
-a(href="#albums/#{id}")
+a(class=isRecent id="#{id}", href="#albums/#{id}")
     img(src="#{thumbsrc}")
-
-div.text
-    h4 #{title}
-    p!= description
+    span.title
+        if folderid == "all"
+            = title
+        else
+            b= title

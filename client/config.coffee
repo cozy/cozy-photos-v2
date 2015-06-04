@@ -1,14 +1,15 @@
-exports.config =
+path = require 'path'
 
-    # See http://brunch.readthedocs.org/en/latest/config.html for documentation.
-    paths:
-        public: 'public'
-        test: '_specs'
+console.log path.resolve __dirname, '../build/client/public'
+
+exports.config =
 
     plugins:
         coffeelint:
             options:
                 indentation: value:4, level:'error'
+        jade:
+            globals: ['t']
 
     conventions:
         vendor: /(vendor)|(_specs)(\/|\\)/ # do not wrap tests in modules
@@ -31,6 +32,7 @@ exports.config =
                     'vendor/scripts/async.js',
                     # Twitter Bootstrap jquery plugins
                     'vendor/scripts/bootstrap.js',
+                    'vendor/scripts/polyglot.js',
                 ]
                 after: [
                 ]
@@ -41,11 +43,20 @@ exports.config =
                 'stylesheets/vendor.css': /^vendor/
             order:
                 before: [
-                    'vendor/styles/bootstrap.css'
-                    'vendor/styles/bootstrap-responsive.css',
+                    'vendor/styles/bootstrap.min.css'
                 ]
                 after: []
         templates:
             defaultExtension: 'jade'
             joinTo: 'javascripts/app.js'
+
     framework: 'backbone'
+
+    overrides:
+        production:
+            # re-enable when uglifyjs will handle properly in source maps
+            # with sourcesContent attribute
+            # optimize: false
+            sourceMaps: true
+            paths:
+                public: path.resolve __dirname, '../build/client/public'

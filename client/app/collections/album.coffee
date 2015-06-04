@@ -5,4 +5,5 @@
 module.exports = class AlbumCollection extends Backbone.Collection
 
     model: require 'models/album'
-    url: 'albums'
+    url: 'albums' + app.urlKey
+    comparator: (model) -> model.get 'title'

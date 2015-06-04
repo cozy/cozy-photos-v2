@@ -1,8 +1,10 @@
-db = require '../db/cozy-adapter'
+cozydb = require 'cozydb'
 
-module.exports = Contact = db.define 'Contact',
-    id : String
-    fn : String
-    datapoints : [Object]
-    note : String
-    _attachments : Object
+# Contacts are required to make sharing easier.
+module.exports = class Contact extends cozydb.CozyModel
+    id           : String
+    fn           : String
+    n            : String
+    datapoints   : cozydb.NoSchema
+    note         : String
+    _attachments : cozydb.NoSchema

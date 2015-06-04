@@ -1,60 +1,80 @@
-module.exports = (app) ->
+americano = require 'americano'
+sharing = require './controllers/sharing'
+path = require 'path'
+fs = require 'fs'
+localizationManager = require('./helpers/localization_manager')
+RealtimeAdapter = require('cozy-realtime-adapter')
+init = require './helpers/initializer'
+thumb = require('./helpers/thumb').create
+File = require './models/file'
+path = require 'path'
+os = require 'os'
 
-    shortcuts = require './helpers/shortcut'
-    express   = require 'express'
-    http      = require 'http'
-    sio       = require 'socket.io'
-    i18n      = require 'cozy-i18n-helper'
+staticMiddleware = americano.static __dirname + '/../client/public',
+                        maxAge: 86400000
 
-    # extract http server from express ...
-    server = http.createServer app
-    app.listen = -> server.listen.apply server, arguments
+publicStatic = (req, res, next) ->
+    url = req.url
+    req.url = req.url.replace '/public', ''
+    staticMiddleware req, res, (err) ->
+        req.url = url
+        next err
 
-    # ... so we can plug socket.io
-    app.io = sio.listen server
-    app.io.set 'log level', 2
-    app.io.set 'transports', ['websocket']
+useBuildView = fs.existsSync path.resolve(__dirname, 'views/index.js')
 
-    # all environements
-    app.use express.bodyParser
-        uploadDir: __dirname + '/uploads'
-        defer: true # don't wait for full form. Needed for progress events
-        keepExtensions: true
-        maxFieldsSize: 10 * 1024 * 1024
+module.exports =
+    common:
+        set:
+            'view engine': if useBuildView then 'js' else 'jade'
+            'views': path.resolve __dirname, 'views'
 
-    # extend express to DRY controllers
-    app.use shortcuts
+        engine:
+            js: (path, locales, callback) ->
+                callback null, require(path)(locales)
 
-    # views in client directory
-    app.set 'views', __dirname + '/../client'
+        use: [
+            americano.methodOverride()
+            americano.bodyParser()
 
-    # mark public request
-    app.use (req, res, next) ->
-        if req.url.match /^\/public/
-            req.public = true
-        next()
+            staticMiddleware
+            publicStatic
 
-    #test environement
-    app.configure 'test', ->
+            sharing.markPublicRequests
+        ]
+        useAfter: [
+            americano.errorHandler
+                dumpExceptions: true
+                showStack: true
+        ]
+        afterStart: (app, server) ->
 
-    #development environement
-    app.configure 'development', ->
-        app.use express.logger 'dev'
-        app.use express.errorHandler
-            dumpExceptions: true
-            showStack: true
+            app.server = server
 
-    #production environement
-    app.configure 'production', ->
-        app.use express.logger()
-        app.use express.errorHandler
-            dumpExceptions: true
-            showStack: true
+            # pass reference to photo controller for socket.io upload progress
+            require('./controllers/photo').setApp app
 
-    # static middleware
-    staticMiddleware = express.static __dirname + '/../client/public',
-        maxAge: 86400000
+            # pass render engine to LocalizationManager
+            viewEngine = app.render.bind app
+            localizationManager.setRenderer viewEngine
 
-    # same client for public and private routes
-    app.use '/public', staticMiddleware
-    app.use staticMiddleware
+            # create the uploads folder
+            try fs.mkdirSync path.join os.tmpdir(), 'uploads'
+            catch err then if err.code isnt 'EEXIST'
+                console.log "Something went wrong while creating uploads folder"
+                console.log err
+
+            # Initialize realtime
+            # contact, album & photo events are sent to client
+            patterns = ['contact.*', 'album.*', 'photo.*']
+            realtime = RealtimeAdapter server, patterns
+
+
+    development: [
+        americano.logger 'dev'
+    ]
+    production: [
+        americano.logger 'short'
+    ]
+    plugins: [
+        'cozydb'
+    ]

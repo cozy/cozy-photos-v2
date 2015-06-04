@@ -1,101 +1,55 @@
-div.row-fluid
-  div#about.span4
+div#about
+  div.clearfix
     div#links.clearfix
-      a.flatbtn.back(href="#albums")
-        i.icon-arrow-left.icon-white
-        span= t("Back")
+        p.back
+            a.flatbtn(href="#albums")
+                span.fa.fa-arrow-left.icon-white
+                span= t("Back")
+        p.startediting
+             a.flatbtn(href="#albums/#{id}/edit")
+                span.fa.fa-edit.icon-white
+                span= t("Edit")
+        p.stopediting
+            a.flatbtn.stopediting(href="#albums/#{id}")
+                span.fa.fa-save.icon-white
+                span= t("Stop editing")
+        p.download
+            a.flatbtn(href="#{downloadPath}")
+                span.fa.fa-download.icon-white
+                span= t("Download")
+        p.delete
+            a.flatbtn.delete
+                span.fa.fa-trash.icon-white
+                span= t("Delete")
+        p.clearance
+            a.flatbtn.clearance
+                span.fa.fa-share-alt.icon-white
+                span= t("share")
+    div#album-text
+        div#album-text-background
 
-      if 'undefined' != typeof id
-        a.flatbtn.startediting(href="#albums/#{id}/edit")
-          i.icon-edit.icon-white
-          span= t("Edit")
+            div.right
+                p
+                    span.photo-number= photosNumber
+                    br
+                    span= t("picture", {smart_count: photosNumber})
 
-        if photosNumber != 0
-          a.flatbtn.download(href="albums/#{id}.zip")
-            i.icon-download-alt.icon-white
-            span= t("Download")
+            form.left
+                div
+                    span.clearance-state
+                        if clearance == 'public'
+                            span.fa.fa-globe
+                            | &nbsp;
+                            | #{t('shared')}
+                        else if clearance && clearance.length > 0
+                            span.fa.fa-share-alt
+                            | &nbsp;
+                            | #{t('shared')}
+                            if clearance.length
+                                span &nbsp;(#{clearance.length})
+                input#title(type="text", placeholder="#{t('title placeholder')}", value=title)
+                textarea#description(placeholder="#{t('description placeholder')}")!= description
 
-        a.flatbtn.stopediting(href="#albums/#{id}")
-          i.icon-eye-open.icon-white
-          span= t("View")
-
-        a.flatbtn.delete
-          i.icon-remove.icon-white
-          span= t("Delete")
-
-        a.flatbtn.clearance(
-          href="#clearance-modal",
-          data-toggle="modal")
-          i.icon-upload.icon-white
-          span= t(clearance)
-
-    h1#title #{title}
-    div#description!= description
-  div#photos.span8
-
-  #clipboard-container
-    textarea(id="clipboard")
-    
-  #clearance-modal.modal.hide
-    .modal-header
-      button.close(type="button", data-dismiss="modal") &times;
-      h3 clearanceHelpers.title
-
-    .modal-body clearanceHelpers.content
-
-    .modal-footer      
-      a#changeprivate.btn.changeclearance= t("Make it Private")
-      a#changehidden.btn.changeclearance= t("Make it Hidden")
-      a#changepublic.btn.changeclearance= t("Make it Public")
-      a.btn.share(
-        href="#share-modal",
-        data-toggle="modal",
-        data-dismiss="modal")
-        span= t("Share album by mail")
-
-  #share-modal.modal.hide
-    .modal-header
-      button.close(type="button", data-dismiss="modal") &times;
-      h3= t("Share album")
-
-    .modal-body 
-      input.input-block-level(type="text", value="", id="mails", placeholder="<example@cozycloud.cc>, <other-example@cozycloud.cc>")
-
-    .modal-footer 
-      a.btn.addcontact(
-        href="#add-contact-modal",
-        data-toggle="modal",
-        data-dismiss="modal")
-        span= t("Add contact")
-      a.btn.sendmail(type="button", data-dismiss="modal")
-        span= t("Send mail")    
-
-
-
-  #add-contact-modal.modal.hide
-    .modal-header
-      button.close(type="button", data-dismiss="modal") &times;
-      h3= t("Select your friends")
-
-    .modal-body 
-      #contacts.input
-        if contacts.length === 0
-          p= t("Upload your contacts ...")
-        else
-          each contact in contacts
-            input(type="checkbox", name="#{contact.fn}", id ="#{contact.fn}").checkbox
-            span #{contact.fn}
-            br
-
-    .modal-footer      
-      a.btn.add(
-        href="#share-modal",
-        data-toggle="modal",
-        data-dismiss="modal")
-        span= t("Add")
-
-      a.btn.cancel(
-        href="#share-modal",
-        data-toggle="modal",
-        data-dismiss="modal")
-        span= t("Cancel")
+div#photos.clearfix
+  //-div#rebuild-th
+      //-a#rebuild-th-btn= t("rebuild thumbnails")

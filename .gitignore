@@ -14,5 +14,8 @@ results
 
 node_modules
 uploads
+client/public
 
 npm-debug.log
+test-get.zip
+*.transifex.coffee

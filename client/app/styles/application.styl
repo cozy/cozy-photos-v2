@@ -1,32 +1,30 @@
-@font-face
-    font-family: styled
-    src: url('/fonts/maven-pro-light-300.otf');
+@import 'nib'
 
-@font-face
-    font-family: main
-    src: url('/fonts/signika-regular.ttf');
+@import '_cozy'
 
+// Colors
 
 bgcolor = #fcfcfc
+bgcolor = #F3F3F3
 uploadcolor = #34a6ff
 darkgrey = #444
 basecolor = lightgrey
 orange = #fe8800
 blue = #34a6ff
+bluegreen = #34A6BB
+green = #5C5
 
+
+// Commons
 
 body
-    height 96%
-    padding 1%
     background-color bgcolor
 
-// # commons
-
-#album, #album-list
-    font-family main
-
 h1, h4
-    font-family styled
+    font-family 'Maven Pro', sans-serif
+
+.pa2
+    padding: 20px
 
 .flatbtn
     margin-bottom 20px
@@ -38,9 +36,7 @@ h1, h4
     background-color blue
     color white
     cursor pointer
-    text-transform capitalize
-    width 30%
-    float left
+    width 100%
     border 0
 
     span
@@ -65,13 +61,15 @@ h1, h4
     background orange
     box-shadow 1px 3px 2px rgba(0, 0, 0, 0.2) inset
 
-@media (max-width: 1210px)
-    .flatbtn
-        width 36%
+.btn-cozy
+    font-weight normal
 
-@media (max-width: 767px)
-    .flatbtn
-        width 19%
+    i
+        &:first-child
+            margin-right 1em
+
+        &:last-child
+            margin-left 1em
 
 button.delete
     position absolute
@@ -85,67 +83,128 @@ button.delete
 // #### album list page ###
 
 .albumitem
-    width 30%
-    min-width 450px
-    height 120px
     float left
-    padding 10px
-    position relative
 
     a
-        display block
-        float left
-        margin-right 10px
-        box-sizing border-box
-        border-radius 2px
-        border 2px solid blue
-        box-shadow 3px 3px 3px darkgrey
-        margin-right 20px
-        width 100px
-        height 100px
-        transition .2s ease-out
-        -webkit-transition .2s ease-out
-        overflow hidden
+        display: block
+        border-radius: 2px
+        overflow: hidden
+        width: 300px
+        height: 300px
+        color: white
+        text-decoration: none
+        border-radius: 0
+        box-sizing: border-box
+        transition: .2s ease-out
+        background-repeat: no-repeat
+        background-size: 100%
 
-        img
-            width 100px
-            height 100px
+    .title
+        z-index: 100
+        border-radius: 0
+        display: block
+        opacity: 0
 
-    a:hover
-        border 2px solid orange
+        font-size: 25px
+        line-height: 25px
+        text-align: center
+        font-variant: small-caps
+        color: white
+        background-color: rgba(0,0,0,0.7)
+
+        transition: all .2s ease-out
+
+    &:hover
+        .title
+            opacity: 1
+
+    a.recent
+        animation: recentAnim 2s ease-in-out infinite alternate;
 
     a:active
-        transition 0s ease-out
-        -webkit-transition 0s ease-out
-        box-shadow: 0px 0px 0px darkgrey
+        transition: 0s ease-out
+        box-shadow: 1px 3px 2px rgba(0, 0, 0, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.0)
 
-    .text
-        margin-left 120px
+@keyframes recentAnim {
+    from { opacity: .5 }
+    to   { opacity: 1 }
+}
 
 // #### album page ###
 
+#album, #album-list
+    font-family 'Source Sans Pro', sans-serif
+
 #album
+    width: 100%
+    height: 100%
     padding: 0
+    position: absolute
+    bottom: 0
+
+    .help
+        margin: 20px
 
 #links
     margin-bottom: 20px
 
     a
-        margin: 0 10px 10px 0
+        margin: 0
 
 #about
-    height 90%
+    box-sizing: border-box
+    float: left
+    width: 280px
+    padding: 0px
+
+    a
+        box-sizing: border-box
 
     #description
+        box-sizing: border-box
         text-align justify
-        padding 1px
-        border 0px
+        padding: 1px
+        border: 0px
+
+    #title
+    #description
+        box-sizing: border-box
+        font-weight: normal
+        padding: 8px
+        background: transparent
+        cursor: default
+        font-family: 'Source Sans Pro', sans-serif
+
+    #title
+        box-sizing: border-box
+        display: block
+        width: 80%
+        min-height: 60px
+        font-size: 30px
+        margin-bottom: 20px
+        border: 0
+
+    .right
+        box-sizing border-box
+        width: 60px
+
+    #description
+        width: 100%
+        min-height: 40px
 
     #title:active
     #description:active
         outline 0
 
 #album.editing
+    .help
+        display: none
+
+    #title
+    #description
+        outline 1px solid blue
+        cursor: text
+
     #title:focus
     #description:focus
         outline 1px solid blue
@@ -155,7 +214,8 @@ button.delete
         outline 1px solid orange
 
 #photos
-    min-height 300px
+    padding: 20px
+    min-height: 100%
     box-sizing border-box
 
     &.dragover
@@ -164,134 +224,411 @@ button.delete
     #uploader
         opacity 0.0001
         display block
-        // z-index -1
-        height 100%
-        font-size 30em
-        line-height 100px
+        width: 90%
         position absolute
+        border: 0
 
     .photo
         float left
-        margin 5px
+        opacity 0.9
+        margin 0px
         position relative
 
         a
             display block
-            width 75px
-            height 68px
             vertical-align bottom
             overflow hidden
             background rgba(0,0,0,0.1)
             transition .4s ease-out
             -webkit-transition .4s ease-out
             border 1px solid transparent
+            border: 0
+            padding: 0
+            outline: 0
+            width 100%
+            height 100%
 
             img
+                display block
                 width 100%
                 height 100%
+                background: url('../img/loading.gif') 50% 50% no-repeat
 
-    .photo .progressfill
-        width 100%
-        height 0%
-        position absolute
-        bottom 0px
-        background-color uploadcolor
-        transition .3s
-        -webkit-transition .3s
+                &.thumbed
+                    opacity 0.5
 
-    .photo a.thumbed
-        border 1px solid uploadcolor
+                &.loaded
+                  background: transparent
 
-    .photo:hover
-        transform scale(1.5)
-        -webkit-transform scale(1.5)
-        z-index 3
 
-        a
-            border 1px solid white
-            box-shadow 0 0 0 2px #FFF, 0 0 20px 5px #000
-            transition .1s
-            -webkit-transition:0.1s
+        .progressfill
+            width 0%
+            height 20px
+            position absolute
+            bottom 0px
+            background-color uploadcolor
+            transition .3s
+            -webkit-transition .3s
 
-        img
-            transform scale(1.2)
-            -webkit-transform scale(1.2)
+        &:hover
+            opacity: 1
+            z-index: 3
+
+            a
+                z-index: 10
+                padding: 0
+                outline: 0
+                box-shadow 0px 0px 10px #666
+                transition .1s
+                -webkit-transition:0.1s
+
+#rebuild-th
+
+    p
+        padding-left: 10px
+
+    a#rebuild-th-btn
+        padding-left: 10px
+        padding-bottom: 10px
+        cursor: pointer
 
 .editing #photos.empty
     border 1px solid orange
 
-.modal
-    border-radius 0px
-    border 0px
-.modal-header
-    background-color blue
-    color white
-    font-family styled
+#upload-actions
+    display: none
+    width: 100%
+    margin-bottom: 10px
+
+.editing
+    #upload-actions
+        display: table
+
+#upload-block, #browse-files
+    width: 50%
+    height: 100%
+    cursor: pointer
+    margin: 10px 0
+
+#upload-block input#uploader
+    width: 47%
+    height: 65px
+    cursor: pointer
+
+#upload-block, #browse-files
+    display: table-cell
+    box-sizing: border-box
+    overflow: hidden
+    margin: 0px
+    padding: 0px
+    text-align: center
+    cursor: pointer
+    height: 100%
+
+    span
+        padding: 10px
+
+#browse-files
+    border-left: 10px solid bgcolor
+
+#upload-block.photo:hover
+    transform scale(1)
+    -webkit-transform scale(1)
+    cursor: pointer
+
+.pbCaptionText
+    .btn-group
+        margin-left: 30px
+
+        a:hover
+           color: orange
+
+#pbCaption
+    background-color rgba(black, .65)
+
+// Clearance
+
+.flatbtn.clearance
+    background: green
+
+    &:hover
+        background: orange
+
+#clearancemanager
+  label
+    font-weight normal
+
+#cozy-clearance-modal
+  .modal-dialog
+    width 700px
+
+  .input-group
+    width 100%
+    input
+      width 90%
+      height 34px
+      line-height 1.428
+      padding-left 5px
+      -webkit-appearance button
+    a.btn
+      width 10%
+      border-bottom-left-radius 0
+      border-top-left-radius 0
+
+#share-list
+    list-style-type: none
+    margin-top 5px
+    padding-left 5px
+
+    // will allow inline-block children to be vertically aligned
+    li
+      font-size 0
+      letter-spacing 0
+      word-spacing 0
+
+      span
+        display inline-block
+        vertical-align middle
+
+        &.clearance-name
+          max-width 190px
+          overflow hidden
+          text-overflow ellipsis
+          white-space nowrap
+
+    select
+        vertical-align middle
+        font-size 14px
+        margin-left 5px
+        background: white
+        border-bottom: 1px solid lightcolor
+
+        &:focus
+            outline: none
+
+.modal-footer
+    padding: 20px
+    border: 0px none
+    background: none repeat scroll 0% 0% transparent
+
+    a.flatbtn
+        float: right
+        text-align: left
+        width: auto
+        padding: 8px
+        line-height: 10px
+        font-size:  10px
+        text-transform: lowercase
+
+
+#inherited-share-list
+    li.header
+        list-style-type none
+        margin-left -30px
+        font-weight bold
+
+.linkshow
+    font-size 14px
+    margin-bottom 5px
+    margin-left -5px
+    padding-left 10px
+    line-height: 20px
+
+    a.flatbtn.active
+            background-color: blue
+
+    label
+            margin-top: 10px
+            font-weight: normal
+
+    input
+        color #444
+        width 70%
+
+.typeahead.dropdown-menu
+    position: fixed
+    top: auto !important
+    left: 32px !important
+
+.typeahead.dropdown-menu > li > a
+    padding: 3px 6px 3px 3px
+
+.typeahead.dropdown-menu > li > a > img
+    margin: 0 3px 0 0
+
+.clearance-name
+    font-size: 15px
+    margin-left: 5px
+
+    &:first-child
+        margin-left: 50px
+
+.clearance-btn
+    font-size 16px
+    margin-left: 10px
+
+.clearance-line
+    line-height: 47px
+    border-bottom: 1px solid lightcolor
+    padding-bottom: 5px
+
+    img
+        width: 60px
+        height: 60px
+
+.modal-body
+    max-height: calc(100vh - 210px)
+    overflow: auto
+
+    dl
+    ul
+        margin 0
+        padding 0
+
+    nav
+        float right
+
+        a
+            padding 10px 5px
+            background-color transparent
+            color blue
+
+            &:hover
+                background-color transparent
+                color orange
+
+        li
+            list-style-type none
+            display inline-block
+
+            & + li
+                margin-left 10px
+
+    dt
+        padding 7px 5px
+        font-size 18px
+        font-weight normal
+
+    dd
+        clear both
+        margin 10px 0
+
+    .thumbs
+        display flex
+        flex-flow row wrap
+        list-style-type none
+
+        li
+            box-sizing border-box
+            padding 5px
+            width 25%
+
+            &:nth-child(4n+1)
+                padding-left 0
+
+            &:nth-child(4n)
+                padding-right 0
+
+        img
+            box-sizing border-box
+            width 100%
+            border 5px solid transparent
+            border-radius 4px
+            opacity 0.8
+            transition opacity border-color 500ms
+
+        .selected
+            border-color: blue
+            opacity: 1
+
+
+.notifs-label
+    margin-top: 30px
+    font-weight: normal
+    margin-bottom: 0px
+
+
+#add-contact
+    padding: 7px
+
 
 // ### Logic ###
 .mode-public .flatbtn
-.mode-public .flatbtn.startediting
+.mode-public .startediting
 .mode-public .create
 .mode-owner .empty .help
 .stopediting
-.flatbtn
 .delete
-.editing .flatbtn.startediting
-.editing .flatbtn.download
+.editing .startediting
+.editing .back
+.editing .clearance
+.editing .download
 .mode-owner.editing .empty .help
     display none
 
 .editing .flatbtn
 .editing .delete
-.mode-public .flatbtn.back
-.flatbtn.back
-.flatbtn.startediting
-.flatbtn.download
+.editing .stopediting
+.mode-public .back
+.mode-public .download
+.mode-public .download .flatbtn
+.startediting
+.download
 .mode-public .empty .help
     display block
 
-
-#uploadblock
-    display none
-    width 100%
-    margin 0px
-    overflow hidden
-    padding 10px 0px
-    margin 5px
-    position relative
-    text-align center
-    transition height 1s
-
-.editing #uploadblock
-    display block
+.mode-public #about #links
+    padding-top: 10px
 
 // # Remove effect from photobox //
 
-// #pbOverlay.show .imageWrap img,
-// #pbOverlay.show .imageWrap img,
-// #pbOverlay.on .imageWrap img,
-// #pbOverlay .imageWrap img,
-// #pbOverlay .imageWrap img.prepare,
-// #pbOverlay.hide .imageWrap img,
-// #pbOverlay.hide .imageWrap img.prepare,
-// #pbOverlay .imageWrap img.zoomable
-//     transform none
-//     -webkit-transform none
-//     -ms-transform none
-//     transition 0.01s
-//     -webkit-transition 0.01s
-//     -ms-transition 0.01s
-//     transition-delay 0s
-//     -webkit-transition-delay 0s
-//     -ms-transition-delay 0s
+#pbOverlay *, #pbOverlay *:before, #pbOverlay *:after
+    box-sizing content-box
+
+
+exifTransforms = (1 rotateZ(0deg)) (2 scale(-1, 1)) (3 rotateZ(180deg)) (4 scale(1,-1)) \
+(5 rotateZ(-90deg) scale(-1, 1)) (6 rotateZ(90deg)) (7 rotateZ(90deg) scale(-1, 1)) (8 rotateZ(-90deg))
+
+pbtransition()
+    transition 0.3s ease
+    transition-delay 0s
+    opacity 1
+    // -ms-transition .3s .5s ease-out
+
+for t in exifTransforms
+  id = t[0]
+
+  #pbOverlay
+    .wrapper img{'[data-orientation="' + id + '"]'}
+      pbtransition true
+      transform t[1] t[2]
+
+    &.next .wrapper img{'[data-orientation="' + id + '"]'}
+      pbtransition true
+      transform translate(-3000px, 0px) t[1] t[2]
+
+      &.prepare
+        transform translate(3000px, 0px) t[1] t[2]
+
+    &.prev .wrapper img{'[data-orientation="' + id + '"]'}
+      pbtransition true
+      transform translate(3000px, 0px) t[1] t[2]
+
+      &.prepare
+        transform translate(-3000px, 0px) t[1] t[2]
+
+    .wrapper img.prepare{'[data-orientation="' + id + '"]'}
+      pbtransition true
+      transform translate(0px, 0px) t[1] t[2]
 
 
 @media (max-width: 700px)
     .flatbtn
         width: auto
 
+// Clipboard Trick
 
-#clipboard-container 
+#clipboard-container
   position: fixed
   left: 0px
   top: 0px
@@ -301,7 +638,221 @@ button.delete
   display: none
   opacity: 0
 
-#clipboard 
+#clipboard
   width: 1px
-  height: 1px     
+  height: 1px
   padding: 0px
+
+
+// Responsive
+@media (max-width: 767px)
+
+    #rebuild-th
+        display: none
+
+
+@media (max-width: 600px)
+
+    #album-list
+        .create
+            a
+                font-size: 16px
+
+                img
+                    width: 40px
+
+        .albumitem .title
+            font-size: 18px
+
+
+// Handle photo size depending on the screen width
+
+.photo a
+.photo img
+    width : 100%
+
+
+.photo
+    width: 10%
+
+#about
+    width: 100%
+    padding: 0
+    box-sizing: border-box
+
+    #links
+        box-sizing: border-box
+        padding: 0 20px
+        padding-top: 20px
+        float: left
+        width: 20%
+
+        .flatbtn
+            width: 100%
+
+    #album-text
+        box-sizing: border-box
+        float: right
+        width: 80%
+        padding: 20px
+        margin: 0
+
+        .clearance-state
+            margin-left: 10px
+
+        h1#title
+            margin-top: 0
+            font-family: 'Source Sans Pro', sans-serif
+            font-size: 40px
+
+        #description
+            font-size: 18px
+
+        #album-text-background
+            box-sizing: border-box
+            padding: 20px
+            background-color: #FCFCFC
+
+            .right
+                font-size: 16px
+                float: right
+                margin-left: 20px
+
+                .photo-number
+                    font-size: 30px
+
+.albumitem
+    width: 16.6666%
+
+    .title
+        font-family: 'Maven Pro', sans-serif
+
+.create
+    width: 100%
+    height: 60px
+    background: green
+    transition: all .2s ease-out
+    text-align: center
+    padding-top: 15px
+    display: block
+
+    color: white
+    font-size: 20px
+    width: 100%
+
+    &:hover
+        background: orange
+        text-decoration: none
+        color: white
+
+    img
+        float: left
+        width: 35px
+        height: 35px
+        margin-right: 10px
+
+    span
+        text-transform: uppercase
+
+.albumitem
+    position: relative
+
+.albumitem a
+.albumitem .title
+.albumitem img
+    width: 100%
+    height: 100%
+.albumitem img
+    background: url('../img/loading.gif') 50% 50% no-repeat
+    &.loaded
+      background: transparent
+
+.albumitem a
+    height: auto
+
+.albumitem .title
+    position: absolute
+    top: 0px
+    left: 0px
+    padding-top: 45%
+    padding-bottom: 20px
+    display: block
+    min-height: 100px
+    opacity: 0
+
+@media (max-width: 1600px)
+
+    .photo
+        height: 12.5vw
+        width: 12.5%
+
+    #about
+        #links
+            width: 25%
+        #album-text
+            width: 75%
+
+    .albumitem
+        width: 20%
+
+@media (max-width: 1200px)
+
+    .photo
+        height: 16.66666vw
+        width: 16.66666%
+
+    #about
+        #links
+            width: 33.333333%
+        #album-text
+            width: 66.666666%
+
+    .albumitem
+        width: 25%
+
+@media (max-width: 900px)
+
+    .photo
+        height: 33.333vw
+        width: 33.333%
+
+    #about
+        #links
+            width: 33.333%
+
+    .albumitem
+        width: 33.333%
+
+@media (max-width: 600px)
+
+    .photo
+        height: 50vw
+        width: 50%
+
+    #photos
+        padding-left: 0
+        padding-right: 0
+
+    #about
+        padding: 20px
+
+        #links
+            padding: 0
+            width: 100%
+
+        #album-text
+            padding: 0 0 20px 0
+            width: 100%
+
+            h1#title
+                margin-top: 0
+
+        #title
+            width: 100%
+
+        .right
+            display: none
+
+    .albumitem
+        width: 50%
+
