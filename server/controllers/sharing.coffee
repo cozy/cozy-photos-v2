@@ -7,25 +7,35 @@ Album = require '../models/album'
 localizationManager = require '../helpers/localization_manager'
 
 
-getDisplayName = (callback) ->
+getUser = (callback) ->
     cozydb.api.getCozyUser (err, user) ->
+        return callback err if err
+
         if user?.public_name and user.public_name.length > 0
-            callback null, user.public_name
+            callback null,
+                name:  user.public_name
+                email: user.email
         else
             localizationManager.ensureReady (err) ->
-                callback null, localizationManager.t 'default user name'
+                callback null,
+                    name: localizationManager.t 'default user name'
+                    email: null
+
 
 clearanceCtl = clearance.controller
     mailTemplate: (options, callback) ->
-        getDisplayName (err, displayName) ->
-            options.displayName = displayName
+        getUser (err, user) ->
+            options.displayName = user.name
+            options.displayEmail= user.email
             localizationManager.render 'sharemail', options, callback
 
     mailSubject: (options, callback) ->
-        getDisplayName (err, displayName) ->
-            callback null, localizationManager.t 'email sharing subject',
-                displayName: displayName
-                name: options.doc.title
+        getUser (err, user) ->
+            # Need to force locale to be loaded before executing callback
+            localizationManager.ensureReady (err) ->
+                callback null, localizationManager.t 'email sharing subject',
+                    displayName: user.name
+                    name: options.doc.title
 
 # fetch album, put it in req.doc
 module.exports.fetch = (req, res, next, id) ->
