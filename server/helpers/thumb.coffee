@@ -28,14 +28,25 @@ module.exports = thumb =
                 callback err
             else
                 orientation = data.Orientation
+# MODIF :Rémi
+                gpsDatas = { 'exif:GPSAltitude',
+                             'exif:GPSAltitudeRef',
+                             'exif:GPSLatitude',
+                             'exif:GPSLatitudeRef',
+                             'exif:GPSLongitude',
+                             'exif:GPSLongitudeRef' }
+                GPS = {}
+                for gpsData in gpsDatas
+                    GPS[gpsData] = if ( data.Properties[gpsData]?) then data.Properties[gpsData] else null
 
                 if not(orientation?) or data.Orientation is 'Undefined'
                     orientation = 1
 
                 metadata =
                     exif:
-                        orientation: orientation
-                        date: data.Properties['date:create']
+                        orientation:    orientation
+                        date:           data.Properties['date:create']
+                        gps:            GPS
 
                 callback null, metadata
 

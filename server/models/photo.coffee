@@ -1,5 +1,7 @@
-cozydb = require 'cozydb'
-async = require 'async'
+cozydb  = require 'cozydb'
+async   = require 'async'
+fs      = require 'fs'
+thumbHelpers = require '../helpers/thumb'
 
 module.exports = class Photo extends cozydb.CozyModel
     @schema:
@@ -11,6 +13,7 @@ module.exports = class Photo extends cozydb.CozyModel
         _attachments : Object
         albumid      : String
         date         : String
+        gps          : Object
 
 
     # Get all photo linked to given album
@@ -22,6 +25,37 @@ module.exports = class Photo extends cozydb.CozyModel
                 startkey: [album.id]
                 endkey: [album.id + "0"]
             Photo.request 'byalbum', params, callback
+#Modif Rémi
+    @patchGps: (callback) ->
+        Photo.fromAlbum {folderId: "all" }, (err, photos) ->
+
+            return callback err if err? # retour si erreur
+            async.eachSeries photos, (photo, next) ->
+
+                unless photo.gps?
+                    gpsCoordinates = {}
+                    photo.extractGpsFromBinary next
+                else next()
+            , callback
+
+    extractGpsFromBinary: (callback) ->
+        unless @binary.raw
+             res = @getFile, (err) ->
+             return callback err if err?
+
+        else res = @getBinary 'raw', (err) ->
+            return callback err if err?
+
+        res.on 'ready', (stream) ->
+            helper.readMetadata stream, (data) ->
+                console.log data?.exif?.gps
+                    # sauvegarde les données en bdd
+                    # GPS = data.exif.gps if data?.exif?.gps? else {} # PROD
+                    #@updateAttributes { gps: GPS }, (err) ->
+                        #console.log 'impossible de mettre a jour les données'
+                callback() # equivalent au next()
+
+
 
     # Get all thumbnails of a given photo album.
     @albumsThumbs: (callback) ->
