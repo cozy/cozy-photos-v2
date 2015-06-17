@@ -50,14 +50,17 @@
     "Contact": {
       "description": "Allows you to easily share an album"
     },
-    "CozyInstance": {
-      "description": "Read language setting"
-    },
     "File": {
       "description": "Import pictures from the Files app"
     },
     "Send mail from user": {
       "description": "Share album with your friends"
+    },
+    "CozyInstance": {
+      "description": "To display the application in the right language, the application requires access to your instance informations."
+    },
+    "User": {
+      "description": "Need user information to send proper sharing emails."
     }
   }
 }

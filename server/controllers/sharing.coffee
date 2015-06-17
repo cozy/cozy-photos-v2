@@ -26,7 +26,7 @@ clearanceCtl = clearance.controller
     mailTemplate: (options, callback) ->
         getUser (err, user) ->
             options.displayName = user.name
-            options.displayEmail= user.email
+            options.displayEmail = user.email
             localizationManager.render 'sharemail', options, callback
 
     mailSubject: (options, callback) ->
