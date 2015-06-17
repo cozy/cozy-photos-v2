@@ -109,11 +109,7 @@ module.exports.create = (req, res, next) =>
                     req.body.date = metadata.exif.dateTime
 # MODIF : Rémi
                 req.body.gps = if (metadata?.exif?.gps?) then metadata.exif.gps else null
-
-                #console.log "metas"
-                #console.log metadata
-                #console.log "db "
-                #console.log req.body
+#
             photo = new Photo req.body
 
             Photo.create photo, (err, photo) ->

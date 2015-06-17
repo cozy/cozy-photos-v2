@@ -1,7 +1,7 @@
 cozydb  = require 'cozydb'
 async   = require 'async'
 fs      = require 'fs'
-thumbHelpers = require '../helpers/thumb'
+Helpers = require '../helpers/thumb'
 
 module.exports = class Photo extends cozydb.CozyModel
     @schema:
@@ -29,31 +29,29 @@ module.exports = class Photo extends cozydb.CozyModel
     @patchGps: (callback) ->
         Photo.fromAlbum {folderId: "all" }, (err, photos) ->
 
-            return callback err if err? # retour si erreur
+            return callback err if err? # error on request fail
             async.eachSeries photos, (photo, next) ->
 
-                unless photo.gps?
-                    gpsCoordinates = {}
+                unless photo.gps? # do it just if never add gps metadata
                     photo.extractGpsFromBinary next
                 else next()
             , callback
 
     extractGpsFromBinary: (callback) ->
-        unless @binary.raw
-             res = @getFile, (err) ->
-             return callback err if err?
+
+        unless @binary.raw then res = @getBinary 'file', (err) ->
+            console.log err if err?
 
         else res = @getBinary 'raw', (err) ->
-            return callback err if err?
+            console.log err if err?
+            callbabk() if err?
 
-        res.on 'ready', (stream) ->
-            helper.readMetadata stream, (data) ->
-                console.log data?.exif?.gps
-                    # sauvegarde les données en bdd
-                    # GPS = data.exif.gps if data?.exif?.gps? else {} # PROD
-                    #@updateAttributes { gps: GPS }, (err) ->
-                        #console.log 'impossible de mettre a jour les données'
-                callback() # equivalent au next()
+        res.on 'ready', (stream) =>
+            Helpers.readMetadata stream, (err, data) =>
+
+                @updateAttributes { gps: data.exif.gps }, (err) ->
+                    console.log err if err?
+                callback() # ~ next()
 
 
 
