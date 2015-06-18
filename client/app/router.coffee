@@ -13,6 +13,11 @@ module.exports = class Router extends Backbone.Router
         'albums/:albumid/edit': 'albumedit'
         'albums/:albumid/photo/:photoid': 'photo'
         'albums/:albumid/edit/photo/:photoid': 'photoedit'
+#MODIF:remi
+        'map':'showmap'
+    # display the 'map' page
+    showmap: ->
+
 
     # display the "home" page : list of albums
     albumslist: (editable=false)->

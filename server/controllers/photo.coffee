@@ -16,6 +16,20 @@ downloader = require '../helpers/downloader'
 app = null
 module.exports.setApp = (ref) -> app = ref
 
+# Get all photos
+module.exports.fetchAll = (req, res, next) ->
+    console.log 'function fetchAll'
+    Photo.request 'byalbum', {}, (err, photos) ->
+        console.log err
+        console.log photos
+        if err?
+            next err
+        else unless photos
+            next "0 photos"
+        else
+            res.send photos
+            next()
+
 # Get given photo, returns 404 if photo is not found.
 module.exports.fetch = (req, res, next, id) ->
     id = id.substring 0, id.length - 4 if id.indexOf('.jpg') > 0

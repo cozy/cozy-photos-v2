@@ -48,7 +48,7 @@ module.exports = thumb =
                         date:           data.Properties['date:create']
                         gps:            GPS
 
-                #console.log data.Properties
+                console.log data.Properties
 
                 callback null, metadata
 
