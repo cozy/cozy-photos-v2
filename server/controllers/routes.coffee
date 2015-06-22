@@ -52,7 +52,7 @@ module.exports =
     'photos/raws/:photoid.jpg':
         get : photo.raw
 
-    'map/':
+    'mapInfo/':
         get: photo.fetchAll
 
     'public/?'                          : get : album.index
