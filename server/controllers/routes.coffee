@@ -52,8 +52,6 @@ module.exports =
     'photos/raws/:photoid.jpg':
         get : photo.raw
 
-    'mapInfo/':
-        get: photo.fetchAll
 
     'public/?'                          : get : album.index
     'public/albums/?'                   : get : album.list
