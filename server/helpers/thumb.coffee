@@ -29,16 +29,26 @@ module.exports = thumb =
             else
                 orientation = data.Orientation
 # MODIF :Rémi
-                gpsDatas = [ 'exif:GPSAltitude',
-                             'exif:GPSAltitudeRef',
-                             'exif:GPSLatitude',
-                             'exif:GPSLatitudeRef',
-                             'exif:GPSLongitude',
-                             'exif:GPSLongitudeRef' ]
+                gpsDegToDec = ( pos, posRef ) -> #String to int
+
+                    split = pos.split( /(\d+)\/(\d+), (\d+)\/(\d+), (\d+)\/(\d+)/ )
+                    unless split[6]
+                        splitAlt = pos.split( /(\d+)\/(\d+)/ )
+                        coord = splitAlt[1] / splitAlt[2]
+                    else
+                        coord = split[1] / split[2] + (split[3] / split[4]) / 60 + (split[5] / split[6])/3600
+                    ref = if (posRef == 'S' or posRef == 'W') then -1 else 1
+                    return ref * coord
+
+                alt  = 'exif:GPSAltitude';
+                lat  = 'exif:GPSLatitude';
+                long = 'exif:GPSLongitude';
+
                 GPS = {}
-                for gpsData in gpsDatas
-                    #GPS.gpsData = if ( data.Properties[gpsData]?) then data.Properties[gpsData] else null
-                    GPS[(gpsData.replace('exif:GPS','').toLowerCase())] = data.Properties[gpsData]
+                GPS.alt  = gpsDegToDec( data.Properties[ alt  ], data.Properties[ alt  + 'Ref' ] )
+                GPS.lat  = gpsDegToDec( data.Properties[ lat  ], data.Properties[ lat  + 'Ref' ] )
+                GPS.long = gpsDegToDec( data.Properties[ long ], data.Properties[ long + 'Ref' ] )
+                console.log GPS
 
                 if not(orientation?) or data.Orientation is 'Undefined'
                     orientation = 1
@@ -47,8 +57,6 @@ module.exports = thumb =
                         orientation:    orientation
                         date:           data.Properties['date:create']
                         gps:            GPS
-
-                console.log data.Properties
 
                 callback null, metadata
 
