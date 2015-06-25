@@ -32,7 +32,7 @@ module.exports = class MapView extends BaseView
             console.info photo
             if gps?.lat?
                 pos  = new L.LatLng(gps.lat, gps.long)
-                text = photo.get('title')
+                text = photo.get('title') + '<img src="photos/thumbs/' + photo.get('id') + '.jpg">'
                 @markers.push new L.marker( pos ).bindPopup(text)
             #L.marker([46, 2]).addTo( map);
         @showAll()
