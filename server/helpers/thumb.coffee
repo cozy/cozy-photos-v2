@@ -45,9 +45,11 @@ module.exports = thumb =
                 long = 'exif:GPSLongitude';
 
                 GPS = {}
-                GPS.alt  = gpsDegToDec( data.Properties[ alt  ], data.Properties[ alt  + 'Ref' ] )
-                GPS.lat  = gpsDegToDec( data.Properties[ lat  ], data.Properties[ lat  + 'Ref' ] )
-                GPS.long = gpsDegToDec( data.Properties[ long ], data.Properties[ long + 'Ref' ] )
+
+                if( data.Properties[ alt  ] )
+                    GPS.alt  = gpsDegToDec( data.Properties[ alt  ], data.Properties[ alt  + 'Ref' ] )
+                    GPS.lat  = gpsDegToDec( data.Properties[ lat  ], data.Properties[ lat  + 'Ref' ] )
+                    GPS.long = gpsDegToDec( data.Properties[ long ], data.Properties[ long + 'Ref' ] )
                 console.log GPS
 
                 if not(orientation?) or data.Orientation is 'Undefined'

@@ -51,7 +51,9 @@ module.exports =
         put : photo.updateThumb
     'photos/raws/:photoid.jpg':
         get : photo.raw
-
+#test
+    'photos/':
+        get : photo.fetchAll
 
     'public/?'                          : get : album.index
     'public/albums/?'                   : get : album.list

@@ -4,6 +4,7 @@ AlbumView       = require 'views/album'
 MapView         = require 'views/map'
 Album           = require 'models/album'
 PhotoCollection = require 'collections/photo'
+AlbumCollection = require 'collections/album'
 
 module.exports = class Router extends Backbone.Router
     routes:
@@ -17,10 +18,12 @@ module.exports = class Router extends Backbone.Router
         'albums/:albumid/edit/photo/:photoid': 'photoedit'
 #MODIF:remi
         'map':                  'showmap'
-    # display the 'map' page
+    # display the "map" page
     showmap: ->
-        allphotos    = new PhotoCollection
-        @displayView = new MapView
+        allphotos = new PhotoCollection
+        allphotos.fetch  {reset:true}
+
+        @displayView new MapView
             collection: allphotos
 
     # display the "home" page : list of albums
