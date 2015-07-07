@@ -5,39 +5,62 @@ module.exports = class MapView extends BaseView
     template: require 'templates/map'
     className: 'masterClass'
 
+    homePosition: [46.8451, 2.4938]
+
     initialize: (options) ->
         super
         @listenTo @collection, 'reset',  @addAllMarkers
         @map = {}
-        @markers = []
+        @markers
 
     afterRender: -> # action quand le dom est pret
         #console.log 'function showmap'
-        L.Icon.Default.imagePath = 'javascripts/images';
+        L.Icon.Default.imagePath = 'images/leaflet-images/';
 
-        @map = L.map( this.$('#map')[0] ).setView([46.8451, 2.4938], 6);
+        @map = L.map( this.$('#map')[0] ).setView(@homePosition, 6)
 
         L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png', {
             subdomains: 'abcd',
             minZoom: 2,
             maxZoom: 16,
             ext: 'png'
-        }).addTo( @map );
+            maxBounds: [
+                [40.712, -74.227],
+                [48.774, 6.125]
+            ]
+        }).addTo( @map )
+
+        ###
+        baseLayers = {
+            "Mapbox": mapbox,
+            "OpenStreetMap": osm
+        };
+        overlays = {
+            "Marker": marker,
+            "Roads": roadsLayer
+        }
+        L.control.layers(baseLayers, overlays).addTo(map);
+        ###
 
     addAllMarkers: ->
 
-        console.log @markers
+#        @markers = new L.MarkerClusterGroup()
+
+#console.log @markers
         @collection.each (photo) =>
+
             gps = photo.attributes.gps
             console.info photo
             if gps?.lat?
                 pos  = new L.LatLng(gps.lat, gps.long)
                 text = photo.get('title') + '<img src="photos/thumbs/' + photo.get('id') + '.jpg">'
-                @markers.push new L.marker( pos ).bindPopup(text)
-            #L.marker([46, 2]).addTo( map);
+                @markers.push new L.marker( pos ).bindPopup(text, {maxWidth: 300})
+                #@markers.addLayer L.marker( pos, { title: text }).bindPopup(text)
         @showAll()
+        @map.invalidateSize({debounceMoveend: true}) # force to load all map tiles
 
     showAll: ->
+#        @map.addLayer @markers
         _.each @markers, (marker, value) =>
             console.log marker
             marker.addTo @map

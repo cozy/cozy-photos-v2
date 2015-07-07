@@ -51,7 +51,7 @@ module.exports =
         put : photo.updateThumb
     'photos/raws/:photoid.jpg':
         get : photo.raw
-#test
+#MOFIF: rémi
     'photos/':
         get : photo.fetchAll
 

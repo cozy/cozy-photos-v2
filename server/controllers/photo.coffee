@@ -17,11 +17,8 @@ app = null
 module.exports.setApp = (ref) -> app = ref
 
 # Get all photos
-
 module.exports.fetchAll = (req, res, next) ->
     Photo.request 'byalbum', {}, (err, photos) ->
-        console.log err
-        console.log photos
         if err?
             next err
         else unless photos

@@ -17,7 +17,8 @@ module.exports = class Router extends Backbone.Router
         'albums/:albumid/photo/:photoid': 'photo'
         'albums/:albumid/edit/photo/:photoid': 'photoedit'
 #MODIF:remi
-        'map':                  'showmap'
+        'map': 'showmap'
+
     # display the "map" page
     showmap: ->
         allphotos = new PhotoCollection
