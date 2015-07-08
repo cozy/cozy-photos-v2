@@ -1,4 +1,5 @@
 BaseView = require 'lib/base_view'
+helpers  = require '../lib/helpers'
 
 module.exports = class MapView extends BaseView
 
@@ -17,7 +18,7 @@ module.exports = class MapView extends BaseView
 
     afterRender: -> # action quand le dom est pret
 
-        L.Icon.Default.imagePath = 'images/leaflet-images/'
+        L.Icon.Default.imagePath = 'leaflet-images'
 
         watercolor = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png', {
             attribution: 'Map by <a href="http://stamen.com">Stamen Design</a>'
@@ -59,18 +60,35 @@ module.exports = class MapView extends BaseView
         @collection.each (photo) =>
 
             gps = photo.attributes.gps
-            console.info photo
+            #console.info photo
             if gps?.lat?
                 pos  = new L.LatLng(gps.lat, gps.long)
-                text = photo.get('title') + '<img src="photos/thumbs/' + photo.get('id') + '.jpg">'
+                imgPath = "photos/thumbs/#{photo.get('id')}.jpg"
+                text = '<img src="images/spinner.svg" width="100%", height="100%" title="waiting..." />'
                 tempMarker = L.marker( pos, { title: text }).bindPopup(text)
+                tempMarker.cached = false
+                tempMarker.on 'popupopen', ->
+
+                    if not tempMarker.cached
+                        img = $ '<img src="' + imgPath + '" title="photo"/>'
+                        element = $ "<div>#{photo.get('title')}</div>"
+                        element.append img
+                        img[0].onload = ()->
+
+                            setTimeout ()=>
+
+                                tempMarker.getPopup().setContent element[0]
+                            , 500
+                            tempMarker.cached = true
+                        helpers.rotate photo.get('orientation'), img
+                        console.log "ORIENTATION: #{photo.get('title')} - #{photo.get('orientation')}"
                 @markers.addLayer tempMarker
-        @showAll()
+            @showAll()
+            @map.invalidateSize()
 
     showAll: ->
         @map.addLayer @markers
-        # force to load all map tiles {debounceMoveend: true}
-        @map.invalidateSize()
+        # force to load all map tiles
 ###
 
         _.each @markers, (marker, value) =>
