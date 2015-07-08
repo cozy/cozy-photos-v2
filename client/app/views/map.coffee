@@ -32,6 +32,10 @@ module.exports = class MapView extends BaseView
             attribution: 'Map by <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         })
 
+        EsriWorldImagery = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP'
+        })
+
         @map = L.map this.$('#map')[0],
             center: @homePosition
             zoom: 6 # 6 = default zoom
@@ -42,34 +46,13 @@ module.exports = class MapView extends BaseView
         baseLayers =
             "Watercolor": watercolor
             "OSM Hot"   : OpenStreetMapHot
+            "Esri world": EsriWorldImagery
 
         overlays =
             "Photos": @markers,
 
         layerControl = L.control.layers(baseLayers, overlays, {position: 'bottomright'}).addTo(@map);
-        ###
-        L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png', {
-            subdomains: 'abcd',
-            minZoom: 2,
-            maxZoom: 17,
-            ext: 'png'
-            maxBounds: [
-                [40.712, -74.227],
-                [48.774, 6.125]
-            ]
-        }).addTo( @map )
 
-
-        baseLayers = {
-            "Mapbox": mapbox,
-            "OpenStreetMap": osm
-        };
-        overlays = {
-            "Marker": marker,
-            "Roads": roadsLayer
-        }
-        L.control.layers(baseLayers, overlays).addTo(map);
-        ###
 
     addAllMarkers: ->
 
