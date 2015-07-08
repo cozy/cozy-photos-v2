@@ -10,19 +10,48 @@ module.exports = class MapView extends BaseView
     initialize: (options) ->
         super
         @listenTo @collection, 'reset',  @addAllMarkers
-        @map = {}
-        @markers
+        @markers = new L.MarkerClusterGroup
+            disableClusteringAtZoom: 17
+            removeOutsideVisibleBounds: false
+            animateAddingMarkers: true
 
     afterRender: -> # action quand le dom est pret
-        #console.log 'function showmap'
-        L.Icon.Default.imagePath = 'images/leaflet-images/';
 
-        @map = L.map( this.$('#map')[0] ).setView(@homePosition, 6)
+        L.Icon.Default.imagePath = 'images/leaflet-images/'
 
+        watercolor = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png', {
+            attribution: 'Map by <a href="http://stamen.com">Stamen Design</a>'
+            subdomains: 'abcd'
+            minZoom: 1
+            maxZoom: 17
+            ext: 'png'
+        })
+
+        OpenStreetMapHot = L.tileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: 'Map by <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        })
+
+        @map = L.map this.$('#map')[0],
+            center: @homePosition
+            zoom: 6 # 6 = default zoom
+            maxZoom: 17
+            layers: watercolor
+
+
+        baseLayers =
+            "Watercolor": watercolor
+            "OSM Hot"   : OpenStreetMapHot
+
+        overlays =
+            "Photos": @markers,
+
+        layerControl = L.control.layers(baseLayers, overlays, {position: 'bottomright'}).addTo(@map);
+        ###
         L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png', {
             subdomains: 'abcd',
             minZoom: 2,
-            maxZoom: 16,
+            maxZoom: 17,
             ext: 'png'
             maxBounds: [
                 [40.712, -74.227],
@@ -30,7 +59,7 @@ module.exports = class MapView extends BaseView
             ]
         }).addTo( @map )
 
-        ###
+
         baseLayers = {
             "Mapbox": mapbox,
             "OpenStreetMap": osm
@@ -44,9 +73,6 @@ module.exports = class MapView extends BaseView
 
     addAllMarkers: ->
 
-#        @markers = new L.MarkerClusterGroup()
-
-#console.log @markers
         @collection.each (photo) =>
 
             gps = photo.attributes.gps
@@ -54,19 +80,20 @@ module.exports = class MapView extends BaseView
             if gps?.lat?
                 pos  = new L.LatLng(gps.lat, gps.long)
                 text = photo.get('title') + '<img src="photos/thumbs/' + photo.get('id') + '.jpg">'
-                @markers.push new L.marker( pos ).bindPopup(text, {maxWidth: 300})
-                #@markers.addLayer L.marker( pos, { title: text }).bindPopup(text)
+                tempMarker = L.marker( pos, { title: text }).bindPopup(text)
+                @markers.addLayer tempMarker
         @showAll()
-        @map.invalidateSize({debounceMoveend: true}) # force to load all map tiles
 
     showAll: ->
-#        @map.addLayer @markers
+        @map.addLayer @markers
+        # force to load all map tiles {debounceMoveend: true}
+        @map.invalidateSize()
+###
+
         _.each @markers, (marker, value) =>
             console.log marker
             marker.addTo @map
 
-
-###
         http://{s}.tile.osm.org/{z}/{x}/{y}.png
         https://{s}.tiles.mapbox.com/v3/examples.map-20v6611k/{z}/{x}/{y}.png                 https://{s}.tiles.mapbox.com/v3/examples.map-i875mjb7/{z}/{x}/{y}.png
         http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png
