@@ -1,12 +1,11 @@
-BaseView = require 'lib/base_view'
-helpers  = require '../lib/helpers'
+BaseView   = require 'lib/base_view'
+helpers    = require '../lib/helpers'
+baseLayers = require '../lib/map_providers'
 
 module.exports = class MapView extends BaseView
 
     template: require 'templates/map'
     className: 'masterClass'
-
-    homePosition: [46.8451, 2.4938]
 
     initialize: (options) ->
         super
@@ -16,43 +15,47 @@ module.exports = class MapView extends BaseView
             removeOutsideVisibleBounds: false
             animateAddingMarkers: true
 
-    afterRender: -> # action quand le dom est pret
+    afterRender: ->
 
+        #define leaflet images folder
         L.Icon.Default.imagePath = 'leaflet-images'
+        #define lngitude and latitude to add on a new photo
+        standbyLatlng = new L.latLng(null)
+        #define Marker used to add photos on the map
+        standbyMarker = L.marker null,
+            draggable: true
+            icon: L.divIcon
+                className: 'leaflet-marker-div'
+                iconSize: L.point 39, 45
+                html: '<i class="fa fa-crosshairs" style="font-size:3.8em"></i>'
 
-        watercolor = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png', {
-            attribution: 'Map by <a href="http://stamen.com">Stamen Design</a>'
-            subdomains: 'abcd'
-            minZoom: 1
-            maxZoom: 17
-            ext: 'png'
-        })
-
-        OpenStreetMapHot = L.tileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: 'Map by <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        })
-
-        EsriWorldImagery = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: 'Tiles &copy; Esri &mdash; i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP'
-        })
-
+        #map declaration
         @map = L.map this.$('#map')[0],
-            center: @homePosition
-            zoom: 6 # 6 = default zoom
+            center: [46.8451, 2.4938]
+            zoom: 6       # 6 = default zoom
             maxZoom: 17
-            layers: watercolor
+            layers: baseLayers["Water color"] #default map background
 
+        @map.on 'contextmenu', (e)=>
+            # add marker where user rightclick
+            standbyMarker.setLatLng e.latlng
+            standbyMarker.addTo @map
+            standbyLatlng = e.latlng
+            standbyMarker.bindPopup standbyLatlng.toString()
 
-        baseLayers =
-            "Watercolor": watercolor
-            "OSM Hot"   : OpenStreetMapHot
-            "Esri world": EsriWorldImagery
+            standbyMarker.on 'move', (e)=>
+                #update position when user move cursor
+                console.log e.latlng
+                standbyMarker.closePopup()
+                standbyLatlng = e.latlng
 
-        overlays =
+        overlays = # map checkables layers
             "Photos": @markers,
 
-        layerControl = L.control.layers(baseLayers, overlays, {position: 'bottomright'}).addTo(@map);
+        #add control button on the map
+        layerControl = L.control.layers baseLayers, overlays,
+            position: 'bottomright'
+        .addTo @map
 
 
     addAllMarkers: ->
@@ -60,12 +63,14 @@ module.exports = class MapView extends BaseView
         @collection.each (photo) =>
 
             gps = photo.attributes.gps
-            #console.info photo
             if gps?.lat?
-                pos  = new L.LatLng(gps.lat, gps.long)
-                imgPath = "photos/thumbs/#{photo.get('id')}.jpg"
-                text = '<img src="images/spinner.svg" width="100%", height="100%" title="waiting..." />'
-                tempMarker = L.marker( pos, { title: text }).bindPopup(text)
+
+                position = new L.LatLng(gps.lat, gps.long)
+                imgPath  = "photos/thumbs/#{photo.get('id')}.jpg"
+                text     = '<img src="images/spinner.svg" width="150" height="150"/>'
+                tempMarker = L.marker position,
+                    title: photo.get 'title'
+                .bindPopup text
                 tempMarker.cached = false
                 tempMarker.on 'popupopen', ->
 
@@ -73,6 +78,7 @@ module.exports = class MapView extends BaseView
                         img = $ '<img src="' + imgPath + '" title="photo"/>'
                         element = $ "<div>#{photo.get('title')}</div>"
                         element.append img
+                        unless photo.get('description')? then element.append $ "<quote>#{photo.get('description')}</quote>"
                         img[0].onload = ()->
 
                             setTimeout ()=>
@@ -81,24 +87,9 @@ module.exports = class MapView extends BaseView
                             , 500
                             tempMarker.cached = true
                         helpers.rotate photo.get('orientation'), img
-                        console.log "ORIENTATION: #{photo.get('title')} - #{photo.get('orientation')}"
                 @markers.addLayer tempMarker
             @showAll()
-            @map.invalidateSize()
+            @map.invalidateSize() # force to load all map tiles
 
     showAll: ->
         @map.addLayer @markers
-        # force to load all map tiles
-###
-
-        _.each @markers, (marker, value) =>
-            console.log marker
-            marker.addTo @map
-
-        http://{s}.tile.osm.org/{z}/{x}/{y}.png
-        https://{s}.tiles.mapbox.com/v3/examples.map-20v6611k/{z}/{x}/{y}.png                 https://{s}.tiles.mapbox.com/v3/examples.map-i875mjb7/{z}/{x}/{y}.png
-        http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png
-            <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>
-        # pour les trouver
-        http://leaflet-extras.github.io/leaflet-providers/preview/
-###
