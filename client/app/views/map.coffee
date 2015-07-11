@@ -10,6 +10,7 @@ module.exports = class MapView extends BaseView
     initialize: (options) ->
         super
         @listenTo @collection, 'reset',  @addAllMarkers
+        #@listenTo 'route:map', # ?????
         @markers = new L.MarkerClusterGroup
             disableClusteringAtZoom: 17
             removeOutsideVisibleBounds: false
@@ -22,7 +23,7 @@ module.exports = class MapView extends BaseView
         #define lngitude and latitude to add on a new photo
         standbyLatlng = new L.latLng(null)
         #define Marker used to add photos on the map
-        standbyMarker = L.marker null,
+        @standbyMarker = L.marker null,
             draggable: true
             icon: L.divIcon
                 className: 'leaflet-marker-div'
@@ -38,16 +39,20 @@ module.exports = class MapView extends BaseView
 
         @map.on 'contextmenu', (e)=>
             # add marker where user rightclick
-            standbyMarker.setLatLng e.latlng
-            standbyMarker.addTo @map
+            @standbyMarker.setLatLng e.latlng
+            @standbyMarker.addTo @map
             standbyLatlng = e.latlng
-            standbyMarker.bindPopup standbyLatlng.toString()
+            @standbyMarker.bindPopup standbyLatlng.toString()
+            @dispChoiceBox()
 
-            standbyMarker.on 'move', (e)=>
+            @standbyMarker.on 'move', (e)=>
                 #update position when user move cursor
                 console.log e.latlng
-                standbyMarker.closePopup()
+                @standbyMarker.closePopup()
                 standbyLatlng = e.latlng
+
+        @map.on 'click', ()=>
+            @hide()
 
         overlays = # map checkables layers
             "Photos": @markers,
@@ -57,10 +62,9 @@ module.exports = class MapView extends BaseView
             position: 'bottomright'
         .addTo @map
 
-
     addAllMarkers: ->
 
-        @collection.each (photo) =>
+        @collection.hasGPS().each (photo) =>
 
             gps = photo.attributes.gps
             if gps?.lat?
@@ -93,3 +97,13 @@ module.exports = class MapView extends BaseView
 
     showAll: ->
         @map.addLayer @markers
+
+    dispChoiceBox: ->
+        console.log 'coucou'
+        $('.choice-box').height 150
+
+    hide: ->
+        $('.choice-box').height 0
+        @map.removeLayer @standbyMarker
+
+
