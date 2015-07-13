@@ -10,18 +10,17 @@ module.exports = class MapView extends BaseView
     initialize: (options) ->
         super
         @listenTo @collection, 'reset',  @addAllMarkers
-        #@listenTo 'route:map', # ?????
         @markers = new L.MarkerClusterGroup
             disableClusteringAtZoom: 17
             removeOutsideVisibleBounds: false
             animateAddingMarkers: true
+        #@listenTo 'router', 'map', @refresh
 
     afterRender: ->
-
         #define leaflet images folder
         L.Icon.Default.imagePath = 'leaflet-images'
         #define lngitude and latitude to add on a new photo
-        standbyLatlng = new L.latLng(null)
+        @standbyLatlng = new L.latLng(null)
         #define Marker used to add photos on the map
         @standbyMarker = L.marker null,
             draggable: true
@@ -37,19 +36,19 @@ module.exports = class MapView extends BaseView
             maxZoom: 17
             layers: baseLayers["Water color"] #default map background
 
-        @map.on 'contextmenu', (e)=>
+        @map.on 'contextmenu', (e) =>
             # add marker where user rightclick
             @standbyMarker.setLatLng e.latlng
             @standbyMarker.addTo @map
-            standbyLatlng = e.latlng
-            @standbyMarker.bindPopup standbyLatlng.toString()
+            @standbyLatlng = e.latlng
+            @standbyMarker.bindPopup @standbyLatlng.toString()
             @dispChoiceBox()
 
-            @standbyMarker.on 'move', (e)=>
+            @standbyMarker.on 'move', (e) =>
                 #update position when user move cursor
                 console.log e.latlng
                 @standbyMarker.closePopup()
-                standbyLatlng = e.latlng
+                @standbyLatlng = e.latlng
 
         @map.on 'click', ()=>
             @hide()
@@ -66,44 +65,59 @@ module.exports = class MapView extends BaseView
 
         @collection.hasGPS().each (photo) =>
 
-            gps = photo.attributes.gps
-            if gps?.lat?
+            gps      = photo.attributes.gps
+            position = new L.LatLng(gps.lat, gps.long)
+            imgPath  = "photos/thumbs/#{photo.get('id')}.jpg"
+            text     = '<img src="images/spinner.svg" width="150" height="150"/>'
+            tempMarker = L.marker position,
+                title: photo.get 'title'
+            .bindPopup text
+            tempMarker.cached = false
+            tempMarker.on 'popupopen', ->
 
-                position = new L.LatLng(gps.lat, gps.long)
-                imgPath  = "photos/thumbs/#{photo.get('id')}.jpg"
-                text     = '<img src="images/spinner.svg" width="150" height="150"/>'
-                tempMarker = L.marker position,
-                    title: photo.get 'title'
-                .bindPopup text
-                tempMarker.cached = false
-                tempMarker.on 'popupopen', ->
+                if not tempMarker.cached
+                    img = $ '<img src="' + imgPath + '" title="photo"/>'
+                    element = $ "<div>#{photo.get('title')}</div>"
+                    element.append img
+                    unless photo.get('description')?
+                    then element.append $ "<quote>#{photo.get 'description' }</quote>"
+                    img[0].onload = () ->
 
-                    if not tempMarker.cached
-                        img = $ '<img src="' + imgPath + '" title="photo"/>'
-                        element = $ "<div>#{photo.get('title')}</div>"
-                        element.append img
-                        unless photo.get('description')? then element.append $ "<quote>#{photo.get('description')}</quote>"
-                        img[0].onload = ()->
+                        setTimeout () =>
 
-                            setTimeout ()=>
-
-                                tempMarker.getPopup().setContent element[0]
-                            , 500
-                            tempMarker.cached = true
-                        helpers.rotate photo.get('orientation'), img
-                @markers.addLayer tempMarker
+                            tempMarker.getPopup().setContent element[0]
+                        , 500
+                        tempMarker.cached = true
+                    helpers.rotate photo.get('orientation'), img
+            @markers.addLayer tempMarker
             @showAll()
-            @map.invalidateSize() # force to load all map tiles
+        @refresh()
 
     showAll: ->
         @map.addLayer @markers
 
     dispChoiceBox: ->
         console.log 'coucou'
-        $('.choice-box').height 150
+        #$('.choice-box').height 140
+        $('.choice-box').height 'auto'
+        mapGalery = this.$('#map-galery')
+        mapGalery.children().remove()
+
+        @collection.hasNotGPS().each (photo) =>
+            imgPath  = "photos/thumbs/#{photo.get('id')}.jpg"
+            mapGalery.append '<img class="map-setter" src="' + imgPath + '" style="height: 130px; display: inline"/>'
+            mapGalery.append '<img class="map-setter" src="' + imgPath + '" style="height: 130px; display: inline"/>'
+            mapGalery.append '<img class="map-setter" src="' + imgPath + '" style="height: 130px; display: inline"/>'
+            mapGalery.append '<img class="map-setter" src="' + imgPath + '" style="height: 130px; display: inline"/>'
+
+        $(document).on "click", ".map-setter", (e)->
+            console.log e
 
     hide: ->
         $('.choice-box').height 0
         @map.removeLayer @standbyMarker
+
+    refresh: ->
+        @map.invalidateSize() # force to load all map tiles
 
 

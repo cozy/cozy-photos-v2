@@ -14,4 +14,4 @@ module.exports = class PhotoCollection extends Backbone.Collection
 
     hasNotGPS: ()->
         return new PhotoCollection this.filter (photo)->
-            return photo.get("gps").lat?
+            return !photo.get("gps").lat?
