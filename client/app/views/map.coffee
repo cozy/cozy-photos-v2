@@ -59,10 +59,15 @@ module.exports = class MapView extends BaseView
             @hide()
 
         overlays = # map checkables layers
-            "Photos": @markers,
+            "Photos": @markers
+            "Ville" : L.tileLayer 'http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}',
+                type: 'hyb'
+                ext: 'png'
+                attribution: 'Tiles by <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                subdomains: '1234'
+                opacity: 0.9
 
-        #add control button on the map
-        layerControl = L.control.layers baseLayers, overlays,
+        layerControl = L.control.layers baseLayers, overlays, #add control button on the map
             position: 'bottomright'
         .addTo @map
 
