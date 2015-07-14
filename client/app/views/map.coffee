@@ -9,12 +9,15 @@ module.exports = class MapView extends BaseView
 
     initialize: (options) ->
         super
-        @listenTo @collection, 'reset',  @addAllMarkers
+        @listenTo @collection, 'reset add',  @addAllMarkers
         @markers = new L.MarkerClusterGroup
-            disableClusteringAtZoom: 17
+            disableClusteringAtZoom:    17
             removeOutsideVisibleBounds: false
-            animateAddingMarkers: true
-        #@listenTo 'router', 'map', @refresh
+            animateAddingMarkers:       true
+
+    events: ->
+        'click #validate': 'validateChange'
+
 
     afterRender: ->
         #define leaflet images folder
@@ -25,16 +28,18 @@ module.exports = class MapView extends BaseView
         @standbyMarker = L.marker null,
             draggable: true
             icon: L.divIcon
-                className: 'leaflet-marker-div'
-                iconSize: L.point 39, 45
-                html: '<i class="fa fa-crosshairs" style="font-size:3.8em"></i>'
+                className:  'leaflet-marker-div'
+                iconSize:   L.point 39, 45
+                html:       '<i class="fa fa-crosshairs" style="font-size:3.8em"></i>'
 
         #map declaration
         @map = L.map this.$('#map')[0],
-            center: [46.8451, 2.4938]
-            zoom: 6       # 6 = default zoom
-            maxZoom: 17
-            layers: baseLayers["Water color"] #default map background
+            center:     [46.8451, 2.4938]
+            zoom:       6       # 6 = default zoom
+            maxZoom:    17
+            minZoom:    2
+            layers:     baseLayers["Water color"] #default map background
+            maxBounds:  L.latLngBounds [84.26, -170], [-59.888, 192.30]
 
         @map.on 'contextmenu', (e) =>
             # add marker where user rightclick
@@ -46,11 +51,11 @@ module.exports = class MapView extends BaseView
 
             @standbyMarker.on 'move', (e) =>
                 #update position when user move cursor
-                console.log e.latlng
                 @standbyMarker.closePopup()
                 @standbyLatlng = e.latlng
 
         @map.on 'click', ()=>
+            # hide marker and box with photos
             @hide()
 
         overlays = # map checkables layers
@@ -66,7 +71,7 @@ module.exports = class MapView extends BaseView
         @collection.hasGPS().each (photo) =>
 
             gps      = photo.attributes.gps
-            position = new L.LatLng(gps.lat, gps.long)
+            position = new L.LatLng gps.lat, gps.long
             imgPath  = "photos/thumbs/#{photo.get('id')}.jpg"
             text     = '<img src="images/spinner.svg" width="150" height="150"/>'
             tempMarker = L.marker position,
@@ -97,21 +102,36 @@ module.exports = class MapView extends BaseView
         @map.addLayer @markers
 
     dispChoiceBox: ->
-        console.log 'coucou'
-        #$('.choice-box').height 140
+
         $('.choice-box').height 'auto'
         mapGalery = this.$('#map-galery')
         mapGalery.children().remove()
 
         @collection.hasNotGPS().each (photo) =>
-            imgPath  = "photos/thumbs/#{photo.get('id')}.jpg"
-            mapGalery.append '<img class="map-setter" src="' + imgPath + '" style="height: 130px; display: inline"/>'
-            mapGalery.append '<img class="map-setter" src="' + imgPath + '" style="height: 130px; display: inline"/>'
-            mapGalery.append '<img class="map-setter" src="' + imgPath + '" style="height: 130px; display: inline"/>'
-            mapGalery.append '<img class="map-setter" src="' + imgPath + '" style="height: 130px; display: inline"/>'
 
-        $(document).on "click", ".map-setter", (e)->
-            console.log e
+            imgPath  = "photos/thumbs/#{photo.get('id')}.jpg"
+            mapGalery.append '<img class="map-setter" src="' +\
+                imgPath + '" data-key="' + photo.get('id') + '"' +\
+                '" style="height: 130px; display: inline"/>'
+
+    $(document).on "click", ".map-setter", ()->
+        $(this).toggleClass 'map-photo-checked'
+
+    validateChange: (e)->
+        e.preventDefault()
+        that = this
+        $(".map-photo-checked").each ()->
+            el = $ this
+            photo = that.collection.get el.attr('data-key')
+            photo.save gps:
+                lat:    that.standbyLatlng.lat
+                long:   that.standbyLatlng.lng
+                alt:    0
+            , success: ()->
+                console.log 'OK'
+                that.standbyLatlng.lat += 0.001
+        that.hide()
+
 
     hide: ->
         $('.choice-box').height 0
