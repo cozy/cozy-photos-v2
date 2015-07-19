@@ -128,3 +128,4 @@ ajoute une photo à cet album.
     "progress"        : "Progression"
     "Navigate before upload" : "Certaines photos n'ont pas encore été envoyées au serveur, voulez-vous vraiment quitter cette page ?"
     "application title": "Cozy - photos"
+    "Apply": "Appliquer"

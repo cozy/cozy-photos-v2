@@ -122,3 +122,4 @@ module.exports =
     "progress"        : "Fortschritt"
     "Navigate before upload" : "Hochladen noch aktiv, möchten Sie wirklich diese Seite verlassen?"
     "application title": "Cozy - photos"
+    "Apply": "Anwenden"

@@ -60,7 +60,7 @@ module.exports = class MapView extends BaseView
 
         overlays = # map checkables layers
             "Photos": @markers
-            "Ville" : L.tileLayer 'http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}',
+            "Villes" : L.tileLayer 'http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}',
                 type: 'hyb'
                 ext: 'png'
                 attribution: 'Tiles by <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -71,14 +71,27 @@ module.exports = class MapView extends BaseView
             position: 'bottomright'
         .addTo @map
 
+        @map.addControl new L.Control.Search
+            url: 'http://nominatim.openstreetmap.org/search?format=json&q={s}'
+            jsonpParam: 'json_callback'
+            propertyName: 'display_name'
+            propertyLoc: ['lat','lon']
+            markerLocation: true
+
     addAllMarkers: ->
 
         @collection.hasGPS().each (photo) =>
 
             gps      = photo.attributes.gps
             position = new L.LatLng gps.lat, gps.long
+
             imgPath  = "photos/thumbs/#{photo.get('id')}.jpg"
             text     = '<img src="images/spinner.svg" width="150" height="150"/>'
+            button   = '<button data-key="' + photo.get('id') +
+                '" class="btn btn-block">' +
+                '<span class="glyphicon gliphicon-move"></span>' +
+                'Relocaliser</button>'
+
             tempMarker = L.marker position,
                 title: photo.get 'title'
             .bindPopup text
@@ -87,8 +100,9 @@ module.exports = class MapView extends BaseView
 
                 if not tempMarker.cached
                     img = $ '<img src="' + imgPath + '" title="photo"/>'
-                    element = $ "<div>#{photo.get('title')}</div>"
+                    element = $ "<div><p>#{photo.get('title')}</p></div>"
                     element.append img
+                    element.append button
                     unless photo.get('description')?
                     then element.append $ "<quote>#{photo.get 'description' }</quote>"
                     img[0].onload = () ->
@@ -122,22 +136,25 @@ module.exports = class MapView extends BaseView
     $(document).on "click", ".map-setter", ()->
         $(this).toggleClass 'map-photo-checked'
 
+    #Set new GPS coordinate to the photo
     validateChange: (e)->
-        e.preventDefault()
+        console.log e
         that = this
         $(".map-photo-checked").each ()->
             el = $ this
             photo = that.collection.get el.attr('data-key')
-            photo.save gps:
+            photo?.save gps:
                 lat:    that.standbyLatlng.lat
                 long:   that.standbyLatlng.lng
                 alt:    0
-            , success: ()->
+            , success: ()=>
                 console.log 'OK'
-                that.standbyLatlng.lat += 0.001
+                that.standbyLatlng.lat += 0.01
+            , error: ()=>
+                console.log "KO"
         that.hide()
 
-
+    # Hide cursor and bottom box
     hide: ->
         $('.choice-box').height 0
         @map.removeLayer @standbyMarker

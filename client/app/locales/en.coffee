@@ -122,3 +122,4 @@ module.exports =
     "progress"        : "Progression"
     "Navigate before upload" : "Some upload are in progress, do you really want to leave this page?"
     "application title": "Cozy - photos"
+    "Apply": "Apply"
