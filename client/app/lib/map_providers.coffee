@@ -10,6 +10,7 @@ module.exports =
         attribution: 'Map by <a href="http://stamen.com">Stamen Design</a>'
         subdomains: 'abcd'
         ext: 'png'
+        maxZoom: 12
 
     'Open street map hot': L.tileLayer 'http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
         attribution: 'Map by <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'

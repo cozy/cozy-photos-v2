@@ -9,7 +9,7 @@ module.exports = class MapView extends BaseView
 
     initialize: (options) ->
         super
-        @listenTo @collection, 'reset add',  @addAllMarkers
+        @listenTo @collection, 'reset change',  @addAllMarkers
         @markers = new L.MarkerClusterGroup
             disableClusteringAtZoom:    17
             removeOutsideVisibleBounds: false
@@ -140,18 +140,21 @@ module.exports = class MapView extends BaseView
     validateChange: (e)->
         console.log e
         that = this
+
         $(".map-photo-checked").each ()->
             el = $ this
             photo = that.collection.get el.attr('data-key')
+            that.standbyLatlng.lng += 0.0001
             photo?.save gps:
                 lat:    that.standbyLatlng.lat
                 long:   that.standbyLatlng.lng
                 alt:    0
-            , success: ()=>
-                console.log 'OK'
-                that.standbyLatlng.lat += 0.01
-            , error: ()=>
-                console.log "KO"
+
+            , success: (e)=>
+                e.preventDefault()
+
+            , error: (e)=>
+                e.preventDefault()
         that.hide()
 
     # Hide cursor and bottom box
