@@ -19,7 +19,7 @@ module.exports.setApp = (ref) -> app = ref
 # Get given photo, returns 404 if photo is not found.
 module.exports.fetch = (req, res, next, id) ->
     id = id.substring 0, id.length - 4 if id.indexOf('.jpg') > 0
-    Photo.find id, (err, photo) =>
+    Photo.find id, (err, photo) ->
         if err
             next err
         else if not photo
@@ -31,7 +31,7 @@ module.exports.fetch = (req, res, next, id) ->
 
 # Create a photo and save file, thumb and scree image as attachments of the
 # photo document.
-module.exports.create = (req, res, next) =>
+module.exports.create = (req, res, next) ->
     cid = null
     lastPercent = 0
     files = {}
@@ -139,8 +139,9 @@ doPipe = (req, which, download, res, next) ->
 
     sharing.checkPermissionsPhoto req.photo, 'r', req, (err, isAllowed) ->
 
-        if err or not isAllowed
-            return next NotAllowed()
+        return next err if err
+
+        return next NotAllowed() if not isAllowed
 
         if download
             disposition = 'attachment; filename=' + req.photo.title
