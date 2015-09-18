@@ -22,10 +22,9 @@ module.exports.fetchAll = (req, res, next) ->
         if err?
             next err
         else unless photos
-            next "0 photos"
+            next new Error '0 photos'
         else
             res.send photos
-            next()
 
 # Get given photo, returns 404 if photo is not found.
 module.exports.fetch = (req, res, next, id) ->

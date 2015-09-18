@@ -34,7 +34,7 @@ module.exports = class Photo extends cozydb.CozyModel
 
                 unless photo.gps? # do it just if never add gps metadata
                     photo.extractGpsFromBinary next
-                else next()
+                else setImmediate next
             , callback
 
     extractGpsFromBinary: (callback) ->
@@ -51,7 +51,7 @@ module.exports = class Photo extends cozydb.CozyModel
 
                 @updateAttributes { gps: data.exif.gps }, (err) ->
                     console.log err if err?
-                callback() # ~ next()
+                    callback() # ~ next()
 
 
 
