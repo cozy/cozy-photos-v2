@@ -21,6 +21,8 @@ module.exports.index = (req, res, next) ->
         (cb) -> Album.listWithThumbs cb
         (cb) -> cozydb.api.getCozyLocale cb
     ], (err, results) ->
+        return next err if err
+
         [albums, locale] = results
         visible = []
         async.each albums, (album, callback) =>
