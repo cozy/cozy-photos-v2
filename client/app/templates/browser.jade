@@ -1,0 +1,30 @@
+.files
+    if dates.length === 0
+        p= t("photos search")
+    else if dates === "No photos found"
+        p= t("no photos found")
+    else
+        nav: ul
+            if hasPrev
+                li: a.btn.btn-cozy.prev
+                    i.fa.fa-angle-left
+                    span #{t('modal prev')}
+            if hasNext
+                li: a.btn.btn-cozy.next
+                    span #{t('modal next')}
+                    i.fa.fa-angle-right
+        dl
+            for date in dates
+                dt #{t(date.split('-')[1])} #{date.split('-')[0]}
+                dd: ul.thumbs
+                    for photo in photos[date]
+                        li: img(src="files/thumbs/#{photo.id}.jpg", id="#{photo.id}")
+        nav: ul
+            if hasPrev
+                li: a.btn.btn-cozy.prev
+                    i.fa.fa-angle-left
+                    span #{t('modal prev')}
+            if hasNext
+                li: a.btn.btn-cozy.next
+                    span #{t('modal next')}
+                    i.fa.fa-angle-right
