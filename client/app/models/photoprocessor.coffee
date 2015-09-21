@@ -11,7 +11,7 @@ readFile = (photo, next) ->
     photo.img = new Image()
 
     reader.readAsDataURL photo.file
-    reader.onloadend = =>
+    reader.onloadend = ->
         photo.img.src = reader.result
         photo.img.orientation = photo.attributes.orientation
         photo.img.onload = ->
@@ -143,7 +143,7 @@ class PhotoProcessor
     uploadQueue: async.queue uploadWorker, 2
 
     process: (photo) ->
-        @uploadQueue.push photo, (err) =>
-             return console.log err if err
+        @uploadQueue.push photo, (err) ->
+            return console.log err if err
 
 module.exports = new PhotoProcessor()

@@ -22,7 +22,7 @@ module.exports = class Clipboard
                 .focus()
                 .select()
 
-        $(document).keyup (e) =>
+        $(document).keyup (e) ->
             if $(e.target).is("#clipboard")
                 $("<textarea id='clipboard'></textarea>").val("")
                 $("#clipboard-container").empty().hide()

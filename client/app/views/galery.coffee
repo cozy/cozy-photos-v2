@@ -218,9 +218,9 @@ module.exports = class Galery extends ViewCollection
     # When trash button is clicked it proposes to delete the currently
     # displayed picture. It asks for a confirmation before
     onTrashClicked: =>
-      if confirm t 'photo delete confirm'
-          photo = @collection.get(@getIdPhoto())
-          photo.destroy()
+        if confirm t 'photo delete confirm'
+            photo = @collection.get(@getIdPhoto())
+            photo.destroy()
 
 
     beforeImageDisplayed: (link) =>
