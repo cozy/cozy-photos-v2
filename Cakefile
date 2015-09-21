@@ -77,13 +77,26 @@ buildJade = ->
         name = file.replace '.jade', '.js'
         fs.writeFileSync "./build/server/views/#{name}", output
 
+# convert JSON lang files to JS
+buildJsInLocales = ->
+    path = require 'path'
+    for file in fs.readdirSync './client/app/locales/'
+        filename = './client/app/locales/' + file
+        template = fs.readFileSync filename, 'utf8'
+        exported = "module.exports = #{template};\n"
+        name     = file.replace '.json', '.js'
+        fs.writeFileSync "./build/client/app/locales/#{name}", exported
+
 task 'build', 'Build CoffeeScript to Javascript', ->
     logger.options.prefix = 'cake:build'
     logger.info "Start compilation..."
     command = "coffee -cb --output build/server server && " + \
               "coffee -cb --output build/ server.coffee && " + \
               "rm -rf build/client && mkdir build/client && " + \
-              "cd client/ && brunch build --production && cd .."
+              "mkdir -p build/client/app/locales/ && " + \
+              "rm -rf build/client/app/locales/* && " + \
+              "cd client/ && brunch build --production && cd .. &&" + \
+              "cp -R client/public build/client/"
 
     exec command, (err, stdout, stderr) ->
         if err
@@ -91,5 +104,6 @@ task 'build', 'Build CoffeeScript to Javascript', ->
             process.exit 1
         else
             buildJade()
+            buildJsInLocales()
             logger.info "Compilation succeeded."
             process.exit 0
