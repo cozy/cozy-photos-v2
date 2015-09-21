@@ -25,8 +25,8 @@ module.exports.index = (req, res, next) ->
 
         [albums, locale] = results
         visible = []
-        async.each albums, (album, callback) =>
-            sharing.checkPermissions album, req, (err, isAllowed) =>
+        async.each albums, (album, callback) ->
+            sharing.checkPermissions album, req, (err, isAllowed) ->
                 visible.push album if isAllowed and not err
                 callback null
 
@@ -56,8 +56,8 @@ module.exports.list = (req, res, next) ->
         return next err if err
 
         visible = []
-        async.each albums, (album, callback) =>
-            sharing.checkPermissions album, req, (err, isAllowed) =>
+        async.each albums, (album, callback) ->
+            sharing.checkPermissions album, req, (err, isAllowed) ->
                 visible.push album if isAllowed and not err
                 callback null
 
@@ -171,9 +171,9 @@ module.exports.update = (req, res, next) ->
 # Destroy album and all its photos.
 module.exports.delete = (req, res, next) ->
     req.album.destroy (err) ->
-       return next err if err
+        return next err if err
 
-       Photo.fromAlbum req.album, (err, photos) ->
-           photo.destroy() for photo in photos
+        Photo.fromAlbum req.album, (err, photos) ->
+            photo.destroy() for photo in photos
 
-       res.send success: "Deletion succeded."
+        res.send success: "Deletion succeded."

@@ -3,7 +3,7 @@ async = require 'async'
 fs = require 'fs'
 
 module.exports.list = (req, res, next) ->
-    Contact.all (err, contacts) =>
+    Contact.all (err, contacts) ->
         if err
             next err
         else if not contacts

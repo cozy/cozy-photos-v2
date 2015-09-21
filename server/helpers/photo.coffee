@@ -19,7 +19,9 @@ module.exports = photoHelpers =
     # Turn given orientation in an integer code.
     getOrientation: (orientation) ->
         result = 1
-        if typeof orientation is 'number' and orientation > 0 and orientation < 9
+        if typeof orientation is 'number' and
+           orientation > 0 and
+           orientation < 9
             result = orientation
         else if codes[orientation]?
             result = codes[orientation]

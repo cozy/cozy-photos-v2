@@ -10,7 +10,7 @@ fileByPage = 5 * 12
 # Get given file, returns 404 if photo is not found.
 module.exports.fetch = (req, res, next, id) ->
     id = id.substring 0, id.length - 4 if id.indexOf('.jpg') > 0
-    File.find id, (err, file) =>
+    File.find id, (err, file) ->
         if err
             next err
         else if not file
@@ -38,7 +38,7 @@ module.exports.list = (req, res, next) ->
         limit: fileByPage + 1
         skip: skip
         descending: true
-    File.imageByDate options, (err, photos) =>
+    File.imageByDate options, (err, photos) ->
         return next err if err
 
         # Check if it exists a page after

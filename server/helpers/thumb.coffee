@@ -57,7 +57,7 @@ module.exports = thumb =
         dstPath = "/tmp/2-#{file.id}"
 
         try
-            attachFile = (err) =>
+            attachFile = (err) ->
                 if err
                     callback err
                 else
