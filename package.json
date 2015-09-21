@@ -1,6 +1,10 @@
 {
   "name": "cozy-photos",
+<<<<<<< HEAD
   "version": "1.0.13",
+=======
+  "version": "1.0.14",
+>>>>>>> ff5ff08aa15bfba8bafc9448bab5371c8940b93c
   "author": "",
   "licenses": [
     {
@@ -50,14 +54,26 @@
     "Contact": {
       "description": "Allows you to easily share an album"
     },
+<<<<<<< HEAD
     "CozyInstance": {
       "description": "Read language setting"
     },
+=======
+>>>>>>> ff5ff08aa15bfba8bafc9448bab5371c8940b93c
     "File": {
       "description": "Import pictures from the Files app"
     },
     "Send mail from user": {
       "description": "Share album with your friends"
+<<<<<<< HEAD
+=======
+    },
+    "CozyInstance": {
+      "description": "To display the application in the right language, the application requires access to your instance informations."
+    },
+    "User": {
+      "description": "Need user information to send proper sharing emails."
+>>>>>>> ff5ff08aa15bfba8bafc9448bab5371c8940b93c
     }
   }
 }
