@@ -8,6 +8,7 @@ module.exports = class Photo extends Backbone.Model
         thumbsrc: 'img/loading.gif'
         src: ''
         orientation: 1
+        gps: {}
 
     url: ->
         super + app.urlKey

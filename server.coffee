@@ -1,4 +1,5 @@
 americano = require 'americano'
+Photo     = require './server/models/photo'
 
 process.on 'uncaughtException', (err) ->
     console.log err
@@ -17,6 +18,11 @@ module.exports.start = start = (options, cb) ->
     americano.start options, (err, app, server) ->
         return cb err if err
 
+        Photo.patchGps (err) ->
+            if err?
+                console.log "Something went wrong during patch -- #{err}"
+            else
+                console.log  "Patch successfully applied"
         module.exports.app = app
         cb?(null, app, server)
 

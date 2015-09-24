@@ -33,6 +33,7 @@ exports.config =
                     # Twitter Bootstrap jquery plugins
                     'vendor/scripts/bootstrap.js',
                     'vendor/scripts/polyglot.js',
+                    'vendor/scripts/leaflet.js'
                 ]
                 after: [
                 ]

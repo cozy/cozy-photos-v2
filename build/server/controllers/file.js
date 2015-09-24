@@ -19,20 +19,18 @@ module.exports.fetch = function(req, res, next, id) {
   if (id.indexOf('.jpg') > 0) {
     id = id.substring(0, id.length - 4);
   }
-  return File.find(id, (function(_this) {
-    return function(err, file) {
-      if (err) {
-        return next(err);
-      } else if (!file) {
-        err = new Error("File " + id + " not found");
-        err.status = 404;
-        return next(err);
-      } else {
-        req.file = file;
-        return next();
-      }
-    };
-  })(this));
+  return File.find(id, function(err, file) {
+    if (err) {
+      return next(err);
+    } else if (!file) {
+      err = new Error("File " + id + " not found");
+      err.status = 404;
+      return next(err);
+    } else {
+      req.file = file;
+      return next();
+    }
+  });
 };
 
 module.exports.list = function(req, res, next) {
@@ -48,36 +46,34 @@ module.exports.list = function(req, res, next) {
     skip: skip,
     descending: true
   };
-  return File.imageByDate(options, (function(_this) {
-    return function(err, photos) {
-      var date, hasNext, i, len, mounth, photo;
-      if (err) {
-        return next(err);
-      }
-      if (photos.length === fileByPage + 1) {
-        hasNext = true;
+  return File.imageByDate(options, function(err, photos) {
+    var date, hasNext, i, len, mounth, photo;
+    if (err) {
+      return next(err);
+    }
+    if (photos.length === fileByPage + 1) {
+      hasNext = true;
+    } else {
+      hasNext = false;
+    }
+    photos.splice(fileByPage, 1);
+    for (i = 0, len = photos.length; i < len; i++) {
+      photo = photos[i];
+      date = new Date(photo.lastModification);
+      mounth = date.getMonth() + 1;
+      mounth = mounth > 9 ? "" + mounth : "0" + mounth;
+      date = (date.getFullYear()) + "-" + mounth;
+      if (dates[date] != null) {
+        dates[date].push(photo);
       } else {
-        hasNext = false;
+        dates[date] = [photo];
       }
-      photos.splice(fileByPage, 1);
-      for (i = 0, len = photos.length; i < len; i++) {
-        photo = photos[i];
-        date = new Date(photo.lastModification);
-        mounth = date.getMonth() + 1;
-        mounth = mounth > 9 ? "" + mounth : "0" + mounth;
-        date = (date.getFullYear()) + "-" + mounth;
-        if (dates[date] != null) {
-          dates[date].push(photo);
-        } else {
-          dates[date] = [photo];
-        }
-      }
-      return res.send({
-        files: dates,
-        hasNext: hasNext
-      });
-    };
-  })(this));
+    }
+    return res.send({
+      files: dates,
+      hasNext: hasNext
+    });
+  });
 };
 
 module.exports.thumb = function(req, res, next) {

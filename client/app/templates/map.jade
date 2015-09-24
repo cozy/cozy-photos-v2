@@ -1,0 +1,17 @@
+div(style="position: fixed; height:100%; width: 100%;")
+    div#links(style="margin-bottom:0;")
+        a.flatbtn(href="#")
+            span.fa.fa-arrow-left.icon-white
+            span= t("Back")
+    div#map(style="height: 95%;")
+
+form.choice-box(style="position: fixed; bottom: 0; width: 100%; height:0; background-color: white; transisiton: all 0.5 linear")
+    div#map-galery.col-sm-10(style="overflow-x: scroll; padding: 0; white-space: nowrap;")
+    div.map-setter.col-sm-2(style="padding: 0;")
+        div.clearfix
+            div#links.clearfix
+                p.back
+                    button.flatbtn#validate
+                        span= t("Apply")
+
+<img hidden src="images/spinner.svg" width="100%", height="100%" title="waiting..." />

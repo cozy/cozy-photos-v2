@@ -209,6 +209,18 @@ module.exports = PhotoCollection = (function(_super) {
     return model.get('title');
   };
 
+  PhotoCollection.prototype.hasGPS = function() {
+    return new PhotoCollection(this.filter(function(photo) {
+      return photo.get("gps").lat != null;
+    }));
+  };
+
+  PhotoCollection.prototype.hasNotGPS = function() {
+    return new PhotoCollection(this.filter(function(photo) {
+      return photo.get("gps").lat == null;
+    }));
+  };
+
   return PhotoCollection;
 
 })(Backbone.Collection);
@@ -378,14 +390,12 @@ module.exports = Clipboard = (function() {
         });
       };
     })(this));
-    $(document).keyup((function(_this) {
-      return function(e) {
-        if ($(e.target).is("#clipboard")) {
-          $("<textarea id='clipboard'></textarea>").val("");
-          return $("#clipboard-container").empty().hide();
-        }
-      };
-    })(this));
+    $(document).keyup(function(e) {
+      if ($(e.target).is("#clipboard")) {
+        $("<textarea id='clipboard'></textarea>").val("");
+        return $("#clipboard-container").empty().hide();
+      }
+    });
   }
 
   Clipboard.prototype.set = function(value) {
@@ -503,6 +513,34 @@ module.exports = {
       return 1;
     }
   }
+};
+});
+
+;require.register("lib/map_providers", function(exports, require, module) {
+
+/*
+    This file permit to add lots of map background, you can copy-paste
+    code from 'http://leaflet-extras.github.io/leaflet-providers/preview/'
+    and add a nex entry in this array, the default background is the first
+    indice.
+ */
+module.exports = {
+  'Water color': L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png', {
+    attribution: 'Map by <a href="http://stamen.com">Stamen Design</a>',
+    subdomains: 'abcd',
+    ext: 'png',
+    maxZoom: 12
+  }),
+  'Open street map hot': L.tileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+    attribution: 'Map by <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }),
+  'Esri world imagery': L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Map by Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP'
+  }),
+  'Acetate all': L.tileLayer('http://a{s}.acetate.geoiq.com/tiles/acetate-hillshading/{z}/{x}/{y}.png', {
+    attribution: 'map by Esri & Stamen',
+    subdomains: '0123'
+  })
 };
 });
 
@@ -843,6 +881,216 @@ module.exports = {
   "thumb creation": "Applikation erstellt Thumbs für Dateien.",
   "progress": "Fortschritt",
   "Navigate before upload": "Hochladen noch aktiv, möchten Sie wirklich diese Seite verlassen?",
+  "application title": "Cozy - photos",
+  "Apply": "Anwenden"
+};
+});
+
+;require.register("locales/de", function(exports, require, module) {
+module.exports = {
+  "or": "oder",
+  "Back": "Zurück",
+  "Create a new album": "Neues Album erstellen",
+  "Delete": "Löschen",
+  "Download": "Herunterladen",
+  "Edit": "Bearbeiten",
+  "Stop editing": "Änderungen speichern",
+  "It will appear on your homepage.": "Es wird auf dem Album Seite angezeigt.",
+  "Make it Hidden": "Verborgen",
+  "Make it Private": "Privat",
+  "Make it Public": "Öffentlich",
+  "New": "New",
+  "private": "Privat",
+  "public": "Öffentlich",
+  "hidden": "Verborgen",
+  "There is no photos in this album": "Es ist kein Foto in diesem Album. Klicken Sie Bearbeiten um neue hinzuzufügen.",
+  "There is no public albums.": "Es existiert kein Album.",
+  "This album is private": "Dieses Album ist privat",
+  "This album is hidden": "Dieses Album ist verborgen",
+  "This album is public": "Dieses Album is öffentlich",
+  "title placeholder": "Vergeben Sie einen Tittel für dieses Album…",
+  "View": "Ansicht",
+  "description placeholder": "Schreiben Sie eine Beschreibung…",
+  "is too big (max 10Mo)": "ist zu groß (max. 10Mo)",
+  "is not an image": "ist kein Bild",
+  "Share album by mail": "Album via E-Mail teilen",
+  "Upload your contacts...": "Ihre Kontakte hochladen…",
+  "Share album": "Album teilen",
+  "Add contact": "Kontact hinzufügen",
+  "Send mail": "E-Mail senden",
+  "Select your friends": "Ihre Freunde auswählen",
+  "Add": "Hinzufügen",
+  "Cancel": "Abbrechen",
+  "photo successfully set as cover": "Diese Bild ist erfolgreich als Album Cover vergeben",
+  "problem occured while setting cover": "Ein Problem ist aufgetreten während der Vergabe dieses Bild als Album Cover",
+  "pick from computer": "Klicken Sie hier oder ziehen Sie Ihre Bilder um Sie zu diesem Album hinzu zufügen.",
+  "pick from files": "Klicken Sie hier um Bilder von der Files app zu übernehmen.",
+  "hidden-description": "It will not appear on your homepage.\nBut you can share it with the following url:",
+  "It cannot be accessed from the public side": "Es is keine öffentlich Ressource.",
+  "rebuild thumbnails": "Neuaufbau Thumbnails",
+  "01": "Januar",
+  "02": "Februar",
+  "03": "März",
+  "04": "April",
+  "05": "Mai",
+  "06": "Juni",
+  "07": "Juli",
+  "08": "August",
+  "09": "September",
+  "10": "Oktober",
+  "11": "November",
+  "12": "Dezember",
+  "cancel": "Abbrechen",
+  "copy paste link": "Um Ihrem Kontakt Zugriff zu gewähren senden Sie Ihr/Ihm den Linnk unten:",
+  "details": "Details",
+  "inherited from": "geerbt von",
+  "modal question album shareable": "Wählen Sie Teilen Modus für diese Album",
+  "modal shared album custom msg": "E-Mail Adresse eingeben und Enter drücken",
+  "modal shared album link msg": "Senden Sie diesen Link um Leuten Zugriff zu diesem Album zu gewähren",
+  "modal shared public link msg": "Senden Sie diesen Link um Leuten Zugriff zu diesm Ordner zu gewähren:",
+  "modal shared with people msg": "Eine Auswahl von Kontakten für Zugriff einladen. E-Mail\nin das Feld eintragen und Enter drücken (Eine E-Mail wird zu Ihnen versand):",
+  "modal send mails": "Eine Mitteilung versenden",
+  "modal next": "Nächste",
+  "modal prev": "Vorherige",
+  "modal ok": "Ok",
+  "modal cancel": "Abbrechen",
+  "modal error": "Fehler",
+  "only you can see": "Nur Sie und die aufgelsiteten Leutehaben Zugriff auf diese Ressource",
+  "public": "Öffentlich",
+  "private": "Privat",
+  "shared": "Geteilt",
+  "share": "Teilen",
+  "save": "Speichern",
+  "see link": "Siehe Link",
+  "send mails question": "Eine Mitteilungs E-Mail versenden an:",
+  "sharing": "Teilen",
+  "revoke": "Absagen",
+  "confirm": "Bestätigen",
+  "share forgot add": "Scheint so als ob Sie vergessen haben die Schaltfläche Hinzufügen zu drücken",
+  "share confirm save": "Die Änderungen die Sie an den Rechten vorgenommen haben, werden nicht gespeichert. Möchten Sie fortfahren?",
+  "yes forgot": "Zurück",
+  "no forgot": "es ist ok",
+  "perm": "can ",
+  "perm r album": "Diese Album durchblättern",
+  "perm rw album": "Fotos durchblättern und hochladen",
+  "mail not send": "E-Mail nicht gesendet",
+  "server error occured": "Fehler auf Server Seite aufgetreten, bitte später noch einmal probieren",
+  "change notif": "Diesen Kasten anwählen um benachrichtigt zu werden, wenn eine Kontakt\nein Bild zu diesem Album hinzufügt.",
+  "send email hint": "Mitteilungs E-Mails werden einmalig beim Speichern gesendet",
+  "yes": "Ja",
+  "no": "Nein",
+  "picture": "Bild |||| Bilder",
+  "delete empty album": "Dieses Album ist leer, möchten Sie es löschen?",
+  "are you sure you want to delete this album": "Sind Sie sicher diese Album zu löschen?",
+  "photos search": "Laden ...",
+  "no photos found": "Keine Bilder gefunden",
+  "thumb creation": "Applikation erstellt Thumbs für Dateien.",
+  "progress": "Fortschritt",
+  "Navigate before upload": "Hochladen noch aktiv, möchten Sie wirklich diese Seite verlassen?",
+  "application title": "Cozy - photos"
+}
+;
+});
+
+require.register("locales/de.transifex", function(exports, require, module) {
+module.exports = {
+  "10": "Oktober",
+  "11": "November",
+  "12": "Dezember",
+  "or": "oder",
+  "Back": "Zurück",
+  "Create a new album": "Neues Album erstellen",
+  "Delete": "Löschen",
+  "Download": "Herunterladen",
+  "Edit": "Bearbeiten",
+  "Stop editing": "Änderungen speichern",
+  "It will appear on your homepage.": "Es wird auf dem Album Seite angezeigt.",
+  "Make it Hidden": "Verborgen",
+  "Make it Private": "Privat",
+  "Make it Public": "Öffentlich",
+  "New": "New",
+  "private": "Privat",
+  "public": "Öffentlich",
+  "hidden": "Verborgen",
+  "There is no photos in this album": "Es ist kein Foto in diesem Album. Klicken Sie Bearbeiten um neue hinzuzufügen.",
+  "There is no public albums.": "Es existiert kein Album.",
+  "This album is private": "Dieses Album ist privat",
+  "This album is hidden": "Dieses Album ist verborgen",
+  "This album is public": "Dieses Album is öffentlich",
+  "title placeholder": "Vergeben Sie einen Tittel für dieses Album…",
+  "View": "Ansicht",
+  "description placeholder": "Schreiben Sie eine Beschreibung…",
+  "is too big (max 10Mo)": "ist zu groß (max. 10Mo)",
+  "is not an image": "ist kein Bild",
+  "Share album by mail": "Album via E-Mail teilen",
+  "Upload your contacts...": "Ihre Kontakte hochladen…",
+  "Share album": "Album teilen",
+  "Add contact": "Kontact hinzufügen",
+  "Send mail": "E-Mail senden",
+  "Select your friends": "Ihre Freunde auswählen",
+  "Add": "Hinzufügen",
+  "Cancel": "Abbrechen",
+  "photo successfully set as cover": "Diese Bild ist erfolgreich als Album Cover vergeben",
+  "problem occured while setting cover": "Ein Problem ist aufgetreten während der Vergabe dieses Bild als Album Cover",
+  "pick from computer": "Klicken Sie hier oder ziehen Sie Ihre Bilder um Sie zu diesem Album hinzu zufügen.",
+  "pick from files": "Klicken Sie hier um Bilder von der Files app zu übernehmen.",
+  "hidden-description": "It will not appear on your homepage.\nBut you can share it with the following url:",
+  "It cannot be accessed from the public side": "Es is keine öffentlich Ressource.",
+  "rebuild thumbnails": "Neuaufbau Thumbnails",
+  "01": "Januar",
+  "02": "Februar",
+  "03": "März",
+  "04": "April",
+  "05": "Mai",
+  "06": "Juni",
+  "07": "Juli",
+  "08": "August",
+  "09": "September",
+  "cancel": "Abbrechen",
+  "copy paste link": "Um Ihrem Kontakt Zugriff zu gewähren senden Sie Ihr/Ihm den Linnk unten:",
+  "details": "Details",
+  "inherited from": "geerbt von",
+  "modal question album shareable": "Wählen Sie Teilen Modus für diese Album",
+  "modal shared album custom msg": "E-Mail Adresse eingeben und Enter drücken",
+  "modal shared album link msg": "Senden Sie diesen Link um Leuten Zugriff zu diesem Album zu gewähren",
+  "modal shared public link msg": "Senden Sie diesen Link um Leuten Zugriff zu diesm Ordner zu gewähren:",
+  "modal shared with people msg": "Eine Auswahl von Kontakten für Zugriff einladen. E-Mail\nin das Feld eintragen und Enter drücken (Eine E-Mail wird zu Ihnen versand):",
+  "modal send mails": "Eine Mitteilung versenden",
+  "modal next": "Nächste",
+  "modal prev": "Vorherige",
+  "modal ok": "Ok",
+  "modal cancel": "Abbrechen",
+  "modal error": "Fehler",
+  "only you can see": "Nur Sie und die aufgelsiteten Leutehaben Zugriff auf diese Ressource",
+  "shared": "Geteilt",
+  "share": "Teilen",
+  "save": "Speichern",
+  "see link": "Siehe Link",
+  "send mails question": "Eine Mitteilungs E-Mail versenden an:",
+  "sharing": "Teilen",
+  "revoke": "Absagen",
+  "confirm": "Bestätigen",
+  "share forgot add": "Scheint so als ob Sie vergessen haben die Schaltfläche Hinzufügen zu drücken",
+  "share confirm save": "Die Änderungen die Sie an den Rechten vorgenommen haben, werden nicht gespeichert. Möchten Sie fortfahren?",
+  "yes forgot": "Zurück",
+  "no forgot": "es ist ok",
+  "perm": "can",
+  "perm r album": "Diese Album durchblättern",
+  "perm rw album": "Fotos durchblättern und hochladen",
+  "mail not send": "E-Mail nicht gesendet",
+  "server error occured": "Fehler auf Server Seite aufgetreten, bitte später noch einmal probieren",
+  "change notif": "Diesen Kasten anwählen um benachrichtigt zu werden, wenn eine Kontakt\nein Bild zu diesem Album hinzufügt.",
+  "send email hint": "Mitteilungs E-Mails werden einmalig beim Speichern gesendet",
+  "yes": "Ja",
+  "no": "Nein",
+  "picture": "Bild |||| Bilder",
+  "delete empty album": "Dieses Album ist leer, möchten Sie es löschen?",
+  "are you sure you want to delete this album": "Sind Sie sicher diese Album zu löschen?",
+  "photos search": "Laden ...",
+  "no photos found": "Keine Bilder gefunden",
+  "thumb creation": "Applikation erstellt Thumbs für Dateien.",
+  "progress": "Fortschritt",
+  "Navigate before upload": "Hochladen noch aktiv, möchten Sie wirklich diese Seite verlassen?",
   "application title": "Cozy - photos"
 };
 });
@@ -932,6 +1180,216 @@ module.exports = {
   "yes forgot": "Back",
   "no forgot": "It's ok",
   "perm": "can ",
+  "perm r album": "browse this album",
+  "perm rw album": "browse and upload photos",
+  "mail not send": "Mail not sent",
+  "server error occured": "Error occured on server side, please try again later",
+  "change notif": "Check this box to be notified when a contact\nwill add a photo to this album.",
+  "send email hint": "Notification emails will be sent one time on save",
+  "yes": "Yes",
+  "no": "No",
+  "picture": "picture |||| pictures",
+  "delete empty album": "This album is empty, do you want to delete it?",
+  "are you sure you want to delete this album": "Are you sure you want to delete this album?",
+  "photos search": "Loading ...",
+  "no photos found": "No photos found",
+  "thumb creation": "Application creates thumbs for files.",
+  "progress": "Progression",
+  "Navigate before upload": "Some upload are in progress, do you really want to leave this page?",
+  "application title": "Cozy - photos",
+  "Apply": "Apply"
+};
+});
+
+;require.register("locales/en", function(exports, require, module) {
+module.exports = {
+  "or": "or",
+  "Back": "Back",
+  "Create a new album": "Create a new album",
+  "Delete": "Delete",
+  "Download": "Download",
+  "Edit": "Edit",
+  "Stop editing": "Save Changes",
+  "It will appear on your homepage.": "It will be displayed on the album page.",
+  "Make it Hidden": "hidden",
+  "Make it Private": "private",
+  "Make it Public": "public",
+  "New": "New",
+  "private": "private",
+  "public": "public",
+  "hidden": "hidden",
+  "There is no photos in this album": "There is no photo in this album. Click on Edit button to add new ones.",
+  "There is no public albums.": "There are no albums.",
+  "This album is private": "This album is private",
+  "This album is hidden": "This album is hidden",
+  "This album is public": "This album is public",
+  "title placeholder": "Set a title for this album…",
+  "View": "View",
+  "description placeholder": "Write a description…",
+  "is too big (max 10Mo)": "is too big (max 10Mo)",
+  "is not an image": "is not an image",
+  "Share album by mail": "Share album by mail",
+  "Upload your contacts...": "Upload your contacts…",
+  "Share album": "Share album",
+  "Add contact": "Add contact",
+  "Send mail": "Send mail",
+  "Select your friends": "Select your friends",
+  "Add": "Add",
+  "Cancel": "Cancel",
+  "photo successfully set as cover": "The picture has been successfully set as album cover",
+  "problem occured while setting cover": "A problem occured while setting picture as cover",
+  "pick from computer": "Click here or drag your photos below to add them to the album.",
+  "pick from files": "Click here to pick pictures from the Files app.",
+  "hidden-description": "It will not appear on your homepage.\nBut you can share it with the following url:",
+  "It cannot be accessed from the public side": "It is not a public resource.",
+  "rebuild thumbnails": "Rebuild thumbnails",
+  "01": "January",
+  "02": "February",
+  "03": "March",
+  "04": "April",
+  "05": "May",
+  "06": "June",
+  "07": "July",
+  "08": "August",
+  "09": "September",
+  "10": "October",
+  "11": "November",
+  "12": "December",
+  "cancel": "Cancel",
+  "copy paste link": "To give access to your contact send him/her the link below:",
+  "details": "Details",
+  "inherited from": "inherited from",
+  "modal question album shareable": "Select share mode for this album",
+  "modal shared album custom msg": "Enter email and press enter",
+  "modal shared album link msg": "Send this link to let people access this album",
+  "modal shared public link msg": "Send this link to let people access this folder:",
+  "modal shared with people msg": "Invite a selection of contacts to access it. Type\nemail in the field and press enter (An email will be sent to them):",
+  "modal send mails": "Send a notification",
+  "modal next": "Next",
+  "modal prev": "Previous",
+  "modal ok": "Ok",
+  "modal cancel": "Cancel",
+  "modal error": "Error",
+  "only you can see": "Only you and the people listed below can access this resource",
+  "public": "Public",
+  "private": "Private",
+  "shared": "Shared",
+  "share": "Share",
+  "save": "Save",
+  "see link": "See link",
+  "send mails question": "Send a notification email to:",
+  "sharing": "Sharing",
+  "revoke": "Revoke",
+  "confirm": "Confirm",
+  "share forgot add": "Looks like you forgot to click the Add button",
+  "share confirm save": "The changes you made to the permissions will not be saved. Do you want to continue?",
+  "yes forgot": "Back",
+  "no forgot": "It's ok",
+  "perm": "can ",
+  "perm r album": "browse this album",
+  "perm rw album": "browse and upload photos",
+  "mail not send": "Mail not sent",
+  "server error occured": "Error occured on server side, please try again later",
+  "change notif": "Check this box to be notified when a contact\nwill add a photo to this album.",
+  "send email hint": "Notification emails will be sent one time on save",
+  "yes": "Yes",
+  "no": "No",
+  "picture": "picture |||| pictures",
+  "delete empty album": "This album is empty, do you want to delete it?",
+  "are you sure you want to delete this album": "Are you sure you want to delete this album?",
+  "photos search": "Loading ...",
+  "no photos found": "No photos found",
+  "thumb creation": "Application creates thumbs for files.",
+  "progress": "Progression",
+  "Navigate before upload": "Some upload are in progress, do you really want to leave this page?",
+  "application title": "Cozy - photos"
+}
+;
+});
+
+require.register("locales/en.transifex", function(exports, require, module) {
+module.exports = {
+  "10": "October",
+  "11": "November",
+  "12": "December",
+  "or": "or",
+  "Back": "Back",
+  "Create a new album": "Create a new album",
+  "Delete": "Delete",
+  "Download": "Download",
+  "Edit": "Edit",
+  "Stop editing": "Save Changes",
+  "It will appear on your homepage.": "It will be displayed on the album page.",
+  "Make it Hidden": "hidden",
+  "Make it Private": "private",
+  "Make it Public": "public",
+  "New": "New",
+  "private": "Private",
+  "public": "Public",
+  "hidden": "hidden",
+  "There is no photos in this album": "There is no photo in this album. Click on Edit button to add new ones.",
+  "There is no public albums.": "There are no albums.",
+  "This album is private": "This album is private",
+  "This album is hidden": "This album is hidden",
+  "This album is public": "This album is public",
+  "title placeholder": "Set a title for this album…",
+  "View": "View",
+  "description placeholder": "Write a description…",
+  "is too big (max 10Mo)": "is too big (max 10Mo)",
+  "is not an image": "is not an image",
+  "Share album by mail": "Share album by mail",
+  "Upload your contacts...": "Upload your contacts…",
+  "Share album": "Share album",
+  "Add contact": "Add contact",
+  "Send mail": "Send mail",
+  "Select your friends": "Select your friends",
+  "Add": "Add",
+  "Cancel": "Cancel",
+  "photo successfully set as cover": "The picture has been successfully set as album cover",
+  "problem occured while setting cover": "A problem occured while setting picture as cover",
+  "pick from computer": "Click here or drag your photos below to add them to the album.",
+  "pick from files": "Click here to pick pictures from the Files app.",
+  "hidden-description": "It will not appear on your homepage.\nBut you can share it with the following url:",
+  "It cannot be accessed from the public side": "It is not a public resource.",
+  "rebuild thumbnails": "Rebuild thumbnails",
+  "01": "January",
+  "02": "February",
+  "03": "March",
+  "04": "April",
+  "05": "May",
+  "06": "June",
+  "07": "July",
+  "08": "August",
+  "09": "September",
+  "cancel": "Cancel",
+  "copy paste link": "To give access to your contact send him/her the link below:",
+  "details": "Details",
+  "inherited from": "inherited from",
+  "modal question album shareable": "Select share mode for this album",
+  "modal shared album custom msg": "Enter email and press enter",
+  "modal shared album link msg": "Send this link to let people access this album",
+  "modal shared public link msg": "Send this link to let people access this folder:",
+  "modal shared with people msg": "Invite a selection of contacts to access it. Type\nemail in the field and press enter (An email will be sent to them):",
+  "modal send mails": "Send a notification",
+  "modal next": "Next",
+  "modal prev": "Previous",
+  "modal ok": "Ok",
+  "modal cancel": "Cancel",
+  "modal error": "Error",
+  "only you can see": "Only you and the people listed below can access this resource",
+  "shared": "Shared",
+  "share": "Share",
+  "save": "Save",
+  "see link": "See link",
+  "send mails question": "Send a notification email to:",
+  "sharing": "Sharing",
+  "revoke": "Revoke",
+  "confirm": "Confirm",
+  "share forgot add": "Looks like you forgot to click the Add button",
+  "share confirm save": "The changes you made to the permissions will not be saved. Do you want to continue?",
+  "yes forgot": "Back",
+  "no forgot": "It's ok",
+  "perm": "can",
   "perm r album": "browse this album",
   "perm rw album": "browse and upload photos",
   "mail not send": "Mail not sent",
@@ -1051,6 +1509,214 @@ module.exports = {
   "thumb creation": "La aplicación está creando miniaturas para mejorar la navegación.",
   "progress": "Avance",
   "Navigate before upload": "Algunas páginas todavía no se han enviado al servidor, ¿desea realmente salir de esta página?",
+  "application title": "Cozy - fotos",
+  "Apply": "Aplicar"
+};
+});
+
+;require.register("locales/es", function(exports, require, module) {
+module.exports = {
+  "10": "Octubre",
+  "11": "Noviembre",
+  "12": "Diciembre",
+  "or": "o",
+  "Back": "Atrás",
+  "Create a new album": "Crear un album",
+  "Delete": "Suprimir",
+  "Download": "Descargar",
+  "Edit": "Modificar",
+  "Stop editing": "Guardar los cambios",
+  "It will appear on your homepage.": "Aparecerá en su página de Inicio.",
+  "Make it Hidden": "oculto",
+  "Make it Private": "privado",
+  "Make it Public": "público",
+  "New": "Nuevo",
+  "private": "Privado",
+  "public": "Público",
+  "hidden": "oculto",
+  "There is no photos in this album": "No hay fotos en este album.",
+  "There is no public albums.": "No hay ningún album.",
+  "This album is private": "Este album es privado",
+  "This album is hidden": "Este album es oculto",
+  "This album is public": "Este album es público",
+  "title placeholder": "Título…",
+  "View": "Ver",
+  "description placeholder": "Descripción…",
+  "is too big (max 10Mo)": "es demasiado grande (max 10Mo)",
+  "is not an image": "no es una imagen",
+  "Share album by mail": "Compartir por correo electrónico",
+  "Upload your contacts...": "Cargar sus contactos…",
+  "Share album": "Compartir el album",
+  "Add contact": "Añadir un contacto",
+  "Send mail": "Enviar un mensaje",
+  "Select your friends": "Escoger a sus amigos",
+  "Add": "Añadir",
+  "Cancel": "Anular",
+  "photo successfully set as cover": "Se ha fijado exitosamente la imagen como  portada del album",
+  "problem occured while setting cover": "Ocurrió un problema al fijar la imagen como portada del album.",
+  "pick from computer": "Para añadir imágenes, haga clic aquí o arrastre y pegue sus fotos.",
+  "pick from files": "Hacer clic aquí para importar imágenes desde la aplicación Archivos.",
+  "hidden-description": "No aparecerá en su página de Inicio.\nPero usted puede compartirlo en esta url:",
+  "It cannot be accessed from the public side": "No es un recurso público",
+  "rebuild thumbnails": "Regenerar las miniaturas",
+  "01": "Enero",
+  "02": "Febrero",
+  "03": "Marzo",
+  "04": "Abril",
+  "05": "Mayo",
+  "06": "Junio",
+  "07": "Julio",
+  "08": "Agosto",
+  "09": "Septiembre",
+  "cancel": "Anular",
+  "copy paste link": "Para que su contacto pueda acceder, enviar este enlace:",
+  "details": "Detalles",
+  "inherited from": "heredado de",
+  "modal question album shareable": "Escoger la manera de compartir este album",
+  "modal shared album custom msg": "Insertar un correo electrónico y pulsar en Enter",
+  "modal shared album link msg": "Enviar este enlace para compartir este album",
+  "modal shared public link msg": "Enviar este enlace para compartir esta carpeta.",
+  "modal shared with people msg": "Invitar a algunos contactos seleccionados a que accedan. Introducir\nel correo electrónico en la casilla y pulsar en Enter (para informarles se les enviará un email):",
+  "modal send mails": "Enviar un aviso",
+  "modal next": "Siguiente",
+  "modal prev": "Precedente",
+  "modal ok": "Ok",
+  "modal cancel": "Anular",
+  "modal error": "Error",
+  "only you can see": "Sólo usted y las personas que aparecen en la lista siguiente pueden acceder al recurso",
+  "shared": "Compartido",
+  "share": "Compartir",
+  "save": "Guardar",
+  "see link": "Ver el enlace",
+  "send mails question": "Avisar por correo electrónico a:",
+  "sharing": "Compartiendo",
+  "revoke": "Revocar el permiso",
+  "confirm": "Confirmar",
+  "share forgot add": "Parece que a usted se le ha olvidado pulsar el botón Añadir",
+  "share confirm save": "Los cambios efectuados en los permisos no se tendrán en cuenta.¿Lo confirma?.",
+  "yes forgot": "Atrás",
+  "no forgot": "Ok",
+  "perm": "Usted puede ",
+  "perm r album": "navegar en este album",
+  "perm rw album": "navegar en este album y cargar fotos",
+  "mail not send": "El mensaje no ha sido enviado",
+  "server error occured": "Ocurrió un error en el servidor, intentar de nuevo",
+  "change notif": "Marque esta casilla para recibir un aviso cozy cuando un contacto\nañada una foto a este album.",
+  "send email hint": "Se avisa por correo electrónico cuando se guarda por primera vez",
+  "yes": "Si",
+  "no": "No",
+  "picture": "foto |||| fotos",
+  "delete empty album": "El album está vacío, ¿quiere suprimirlo?",
+  "are you sure you want to delete this album": "¿Esta seguro(a) que quiere borrar este album?",
+  "photos search": "Cargando ...",
+  "no photos found": "No se ha encontrado ninguna foto",
+  "thumb creation": "La aplicación está creando miniaturas para mejorar la navegación.",
+  "progress": "Avance",
+  "Navigate before upload": "Algunas páginas todavía no se han enviado al servidor, ¿desea realmente salir de esta página?",
+  "application title": "Cozy - fotos"
+}
+;
+});
+
+require.register("locales/es.transifex", function(exports, require, module) {
+module.exports = {
+  "10": "Octubre",
+  "11": "Noviembre",
+  "12": "Diciembre",
+  "or": "o",
+  "Back": "Atrás",
+  "Create a new album": "Crear un album",
+  "Delete": "Suprimir",
+  "Download": "Descargar",
+  "Edit": "Modificar",
+  "Stop editing": "Guardar los cambios",
+  "It will appear on your homepage.": "Aparecerá en su página de Inicio.",
+  "Make it Hidden": "oculto",
+  "Make it Private": "privado",
+  "Make it Public": "público",
+  "New": "Nuevo",
+  "private": "Privado",
+  "public": "Público",
+  "hidden": "oculto",
+  "There is no photos in this album": "No hay fotos en este album.",
+  "There is no public albums.": "No hay ningún album.",
+  "This album is private": "Este album es privado",
+  "This album is hidden": "Este album es oculto",
+  "This album is public": "Este album es público",
+  "title placeholder": "Título…",
+  "View": "Ver",
+  "description placeholder": "Descripción…",
+  "is too big (max 10Mo)": "es demasiado grande (max 10Mo)",
+  "is not an image": "no es una imagen",
+  "Share album by mail": "Compartir por correo electrónico",
+  "Upload your contacts...": "Cargar sus contactos…",
+  "Share album": "Compartir el album",
+  "Add contact": "Añadir un contacto",
+  "Send mail": "Enviar un mensaje",
+  "Select your friends": "Escoger a sus amigos",
+  "Add": "Añadir",
+  "Cancel": "Anular",
+  "photo successfully set as cover": "Se ha fijado exitosamente la imagen como  portada del album",
+  "problem occured while setting cover": "Ocurrió un problema al fijar la imagen como portada del album.",
+  "pick from computer": "Para añadir imágenes, haga clic aquí o arrastre y pegue sus fotos.",
+  "pick from files": "Hacer clic aquí para importar imágenes desde la aplicación Archivos.",
+  "hidden-description": "No aparecerá en su página de Inicio.\nPero usted puede compartirlo en esta url:",
+  "It cannot be accessed from the public side": "No es un recurso público",
+  "rebuild thumbnails": "Regenerar las miniaturas",
+  "01": "Enero",
+  "02": "Febrero",
+  "03": "Marzo",
+  "04": "Abril",
+  "05": "Mayo",
+  "06": "Junio",
+  "07": "Julio",
+  "08": "Agosto",
+  "09": "Septiembre",
+  "cancel": "Anular",
+  "copy paste link": "Para que su contacto pueda acceder, enviar este enlace:",
+  "details": "Detalles",
+  "inherited from": "heredado de",
+  "modal question album shareable": "Escoger la manera de compartir este album",
+  "modal shared album custom msg": "Insertar un correo electrónico y pulsar en Enter",
+  "modal shared album link msg": "Enviar este enlace para compartir este album",
+  "modal shared public link msg": "Enviar este enlace para compartir esta carpeta.",
+  "modal shared with people msg": "Invitar a algunos contactos seleccionados a que accedan. Introducir\nel correo electrónico en la casilla y pulsar en Enter (para informarles se les enviará un email):",
+  "modal send mails": "Enviar un aviso",
+  "modal next": "Siguiente",
+  "modal prev": "Precedente",
+  "modal ok": "Ok",
+  "modal cancel": "Anular",
+  "modal error": "Error",
+  "only you can see": "Sólo usted y las personas que aparecen en la lista siguiente pueden acceder al recurso",
+  "shared": "Compartido",
+  "share": "Compartir",
+  "save": "Guardar",
+  "see link": "Ver el enlace",
+  "send mails question": "Avisar por correo electrónico a:",
+  "sharing": "Compartiendo",
+  "revoke": "Revocar el permiso",
+  "confirm": "Confirmar",
+  "share forgot add": "Parece que a usted se le ha olvidado pulsar el botón Añadir",
+  "share confirm save": "Los cambios efectuados en los permisos no se tendrán en cuenta.¿Lo confirma?.",
+  "yes forgot": "Atrás",
+  "no forgot": "Ok",
+  "perm": "Usted puede",
+  "perm r album": "navegar en este album",
+  "perm rw album": "navegar en este album y cargar fotos",
+  "mail not send": "El mensaje no ha sido enviado",
+  "server error occured": "Ocurrió un error en el servidor, intentar de nuevo",
+  "change notif": "Marque esta casilla para recibir un aviso cozy cuando un contacto\nañada una foto a este album.",
+  "send email hint": "Se avisa por correo electrónico cuando se guarda por primera vez",
+  "yes": "Si",
+  "no": "No",
+  "picture": "foto |||| fotos",
+  "delete empty album": "El album está vacío, ¿quiere suprimirlo?",
+  "are you sure you want to delete this album": "¿Esta seguro(a) que quiere borrar este album?",
+  "photos search": "Cargando ...",
+  "no photos found": "No se ha encontrado ninguna foto",
+  "thumb creation": "La aplicación está creando miniaturas para mejorar la navegación.",
+  "progress": "Avance",
+  "Navigate before upload": "Algunas páginas todavía no se han enviado al servidor, ¿desea realmente salir de esta página?",
   "application title": "Cozy - fotos"
 };
 });
@@ -1141,6 +1807,217 @@ module.exports = {
   "yes forgot": "Retour",
   "no forgot": "Ok",
   "perm": "peut ",
+  "perm r album": "parcourir cet album",
+  "perm rw album": "parcourir cet album et ajouter des photos",
+  "mail not send": "Le message n'a pas pu être envoyé",
+  "server error occured": "Une erreur est survenue sur le serveur, veuillez réessayer",
+  "change notif": "Cocher cette case pour recevoir une notification cozy quand un contact\najoute une photo à cet album.",
+  "send email hint": "Des emails de notification seront envoyés lors de la première sauvegarde.",
+  "yes": "Oui",
+  "no": "Non",
+  "picture": "photo |||| photos",
+  "delete empty album": "L'album est vide, voulez-vous le supprimer?",
+  "are you sure you want to delete this album": "Voulez-vous vraiment effacer cet album ?",
+  "photos search": "Recherche des photos...",
+  "no photos found": "Aucune photo trouvée...",
+  "thumb creation": "L'application est en train de créer des minatures pour vos photos afin d'améliorer votre navigation.",
+  "progress": "Progression",
+  "Navigate before upload": "Certaines photos n'ont pas encore été envoyées au serveur, voulez-vous vraiment quitter cette page ?",
+  "application title": "Cozy - photos",
+  "Apply": "Appliquer"
+};
+});
+
+;require.register("locales/fr", function(exports, require, module) {
+module.exports = {
+  "or": "ou",
+  "Back": "Retour",
+  "Create a new album": "Créer un nouvel album",
+  "Delete": "Supprimer",
+  "Download": "Télécharger",
+  "Edit": "Modifier",
+  "Stop editing": "Enregistrer",
+  "It will appear on your homepage.": "Il sera affiché sur la page de l'album.",
+  "Make it Hidden": "masqué",
+  "Make it Private": "privé",
+  "Make it Public": "public",
+  "New": "Nouveau",
+  "private": "privé",
+  "public": "public",
+  "hidden": "masqué",
+  "There is no photos in this album": "Pas de photos dans cet album",
+  "There is no public albums.": "Il n'y a aucun album",
+  "This album is private": "Cet album est privé",
+  "This album is hidden": "Cet album est masqué",
+  "This album is public": "Cet album est public",
+  "title placeholder": "Titre...",
+  "description placeholder": "Description...",
+  "View": "Voir",
+  "is too big (max 10Mo)": "est trop grosse (max 10Mo)",
+  "is not an image": "n'est pas une image",
+  "Share album by mail": "Partagez par mail",
+  "Upload your contacts...": "Envoi de vos contacts",
+  "Share album": "Partagez l'album",
+  "Add contact": "Ajoutez un contact",
+  "Send mail": "Envoyez mail",
+  "Select your friends": "Choisissez vos amis",
+  "Add": "Ajouter",
+  "Cancel": "Annuler",
+  "photo successfully set as cover": "L'image est maintenant la couverture de l'album.",
+  "problem occured while setting cover": "Un problème est survenu en positionnant l'image comme couverture de\nl'album.",
+  "pick from computer": "Cliquez ici ou glissez-déposez vos photos pour ajouter des images",
+  "pick from files": "Cliquez ici pour importer des images de l'application Files",
+  "hidden-description": "Il n'apparaîtra pas sur votre page d'accueil,\nMais vous pouvez partager cette URL :",
+  "It cannot be accessed from the public side": "Il ne peut pas être vu depuis le côté public",
+  "rebuild thumbnails": "Regénérer les vignettes",
+  "01": "Janvier",
+  "02": "Février",
+  "03": "Mars",
+  "04": "Avril",
+  "05": "Mai",
+  "06": "Juin",
+  "07": "Juillet",
+  "08": "Août",
+  "09": "Septembre",
+  "10": "Octobre",
+  "11": "Novembre",
+  "12": "Décembre",
+  "cancel": "Annuler",
+  "copy paste link": "Pour donner accès à votre contact envoyez-lui ce lien :",
+  "details": "Détails",
+  "inherited from": "hérité de",
+  "modal question album shareable": "Choisissez le mode de partage pour cet album",
+  "modal shared album custom msg": "Entrez un email et appuyez sur Entrée",
+  "modal shared album link msg": "Envoyez ce lien pour permettre aux personnes d'accéder à l'album",
+  "modal shared public link msg": "Envoyez ce lien pour partager cet album",
+  "modal shared with people msg": "Invitez une sélection de contacts à y accéder. Taper l'email\ndans le champ et appuyez sur entrée (un email pour les prévenir leur sera envoyé) :",
+  "only you can see": "Seul vous pouvez accéder à cette ressource.",
+  "modal send mails": "Envoyer une notification",
+  "modal next": "Suivant",
+  "modal prev": "Précédent",
+  "modal ok": "Ok",
+  "modal cancel": "Annuler",
+  "modal error": "Erreur",
+  "only you can see": "Seuls vous et les personnes ci-dessous peuvent accéder à cette ressource.",
+  "public": "Public",
+  "private": "Privé",
+  "shared": "Partagé",
+  "share": "Partager",
+  "save": "Sauvegarder",
+  "see link": "Voir le lien",
+  "sharing": "Partage",
+  "revoke": "Révoquer la permission",
+  "send mails question": "Envoyer un email de notification à :",
+  "confirm": "Confirmer",
+  "share forgot add": "Il semble que vous ayez oublié d'appuyer sur le bouton Ajouter",
+  "share confirm save": "Les changements effectués sur les permissions ne seront pas sauvegardés. Vous confirmez ?",
+  "yes forgot": "Retour",
+  "no forgot": "Ok",
+  "perm": "peut ",
+  "perm r album": "parcourir cet album",
+  "perm rw album": "parcourir cet album et ajouter des photos",
+  "mail not send": "Le message n'a pas pu être envoyé",
+  "server error occured": "Une erreur est survenue sur le serveur, veuillez réessayer",
+  "change notif": "Cocher cette case pour recevoir une notification cozy quand un contact\najoute une photo à cet album.",
+  "send email hint": "Des emails de notification seront envoyés lors de la première sauvegarde.",
+  "yes": "Oui",
+  "no": "Non",
+  "picture": "photo |||| photos",
+  "delete empty album": "L'album est vide, voulez-vous le supprimer?",
+  "are you sure you want to delete this album": "Voulez-vous vraiment effacer cet album ?",
+  "photos search": "Recherche des photos...",
+  "no photos found": "Aucune photo trouvée...",
+  "thumb creation": "L'application est en train de créer des minatures pour vos photos afin d'améliorer votre navigation.",
+  "progress": "Progression",
+  "Navigate before upload": "Certaines photos n'ont pas encore été envoyées au serveur, voulez-vous vraiment quitter cette page ?",
+  "application title": "Cozy - photos"
+}
+;
+});
+
+require.register("locales/fr.transifex", function(exports, require, module) {
+module.exports = {
+  "10": "Octobre",
+  "11": "Novembre",
+  "12": "Décembre",
+  "or": "ou",
+  "Back": "Retour",
+  "Create a new album": "Créer un nouvel album",
+  "Delete": "Supprimer",
+  "Download": "Télécharger",
+  "Edit": "Modifier",
+  "Stop editing": "Enregistrer",
+  "It will appear on your homepage.": "Il sera affiché sur la page de l'album.",
+  "Make it Hidden": "masqué",
+  "Make it Private": "privé",
+  "Make it Public": "public",
+  "New": "Nouveau",
+  "private": "Privé",
+  "public": "Public",
+  "hidden": "masqué",
+  "There is no photos in this album": "Pas de photos dans cet album",
+  "There is no public albums.": "Il n'y a aucun album",
+  "This album is private": "Cet album est privé",
+  "This album is hidden": "Cet album est masqué",
+  "This album is public": "Cet album est public",
+  "title placeholder": "Titre...",
+  "View": "Voir",
+  "description placeholder": "Description...",
+  "is too big (max 10Mo)": "est trop grosse (max 10Mo)",
+  "is not an image": "n'est pas une image",
+  "Share album by mail": "Partagez par mail",
+  "Upload your contacts...": "Envoi de vos contacts",
+  "Share album": "Partagez l'album",
+  "Add contact": "Ajoutez un contact",
+  "Send mail": "Envoyez mail",
+  "Select your friends": "Choisissez vos amis",
+  "Add": "Ajouter",
+  "Cancel": "Annuler",
+  "photo successfully set as cover": "L'image est maintenant la couverture de l'album.",
+  "problem occured while setting cover": "Un problème est survenu en positionnant l'image comme couverture de\nl'album.",
+  "pick from computer": "Cliquez ici ou glissez-déposez vos photos pour ajouter des images",
+  "pick from files": "Cliquez ici pour importer des images de l'application Files",
+  "hidden-description": "Il n'apparaîtra pas sur votre page d'accueil,\nMais vous pouvez partager cette URL :",
+  "It cannot be accessed from the public side": "Il ne peut pas être vu depuis le côté public",
+  "rebuild thumbnails": "Regénérer les vignettes",
+  "01": "Janvier",
+  "02": "Février",
+  "03": "Mars",
+  "04": "Avril",
+  "05": "Mai",
+  "06": "Juin",
+  "07": "Juillet",
+  "08": "Août",
+  "09": "Septembre",
+  "cancel": "Annuler",
+  "copy paste link": "Pour donner accès à votre contact envoyez-lui ce lien :",
+  "details": "Détails",
+  "inherited from": "hérité de",
+  "modal question album shareable": "Choisissez le mode de partage pour cet album",
+  "modal shared album custom msg": "Entrez un email et appuyez sur Entrée",
+  "modal shared album link msg": "Envoyez ce lien pour permettre aux personnes d'accéder à l'album",
+  "modal shared public link msg": "Envoyez ce lien pour partager cet album",
+  "modal shared with people msg": "Invitez une sélection de contacts à y accéder. Taper l'email\ndans le champ et appuyez sur entrée (un email pour les prévenir leur sera envoyé) :",
+  "modal send mails": "Envoyer une notification",
+  "modal next": "Suivant",
+  "modal prev": "Précédent",
+  "modal ok": "Ok",
+  "modal cancel": "Annuler",
+  "modal error": "Erreur",
+  "only you can see": "Seuls vous et les personnes ci-dessous peuvent accéder à cette ressource.",
+  "shared": "Partagé",
+  "share": "Partager",
+  "save": "Sauvegarder",
+  "see link": "Voir le lien",
+  "send mails question": "Envoyer un email de notification à :",
+  "sharing": "Partage",
+  "revoke": "Révoquer la permission",
+  "confirm": "Confirmer",
+  "share forgot add": "Il semble que vous ayez oublié d'appuyer sur le bouton Ajouter",
+  "share confirm save": "Les changements effectués sur les permissions ne seront pas sauvegardés. Vous confirmez ?",
+  "yes forgot": "Retour",
+  "no forgot": "Ok",
+  "perm": "peut",
   "perm r album": "parcourir cet album",
   "perm rw album": "parcourir cet album et ajouter des photos",
   "mail not send": "Le message n'a pas pu être envoyé",
@@ -1268,7 +2145,8 @@ module.exports = Photo = (function(_super) {
     return {
       thumbsrc: 'img/loading.gif',
       src: '',
-      orientation: 1
+      orientation: 1,
+      gps: {}
     };
   };
 
@@ -1319,15 +2197,13 @@ readFile = function(photo, next) {
   reader = new FileReader();
   photo.img = new Image();
   reader.readAsDataURL(photo.file);
-  return reader.onloadend = (function(_this) {
-    return function() {
-      photo.img.src = reader.result;
-      photo.img.orientation = photo.attributes.orientation;
-      return photo.img.onload = function() {
-        return next();
-      };
+  return reader.onloadend = function() {
+    photo.img.src = reader.result;
+    photo.img.orientation = photo.attributes.orientation;
+    return photo.img.onload = function() {
+      return next();
     };
-  })(this);
+  };
 };
 
 resize = function(photo, MAX_WIDTH, MAX_HEIGHT, fill) {
@@ -1466,13 +2342,11 @@ PhotoProcessor = (function() {
   PhotoProcessor.prototype.uploadQueue = async.queue(uploadWorker, 2);
 
   PhotoProcessor.prototype.process = function(photo) {
-    return this.uploadQueue.push(photo, (function(_this) {
-      return function(err) {
-        if (err) {
-          return console.log(err);
-        }
-      };
-    })(this));
+    return this.uploadQueue.push(photo, function(err) {
+      if (err) {
+        return console.log(err);
+      }
+    });
   };
 
   return PhotoProcessor;
@@ -1607,7 +2481,7 @@ module.exports = new ThumbProcessor();
 });
 
 ;require.register("router", function(exports, require, module) {
-var Album, AlbumView, AlbumsListView, Router, app,
+var Album, AlbumCollection, AlbumView, AlbumsListView, MapView, PhotoCollection, Router, app,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1618,7 +2492,13 @@ AlbumsListView = require('views/albumslist');
 
 AlbumView = require('views/album');
 
+MapView = require('views/map');
+
 Album = require('models/album');
+
+PhotoCollection = require('collections/photo');
+
+AlbumCollection = require('collections/album');
 
 module.exports = Router = (function(_super) {
   __extends(Router, _super);
@@ -1638,7 +2518,19 @@ module.exports = Router = (function(_super) {
     'albums/:albumid': 'album',
     'albums/:albumid/edit': 'albumedit',
     'albums/:albumid/photo/:photoid': 'photo',
-    'albums/:albumid/edit/photo/:photoid': 'photoedit'
+    'albums/:albumid/edit/photo/:photoid': 'photoedit',
+    'map': 'showmap'
+  };
+
+  Router.prototype.showmap = function() {
+    var allphotos;
+    allphotos = new PhotoCollection;
+    allphotos.fetch({
+      reset: true
+    });
+    return this.displayView(new MapView({
+      collection: allphotos
+    }));
   };
 
   Router.prototype.albumslist = function(editable) {
@@ -1826,7 +2718,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 
-buf.push("<a id=\"create-album-link\" href=\"#albums/new\" class=\"create\"><span>" + (jade.escape(null == (jade_interp = t('Create a new album')) ? "" : jade_interp)) + "</span></a><p class=\"help\">" + (jade.escape(null == (jade_interp = t('There is no public albums.')) ? "" : jade_interp)) + "</p>");;return buf.join("");
+buf.push("<a id=\"create-album-link\" href=\"#albums/new\" class=\"create\"><span>" + (jade.escape(null == (jade_interp = t('Create a new album')) ? "" : jade_interp)) + "</span></a><a href=\"#map\" class=\"create map-link\"><i class=\"fa fa-globe\"></i></a><p class=\"help\">" + (jade.escape(null == (jade_interp = t('There is no public albums.')) ? "" : jade_interp)) + "</p>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -1993,6 +2885,25 @@ var jade_mixins = {};
 var jade_interp;
 
 buf.push("<p class=\"help\">" + (jade.escape(null == (jade_interp = t('There is no photos in this album')) ? "" : jade_interp)) + "</p><div id=\"upload-actions\"><div id=\"upload-block\" class=\"flatbtn\"><input id=\"uploader\" type=\"file\" multiple=\"multiple\"/><div class=\"pa2\">" + (jade.escape(null == (jade_interp = t('pick from computer')) ? "" : jade_interp)) + "</div></div><div id=\"browse-files\" class=\"flatbtn\"><div class=\"pa2\">" + (jade.escape(null == (jade_interp = t('pick from files')) ? "" : jade_interp)) + "</div></div></div>");;return buf.join("");
+};
+if (typeof define === 'function' && define.amd) {
+  define([], function() {
+    return __templateData;
+  });
+} else if (typeof module === 'object' && module && module.exports) {
+  module.exports = __templateData;
+} else {
+  __templateData;
+}
+});
+
+;require.register("templates/map", function(exports, require, module) {
+var __templateData = function template(locals) {
+var buf = [];
+var jade_mixins = {};
+var jade_interp;
+
+buf.push("<div style=\"position: fixed; height:100%; width: 100%;\"><div id=\"links\" style=\"margin-bottom:0;\"><a href=\"#\" class=\"flatbtn\"><span class=\"fa fa-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Back")) ? "" : jade_interp)) + "</span></a></div><div id=\"map\" style=\"height: 95%;\"></div></div><form style=\"position: fixed; bottom: 0; width: 100%; height:0; background-color: white; transisiton: all 0.5 linear\" class=\"choice-box\"><div id=\"map-galery\" style=\"overflow-x: scroll; padding: 0; white-space: nowrap;\" class=\"col-sm-10\"></div><div style=\"padding: 0;\" class=\"map-setter col-sm-2\"><div class=\"clearfix\"><div id=\"links\" class=\"clearfix\"><p class=\"back\"><button id=\"validate\" class=\"flatbtn\"><span>" + (jade.escape(null == (jade_interp = t("Apply")) ? "" : jade_interp)) + "</span></button></p></div></div></div></form><img hidden src=\"images/spinner.svg\" width=\"100%\", height=\"100%\" title=\"waiting...\" />");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -2910,6 +3821,211 @@ module.exports = Galery = (function(_super) {
   return Galery;
 
 })(ViewCollection);
+});
+
+;require.register("views/map", function(exports, require, module) {
+var BaseView, MapView, baseLayers, helpers,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+BaseView = require('lib/base_view');
+
+helpers = require('../lib/helpers');
+
+baseLayers = require('../lib/map_providers');
+
+module.exports = MapView = (function(_super) {
+  __extends(MapView, _super);
+
+  function MapView() {
+    return MapView.__super__.constructor.apply(this, arguments);
+  }
+
+  MapView.prototype.template = require('templates/map');
+
+  MapView.prototype.className = 'masterClass';
+
+  MapView.prototype.initialize = function(options) {
+    MapView.__super__.initialize.apply(this, arguments);
+    this.listenTo(this.collection, 'reset change', this.addAllMarkers);
+    return this.markers = new L.MarkerClusterGroup({
+      disableClusteringAtZoom: 17,
+      removeOutsideVisibleBounds: false,
+      animateAddingMarkers: true
+    });
+  };
+
+  MapView.prototype.events = function() {
+    return {
+      'click #validate': 'validateChange'
+    };
+  };
+
+  MapView.prototype.afterRender = function() {
+    var layerControl, overlays;
+    L.Icon.Default.imagePath = 'leaflet-images';
+    this.standbyLatlng = new L.latLng(null);
+    this.standbyMarker = L.marker(null, {
+      draggable: true,
+      icon: L.divIcon({
+        className: 'leaflet-marker-div',
+        iconSize: L.point(39, 45),
+        html: '<i class="fa fa-crosshairs" style="font-size:3.8em"></i>'
+      })
+    });
+    this.map = L.map(this.$('#map')[0], {
+      center: [46.8451, 2.4938],
+      zoom: 6,
+      maxZoom: 17,
+      minZoom: 2,
+      layers: baseLayers["Water color"],
+      maxBounds: L.latLngBounds([84.26, -170], [-59.888, 192.30])
+    });
+    this.map.on('contextmenu', (function(_this) {
+      return function(e) {
+        _this.standbyMarker.setLatLng(e.latlng);
+        _this.standbyMarker.addTo(_this.map);
+        _this.standbyLatlng = e.latlng;
+        _this.standbyMarker.bindPopup(_this.standbyLatlng.toString());
+        _this.dispChoiceBox();
+        return _this.standbyMarker.on('move', function(e) {
+          _this.standbyMarker.closePopup();
+          return _this.standbyLatlng = e.latlng;
+        });
+      };
+    })(this));
+    this.map.on('click', (function(_this) {
+      return function() {
+        return _this.hide();
+      };
+    })(this));
+    overlays = {
+      "Photos": this.markers,
+      "Villes": L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}', {
+        type: 'hyb',
+        ext: 'png',
+        attribution: 'Tiles by <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        subdomains: '1234',
+        opacity: 0.9
+      })
+    };
+    layerControl = L.control.layers(baseLayers, overlays, {
+      position: 'bottomright'
+    }).addTo(this.map);
+    return this.map.addControl(new L.Control.Search({
+      url: 'http://nominatim.openstreetmap.org/search?format=json&q={s}',
+      jsonpParam: 'json_callback',
+      propertyName: 'display_name',
+      propertyLoc: ['lat', 'lon'],
+      markerLocation: true
+    }));
+  };
+
+  MapView.prototype.addAllMarkers = function() {
+    this.collection.hasGPS().each((function(_this) {
+      return function(photo) {
+        var button, gps, imgPath, position, tempMarker, text;
+        gps = photo.attributes.gps;
+        position = new L.LatLng(gps.lat, gps.long);
+        imgPath = "photos/thumbs/" + (photo.get('id')) + ".jpg";
+        text = '<img src="images/spinner.svg" width="150" height="150"/>';
+        button = '<button data-key="' + photo.get('id') + '" class="btn btn-block">' + '<span class="glyphicon gliphicon-move"></span>' + 'Relocaliser</button>';
+        tempMarker = L.marker(position, {
+          title: photo.get('title')
+        }).bindPopup(text);
+        tempMarker.cached = false;
+        tempMarker.on('popupopen', function() {
+          var element, img;
+          if (!tempMarker.cached) {
+            img = $('<img src="' + imgPath + '" title="photo"/>');
+            element = $("<div><p>" + (photo.get('title')) + "</p></div>");
+            element.append(img);
+            element.append(button);
+            if (photo.get('description') == null) {
+              element.append($("<quote>" + (photo.get('description')) + "</quote>"));
+            }
+            img[0].onload = function() {
+              setTimeout((function(_this) {
+                return function() {
+                  return tempMarker.getPopup().setContent(element[0]);
+                };
+              })(this), 500);
+              return tempMarker.cached = true;
+            };
+            return helpers.rotate(photo.get('orientation'), img);
+          }
+        });
+        _this.markers.addLayer(tempMarker);
+        return _this.showAll();
+      };
+    })(this));
+    return this.refresh();
+  };
+
+  MapView.prototype.showAll = function() {
+    return this.map.addLayer(this.markers);
+  };
+
+  MapView.prototype.dispChoiceBox = function() {
+    var mapGalery;
+    $('.choice-box').height('auto');
+    mapGalery = this.$('#map-galery');
+    mapGalery.children().remove();
+    return this.collection.hasNotGPS().each((function(_this) {
+      return function(photo) {
+        var imgPath;
+        imgPath = "photos/thumbs/" + (photo.get('id')) + ".jpg";
+        return mapGalery.append('<img class="map-setter" src="' + imgPath + '" data-key="' + photo.get('id') + '"' + '" style="height: 130px; display: inline"/>');
+      };
+    })(this));
+  };
+
+  $(document).on("click", ".map-setter", function() {
+    return $(this).toggleClass('map-photo-checked');
+  });
+
+  MapView.prototype.validateChange = function(e) {
+    var that;
+    console.log(e);
+    that = this;
+    $(".map-photo-checked").each(function() {
+      var el, photo;
+      el = $(this);
+      photo = that.collection.get(el.attr('data-key'));
+      that.standbyLatlng.lng += 0.0001;
+      return photo != null ? photo.save({
+        gps: {
+          lat: that.standbyLatlng.lat,
+          long: that.standbyLatlng.lng,
+          alt: 0
+        },
+        success: (function(_this) {
+          return function(e) {
+            return e.preventDefault();
+          };
+        })(this),
+        error: (function(_this) {
+          return function(e) {
+            return e.preventDefault();
+          };
+        })(this)
+      }) : void 0;
+    });
+    return that.hide();
+  };
+
+  MapView.prototype.hide = function() {
+    $('.choice-box').height(0);
+    return this.map.removeLayer(this.standbyMarker);
+  };
+
+  MapView.prototype.refresh = function() {
+    return this.map.invalidateSize();
+  };
+
+  return MapView;
+
+})(BaseView);
 });
 
 ;require.register("views/photo", function(exports, require, module) {

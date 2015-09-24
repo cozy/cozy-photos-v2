@@ -16,6 +16,16 @@ downloader = require '../helpers/downloader'
 app = null
 module.exports.setApp = (ref) -> app = ref
 
+# Get all photos
+module.exports.fetchAll = (req, res, next) ->
+    Photo.request 'byalbum', {}, (err, photos) ->
+        if err?
+            next err
+        else unless photos
+            next new Error '0 photos'
+        else
+            res.send photos
+
 # Get given photo, returns 404 if photo is not found.
 module.exports.fetch = (req, res, next, id) ->
     id = id.substring 0, id.length - 4 if id.indexOf('.jpg') > 0
@@ -107,7 +117,9 @@ module.exports.create = (req, res, next) ->
 
                 if metadata?.exif?.dateTime?
                     req.body.date = metadata.exif.dateTime
-
+# MODIF : Rémi
+                req.body.gps = if (metadata?.exif?.gps?) then metadata.exif.gps else null
+#
             photo = new Photo req.body
 
             Photo.create photo, (err, photo) ->

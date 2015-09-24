@@ -49,8 +49,11 @@ module.exports =
     'photos/thumbs/:photoid.jpg':
         get : photo.thumb
         put : photo.updateThumb
-    'photos/raws/:photoid.jpg'   :
+    'photos/raws/:photoid.jpg':
         get : photo.raw
+#MOFIF: rémi
+    'photos/':
+        get : photo.fetchAll
 
     'public/?'                          : get : album.index
     'public/albums/?'                   : get : album.list

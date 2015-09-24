@@ -35,18 +35,19 @@ module.exports.index = function(req, res, next) {
     }
   ], function(err, results) {
     var albums, locale, visible;
+    if (err) {
+      return next(err);
+    }
     albums = results[0], locale = results[1];
     visible = [];
-    return async.each(albums, (function(_this) {
-      return function(album, callback) {
-        return sharing.checkPermissions(album, req, function(err, isAllowed) {
-          if (isAllowed && !err) {
-            visible.push(album);
-          }
-          return callback(null);
-        });
-      };
-    })(this), function(err) {
+    return async.each(albums, function(album, callback) {
+      return sharing.checkPermissions(album, req, function(err, isAllowed) {
+        if (isAllowed && !err) {
+          visible.push(album);
+        }
+        return callback(null);
+      });
+    }, function(err) {
       return res.render('index', {
         imports: "window.locale = \"" + locale + "\";\nwindow.initalbums = " + (JSON.stringify(visible)) + ";"
       });
@@ -74,16 +75,14 @@ module.exports.list = function(req, res, next) {
       return next(err);
     }
     visible = [];
-    return async.each(albums, (function(_this) {
-      return function(album, callback) {
-        return sharing.checkPermissions(album, req, function(err, isAllowed) {
-          if (isAllowed && !err) {
-            visible.push(album);
-          }
-          return callback(null);
-        });
-      };
-    })(this), function(err) {
+    return async.each(albums, function(album, callback) {
+      return sharing.checkPermissions(album, req, function(err, isAllowed) {
+        if (isAllowed && !err) {
+          visible.push(album);
+        }
+        return callback(null);
+      });
+    }, function(err) {
       if (err) {
         return next(err);
       }

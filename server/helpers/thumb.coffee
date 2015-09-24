@@ -28,14 +28,39 @@ module.exports = thumb =
                 callback err
             else
                 orientation = data.Orientation
+# MODIF :Rémi
+# fonction a déplacer: Convert degree, minutes, secondes into position x and y
+                gpsDegToDec = ( pos, posRef ) -> #String to int
+
+                    split = pos.split( /(\d+)\/(\d+), (\d+)\/(\d+), (\d+)\/(\d+)/ )
+                    unless split[6]
+                        splitAlt = pos.split( /(\d+)\/(\d+)/ ) # altitude format
+                        coord    = splitAlt[1] / splitAlt[2]
+                    else
+                        coord    = split[1] / split[2] + (split[3] / split[4]) / 60 + (split[5] / split[6])/3600 # lat and long format
+                    ref = if (posRef == 'S' or posRef == 'W') then -1 else 1
+                    return ref * coord
+
+                alt  = 'exif:GPSAltitude'
+                lat  = 'exif:GPSLatitude'
+                long = 'exif:GPSLongitude'
+                GPS  = {}
+
+                if data.Properties[ alt  ]
+                    GPS.alt  = gpsDegToDec data.Properties[alt] , data.Properties[alt  + 'Ref']
+                if data.Properties[ lat ]
+                    GPS.lat  = gpsDegToDec data.Properties[lat] , data.Properties[lat  + 'Ref']
+                if data.Properties[ long ]
+                    GPS.long = gpsDegToDec data.Properties[long], data.Properties[long + 'Ref']
+                #console.log data.Properties
 
                 if not(orientation?) or data.Orientation is 'Undefined'
                     orientation = 1
-
                 metadata =
                     exif:
-                        orientation: orientation
-                        date: data.Properties['date:create']
+                        orientation:    orientation
+                        date:           data.Properties['date:create']
+                        gps:            GPS
 
                 callback null, metadata
 

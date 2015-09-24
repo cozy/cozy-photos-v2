@@ -31,160 +31,172 @@ module.exports.setApp = function(ref) {
   return app = ref;
 };
 
+module.exports.fetchAll = function(req, res, next) {
+  return Photo.request('byalbum', {}, function(err, photos) {
+    if (err != null) {
+      return next(err);
+    } else if (!photos) {
+      return next(new Error('0 photos'));
+    } else {
+      return res.send(photos);
+    }
+  });
+};
+
 module.exports.fetch = function(req, res, next, id) {
   if (id.indexOf('.jpg') > 0) {
     id = id.substring(0, id.length - 4);
   }
-  return Photo.find(id, (function(_this) {
-    return function(err, photo) {
-      if (err) {
-        return next(err);
-      } else if (!photo) {
-        return next(NotFound("Photo " + id));
-      } else {
-        req.photo = photo;
-        return next();
-      }
-    };
-  })(this));
+  return Photo.find(id, function(err, photo) {
+    if (err) {
+      return next(err);
+    } else if (!photo) {
+      return next(NotFound("Photo " + id));
+    } else {
+      req.photo = photo;
+      return next();
+    }
+  });
 };
 
-module.exports.create = (function(_this) {
-  return function(req, res, next) {
-    var cid, cleanup, files, form, isAllowed, lastPercent;
-    cid = null;
-    lastPercent = 0;
-    files = {};
-    isAllowed = !req["public"];
-    cleanup = function() {
-      return async.each(req.files, function(file, cb) {
-        return fs.unlink(file.path, function(err) {
-          if (err) {
-            console.log('Could not delete %s', file.path);
-          }
-          return cb(null);
-        });
-      }, function() {});
-    };
-    form = new multiparty.Form({
-      uploadDir: path.join(os.tmpdir(), 'uploads'),
-      defer: true,
-      keepExtensions: true,
-      maxFieldsSize: 10 * 1024 * 1024
-    });
-    form.parse(req);
-    form.on('field', function(name, value) {
-      var albumid;
-      req.body[name] = value;
-      if (name === 'cid') {
-        return cid = value;
-      } else if (name === 'albumid' && req["public"]) {
-        albumid = value;
-        return sharing.checkPermissionsPhoto({
-          albumid: albumid
-        }, 'w', req, function(err, ok) {
-          return isAllowed = ok;
-        });
-      }
-    });
-    form.on('file', function(name, val) {
-      val.name = val.originalFilename;
-      val.type = val.headers['content-type'] || null;
-      return files[name] = val;
-    });
-    form.on('progress', function(bytesReceived, bytesExpected) {
-      var percent;
-      if (cid == null) {
-        return;
-      }
-      percent = bytesReceived / bytesExpected;
-      if (!(percent - lastPercent > 0.05)) {
-        return;
-      }
-      lastPercent = percent;
-      return app.io.sockets.emit('uploadprogress', {
-        cid: cid,
-        p: percent
-      });
-    });
-    form.on('error', function(err) {
-      if (err.message !== "Request aborted") {
-        return next(err);
-      }
-    });
-    return form.on('close', function() {
-      var raw;
-      req.files = qs.parse(files);
-      raw = req.files['raw'];
-      if (!isAllowed) {
-        cleanup();
-        return next(NotAllowed());
-      }
-      return thumbHelpers.readMetadata(raw.path, function(err, metadata) {
-        var orientation, photo, ref2, ref3;
-        if (err != null) {
-          console.log("[Create photo - Exif metadata extraction]");
-          console.log("Are you sure imagemagick is installed ?");
-          next(err);
-        } else {
-          req.body.orientation = 1;
-          if ((metadata != null ? (ref2 = metadata.exif) != null ? ref2.orientation : void 0 : void 0) != null) {
-            orientation = metadata.exif.orientation;
-            req.body.orientation = photoHelpers.getOrientation(orientation);
-          }
-          if ((metadata != null ? (ref3 = metadata.exif) != null ? ref3.dateTime : void 0 : void 0) != null) {
-            req.body.date = metadata.exif.dateTime;
-          }
+module.exports.create = function(req, res, next) {
+  var cid, cleanup, files, form, isAllowed, lastPercent;
+  cid = null;
+  lastPercent = 0;
+  files = {};
+  isAllowed = !req["public"];
+  cleanup = function() {
+    return async.each(req.files, function(file, cb) {
+      return fs.unlink(file.path, function(err) {
+        if (err) {
+          console.log('Could not delete %s', file.path);
         }
-        photo = new Photo(req.body);
-        return Photo.create(photo, function(err, photo) {
+        return cb(null);
+      });
+    }, function() {});
+  };
+  form = new multiparty.Form({
+    uploadDir: path.join(os.tmpdir(), 'uploads'),
+    defer: true,
+    keepExtensions: true,
+    maxFieldsSize: 10 * 1024 * 1024
+  });
+  form.parse(req);
+  form.on('field', function(name, value) {
+    var albumid;
+    req.body[name] = value;
+    if (name === 'cid') {
+      return cid = value;
+    } else if (name === 'albumid' && req["public"]) {
+      albumid = value;
+      return sharing.checkPermissionsPhoto({
+        albumid: albumid
+      }, 'w', req, function(err, ok) {
+        return isAllowed = ok;
+      });
+    }
+  });
+  form.on('file', function(name, val) {
+    val.name = val.originalFilename;
+    val.type = val.headers['content-type'] || null;
+    return files[name] = val;
+  });
+  form.on('progress', function(bytesReceived, bytesExpected) {
+    var percent;
+    if (cid == null) {
+      return;
+    }
+    percent = bytesReceived / bytesExpected;
+    if (!(percent - lastPercent > 0.05)) {
+      return;
+    }
+    lastPercent = percent;
+    return app.io.sockets.emit('uploadprogress', {
+      cid: cid,
+      p: percent
+    });
+  });
+  form.on('error', function(err) {
+    if (err.message !== "Request aborted") {
+      return next(err);
+    }
+  });
+  return form.on('close', function() {
+    var raw;
+    req.files = qs.parse(files);
+    raw = req.files['raw'];
+    if (!isAllowed) {
+      cleanup();
+      return next(NotAllowed());
+    }
+    return thumbHelpers.readMetadata(raw.path, function(err, metadata) {
+      var orientation, photo, ref2, ref3, ref4;
+      if (err != null) {
+        console.log("[Create photo - Exif metadata extraction]");
+        console.log("Are you sure imagemagick is installed ?");
+        next(err);
+      } else {
+        req.body.orientation = 1;
+        if ((metadata != null ? (ref2 = metadata.exif) != null ? ref2.orientation : void 0 : void 0) != null) {
+          orientation = metadata.exif.orientation;
+          req.body.orientation = photoHelpers.getOrientation(orientation);
+        }
+        if ((metadata != null ? (ref3 = metadata.exif) != null ? ref3.dateTime : void 0 : void 0) != null) {
+          req.body.date = metadata.exif.dateTime;
+        }
+        req.body.gps = ((metadata != null ? (ref4 = metadata.exif) != null ? ref4.gps : void 0 : void 0) != null) ? metadata.exif.gps : null;
+      }
+      photo = new Photo(req.body);
+      return Photo.create(photo, function(err, photo) {
+        if (err) {
+          return next(err);
+        }
+        return async.series([
+          function(cb) {
+            var data;
+            raw = req.files['raw'];
+            data = {
+              name: 'raw',
+              type: raw.type
+            };
+            return photo.attachBinary(raw.path, data, cb);
+          }, function(cb) {
+            var data, screen;
+            screen = req.files['screen'];
+            data = {
+              name: 'screen',
+              type: screen.type
+            };
+            return photo.attachBinary(screen.path, data, cb);
+          }, function(cb) {
+            var data, thumb;
+            thumb = req.files['thumb'];
+            data = {
+              name: 'thumb',
+              type: thumb.type
+            };
+            return photo.attachBinary(thumb.path, data, cb);
+          }
+        ], function(err) {
+          cleanup();
           if (err) {
             return next(err);
+          } else {
+            return res.status(201).send(photo);
           }
-          return async.series([
-            function(cb) {
-              var data;
-              raw = req.files['raw'];
-              data = {
-                name: 'raw',
-                type: raw.type
-              };
-              return photo.attachBinary(raw.path, data, cb);
-            }, function(cb) {
-              var data, screen;
-              screen = req.files['screen'];
-              data = {
-                name: 'screen',
-                type: screen.type
-              };
-              return photo.attachBinary(screen.path, data, cb);
-            }, function(cb) {
-              var data, thumb;
-              thumb = req.files['thumb'];
-              data = {
-                name: 'thumb',
-                type: thumb.type
-              };
-              return photo.attachBinary(thumb.path, data, cb);
-            }
-          ], function(err) {
-            cleanup();
-            if (err) {
-              return next(err);
-            } else {
-              return res.status(201).send(photo);
-            }
-          });
         });
       });
     });
-  };
-})(this);
+  });
+};
 
 doPipe = function(req, which, download, res, next) {
   return sharing.checkPermissionsPhoto(req.photo, 'r', req, function(err, isAllowed) {
     var binaryPath, disposition, onError, ref2, ref3, request;
-    if (err || !isAllowed) {
+    if (err) {
+      return next(err);
+    }
+    if (!isAllowed) {
       return next(NotAllowed());
     }
     if (download) {

@@ -18,18 +18,44 @@ module.exports = thumb = {
     return gm(filePath).options({
       imageMagick: true
     }).identify(function(err, data) {
-      var metadata, orientation;
+      var GPS, alt, gpsDegToDec, lat, long, metadata, orientation;
       if (err) {
         return callback(err);
       } else {
         orientation = data.Orientation;
+        gpsDegToDec = function(pos, posRef) {
+          var coord, ref, split, splitAlt;
+          split = pos.split(/(\d+)\/(\d+), (\d+)\/(\d+), (\d+)\/(\d+)/);
+          if (!split[6]) {
+            splitAlt = pos.split(/(\d+)\/(\d+)/);
+            coord = splitAlt[1] / splitAlt[2];
+          } else {
+            coord = split[1] / split[2] + (split[3] / split[4]) / 60 + (split[5] / split[6]) / 3600;
+          }
+          ref = posRef === 'S' || posRef === 'W' ? -1 : 1;
+          return ref * coord;
+        };
+        alt = 'exif:GPSAltitude';
+        lat = 'exif:GPSLatitude';
+        long = 'exif:GPSLongitude';
+        GPS = {};
+        if (data.Properties[alt]) {
+          GPS.alt = gpsDegToDec(data.Properties[alt], data.Properties[alt + 'Ref']);
+        }
+        if (data.Properties[lat]) {
+          GPS.lat = gpsDegToDec(data.Properties[lat], data.Properties[lat + 'Ref']);
+        }
+        if (data.Properties[long]) {
+          GPS.long = gpsDegToDec(data.Properties[long], data.Properties[long + 'Ref']);
+        }
         if (!(orientation != null) || data.Orientation === 'Undefined') {
           orientation = 1;
         }
         metadata = {
           exif: {
             orientation: orientation,
-            date: data.Properties['date:create']
+            date: data.Properties['date:create'],
+            gps: GPS
           }
         };
         return callback(null, metadata);
@@ -52,15 +78,13 @@ module.exports = thumb = {
     var attachFile, buildThumb, dstPath, err, gmRunner;
     dstPath = "/tmp/2-" + file.id;
     try {
-      attachFile = (function(_this) {
-        return function(err) {
-          if (err) {
-            return callback(err);
-          } else {
+      attachFile = function(err) {
+        if (err) {
+          return callback(err);
+        } else {
 
-          }
-        };
-      })(this);
+        }
+      };
       gmRunner = gm(srcPath).options({
         imageMagick: true
       });
