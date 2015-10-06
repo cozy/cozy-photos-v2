@@ -86,6 +86,13 @@ buildJsInLocales = ->
         exported = "module.exports = #{template};\n"
         name     = file.replace '.json', '.js'
         fs.writeFileSync "./build/client/app/locales/#{name}", exported
+        # server files
+    for file in fs.readdirSync './server/locales/'
+        filename = './server/locales/' + file
+        template = fs.readFileSync filename, 'utf8'
+        exported = "module.exports = #{template};\n"
+        name     = file.replace '.json', '.js'
+        fs.writeFileSync "./build/server/locales/#{name}", exported
 
 task 'build', 'Build CoffeeScript to Javascript', ->
     logger.options.prefix = 'cake:build'
