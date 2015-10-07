@@ -58,9 +58,17 @@ module.exports =
             localizationManager.setRenderer viewEngine
 
             # create the uploads folder
-            try fs.mkdirSync path.join os.tmpdir(), 'uploads'
+            uploadFolder = path.join os.tmpdir(), 'uploads'
+            try fs.mkdirSync uploadFolder
             catch err then if err.code isnt 'EEXIST'
                 console.log "Something went wrong while creating uploads folder"
+                console.log err
+            # Ensure other apps can't read into this folder
+            try fs.chmodSync uploadFolder, '0700'
+            catch err
+                console.log """
+                Something went wrong while setting rights on upload folder
+                """
                 console.log err
 
             # Initialize realtime
