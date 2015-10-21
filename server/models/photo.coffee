@@ -25,14 +25,16 @@ module.exports = class Photo extends cozydb.CozyModel
                 startkey: [album.id]
                 endkey: [album.id + "0"]
             Photo.request 'byalbum', params, callback
-#Modif Rémi
+
+    # Patch every photo to add GPS data
     @patchGps: (callback) ->
         Photo.fromAlbum {folderId: "all" }, (err, photos) ->
 
             return callback err if err? # error on request fail
             async.eachSeries photos, (photo, next) ->
 
-                unless photo.gps? # do it just if never add gps metadata
+                # Don't try to extract data if we already got them
+                if photo.binary? and not photo.gps?
                     photo.extractGpsFromBinary next
                 else setImmediate next
             , callback
