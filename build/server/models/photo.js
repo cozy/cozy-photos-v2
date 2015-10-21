@@ -51,7 +51,7 @@ module.exports = Photo = (function(superClass) {
         return callback(err);
       }
       return async.eachSeries(photos, function(photo, next) {
-        if (photo.gps == null) {
+        if ((photo.binary != null) && (photo.gps == null)) {
           return photo.extractGpsFromBinary(next);
         } else {
           return setImmediate(next);
