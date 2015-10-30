@@ -174,6 +174,6 @@ module.exports.delete = (req, res, next) ->
         return next err if err
 
         Photo.fromAlbum req.album, (err, photos) ->
-            photo.destroy() for photo in photos
+            photo.destroy(() -> ) for photo in photos
 
         res.send success: "Deletion succeded."
