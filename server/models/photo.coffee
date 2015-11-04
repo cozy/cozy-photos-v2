@@ -46,10 +46,12 @@ module.exports = class Photo extends cozydb.CozyModel
 
         else res = @getBinary 'raw', (err) ->
             console.log err if err?
-            callbabk() if err?
+            callback() if err?
 
         res.on 'ready', (stream) =>
             Helpers.readMetadata stream, (err, data) =>
+                console.log err if err?
+                callback() if err?
 
                 @updateAttributes { gps: data.exif.gps }, (err) ->
                     console.log err if err?
