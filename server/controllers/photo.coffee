@@ -170,7 +170,7 @@ doPipe = (req, which, download, res, next) ->
                     res.on 'close', -> request.abort()
                     stream.pipe res
                 else
-                    return res.sendfile './server/img/error.gif'
+                    return res.sendFile './server/img/error.gif'
 
         else if req.photo.binary?[which]
             binaryPath = "/data/#{req.photo.id}/binaries/#{which}"
@@ -179,10 +179,10 @@ doPipe = (req, which, download, res, next) ->
                     res.on 'close', -> request.abort()
                     stream.pipe res
                 else
-                    return res.sendfile './server/img/error.gif'
+                    return res.sendFile './server/img/error.gif'
 
         else
-            return res.sendfile './server/img/error.gif'
+            return res.sendFile './server/img/error.gif'
 
         # This is a temporary hack to allow caching
         # ideally, we would do as follow :

@@ -30,7 +30,9 @@ module.exports = class MapView extends BaseView
             icon: L.divIcon
                 className:  'leaflet-marker-div'
                 iconSize:   L.point 39, 45
-                html:       '<i class="fa fa-crosshairs" style="font-size:3.8em"></i>'
+                html:       """
+                    <i class="fa fa-crosshairs" style="font-size:3.8em"></i>
+                    """
 
         #map declaration
         @map = L.map this.$('#map')[0],
@@ -58,21 +60,28 @@ module.exports = class MapView extends BaseView
             # hide marker and box with photos
             @hide()
 
+        layerUrl = """
+    http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}
+    """
+        attribution = """
+    Tiles by <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>
+        """
         overlays = # map checkables layers
             "Photos": @markers
-            "Villes" : L.tileLayer 'http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}',
+            "Villes" : L.tileLayer layerUrl,
                 type: 'hyb'
                 ext: 'png'
-                attribution: 'Tiles by <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                attribution: attribution
                 subdomains: '1234'
                 opacity: 0.9
 
-        layerControl = L.control.layers baseLayers, overlays, #add control button on the map
+        # add control button on the map
+        layerControl = L.control.layers baseLayers, overlays,
             position: 'bottomright'
         .addTo @map
 
         @map.addControl new L.Control.Search
-            url: 'http://nominatim.openstreetmap.org/search?format=json&q={s}'
+            url: 'https://nominatim.openstreetmap.org/search?format=json&q={s}'
             jsonpParam: 'json_callback'
             propertyName: 'display_name'
             propertyLoc: ['lat','lon']
@@ -85,9 +94,9 @@ module.exports = class MapView extends BaseView
             gps      = photo.attributes.gps
             position = new L.LatLng gps.lat, gps.long
 
-            imgPath  = "photos/thumbs/#{photo.get('id')}.jpg"
-            text     = '<img src="images/spinner.svg" width="150" height="150"/>'
-            button   = '<button data-key="' + photo.get('id') +
+            imgPath = "photos/thumbs/#{photo.get('id')}.jpg"
+            text    = '<img src="images/spinner.svg" width="150" height="150"/>'
+            button  = '<button data-key="' + photo.get('id') +
                 '" class="btn btn-block">' +
                 '<span class="glyphicon gliphicon-move"></span>' +
                 'Relocaliser</button>'
@@ -101,13 +110,14 @@ module.exports = class MapView extends BaseView
                 if not tempMarker.cached
                     img = $ '<img src="' + imgPath + '" title="photo"/>'
                     element = $ "<div><p>#{photo.get('title')}</p></div>"
+                    description = photo.get 'description'
                     element.append img
                     element.append button
                     unless photo.get('description')?
-                    then element.append $ "<quote>#{photo.get 'description' }</quote>"
+                    then element.append $ "<quote>#{description}</quote>"
                     img[0].onload = () ->
 
-                        setTimeout () =>
+                        setTimeout () ->
 
                             tempMarker.getPopup().setContent element[0]
                         , 500
@@ -126,7 +136,7 @@ module.exports = class MapView extends BaseView
         mapGalery = this.$('#map-galery')
         mapGalery.children().remove()
 
-        @collection.hasNotGPS().each (photo) =>
+        @collection.hasNotGPS().each (photo) ->
 
             imgPath  = "photos/thumbs/#{photo.get('id')}.jpg"
             mapGalery.append '<img class="map-setter" src="' +\
@@ -150,10 +160,10 @@ module.exports = class MapView extends BaseView
                 long:   that.standbyLatlng.lng
                 alt:    0
 
-            , success: (e)=>
+            , success: (e) ->
                 e.preventDefault()
 
-            , error: (e)=>
+            , error: (e) ->
                 e.preventDefault()
         that.hide()
 
