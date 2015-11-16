@@ -57,6 +57,9 @@
     "File": {
       "description": "Import pictures from the Files app"
     },
+    "User": {
+      "description": "Need information for the from part of email sent."
+    },
     "Send mail from user": {
       "description": "Share album with your friends"
     }

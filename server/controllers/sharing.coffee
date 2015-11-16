@@ -26,17 +26,23 @@ getUser = (callback) ->
 clearanceCtl = clearance.controller
     mailTemplate: (options, callback) ->
         getUser (err, user) ->
-            options.displayName = user.name
-            options.displayEmail= user.email
-            localizationManager.render 'sharemail', options, callback
+            if err?
+                callback err
+            else
+                options.displayName = user.name
+                options.displayEmail= user.email
+                localizationManager.render 'sharemail', options, callback
 
     mailSubject: (options, callback) ->
         getUser (err, user) ->
-            # Need to force locale to be loaded before executing callback
-            localizationManager.ensureReady (err) ->
-                callback null, localizationManager.t 'email sharing subject',
-                    displayName: user.name
-                    name: options.doc.title
+            if err?
+                callback err
+            else
+                # Need to force locale to be loaded before executing callback
+                localizationManager.ensureReady (err) ->
+                    callback null, localizationManager.t 'email sharing subject',
+                        displayName: user.name
+                        name: options.doc.title
 
     attachments: [
         path: fs.realpathSync './build/client/public/img/cozy-logo.png'
