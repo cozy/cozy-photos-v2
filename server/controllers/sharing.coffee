@@ -1,6 +1,7 @@
 async = require 'async'
 clearance = require 'cozy-clearance'
 cozydb = require 'cozydb'
+fs = require 'fs'
 
 Album = require '../models/album'
 
@@ -36,6 +37,12 @@ clearanceCtl = clearance.controller
                 callback null, localizationManager.t 'email sharing subject',
                     displayName: user.name
                     name: options.doc.title
+
+    attachments: [
+        path: fs.realpathSync './build/client/public/img/cozy-logo.png'
+        filename: 'cozy-logo.png'
+        cid: 'cozy-logo'
+    ]
 
 # fetch album, put it in req.doc
 module.exports.fetch = (req, res, next, id) ->
