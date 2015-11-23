@@ -32,7 +32,7 @@ before_install:
     - npm install
     - cd ..
     - npm install
-    - cake build
+    - node_modules/.bin/cake build
 
 after_failure:
     - pwd
