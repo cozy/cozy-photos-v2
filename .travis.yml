@@ -1,3 +1,4 @@
+sudo: false
 language: node_js
 matrix:
     fast_finish: true
@@ -31,13 +32,18 @@ before_install:
     - mkdir public
     - npm install
     - cd ..
-    - npm install
-    - node_modules/.bin/cake build
+    - pwd
+
+script:
+    - npm build
+    - npm test
 
 after_failure:
     - pwd
     - ps aux | grep server.js
     - netstat -lntp
-    - cat /home/travis/build/cozy/cozy-photos/cozy-data-system/forever-ds.log
-    - cat /home/travis/build/cozy/cozy-photos/cozy-data-system/forever-ds-err.log
+    - cat ~/cozy-data-system/forever-ds.log
+    - cat ~/cozy-data-system/forever-ds-err.log
     - curl -v http://localhost:9101/
+    - which cake
+    - ls -l node_modules/.bin
