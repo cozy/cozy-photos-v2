@@ -27,11 +27,12 @@ before_install:
     - cd ..
     - export NAME=photos
     - export TOKEN=apptoken
+    - mkdir client/public
 
 after_failure:
     - pwd
     - ps aux | grep server.js
     - netstat -lntp
-    - cat ~/cozy-data-system/forever-ds.log
-    - cat ~/cozy-data-system/forever-ds-err.log
+    - cat /home/travis/build/cozy/cozy-photos/cozy-data-system/forever-ds.log
+    - cat /home/travis/build/cozy/cozy-photos/cozy-data-system/forever-ds-err.log
     - curl -v http://localhost:9101/
