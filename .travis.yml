@@ -27,7 +27,11 @@ before_install:
     - cd ..
     - export NAME=photos
     - export TOKEN=apptoken
-    - mkdir client/public
+    - cd client
+    - mkdir public
+    - npm install
+    - cd ..
+    - cake build
 
 after_failure:
     - pwd
