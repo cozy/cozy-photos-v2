@@ -22,7 +22,6 @@ before_install:
     - ps aux | grep server.js
     - sleep 5
     - cat forever-ds.log
-    - sudo netstat -lntp
     - curl http://localhost:9101/
     - coffee commands.coffee test-install photos
     - cd ..
