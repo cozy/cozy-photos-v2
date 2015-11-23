@@ -14,14 +14,14 @@ whiteList = [
 # Convert degree, minutes, secondes into position x and y
 gpsDegToDec = (pos, posRef) -> # String to int
 
-    split = pos.split( /(\d+)\/(\d+), (\d+)\/(\d+), (\d+)\/(\d+)/ )
-    unless split[6]
-        splitAlt = pos.split( /(\d+)\/(\d+)/ ) # altitude format
-        coord    = splitAlt[1] / splitAlt[2]
-    else
-        coord    = split[1] / split[2] + \
+    split = pos.match /(\d+)\/(\d+), (\d+)\/(\d+), (\d+)\/(\d+)/
+    if split[6]
+        coord    =  split[1] / split[2] + \
                    (split[3] / split[4]) / 60 + \
                    (split[5] / split[6])/3600 # lat and long format
+    else
+        splitAlt = pos.match /(\d+)\/(\d+)/   # altitude format
+        coord    = splitAlt[1] / splitAlt[2]
     ref = if (posRef == 'S' or posRef == 'W') then -1 else 1
     return ref * coord
 

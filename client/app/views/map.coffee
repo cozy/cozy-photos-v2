@@ -96,10 +96,11 @@ module.exports = class MapView extends BaseView
 
             imgPath = "photos/thumbs/#{photo.get('id')}.jpg"
             text    = '<img src="images/spinner.svg" width="150" height="150"/>'
-            button  = '<button data-key="' + photo.get('id') +
-                '" class="btn btn-block">' +
-                '<span class="glyphicon gliphicon-move"></span>' +
-                'Relocaliser</button>'
+            button  = """<button data-key="#{photo.get('id')}"
+                class="btn btn-block">
+                <span class="glyphicon gliphicon-move"></span>
+                Relocaliser</button>
+                """
 
             tempMarker = L.marker position,
                 title: photo.get 'title'
@@ -115,10 +116,8 @@ module.exports = class MapView extends BaseView
                     element.append button
                     unless photo.get('description')?
                     then element.append $ "<quote>#{description}</quote>"
-                    img[0].onload = () ->
-
-                        setTimeout () ->
-
+                    img[0].onload = ->
+                        setTimeout ->
                             tempMarker.getPopup().setContent element[0]
                         , 500
                         tempMarker.cached = true
