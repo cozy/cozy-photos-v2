@@ -20,12 +20,12 @@ module.exports =
       @timeout 15000
       root = require('path').join __dirname, '..'
       require('cozydb').configure root, null, (err) ->
-        return done err if err
-        Photo = require '../server/models/photo'
-        Album = require '../server/models/album'
-        Photo.requestDestroy "all", (err) ->
-            return done err if err
-            Album.requestDestroy "all", done
+          return done err if err
+          Photo = require '../server/models/photo'
+          Album = require '../server/models/album'
+          Photo.requestDestroy "all", (err) ->
+              return done err if err
+              Album.requestDestroy "all", done
 
   createAlbum: (data) -> (done) ->
       baseAlbum = new Album(data)
@@ -52,7 +52,7 @@ module.exports =
 
       store = this # this will be the common scope of tests
 
-      callbackFactory = (done) -> (error, response, body) =>
+      callbackFactory = (done) -> (error, response, body) ->
           throw error if(error)
           store.response = response
           store.body = body
