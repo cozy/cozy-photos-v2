@@ -27,14 +27,10 @@ before_install:
     - cd ..
     - export NAME=photos
     - export TOKEN=apptoken
-    - cd client
-    - mkdir public
-    - npm install
-    - cd ..
-    - pwd
+    - mkdir -p build/client/public/img/
+    - cp client/app/assets/img/cozy-logo.png build/client/public/img/
 
 script:
-    - npm run build
     - npm test
 
 after_failure:
@@ -44,4 +40,3 @@ after_failure:
     - cat /home/travis/build/cozy/cozy-photos/cozy-data-system/forever-ds.log
     - cat /home/travis/build/cozy/cozy-photos/cozy-data-system/forever-ds-err.log
     - curl -v http://localhost:9101/
-    - cat /home/travis/build/cozy/cozy-photos/npm-debug.log
