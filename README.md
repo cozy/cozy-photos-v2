@@ -23,8 +23,8 @@ From the command line you can type this command:
 
 You can contribute to the Cozy Photos in many ways:
 
-* Pick up an [issue](https://github.com/mycozycloud/cozy-photos/issues?state=open) and solve it.
-* Translate it in [a new language](https://github.com/mycozycloud/cozy-photos/tree/master/client/app/locales).
+* Pick up an [issue](https://github.com/cozy/cozy-photos/issues?state=open) and solve it.
+* Translate it in [a new language](https://github.com/cozy/cozy-photos/tree/master/client/app/locales).
 * Photo tagging
 * Contact tagging
 * Last added photo stream
@@ -34,7 +34,7 @@ You can contribute to the Cozy Photos in many ways:
 
 Hacking the Photos app requires you [setup a dev environment](http://cozy.io/hack/getting-started/). Once it's done you can hack Cozy Contact just like it was your own app.
 
-    git clone https://github.com/mycozycloud/cozy-photos.git
+    git clone https://github.com/cozy/cozy-photos.git
 
 Run it with:
 
@@ -55,7 +55,7 @@ Make sure you have installed imagemagick on your local system otherwise you won'
 ## Tests
 
 ![Build
-Status](https://travis-ci.org/mycozycloud/cozy-photos.png?branch=master)
+Status](https://travis-ci.org/cozy/cozy-photos.png?branch=master)
 
 To run tests type the following command into the Cozy Photos folder:
 
@@ -80,7 +80,7 @@ Cozy Photos is developed by Cozy Cloud and distributed under the AGPL v3 license
 
 ## What is Cozy?
 
-![Cozy Logo](https://raw.github.com/mycozycloud/cozy-setup/gh-pages/assets/images/happycloud.png)
+![Cozy Logo](https://raw.github.com/cozy/cozy-setup/gh-pages/assets/images/happycloud.png)
 
 [Cozy](http://cozy.io) is a platform that brings all your web services in the
 same private space.  With it, your web apps and your devices can share data

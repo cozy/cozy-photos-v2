@@ -15,7 +15,7 @@
     "archiver": "0.14.4",
     "async": "0.9.0",
     "axon": "0.6.1",
-    "cozy-clearance": "0.1.19",
+    "cozy-clearance": "0.1.22",
     "cozy-realtime-adapter": "1.0.0",
     "cozydb": "0.1.1",
     "gm": "1.17.0",
@@ -29,13 +29,14 @@
   },
   "devDependencies": {
     "chai": "1.9.1",
-    "request-json": "0.4.10",
-    "mocha": "1.20.1",
+    "request-json": "0.5.3",
+    "mocha": "2.3.4",
     "sinon": "1.10.2",
     "coffee-script": "1.7.1"
   },
   "scripts": {
     "test": "cake tests",
+    "build": "cake build",
     "start": "node build/server.js"
   },
   "repository": "https://github.com/cozy/cozy-photos.git",
@@ -55,6 +56,9 @@
     },
     "File": {
       "description": "Import pictures from the Files app"
+    },
+    "User": {
+      "description": "Need information for the from part of email sent."
     },
     "Send mail from user": {
       "description": "Share album with your friends"
