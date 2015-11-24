@@ -7,14 +7,16 @@ store = {}
 describe 'Read operations', ->
 
     before helpers.clearDb
-    before helpers.createAlbum fixtures.baseAlbum
-    before helpers.createPhoto fixtures.basePhoto1
-    before helpers.createPhoto fixtures.basePhoto2
+    before 'create album', helpers.createAlbum fixtures.baseAlbum
+    before 'create photo', helpers.createPhoto fixtures.basePhoto1
+    before 'create photo', helpers.createPhoto fixtures.basePhoto2
 
-    before helpers.startServer
-    before helpers.makeTestClient
+    before 'start server', helpers.startServer
+    before 'make client ', helpers.makeTestClient
     after  helpers.killServer
-    after -> fs.unlinkSync './test-get.jpg'
+    after ->
+        fs.unlinkSync './test-get.jpg'
+        fs.unlinkSync './test-get.zip'
 
     describe 'List - GET /albums', ->
 
