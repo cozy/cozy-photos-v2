@@ -98,6 +98,7 @@ module.exports = {
   "thumb creation": "Application creates thumbs for files.",
   "progress": "Progression",
   "Navigate before upload": "Some upload are in progress, do you really want to leave this page?",
-  "application title": "Cozy - photos"
+  "application title": "Cozy - photos",
+  "r": "read only"
 }
 ;

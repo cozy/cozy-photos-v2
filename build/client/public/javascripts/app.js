@@ -984,7 +984,8 @@ module.exports = {
   "thumb creation": "Application creates thumbs for files.",
   "progress": "Progression",
   "Navigate before upload": "Some upload are in progress, do you really want to leave this page?",
-  "application title": "Cozy - photos"
+  "application title": "Cozy - photos",
+  "r": "read only"
 }
 ;
 });
@@ -3019,7 +3020,7 @@ module.exports = MapView = (function(_super) {
   };
 
   MapView.prototype.afterRender = function() {
-    var layerControl, overlays;
+    var attribution, layerControl, layerUrl, overlays;
     L.Icon.Default.imagePath = 'leaflet-images';
     this.standbyLatlng = new L.latLng(null);
     this.standbyMarker = L.marker(null, {
@@ -3027,7 +3028,7 @@ module.exports = MapView = (function(_super) {
       icon: L.divIcon({
         className: 'leaflet-marker-div',
         iconSize: L.point(39, 45),
-        html: '<i class="fa fa-crosshairs" style="font-size:3.8em"></i>'
+        html: "<i class=\"fa fa-crosshairs\" style=\"font-size:3.8em\"></i>"
       })
     });
     this.map = L.map(this.$('#map')[0], {
@@ -3056,12 +3057,14 @@ module.exports = MapView = (function(_super) {
         return _this.hide();
       };
     })(this));
+    layerUrl = "http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}";
+    attribution = "Tiles by <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a>";
     overlays = {
       "Photos": this.markers,
-      "Villes": L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/{type}/{z}/{x}/{y}.{ext}', {
+      "Villes": L.tileLayer(layerUrl, {
         type: 'hyb',
         ext: 'png',
-        attribution: 'Tiles by <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        attribution: attribution,
         subdomains: '1234',
         opacity: 0.9
       })
@@ -3070,7 +3073,7 @@ module.exports = MapView = (function(_super) {
       position: 'bottomright'
     }).addTo(this.map);
     return this.map.addControl(new L.Control.Search({
-      url: 'http://nominatim.openstreetmap.org/search?format=json&q={s}',
+      url: 'https://nominatim.openstreetmap.org/search?format=json&q={s}',
       jsonpParam: 'json_callback',
       propertyName: 'display_name',
       propertyLoc: ['lat', 'lon'],
@@ -3086,27 +3089,26 @@ module.exports = MapView = (function(_super) {
         position = new L.LatLng(gps.lat, gps.long);
         imgPath = "photos/thumbs/" + (photo.get('id')) + ".jpg";
         text = '<img src="images/spinner.svg" width="150" height="150"/>';
-        button = '<button data-key="' + photo.get('id') + '" class="btn btn-block">' + '<span class="glyphicon gliphicon-move"></span>' + 'Relocaliser</button>';
+        button = "<button data-key=\"" + (photo.get('id')) + "\"\nclass=\"btn btn-block\">\n<span class=\"glyphicon gliphicon-move\"></span>\nRelocaliser</button>";
         tempMarker = L.marker(position, {
           title: photo.get('title')
         }).bindPopup(text);
         tempMarker.cached = false;
         tempMarker.on('popupopen', function() {
-          var element, img;
+          var description, element, img;
           if (!tempMarker.cached) {
             img = $('<img src="' + imgPath + '" title="photo"/>');
             element = $("<div><p>" + (photo.get('title')) + "</p></div>");
+            description = photo.get('description');
             element.append(img);
             element.append(button);
             if (photo.get('description') == null) {
-              element.append($("<quote>" + (photo.get('description')) + "</quote>"));
+              element.append($("<quote>" + description + "</quote>"));
             }
             img[0].onload = function() {
-              setTimeout((function(_this) {
-                return function() {
-                  return tempMarker.getPopup().setContent(element[0]);
-                };
-              })(this), 500);
+              setTimeout(function() {
+                return tempMarker.getPopup().setContent(element[0]);
+              }, 500);
               return tempMarker.cached = true;
             };
             return helpers.rotate(photo.get('orientation'), img);
@@ -3128,13 +3130,11 @@ module.exports = MapView = (function(_super) {
     $('.choice-box').height('auto');
     mapGalery = this.$('#map-galery');
     mapGalery.children().remove();
-    return this.collection.hasNotGPS().each((function(_this) {
-      return function(photo) {
-        var imgPath;
-        imgPath = "photos/thumbs/" + (photo.get('id')) + ".jpg";
-        return mapGalery.append('<img class="map-setter" src="' + imgPath + '" data-key="' + photo.get('id') + '"' + '" style="height: 130px; display: inline"/>');
-      };
-    })(this));
+    return this.collection.hasNotGPS().each(function(photo) {
+      var imgPath;
+      imgPath = "photos/thumbs/" + (photo.get('id')) + ".jpg";
+      return mapGalery.append('<img class="map-setter" src="' + imgPath + '" data-key="' + photo.get('id') + '"' + '" style="height: 130px; display: inline"/>');
+    });
   };
 
   $(document).on("click", ".map-setter", function() {
@@ -3156,16 +3156,12 @@ module.exports = MapView = (function(_super) {
           long: that.standbyLatlng.lng,
           alt: 0
         },
-        success: (function(_this) {
-          return function(e) {
-            return e.preventDefault();
-          };
-        })(this),
-        error: (function(_this) {
-          return function(e) {
-            return e.preventDefault();
-          };
-        })(this)
+        success: function(e) {
+          return e.preventDefault();
+        },
+        error: function(e) {
+          return e.preventDefault();
+        }
       }) : void 0;
     });
     return that.hide();
