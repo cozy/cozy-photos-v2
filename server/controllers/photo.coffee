@@ -163,6 +163,8 @@ doPipe = (req, which, download, res, next) ->
         # support both old style _attachment photo and new style binary photo
         onError = (err) -> next err if err
 
+        errorFile = path.join __dirname, '..', 'img', 'error.gif'
+
         if req.photo._attachments?[which]
             binaryPath = "/data/#{req.photo.id}/attachments/#{which}"
             request = downloader.download binaryPath, (stream) ->
@@ -170,7 +172,7 @@ doPipe = (req, which, download, res, next) ->
                     res.on 'close', -> request.abort()
                     stream.pipe res
                 else
-                    return res.sendFile './server/img/error.gif'
+                    return res.sendFile errorFile
 
         else if req.photo.binary?[which]
             binaryPath = "/data/#{req.photo.id}/binaries/#{which}"
@@ -179,10 +181,10 @@ doPipe = (req, which, download, res, next) ->
                     res.on 'close', -> request.abort()
                     stream.pipe res
                 else
-                    return res.sendFile './server/img/error.gif'
+                    return res.sendFile errorFile
 
         else
-            return res.sendFile './server/img/error.gif'
+            return res.sendFile errorFile
 
         # This is a temporary hack to allow caching
         # ideally, we would do as follow :

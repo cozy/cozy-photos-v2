@@ -99,6 +99,7 @@ task 'build', 'Build CoffeeScript to Javascript', ->
     logger.info "Start compilation..."
     command = "coffee -cb --output build/server server && " + \
               "coffee -cb --output build/ server.coffee && " + \
+              "cp -R server/img build/server && " + \
               "rm -rf build/client && mkdir build/client && " + \
               "mkdir -p build/client/app/locales/ && " + \
               "rm -rf build/client/app/locales/* && " + \
