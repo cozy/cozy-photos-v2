@@ -192,7 +192,7 @@ module.exports.create = function(req, res, next) {
 
 doPipe = function(req, which, download, res, next) {
   return sharing.checkPermissionsPhoto(req.photo, 'r', req, function(err, isAllowed) {
-    var binaryPath, disposition, onError, request, _ref1, _ref2;
+    var binaryPath, disposition, errorFile, onError, request, _ref1, _ref2;
     if (err) {
       return next(err);
     }
@@ -208,6 +208,7 @@ doPipe = function(req, which, download, res, next) {
         return next(err);
       }
     };
+    errorFile = path.join(__dirname, '..', 'img', 'error.gif');
     if ((_ref1 = req.photo._attachments) != null ? _ref1[which] : void 0) {
       binaryPath = "/data/" + req.photo.id + "/attachments/" + which;
       return request = downloader.download(binaryPath, function(stream) {
@@ -217,7 +218,7 @@ doPipe = function(req, which, download, res, next) {
           });
           return stream.pipe(res);
         } else {
-          return res.sendFile('./server/img/error.gif');
+          return res.sendFile(errorFile);
         }
       });
     } else if ((_ref2 = req.photo.binary) != null ? _ref2[which] : void 0) {
@@ -229,11 +230,11 @@ doPipe = function(req, which, download, res, next) {
           });
           return stream.pipe(res);
         } else {
-          return res.sendFile('./server/img/error.gif');
+          return res.sendFile(errorFile);
         }
       });
     } else {
-      return res.sendFile('./server/img/error.gif');
+      return res.sendFile(errorFile);
     }
   });
 };
