@@ -15,15 +15,17 @@ whiteList = [
 gpsDegToDec = (pos, posRef) -> # String to int
 
     split = pos.match /(\d+)\/(\d+), (\d+)\/(\d+), (\d+)\/(\d+)/
-    if split[6]
+    if split?[6]
         coord    =  split[1] / split[2] + \
                    (split[3] / split[4]) / 60 + \
                    (split[5] / split[6])/3600 # lat and long format
     else
         splitAlt = pos.match /(\d+)\/(\d+)/   # altitude format
-        coord    = splitAlt[1] / splitAlt[2]
+        if splitAlt?
+            coord    = splitAlt[1] / splitAlt[2]
     ref = if (posRef == 'S' or posRef == 'W') then -1 else 1
-    return ref * coord
+    if coord?
+        return ref * coord
 
 module.exports = thumb =
 
@@ -53,7 +55,6 @@ module.exports = thumb =
                     GPS.lat  = gpsDegToDec data.Properties[lat] , data.Properties[lat  + 'Ref']
                 if data.Properties[ long ]
                     GPS.long = gpsDegToDec data.Properties[long], data.Properties[long + 'Ref']
-                #console.log data.Properties
 
                 if not(orientation?) or data.Orientation is 'Undefined'
                     orientation = 1
