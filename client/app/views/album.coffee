@@ -165,7 +165,8 @@ module.exports = class AlbumView extends BaseView
         @model.save updated: Date.now()
         # updates the photo counter
         @$('.photo-number').html @model.photos.length
-
+        @$('.photo-count').html t("picture", {smart_count: @model.photos.length})
+        
     # Force display of given photo.
     showPhoto: (photoid) ->
         @galery.showPhoto photoid
