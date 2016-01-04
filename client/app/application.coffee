@@ -7,7 +7,7 @@ module.exports =
         window.app = this
         # Translation helpers.
         @locale = window.locale
-        @polyglot = new Polyglot({locale:@locale})
+        @polyglot = new Polyglot locale: @locale
         try
             locales = require 'locales/'+ @locale
         catch e
