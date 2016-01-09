@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "json-brunch": "^1.5.4",
     "javascript-brunch": "1.7.1",
     "css-brunch": "1.7.0",
     "coffee-script-brunch": "1.8.0",
