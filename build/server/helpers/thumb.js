@@ -16,14 +16,18 @@ whiteList = ['image/jpeg', 'image/png'];
 gpsDegToDec = function(pos, posRef) {
   var coord, ref, split, splitAlt;
   split = pos.match(/(\d+)\/(\d+), (\d+)\/(\d+), (\d+)\/(\d+)/);
-  if (split[6]) {
+  if (split != null ? split[6] : void 0) {
     coord = split[1] / split[2] + (split[3] / split[4]) / 60 + (split[5] / split[6]) / 3600;
   } else {
     splitAlt = pos.match(/(\d+)\/(\d+)/);
-    coord = splitAlt[1] / splitAlt[2];
+    if (splitAlt != null) {
+      coord = splitAlt[1] / splitAlt[2];
+    }
   }
   ref = posRef === 'S' || posRef === 'W' ? -1 : 1;
-  return ref * coord;
+  if (coord != null) {
+    return ref * coord;
+  }
 };
 
 module.exports = thumb = {
