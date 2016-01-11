@@ -1,4 +1,4 @@
-# [Cozy](http://cozy.io) Photos
+# [Cozy](https://cozy.io) Photos
 
 Cozy Photos makes your photo management easy. Main features are:
 
@@ -9,7 +9,7 @@ Cozy Photos makes your photo management easy. Main features are:
 
 ## Install
 
-We assume here that the Cozy platform is correctly [installed](http://cozy.io/host/install.html)
+We assume here that the Cozy platform is correctly [installed](https://docs.cozy.io/en/host/install)
  on your server.
 
 You can simply install the Photos application via the app registry. Click on ythe *Chose Your Apps* button located on the right of your Cozy Home.
@@ -32,7 +32,7 @@ You can contribute to the Cozy Photos in many ways:
 
 ## Hack
 
-Hacking the Photos app requires you [setup a dev environment](http://cozy.io/hack/getting-started/). Once it's done you can hack Cozy Contact just like it was your own app.
+Hacking the Photos app requires you [setup a dev environment](https://docs.cozy.io/en/hack/getting-started/). Once it's done you can hack Cozy Contact just like it was your own app.
 
     git clone https://github.com/cozy/cozy-photos.git
 
@@ -54,8 +54,7 @@ Make sure you have installed imagemagick on your local system otherwise you won'
 
 ## Tests
 
-![Build
-Status](https://travis-ci.org/cozy/cozy-photos.png?branch=master)
+![Build Status](https://travis-ci.org/cozy/cozy-photos.png?branch=master)
 
 To run tests type the following command into the Cozy Photos folder:
 
@@ -82,7 +81,7 @@ Cozy Photos is developed by Cozy Cloud and distributed under the AGPL v3 license
 
 ![Cozy Logo](https://raw.github.com/cozy/cozy-setup/gh-pages/assets/images/happycloud.png)
 
-[Cozy](http://cozy.io) is a platform that brings all your web services in the
+[Cozy](https://cozy.io) is a platform that brings all your web services in the
 same private space.  With it, your web apps and your devices can share data
 easily, providing you
 with a new experience. You can install Cozy on your own hardware where no one
@@ -95,4 +94,4 @@ You can reach the Cozy Community by:
 * Chatting with us on IRC #cozycloud on irc.freenode.net
 * Posting on our [Forum](https://forum.cozy.io/)
 * Posting issues on the [Github repos](https://github.com/cozy/)
-* Mentioning us on [Twitter](http://twitter.com/mycozycloud)
+* Mentioning us on [Twitter](https://twitter.com/mycozycloud)
