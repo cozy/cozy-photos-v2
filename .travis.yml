@@ -15,6 +15,14 @@ env:
     global:
         - NODE_ENV=test
         - INDEXES_PATH=/home/travis/build/indexes
+        - CXX=g++-4.8
+addons:
+    apt:
+        sources:
+            - ubuntu-toolchain-r-test
+        packages:
+            - gcc-4.8
+            - g++-4.8
 
 before_install:
     - travis_retry git clone git://github.com/cozy/cozy-data-system.git
