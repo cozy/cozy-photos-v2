@@ -1,7 +1,7 @@
 {
     "default user name": "Someone",
     "email sharing subject": "%{displayName} share the photo album \"%{name}\" with you",
-    "file": "album",
+    "file": "Album",
     "link file content": "Cliquez ici pour voir ce fichier",
     "link folder content": "Cliquez ici pour naviguer dans ce dossier",
     "404 headline": "The album can't be found.",
