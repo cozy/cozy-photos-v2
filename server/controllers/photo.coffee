@@ -149,7 +149,13 @@ module.exports.create = (req, res, next) ->
 
 doPipe = (req, which, download, res, next) ->
 
+    connectionClosed = false
+    req.on 'close', -> connectionClosed = true
+    res.on 'close', -> connectionClosed = true
+
     sharing.checkPermissionsPhoto req.photo, 'r', req, (err, isAllowed) ->
+
+        return if connectionClosed
 
         return next err if err
 
@@ -159,32 +165,21 @@ doPipe = (req, which, download, res, next) ->
             disposition = 'attachment; filename=' + req.photo.title
             res.setHeader 'Content-disposition', disposition
 
-
-        # support both old style _attachment photo and new style binary photo
-        onError = (err) -> next err if err
-
         errorFile = path.join __dirname, '..', 'img', 'error.gif'
 
         if req.photo._attachments?[which]
             binaryPath = "/data/#{req.photo.id}/attachments/#{which}"
-            request = downloader.download binaryPath, (stream) ->
-                if stream.statusCode is 200
-                    res.on 'close', -> request.abort()
-                    stream.pipe res
-                else
-                    return res.sendFile errorFile
-
         else if req.photo.binary?[which]
             binaryPath = "/data/#{req.photo.id}/binaries/#{which}"
-            request = downloader.download binaryPath, (stream) ->
-                if stream.statusCode is 200
-                    res.on 'close', -> request.abort()
-                    stream.pipe res
-                else
-                    return res.sendFile errorFile
-
         else
             return res.sendFile errorFile
+
+        request = downloader.download binaryPath, (stream) ->
+            if stream.statusCode is 200
+                stream.pipe res
+            else
+                return res.sendFile errorFile
+        res.on 'close', -> request.abort()
 
         # This is a temporary hack to allow caching
         # ideally, we would do as follow :
