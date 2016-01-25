@@ -119,7 +119,9 @@ module.exports = {
     var AlbumCollection, Router, e, key, locales, param, value, _i, _len, _ref, _ref1;
     window.app = this;
     this.locale = window.locale;
-    this.polyglot = new Polyglot();
+    this.polyglot = new Polyglot({
+      locale: this.locale
+    });
     try {
       locales = require('locales/' + this.locale);
     } catch (_error) {
@@ -879,7 +881,7 @@ module.exports = {
     "thumb creation": "Applikation erstellt Thumbs für Dateien.",
     "progress": "Fortschritt",
     "Navigate before upload": "Hochladen noch aktiv, möchten Sie wirklich diese Seite verlassen?",
-    "application title": "Cozy - photos"
+    "application title": "Cozy - Fotos"
 };
 });
 
@@ -1029,8 +1031,8 @@ module.exports = {
     "problem occured while setting cover": "Ocurrió un problema al fijar la imagen como portada del album.",
     "pick from computer": "Para añadir imágenes, haga clic aquí o arrastre y pegue sus fotos.",
     "pick from files": "Hacer clic aquí para importar imágenes desde la aplicación Archivos.",
-    "hidden-description": "No aparecerá en su página de Inicio.\nPero usted puede compartirlo en esta url:",
-    "It cannot be accessed from the public side": "It is not a public resource.",
+    "hidden-description": "No aparecerá en su página Escritorio.\nPero usted puede compartirlo en esta url:",
+    "It cannot be accessed from the public side": "No es un recurso público.",
     "rebuild thumbnails": "Regenerar las miniaturas",
     "01": "Enero",
     "02": "Febrero",
@@ -1052,7 +1054,7 @@ module.exports = {
     "modal shared album custom msg": "Insertar un correo electrónico y pulsar en Enter",
     "modal shared album link msg": "Enviar este enlace para compartir este album",
     "modal shared public link msg": "Enviar este enlace para compartir esta carpeta.",
-    "modal shared with people msg": "Invite a selection of contacts to access it. Type\nemail in the field and press enter (An email will be sent to them):",
+    "modal shared with people msg": "Invite a unos contactos seleccionados a acceder a él. Escriba\nlos email en el campo y presione la tecla Enter (se les enviará un email):",
     "modal send mails": "Enviar un aviso",
     "modal next": "Siguiente",
     "modal prev": "Precedente",
@@ -1133,7 +1135,7 @@ module.exports = {
     "pick from computer": "Cliquez ici ou glissez-déposez vos photos pour ajouter des images",
     "pick from files": "Cliquez ici pour importer des images de l'application Files",
     "hidden-description": "Il n'apparaîtra pas sur votre page d'accueil,\nMais vous pouvez partager cette URL :",
-    "It cannot be accessed from the public side": "It is not a public resource.",
+    "It cannot be accessed from the public side": "Ce n'est pas visible en public",
     "rebuild thumbnails": "Regénérer les vignettes",
     "01": "Janvier",
     "02": "Février",
@@ -1155,7 +1157,7 @@ module.exports = {
     "modal shared album custom msg": "Entrez un email et appuyez sur Entrée",
     "modal shared album link msg": "Envoyez ce lien pour permettre aux personnes d'accéder à l'album",
     "modal shared public link msg": "Envoyez ce lien pour partager cet album",
-    "modal shared with people msg": "Invite a selection of contacts to access it. Type\nemail in the field and press enter (An email will be sent to them):",
+    "modal shared with people msg": "Invitez des personnes parmi vos contacts à y accéder. Saisissez\nleur adresse mail dans le champ et appuyez sur Entrée (un mail leur sera envoyé)&nbsp;:",
     "modal send mails": "Envoyer une notification",
     "modal next": "Suivant",
     "modal prev": "Précédent",
@@ -1844,7 +1846,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 var locals_ = (locals || {}),id = locals_.id,downloadPath = locals_.downloadPath,photosNumber = locals_.photosNumber,clearance = locals_.clearance,title = locals_.title,description = locals_.description;
-buf.push("<div id=\"about\"><div class=\"clearfix\"><div id=\"links\" class=\"clearfix\"><p class=\"back\"><a href=\"#albums\" class=\"flatbtn\"><span class=\"fa fa-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Back")) ? "" : jade_interp)) + "</span></a></p><p class=\"startediting\"><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn\"><span class=\"fa fa-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p class=\"stopediting\"><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn stopediting\"><span class=\"fa fa-save icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><p class=\"download\"><a" + (jade.attr("href", "" + (downloadPath) + "", true, false)) + " class=\"flatbtn\"><span class=\"fa fa-download icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p class=\"delete\"><a class=\"flatbtn delete\"><span class=\"fa fa-trash icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p><p class=\"clearance\"><a class=\"flatbtn clearance\"><span class=\"fa fa-share-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("share")) ? "" : jade_interp)) + "</span></a></p></div><div id=\"album-text\"><div id=\"album-text-background\"><div class=\"right\"><p><span class=\"photo-number\">" + (jade.escape(null == (jade_interp = photosNumber) ? "" : jade_interp)) + "</span><br/><span>" + (jade.escape(null == (jade_interp = t("picture", {smart_count: photosNumber})) ? "" : jade_interp)) + "</span></p></div><form class=\"left\"><div><span class=\"clearance-state\">");
+buf.push("<div id=\"about\"><div class=\"clearfix\"><div id=\"links\" class=\"clearfix\"><p class=\"back\"><a href=\"#albums\" class=\"flatbtn\"><span class=\"fa fa-arrow-left icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Back")) ? "" : jade_interp)) + "</span></a></p><p class=\"startediting\"><a" + (jade.attr("href", "#albums/" + (id) + "/edit", true, false)) + " class=\"flatbtn\"><span class=\"fa fa-edit icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Edit")) ? "" : jade_interp)) + "</span></a></p><p class=\"stopediting\"><a" + (jade.attr("href", "#albums/" + (id) + "", true, false)) + " class=\"flatbtn stopediting\"><span class=\"fa fa-save icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Stop editing")) ? "" : jade_interp)) + "</span></a></p><p class=\"download\"><a" + (jade.attr("href", "" + (downloadPath) + "", true, false)) + " class=\"flatbtn\"><span class=\"fa fa-download icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Download")) ? "" : jade_interp)) + "</span></a></p><p class=\"delete\"><a class=\"flatbtn delete\"><span class=\"fa fa-trash icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("Delete")) ? "" : jade_interp)) + "</span></a></p><p class=\"clearance\"><a class=\"flatbtn clearance\"><span class=\"fa fa-share-alt icon-white\"></span><span>" + (jade.escape(null == (jade_interp = t("share")) ? "" : jade_interp)) + "</span></a></p></div><div id=\"album-text\"><div id=\"album-text-background\"><div class=\"right\"><p><span class=\"photo-number\">" + (jade.escape(null == (jade_interp = photosNumber) ? "" : jade_interp)) + "</span><br/><span class=\"photo-count\">" + (jade.escape(null == (jade_interp = t("picture", {smart_count: photosNumber})) ? "" : jade_interp)) + "</span></p></div><form class=\"left\"><div><span class=\"clearance-state\">");
 if ( clearance == 'public')
 {
 buf.push("<span class=\"fa fa-globe\"></span>&nbsp;\n" + (jade.escape((jade_interp = t('shared')) == null ? '' : jade_interp)) + "");
@@ -2320,7 +2322,10 @@ module.exports = AlbumView = (function(_super) {
     this.model.save({
       updated: Date.now()
     });
-    return this.$('.photo-number').html(this.model.photos.length);
+    this.$('.photo-number').html(this.model.photos.length);
+    return this.$('.photo-count').html(t("picture", {
+      smart_count: this.model.photos.length
+    }));
   };
 
   AlbumView.prototype.showPhoto = function(photoid) {
