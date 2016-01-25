@@ -191,8 +191,19 @@ module.exports.create = function(req, res, next) {
 };
 
 doPipe = function(req, which, download, res, next) {
+  var connectionClosed;
+  connectionClosed = false;
+  req.on('close', function() {
+    return connectionClosed = true;
+  });
+  res.on('close', function() {
+    return connectionClosed = true;
+  });
   return sharing.checkPermissionsPhoto(req.photo, 'r', req, function(err, isAllowed) {
-    var binaryPath, disposition, errorFile, onError, request, _ref1, _ref2;
+    var binaryPath, disposition, errorFile, request, _ref1, _ref2;
+    if (connectionClosed) {
+      return;
+    }
     if (err) {
       return next(err);
     }
@@ -203,39 +214,24 @@ doPipe = function(req, which, download, res, next) {
       disposition = 'attachment; filename=' + req.photo.title;
       res.setHeader('Content-disposition', disposition);
     }
-    onError = function(err) {
-      if (err) {
-        return next(err);
-      }
-    };
     errorFile = path.join(__dirname, '..', 'img', 'error.gif');
     if ((_ref1 = req.photo._attachments) != null ? _ref1[which] : void 0) {
       binaryPath = "/data/" + req.photo.id + "/attachments/" + which;
-      return request = downloader.download(binaryPath, function(stream) {
-        if (stream.statusCode === 200) {
-          res.on('close', function() {
-            return request.abort();
-          });
-          return stream.pipe(res);
-        } else {
-          return res.sendFile(errorFile);
-        }
-      });
     } else if ((_ref2 = req.photo.binary) != null ? _ref2[which] : void 0) {
       binaryPath = "/data/" + req.photo.id + "/binaries/" + which;
-      return request = downloader.download(binaryPath, function(stream) {
-        if (stream.statusCode === 200) {
-          res.on('close', function() {
-            return request.abort();
-          });
-          return stream.pipe(res);
-        } else {
-          return res.sendFile(errorFile);
-        }
-      });
     } else {
       return res.sendFile(errorFile);
     }
+    request = downloader.download(binaryPath, function(stream) {
+      if (stream.statusCode === 200) {
+        return stream.pipe(res);
+      } else {
+        return res.sendFile(errorFile);
+      }
+    });
+    return res.on('close', function() {
+      return request.abort();
+    });
   });
 };
 
