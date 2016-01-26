@@ -95,6 +95,10 @@ module.exports.read = (req, res, next) ->
 # Generate a zip archive containing all photo attached to photo docs of give
 # album.
 module.exports.zip = (req, res, next) ->
+    connectionClosed = false
+    req.on 'close', -> connectionClosed = true
+    res.on 'close', -> connectionClosed = true
+
     sharing.checkPermissions req.album, req, (err, isAllowed) ->
         if not isAllowed
             next NotAllowed()
@@ -105,6 +109,7 @@ module.exports.zip = (req, res, next) ->
             zipName = slugify req.album.title or 'Album'
 
             addToArchive = (photo, cb) ->
+                return unless archive
 
                 # Photo uploaded from the app.
                 if photo?.binary.raw?
@@ -129,11 +134,18 @@ module.exports.zip = (req, res, next) ->
                 laterStream.on 'ready', (stream) ->
                     # Get the file's name in the archive.
                     name = photo.title or "#{photo.id}.jpg"
-                    archive.append stream, {name}
+                    if archive
+                        archive.append stream, {name}
+                    else
+                        stream.abort()
                     cb()
 
             # Build zip from file list and pip the result in the response.
             makeZip = (zipName, photos) ->
+                if connectionClosed
+                    archive.abort()
+                    archive = null
+                    return
 
                 # Start the streaming.
                 archive.pipe res
@@ -141,6 +153,7 @@ module.exports.zip = (req, res, next) ->
                 # Abort archiving process when the user aborts his request.
                 res.on 'close', ->
                     archive.abort()
+                    archive = null
 
                 # Set headers describing the final zip file.
                 disposition = "attachment; filename=\"#{zipName}.zip\""
