@@ -68,6 +68,7 @@ module.exports.thumb = (req, res, next) ->
     stream = req.file.getBinary which, (err) ->
         return next err if err
     stream.pipe res
+    res.on 'close', -> stream.abort()
 
 
 
