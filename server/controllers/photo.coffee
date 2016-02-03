@@ -118,7 +118,7 @@ module.exports.create = (req, res, next) ->
                 if metadata?.exif?.dateTime?
                     req.body.date = metadata.exif.dateTime
 # MODIF : Rémi
-                req.body.gps = if (metadata?.exif?.gps?) then metadata.exif.gps else null
+                req.body.gps = metadata?.exif?.gps or null
 #
             photo = new Photo req.body
 
@@ -149,13 +149,9 @@ module.exports.create = (req, res, next) ->
 
 doPipe = (req, which, download, res, next) ->
 
-    connectionClosed = false
-    req.on 'close', -> connectionClosed = true
-    res.on 'close', -> connectionClosed = true
-
     sharing.checkPermissionsPhoto req.photo, 'r', req, (err, isAllowed) ->
 
-        return if connectionClosed
+        return if not res.connection or res.connection.destroyed
 
         return next err if err
 
