@@ -64,19 +64,21 @@ module.exports.list = (req, res, next) ->
 
 # Return thumb for given file.
 module.exports.thumb = (req, res, next) ->
-    which = if req.file.binary.thumb then 'thumb' else 'file'
-    stream = req.file.getBinary which, (err) ->
-        return next err if err
-    stream.pipe res
-    res.on 'close', -> stream.abort()
+    if res.connection and not res.connection.destroyed
+        which = if req.file.binary.thumb then 'thumb' else 'file'
+        stream = req.file.getBinary which, (err) ->
+            return next err if err
+        stream.pipe res
+        res.on 'close', -> stream.abort()
 
 
 
 download = (res, file, rawFile, callback) ->
-    fs.openSync rawFile, 'w'
-    stream = file.getBinary 'file', callback
-    stream.pipe fs.createWriteStream rawFile
-    res.on 'close', -> stream.abort()
+    if res.connection and not res.connection.destroyed
+        fs.openSync rawFile, 'w'
+        stream = file.getBinary 'file', callback
+        stream.pipe fs.createWriteStream rawFile
+        res.on 'close', -> stream.abort()
 
 module.exports.createPhoto = (req, res, next) ->
     file = req.file

@@ -95,9 +95,6 @@ module.exports.read = (req, res, next) ->
 # Generate a zip archive containing all photo attached to photo docs of give
 # album.
 module.exports.zip = (req, res, next) ->
-    connectionClosed = false
-    req.on 'close', -> connectionClosed = true
-    res.on 'close', -> connectionClosed = true
 
     sharing.checkPermissions req.album, req, (err, isAllowed) ->
         if not isAllowed
@@ -142,7 +139,7 @@ module.exports.zip = (req, res, next) ->
 
             # Build zip from file list and pip the result in the response.
             makeZip = (zipName, photos) ->
-                if connectionClosed
+                if not res.connection or res.connection.destroyed
                     archive.abort()
                     archive = null
                     return
