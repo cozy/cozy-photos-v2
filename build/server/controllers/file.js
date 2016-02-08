@@ -78,23 +78,30 @@ module.exports.list = function(req, res, next) {
 
 module.exports.thumb = function(req, res, next) {
   var stream, which;
-  which = req.file.binary.thumb ? 'thumb' : 'file';
-  stream = req.file.getBinary(which, function(err) {
-    if (err) {
-      return next(err);
-    }
-  });
-  return stream.pipe(res);
+  if (res.connection && !res.connection.destroyed) {
+    which = req.file.binary.thumb ? 'thumb' : 'file';
+    stream = req.file.getBinary(which, function(err) {
+      if (err) {
+        return next(err);
+      }
+    });
+    stream.pipe(res);
+    return res.on('close', function() {
+      return stream.abort();
+    });
+  }
 };
 
 download = function(res, file, rawFile, callback) {
   var stream;
-  fs.openSync(rawFile, 'w');
-  stream = file.getBinary('file', callback);
-  stream.pipe(fs.createWriteStream(rawFile));
-  return res.on('close', function() {
-    return stream.abort();
-  });
+  if (res.connection && !res.connection.destroyed) {
+    fs.openSync(rawFile, 'w');
+    stream = file.getBinary('file', callback);
+    stream.pipe(fs.createWriteStream(rawFile));
+    return res.on('close', function() {
+      return stream.abort();
+    });
+  }
 };
 
 module.exports.createPhoto = function(req, res, next) {

@@ -131,6 +131,9 @@ module.exports.zip = function(req, res, next) {
       zipName = slugify(req.album.title || 'Album');
       addToArchive = function(photo, cb) {
         var laterStream, type;
+        if (!archive) {
+          return;
+        }
         if ((photo != null ? photo.binary.raw : void 0) != null) {
           type = 'raw';
         } else if ((photo != null ? photo.binary.file : void 0) != null) {
@@ -148,17 +151,27 @@ module.exports.zip = function(req, res, next) {
         return laterStream.on('ready', function(stream) {
           var name;
           name = photo.title || ("" + photo.id + ".jpg");
-          archive.append(stream, {
-            name: name
-          });
+          if (archive) {
+            archive.append(stream, {
+              name: name
+            });
+          } else {
+            stream.abort();
+          }
           return cb();
         });
       };
       makeZip = function(zipName, photos) {
         var disposition;
+        if (!res.connection || res.connection.destroyed) {
+          archive.abort();
+          archive = null;
+          return;
+        }
         archive.pipe(res);
         res.on('close', function() {
-          return archive.abort();
+          archive.abort();
+          return archive = null;
         });
         disposition = "attachment; filename=\"" + zipName + ".zip\"";
         res.setHeader('Content-Disposition', disposition);

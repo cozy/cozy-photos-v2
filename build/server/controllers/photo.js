@@ -144,7 +144,7 @@ module.exports.create = function(req, res, next) {
         if ((metadata != null ? (_ref2 = metadata.exif) != null ? _ref2.dateTime : void 0 : void 0) != null) {
           req.body.date = metadata.exif.dateTime;
         }
-        req.body.gps = ((metadata != null ? (_ref3 = metadata.exif) != null ? _ref3.gps : void 0 : void 0) != null) ? metadata.exif.gps : null;
+        req.body.gps = (metadata != null ? (_ref3 = metadata.exif) != null ? _ref3.gps : void 0 : void 0) || null;
       }
       photo = new Photo(req.body);
       return Photo.create(photo, function(err, photo) {
@@ -191,17 +191,9 @@ module.exports.create = function(req, res, next) {
 };
 
 doPipe = function(req, which, download, res, next) {
-  var connectionClosed;
-  connectionClosed = false;
-  req.on('close', function() {
-    return connectionClosed = true;
-  });
-  res.on('close', function() {
-    return connectionClosed = true;
-  });
   return sharing.checkPermissionsPhoto(req.photo, 'r', req, function(err, isAllowed) {
     var binaryPath, disposition, errorFile, request, _ref1, _ref2;
-    if (connectionClosed) {
+    if (!res.connection || res.connection.destroyed) {
       return;
     }
     if (err) {
