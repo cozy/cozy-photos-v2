@@ -5,19 +5,23 @@ Galery = require 'views/galery'
 Clipboard = require 'lib/clipboard'
 
 thProcessor = require 'models/thumbprocessor'
-CozyClearanceModal = require 'cozy-clearance/modal_share_view'
 clipboard = new Clipboard()
 
 TAB_KEY_CODE = 9
 
-class ShareModal extends CozyClearanceModal
-    initialize: ->
-        super
-        @refresh()
+# On a public page, we don't need the Share modal.
+# Requiring modal_share_view triggers a request to get the contacts, and
+# the request will fail on public pages.
+if not window.location.pathname.match /public/
+    CozyClearanceModal = require 'cozy-clearance/modal_share_view'
+    class ShareModal extends CozyClearanceModal
+        initialize: ->
+            super
+            @refresh()
 
-    # override makeURL to append the key in the middle of the url
-    # see: models/album:getPublicURL
-    makeURL: (key) -> @model.getPublicURL key
+        # override makeURL to append the key in the middle of the url
+        # see: models/album:getPublicURL
+        makeURL: (key) -> @model.getPublicURL key
 
 
 module.exports = class AlbumView extends BaseView
@@ -166,7 +170,7 @@ module.exports = class AlbumView extends BaseView
         # updates the photo counter
         @$('.photo-number').html @model.photos.length
         @$('.photo-count').html t("picture", {smart_count: @model.photos.length})
-        
+
     # Force display of given photo.
     showPhoto: (photoid) ->
         @galery.showPhoto photoid

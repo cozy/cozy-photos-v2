@@ -20,7 +20,6 @@ module.exports =
         Router = require('router')
 
         @router = new Router()
-        @socketListener = new SocketListener()
 
         $(window).on "hashchange", @router.hashChange
         $(window).on "beforeunload", @router.beforeUnload
@@ -36,6 +35,11 @@ module.exports =
 
         @mode = if window.location.pathname.match /public/ then 'public'
         else 'owner'
+
+        if @mode isnt 'public'
+            # on public pages, realtime is not available, so we don't need
+            # the socket listener, to prevent 404
+            @socketListener = new SocketListener()
 
         # Display albums. Fetch data if no data were loaded via server index.
         if window.initalbums
