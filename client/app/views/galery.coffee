@@ -42,11 +42,11 @@ module.exports = class Galery extends ViewCollection
 
         # Addition to photobox ui to give more control to the user.
 
+        if $('#pbOverlay .pbCaptionText .btn-group').length is 0
+            $('#pbOverlay .pbCaptionText')
+                .append('<div class="btn-group"></div>')
         # Add button to return photo to left
         if app.mode isnt 'public'
-            if $('#pbOverlay .pbCaptionText .btn-group').length is 0
-                $('#pbOverlay .pbCaptionText')
-                    .append('<div class="btn-group"></div>')
             @turnLeft = $('#pbOverlay .pbCaptionText .btn-group .left')
             @turnLeft.unbind 'click'
             @turnLeft.remove()
