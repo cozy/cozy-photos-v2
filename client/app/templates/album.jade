@@ -49,6 +49,7 @@ div#about
                                 span &nbsp;(#{clearance.length})
                 input#title(type="text", placeholder="#{t('title placeholder')}", value=title)
                 textarea#description(placeholder="#{t('description placeholder')}")!= description
+                div#publicDesc= description
 
 div#photos.clearfix
   //-div#rebuild-th
