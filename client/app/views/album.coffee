@@ -75,6 +75,7 @@ module.exports = class AlbumView extends BaseView
 
         @title = @$ '#title'
         @description = @$ '#description'
+        @publicDesc  = @$ '#publicDesc'
 
         @galery = new Galery
             el: @$ '#photos'
@@ -87,9 +88,11 @@ module.exports = class AlbumView extends BaseView
 
         if @options.editable
             @makeEditable()
+            @publicDesc.hide()
         else
             @title.addClass 'disabled'
-            @description.addClass 'disabled'
+            @description.hide()
+            @publicDesc.show()
 
 
     beforePhotoUpload: (callback) =>
@@ -106,12 +109,16 @@ module.exports = class AlbumView extends BaseView
         @$el.addClass 'editing'
         @options.editable = true
         @galery.options.editable = true
+        @description.show()
+        @publicDesc.hide()
 
     makeNonEditable: =>
         document.title = "#{t 'application title'} - #{@model.get 'title'}"
         @$el.removeClass 'editing'
         @options.editable = false
         @galery.options.editable = false
+        @description.hide()
+        @publicDesc.show()
 
     onFieldClicked: (event) =>
         unless @options.editable
