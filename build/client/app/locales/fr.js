@@ -93,8 +93,9 @@ module.exports = {
     "are you sure you want to delete this album": "Voulez-vous vraiment effacer cet album ?",
     "photos search": "Recherche des photos...",
     "no photos found": "Aucune photo trouvée...",
-    "thumb creation": "L'application est en train de créer des minatures pour vos photos afin d'améliorer votre navigation.",
+    "thumb creation": "L'application est en train de créer des miniatures pour vos photos afin d'améliorer votre navigation.",
     "progress": "Progression",
     "Navigate before upload": "Certaines photos n'ont pas encore été envoyées au serveur, voulez-vous vraiment quitter cette page ?",
     "application title": "Cozy - photos"
-};
+}
+;
