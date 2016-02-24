@@ -1623,7 +1623,8 @@ button.delete {
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 40px;
 }
-#about #album-text #description {
+#about #album-text #description,
+#about #album-text #publicDesc {
   font-size: 18px;
 }
 #about #album-text #album-text-background {

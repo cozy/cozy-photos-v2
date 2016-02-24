@@ -133,7 +133,6 @@ module.exports = {
     AlbumCollection = require('collections/album');
     Router = require('router');
     this.router = new Router();
-    this.socketListener = new SocketListener();
     $(window).on("hashchange", this.router.hashChange);
     $(window).on("beforeunload", this.router.beforeUnload);
     this.albums = new AlbumCollection();
@@ -149,6 +148,9 @@ module.exports = {
       }
     }
     this.mode = window.location.pathname.match(/public/) ? 'public' : 'owner';
+    if (this.mode !== 'public') {
+      this.socketListener = new SocketListener();
+    }
     if (window.initalbums) {
       this.albums.reset(window.initalbums, {
         parse: true
@@ -1191,11 +1193,12 @@ module.exports = {
     "are you sure you want to delete this album": "Voulez-vous vraiment effacer cet album ?",
     "photos search": "Recherche des photos...",
     "no photos found": "Aucune photo trouvée...",
-    "thumb creation": "L'application est en train de créer des minatures pour vos photos afin d'améliorer votre navigation.",
+    "thumb creation": "L'application est en train de créer des miniatures pour vos photos afin d'améliorer votre navigation.",
     "progress": "Progression",
     "Navigate before upload": "Certaines photos n'ont pas encore été envoyées au serveur, voulez-vous vraiment quitter cette page ?",
     "application title": "Cozy - photos"
-};
+}
+;
 });
 
 require.register("models/album", function(exports, require, module) {
@@ -1859,7 +1862,7 @@ if ( clearance.length)
 buf.push("<span>&nbsp;(" + (jade.escape((jade_interp = clearance.length) == null ? '' : jade_interp)) + ")</span>");
 }
 }
-buf.push("</span></div><input id=\"title\" type=\"text\"" + (jade.attr("placeholder", "" + (t('title placeholder')) + "", true, false)) + (jade.attr("value", title, true, false)) + "/><textarea id=\"description\"" + (jade.attr("placeholder", "" + (t('description placeholder')) + "", true, false)) + ">" + (null == (jade_interp = description) ? "" : jade_interp) + "</textarea></form></div></div></div></div><div id=\"photos\" class=\"clearfix\"></div>");;return buf.join("");
+buf.push("</span></div><input id=\"title\" type=\"text\"" + (jade.attr("placeholder", "" + (t('title placeholder')) + "", true, false)) + (jade.attr("value", title, true, false)) + "/><textarea id=\"description\"" + (jade.attr("placeholder", "" + (t('description placeholder')) + "", true, false)) + ">" + (null == (jade_interp = description) ? "" : jade_interp) + "</textarea><div id=\"publicDesc\">" + (jade.escape(null == (jade_interp = description) ? "" : jade_interp)) + "</div></form></div></div></div></div><div id=\"photos\" class=\"clearfix\"></div>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -2111,31 +2114,32 @@ Clipboard = require('lib/clipboard');
 
 thProcessor = require('models/thumbprocessor');
 
-CozyClearanceModal = require('cozy-clearance/modal_share_view');
-
 clipboard = new Clipboard();
 
 TAB_KEY_CODE = 9;
 
-ShareModal = (function(_super) {
-  __extends(ShareModal, _super);
+if (!window.location.pathname.match(/public/)) {
+  CozyClearanceModal = require('cozy-clearance/modal_share_view');
+  ShareModal = (function(_super) {
+    __extends(ShareModal, _super);
 
-  function ShareModal() {
-    return ShareModal.__super__.constructor.apply(this, arguments);
-  }
+    function ShareModal() {
+      return ShareModal.__super__.constructor.apply(this, arguments);
+    }
 
-  ShareModal.prototype.initialize = function() {
-    ShareModal.__super__.initialize.apply(this, arguments);
-    return this.refresh();
-  };
+    ShareModal.prototype.initialize = function() {
+      ShareModal.__super__.initialize.apply(this, arguments);
+      return this.refresh();
+    };
 
-  ShareModal.prototype.makeURL = function(key) {
-    return this.model.getPublicURL(key);
-  };
+    ShareModal.prototype.makeURL = function(key) {
+      return this.model.getPublicURL(key);
+    };
 
-  return ShareModal;
+    return ShareModal;
 
-})(CozyClearanceModal);
+  })(CozyClearanceModal);
+}
 
 module.exports = AlbumView = (function(_super) {
   __extends(AlbumView, _super);
@@ -2205,6 +2209,7 @@ module.exports = AlbumView = (function(_super) {
     document.title = "" + (t('application title')) + " - " + (this.model.get('title'));
     this.title = this.$('#title');
     this.description = this.$('#description');
+    this.publicDesc = this.$('#publicDesc');
     this.galery = new Galery({
       el: this.$('#photos'),
       editable: this.options.editable,
@@ -2214,10 +2219,12 @@ module.exports = AlbumView = (function(_super) {
     this.galery.album = this.model;
     this.galery.render();
     if (this.options.editable) {
-      return this.makeEditable();
+      this.makeEditable();
+      return this.publicDesc.hide();
     } else {
       this.title.addClass('disabled');
-      return this.description.addClass('disabled');
+      this.description.hide();
+      return this.publicDesc.show();
     }
   };
 
@@ -2243,14 +2250,18 @@ module.exports = AlbumView = (function(_super) {
     document.title = "" + (t('application title')) + " - " + (this.model.get('title'));
     this.$el.addClass('editing');
     this.options.editable = true;
-    return this.galery.options.editable = true;
+    this.galery.options.editable = true;
+    this.description.show();
+    return this.publicDesc.hide();
   };
 
   AlbumView.prototype.makeNonEditable = function() {
     document.title = "" + (t('application title')) + " - " + (this.model.get('title'));
     this.$el.removeClass('editing');
     this.options.editable = false;
-    return this.galery.options.editable = false;
+    this.galery.options.editable = false;
+    this.description.hide();
+    return this.publicDesc.show();
   };
 
   AlbumView.prototype.onFieldClicked = function(event) {
@@ -2683,10 +2694,10 @@ module.exports = Galery = (function(_super) {
       beforeShow: this.beforeImageDisplayed,
       afterClose: this.onAfterClosed
     }, this.onImageDisplayed);
+    if ($('#pbOverlay .pbCaptionText .btn-group').length === 0) {
+      $('#pbOverlay .pbCaptionText').append('<div class="btn-group"></div>');
+    }
     if (app.mode !== 'public') {
-      if ($('#pbOverlay .pbCaptionText .btn-group').length === 0) {
-        $('#pbOverlay .pbCaptionText').append('<div class="btn-group"></div>');
-      }
       this.turnLeft = $('#pbOverlay .pbCaptionText .btn-group .left');
       this.turnLeft.unbind('click');
       this.turnLeft.remove();
