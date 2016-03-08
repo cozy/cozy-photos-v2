@@ -2,6 +2,9 @@ cozydb  = require 'cozydb'
 async   = require 'async'
 fs      = require 'fs'
 Helpers = require '../helpers/thumb'
+log     = require('printit')
+    date: true
+    prefix: "model:photo"
 
 module.exports = class Photo extends cozydb.CozyModel
     @schema:
@@ -42,16 +45,17 @@ module.exports = class Photo extends cozydb.CozyModel
     extractGpsFromBinary: (callback) ->
         kind = if @binary.raw then 'raw' else 'file'
         res  = @getBinary kind, (err) ->
-            console.log err if err?
+            log.error err if err?
 
         res.on 'ready', (stream) =>
             Helpers.readMetadata stream, (err, data) =>
                 if err?
-                    console.log err
+                    log.error "Error reading metadata of #{@id} / #{@title}"
+                    log.error err
                     callback()
                 else
                     @updateAttributes { gps: data.exif.gps }, (err) ->
-                        console.log err if err?
+                        log.error err if err?
                         callback() # ~ next()
 
 
@@ -77,7 +81,7 @@ module.exports = class Photo extends cozydb.CozyModel
             async.eachSeries binaries, (bin, cb) =>
                 @removeBinary bin, (err) =>
                     if err
-                        console.log """
+                        log.error """
                             Cannot destroy binary linked to photo #{@id}"""
                     cb()
             , (err) =>
