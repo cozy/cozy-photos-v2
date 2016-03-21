@@ -23,6 +23,7 @@
     "socket.io": "0.9.14"
   },
   "devDependencies": {
+     "brunch": "1.8.5",
     "chai": "1.9.1",
     "request-json": "0.5.3",
     "mocha": "2.3.4",
@@ -31,7 +32,9 @@
   },
   "scripts": {
     "test": "cake tests",
-    "build": "cake build",
+    "build:client": "cd client && brunch b",
+    "build:server": "cake build",
+    "build":"npm run build:client && npm run build:server",
     "start": "node build/server.js"
   },
   "repository": "https://github.com/cozy/cozy-photos.git",
