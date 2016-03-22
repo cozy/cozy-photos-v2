@@ -4,7 +4,7 @@
   "author": "",
   "license": "AGPL-3.0",
   "description": "A cozy application to store, browse and share your photos.",
-  "main": "server.coffee",
+  "main": "build/server.js",
   "dependencies": {
     "americano": "0.4.2",
     "archiver": "0.14.4",
