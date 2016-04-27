@@ -247,8 +247,10 @@ module.exports.updateThumb = (req, res, next) ->
         data = name: 'thumb', type: thumb.type
 
         req.photo.attachFile thumb.path, data, (err) ->
-            return next err if err
-
-            fs.unlink thumb.path, (err) ->
-                return next err if err
-                res.send success: true
+            if err
+                fs.unlink thumb.path
+                return next err
+            else
+                fs.unlink thumb.path, (err) ->
+                    return next err if err
+                    res.send success: true

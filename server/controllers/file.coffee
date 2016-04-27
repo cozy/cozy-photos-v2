@@ -103,14 +103,20 @@ module.exports.createPhoto = (req, res, next) ->
             # Add content thumb or screen if necessary
             rawFile = "/tmp/#{photo.id}"
             download res, file, rawFile, (err) ->
-                return next err if err
-                if not photo.binary.thumb?
-                    thumbHelpers.resize rawFile, photo, 'thumb', (err) ->
-                        return next err if err
+                if err
+                    fs.unlink rawfile ->
+                        return next err
+                else
+                    if not photo.binary.thumb?
+                        thumbHelpers.resize rawFile, photo, 'thumb', (err) ->
+                            if err
+                                fs.unlink rawfile ->
+                                    return next err
+                            else
+                                thumbHelpers.resize rawFile, photo, 'screen', (err) ->
+                                    fs.unlink rawFile, ->
+                                        res.status(201).send photo
+                    else if not photo.binary.screen?
                         thumbHelpers.resize rawFile, photo, 'screen', (err) ->
                             fs.unlink rawFile, ->
                                 res.status(201).send photo
-                else if not photo.binary.screen?
-                    thumbHelpers.resize rawFile, photo, 'screen', (err) ->
-                        fs.unlink rawFile, ->
-                            res.status(201).send photo
