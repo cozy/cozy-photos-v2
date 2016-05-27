@@ -61,7 +61,7 @@ module.exports.create = (req, res, next) ->
         uploadDir: path.join os.tmpdir(), 'uploads'
         defer: true # don't wait for full form. Needed for progress events
         keepExtensions: true
-        maxFieldsSize: 10 * 1024 * 1024
+        maxFieldsSize: 50 * 1024 * 1024
     form.parse req
 
     # Get fields from form.
@@ -227,7 +227,7 @@ module.exports.updateThumb = (req, res, next) ->
         uploadDir: __dirname + '../../uploads'
         defer: true # don't wait for full form. Needed for progress events
         keepExtensions: true
-        maxFieldsSize: 10 * 1024 * 1024
+        maxFieldsSize: 50 * 1024 * 1024
 
     form.parse req
 

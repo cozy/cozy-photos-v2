@@ -291,16 +291,18 @@ module.exports.updateThumb = function(req, res, next) {
     };
     return req.photo.attachFile(thumb.path, data, function(err) {
       if (err) {
+        fs.unlink(thumb.path);
         return next(err);
-      }
-      return fs.unlink(thumb.path, function(err) {
-        if (err) {
-          return next(err);
-        }
-        return res.send({
-          success: true
+      } else {
+        return fs.unlink(thumb.path, function(err) {
+          if (err) {
+            return next(err);
+          }
+          return res.send({
+            success: true
+          });
         });
-      });
+      }
     });
   });
 };

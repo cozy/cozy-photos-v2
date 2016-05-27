@@ -129,25 +129,31 @@ module.exports.createPhoto = function(req, res, next) {
       rawFile = "/tmp/" + photo.id;
       return download(res, file, rawFile, function(err) {
         if (err) {
-          return next(err);
-        }
-        if (photo.binary.thumb == null) {
-          return thumbHelpers.resize(rawFile, photo, 'thumb', function(err) {
-            if (err) {
-              return next(err);
-            }
+          return fs.unlink(rawfile(function() {
+            return next(err);
+          }));
+        } else {
+          if (photo.binary.thumb == null) {
+            return thumbHelpers.resize(rawFile, photo, 'thumb', function(err) {
+              if (err) {
+                return fs.unlink(rawfile(function() {
+                  return next(err);
+                }));
+              } else {
+                return thumbHelpers.resize(rawFile, photo, 'screen', function(err) {
+                  return fs.unlink(rawFile, function() {
+                    return res.status(201).send(photo);
+                  });
+                });
+              }
+            });
+          } else if (photo.binary.screen == null) {
             return thumbHelpers.resize(rawFile, photo, 'screen', function(err) {
               return fs.unlink(rawFile, function() {
                 return res.status(201).send(photo);
               });
             });
-          });
-        } else if (photo.binary.screen == null) {
-          return thumbHelpers.resize(rawFile, photo, 'screen', function(err) {
-            return fs.unlink(rawFile, function() {
-              return res.status(201).send(photo);
-            });
-          });
+          }
         }
       });
     }
