@@ -23,7 +23,7 @@
     "socket.io": "1.4.5"
   },
   "devDependencies": {
-    "brunch": "2.6.5",
+    "brunch": "1.8.5",
     "chai": "3.5.0",
     "request-json": "0.5.5",
     "mocha": "2.4.5",
