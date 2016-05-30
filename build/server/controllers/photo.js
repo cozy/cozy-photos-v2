@@ -79,7 +79,7 @@ module.exports.create = function(req, res, next) {
     uploadDir: path.join(os.tmpdir(), 'uploads'),
     defer: true,
     keepExtensions: true,
-    maxFieldsSize: 10 * 1024 * 1024
+    maxFieldsSize: 50 * 1024 * 1024
   });
   form.parse(req);
   form.on('field', function(name, value) {
@@ -270,7 +270,7 @@ module.exports.updateThumb = function(req, res, next) {
     uploadDir: __dirname + '../../uploads',
     defer: true,
     keepExtensions: true,
-    maxFieldsSize: 10 * 1024 * 1024
+    maxFieldsSize: 50 * 1024 * 1024
   });
   form.parse(req);
   form.on('file', function(name, val) {
