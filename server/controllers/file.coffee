@@ -3,6 +3,9 @@ Photo = require '../models/photo'
 async = require 'async'
 fs = require 'fs'
 thumbHelpers = require '../helpers/thumb'
+log = require('printit')
+    date: true
+    prefix: "file"
 
 onThumbCreation = require('../helpers/initializer').onThumbCreation
 fileByPage = 5 * 12
@@ -95,7 +98,10 @@ module.exports.createPhoto = (req, res, next) ->
         binary       : file.binary
 
     Photo.create photo, (err, photo) ->
-        return next err if err
+        if err?
+            log.error "Error creating photo from file #{file.id}"
+            log.raw err
+            return next err
 
         if photo.binary?.thumb? and photo.binary.screen?
             res.status(201).send photo
@@ -103,20 +109,30 @@ module.exports.createPhoto = (req, res, next) ->
             # Add content thumb or screen if necessary
             rawFile = "/tmp/#{photo.id}"
             download res, file, rawFile, (err) ->
-                if err
+                if err?
+                    log.error "Error downloading photo from file #{file.id}"
+                    log.raw err
                     fs.unlink rawfile ->
                         return next err
                 else
                     if not photo.binary.thumb?
                         thumbHelpers.resize rawFile, photo, 'thumb', (err) ->
-                            if err
+                            if err?
+                                log.error "Error resizing thumb #{photo.id}"
+                                log.raw err
                                 fs.unlink rawfile ->
                                     return next err
                             else
                                 thumbHelpers.resize rawFile, photo, 'screen', (err) ->
+                                    if err?
+                                        log.error "Error resizing screen #{photo.id}"
+                                        log.raw err
                                     fs.unlink rawFile, ->
                                         res.status(201).send photo
                     else if not photo.binary.screen?
                         thumbHelpers.resize rawFile, photo, 'screen', (err) ->
+                            if err?
+                                log.error "Error resizing screen #{photo.id}"
+                                log.raw err
                             fs.unlink rawFile, ->
                                 res.status(201).send photo
