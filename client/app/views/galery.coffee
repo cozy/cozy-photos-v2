@@ -24,16 +24,17 @@ module.exports = class Galery extends ViewCollection
 
 
     initialize: ->
+        @photoCount = 0
         super
         # when the cover picture is deleted, we remove it from the album
         @listenTo @collection, 'destroy', @onPictureDestroyed
 
 
-    # launch photobox after render
+    # Launch photobox after render.
     afterRender: ->
         super
         @$el.photobox 'a.server',
-            thumbs: true
+            thumbs: false
             history: false
             zoomable: false
             beforeShow: @beforeImageDisplayed
@@ -41,10 +42,10 @@ module.exports = class Galery extends ViewCollection
         , @onImageDisplayed
 
         # Addition to photobox ui to give more control to the user.
-
         if $('#pbOverlay .pbCaptionText .btn-group').length is 0
             $('#pbOverlay .pbCaptionText')
                 .append('<div class="btn-group"></div>')
+
         # Add button to return photo to left
         if app.mode isnt 'public'
             @turnLeft = $('#pbOverlay .pbCaptionText .btn-group .left')
@@ -103,8 +104,20 @@ module.exports = class Galery extends ViewCollection
 
 
         if app.mode isnt 'public'
-            for key, view of @views
-                view.collection = @collection
+            view.collection = @collection for key, view of @views
+
+
+    # Override addItem to display only 50 first photos. Then, displaying should
+    # be handled by unveil (lazy loading).
+    addItem: (model) =>
+        options = _.extend {}, {model: model}, @itemViewOptions(model)
+        view = new @itemView(options)
+
+        @views[model.cid] = view.render()
+        view.setSource() if @photoCount < 50
+        @photoCount++
+        @appendView view
+        @checkIfEmpty @views
 
 
     checkIfEmpty: =>

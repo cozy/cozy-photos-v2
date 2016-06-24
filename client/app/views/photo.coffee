@@ -31,13 +31,23 @@ module.exports = class PhotoView extends BaseView
         @progressbar = @$ '.progressfill'
         helpers.rotate @model.get('orientation'), @image
         @link.addClass 'server' unless @model.isNew()
-        # remove loading background one image is loaded
+
+        # Images are not loaded by default, they are only loaded when the
+        # user reaches them by scrolling the window.
+        @image.unveil()
+
         if @image.get(0).complete
             @onImageLoaded()
         else
             @image.on 'load', =>
                 @onImageLoaded()
 
+    # Force display of current image by setting its source attribute.
+    setSource: ->
+        source = @$("img").attr "data-src"
+        @$("img").attr "src", source
+
+    # Change progress bar state to show the progress of the upload.
     setProgress: (percent) ->
         @progressbar.css 'width', percent + '%'
 
