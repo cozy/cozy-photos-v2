@@ -989,7 +989,8 @@ module.exports = {
   "progress": "Progression",
   "Navigate before upload": "Some upload are in progress, do you really want to leave this page?",
   "application title": "Cozy - photos",
-  "r": "read only"
+  "r": "read only",
+  "photo delete confirm": "Are you sure you want to delete this photo?"
 }
 ;
 });
@@ -1196,7 +1197,8 @@ module.exports = {
     "thumb creation": "L'application est en train de créer des miniatures pour vos photos afin d'améliorer votre navigation.",
     "progress": "Progression",
     "Navigate before upload": "Certaines photos n'ont pas encore été envoyées au serveur, voulez-vous vraiment quitter cette page ?",
-    "application title": "Cozy - photos"
+    "application title": "Cozy - photos",
+    "photo delete confirm": "Voulez-vous vraiment supprimer cette photo ?"
 }
 ;
 });
@@ -2085,7 +2087,7 @@ var buf = [];
 var jade_mixins = {};
 var jade_interp;
 var locals_ = (locals || {}),src = locals_.src,title = locals_.title,thumbsrc = locals_.thumbsrc;
-buf.push("<a" + (jade.attr("href", "" + (src) + "", true, false)) + (jade.attr("title", "" + (title) + "", true, false)) + "><img" + (jade.attr("src", "" + (thumbsrc) + "", true, false)) + (jade.attr("alt", "" + (title) + "", true, false)) + "/><div class=\"progressfill\"></div></a><button class=\"delete flatbtn\"><i class=\"fa fa-times icon-white\"></i></button>");;return buf.join("");
+buf.push("<a" + (jade.attr("href", "" + (src) + "", true, false)) + (jade.attr("title", "" + (title) + "", true, false)) + "><img" + (jade.attr("data-src", "" + (thumbsrc) + "", true, false)) + (jade.attr("alt", "" + (title) + "", true, false)) + "/><div class=\"progressfill\"></div></a><button class=\"delete flatbtn\"><i class=\"fa fa-times icon-white\"></i></button>");;return buf.join("");
 };
 if (typeof define === 'function' && define.amd) {
   define([], function() {
@@ -2662,6 +2664,7 @@ module.exports = Galery = (function(_super) {
     this.onTurnRight = __bind(this.onTurnRight, this);
     this.onTurnLeft = __bind(this.onTurnLeft, this);
     this.checkIfEmpty = __bind(this.checkIfEmpty, this);
+    this.addItem = __bind(this.addItem, this);
     return Galery.__super__.constructor.apply(this, arguments);
   }
 
@@ -2680,6 +2683,7 @@ module.exports = Galery = (function(_super) {
   };
 
   Galery.prototype.initialize = function() {
+    this.photoCount = 0;
     Galery.__super__.initialize.apply(this, arguments);
     return this.listenTo(this.collection, 'destroy', this.onPictureDestroyed);
   };
@@ -2688,7 +2692,7 @@ module.exports = Galery = (function(_super) {
     var key, transform, view, _ref, _results;
     Galery.__super__.afterRender.apply(this, arguments);
     this.$el.photobox('a.server', {
-      thumbs: true,
+      thumbs: false,
       history: false,
       zoomable: false,
       beforeShow: this.beforeImageDisplayed,
@@ -2740,6 +2744,21 @@ module.exports = Galery = (function(_super) {
       }
       return _results;
     }
+  };
+
+  Galery.prototype.addItem = function(model) {
+    var options, view;
+    options = _.extend({}, {
+      model: model
+    }, this.itemViewOptions(model));
+    view = new this.itemView(options);
+    this.views[model.cid] = view.render();
+    if (this.photoCount < 50) {
+      view.setSource();
+    }
+    this.photoCount++;
+    this.appendView(view);
+    return this.checkIfEmpty(this.views);
   };
 
   Galery.prototype.checkIfEmpty = function() {
@@ -3253,6 +3272,7 @@ module.exports = PhotoView = (function(_super) {
     if (!this.model.isNew()) {
       this.link.addClass('server');
     }
+    this.image.unveil();
     if (this.image.get(0).complete) {
       return this.onImageLoaded();
     } else {
@@ -3262,6 +3282,12 @@ module.exports = PhotoView = (function(_super) {
         };
       })(this));
     }
+  };
+
+  PhotoView.prototype.setSource = function() {
+    var source;
+    source = this.$("img").attr("data-src");
+    return this.$("img").attr("src", source);
   };
 
   PhotoView.prototype.setProgress = function(percent) {
