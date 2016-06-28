@@ -2689,7 +2689,7 @@ module.exports = Galery = (function(_super) {
   };
 
   Galery.prototype.afterRender = function() {
-    var key, transform, view, _ref, _results;
+    var key, view, _ref, _results;
     Galery.__super__.afterRender.apply(this, arguments);
     this.$el.photobox('a.server', {
       thumbs: false,
@@ -2705,11 +2705,6 @@ module.exports = Galery = (function(_super) {
       this.turnLeft = $('#pbOverlay .pbCaptionText .btn-group .left');
       this.turnLeft.unbind('click');
       this.turnLeft.remove();
-      if (navigator.userAgent.search("Firefox") !== -1) {
-        transform = "transform";
-      } else {
-        transform = "-webkit-transform";
-      }
       this.turnLeft = $('<a id="left" class="btn left" type="button"> <i class="fa fa-undo"> </i> </a>').appendTo('#pbOverlay .pbCaptionText .btn-group');
       this.turnLeft.on('click', this.onTurnLeft);
       this.turnRight = $('#pbOverlay .pbCaptionText .btn-group .right');
@@ -2905,17 +2900,17 @@ module.exports = Galery = (function(_super) {
     return $('#pbOverlay .wrapper img')[0].dataset.orientation = orientation;
   };
 
-  Galery.prototype.onImageDisplayed = function(args) {
+  Galery.prototype.onImageDisplayed = function() {
     var id, orientation, parts, thumb, thumbs, url, _i, _len, _ref, _results;
     this.isViewing = true;
-    url = $('.pbThumbs .active img').attr('src');
     id = this.getIdPhoto();
     if (this.options.editable) {
       app.router.navigate("albums/" + this.album.id + "/edit/photo/" + id, false);
     } else {
       app.router.navigate("albums/" + this.album.id + "/photo/" + id, false);
     }
-    this.downloadLink.attr('href', url.replace('thumbs', 'raws'));
+    url = "photos/raws/" + id + ".jpg";
+    this.downloadLink.attr('href', url);
     thumbs = $('#pbOverlay .pbThumbs img');
     _results = [];
     for (_i = 0, _len = thumbs.length; _i < _len; _i++) {
@@ -3002,7 +2997,8 @@ module.exports = Galery = (function(_super) {
   Galery.prototype.showPhoto = function(photoid) {
     var url;
     url = "photos/" + photoid + ".jpg";
-    return $('a[href="' + url + '"]').trigger('click.photobox');
+    $('a[href="' + url + '"]').trigger('click.photobox');
+    return setTimeout(this.onImageDisplayed, 10);
   };
 
   Galery.prototype.closePhotobox = function() {
