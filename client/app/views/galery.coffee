@@ -51,10 +51,6 @@ module.exports = class Galery extends ViewCollection
             @turnLeft = $('#pbOverlay .pbCaptionText .btn-group .left')
             @turnLeft.unbind 'click'
             @turnLeft.remove()
-            if navigator.userAgent.search("Firefox") isnt -1
-                transform = "transform"
-            else
-                transform = "-webkit-transform"
             @turnLeft = $('<a id="left" class="btn left" type="button">
                          <i class="fa fa-undo"> </i> </a>')
                 .appendTo '#pbOverlay .pbCaptionText .btn-group'
@@ -242,10 +238,8 @@ module.exports = class Galery extends ViewCollection
         $('#pbOverlay .wrapper img')[0].dataset.orientation = orientation
 
 
-    onImageDisplayed: (args) =>
+    onImageDisplayed: =>
         @isViewing = true
-        # Initialize download link
-        url = $('.pbThumbs .active img').attr 'src'
         id = @getIdPhoto()
 
         if @options.editable
@@ -253,7 +247,8 @@ module.exports = class Galery extends ViewCollection
         else
             app.router.navigate "albums/#{@album.id}/photo/#{id}", false
 
-        @downloadLink.attr 'href', url.replace 'thumbs', 'raws'
+        url = "photos/raws/#{id}.jpg"
+        @downloadLink.attr 'href', url
 
         # Rotate thumbs
         thumbs = $('#pbOverlay .pbThumbs img')
@@ -345,10 +340,10 @@ module.exports = class Galery extends ViewCollection
     showPhoto: (photoid) ->
         url = "photos/#{photoid}.jpg"
         $('a[href="' + url + '"]').trigger('click.photobox')
+        setTimeout @onImageDisplayed, 10
 
 
     # Close galery via photobox close button.
     closePhotobox: ->
         if @isViewing
             $('#pbCloseBtn').click()
-
