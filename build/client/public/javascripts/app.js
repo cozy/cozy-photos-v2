@@ -1353,7 +1353,7 @@ var PhotoProcessor, blobify, makeScreenBlob, makeScreenDataURI, makeThumbBlob, m
 
 readFile = function(photo, next) {
   var reader;
-  if (photo.file.size > 10 * 1024 * 1024) {
+  if (photo.file.size > 50 * 1024 * 1024) {
     return next(t('is too big (max 10Mo)'));
   }
   if (!photo.file.type.match(/image\/.*/)) {
