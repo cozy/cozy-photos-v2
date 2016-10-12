@@ -61,7 +61,14 @@ module.exports = thumb =
                 metadata =
                     exif:
                         orientation:    orientation
-                        date:           data.Properties['date:create']
+                        # From Exif 2.2 specs :
+                        # DateTimeOriginal - Date of the original creation of data
+                        # DateTimeDigitized - Date of the digitization of data
+                        # DateTime - Modification date of the file
+                        # In case of a raw photo 3 should be the same
+                        # In case of a retouched photo DateTimeOriginal should be the date of the shot, DateTime the retouching date.
+                        # Fallback to creation date if  no exif.
+                        date:           data.Properties['exif:DateTimeOriginal'] ? data.Properties['exif:DateTimeDigitized'] ? data.Properties['exif:DateTime'] ? data.Properties['date:create']
                         gps:            GPS
 
                 callback null, metadata

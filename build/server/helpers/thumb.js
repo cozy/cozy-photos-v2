@@ -35,7 +35,7 @@ module.exports = thumb = {
     return gm(filePath).options({
       imageMagick: true
     }).identify(function(err, data) {
-      var GPS, alt, lat, long, metadata, orientation;
+      var GPS, alt, lat, long, metadata, orientation, ref1, ref2, ref3;
       if (err) {
         return callback(err);
       } else {
@@ -59,7 +59,7 @@ module.exports = thumb = {
         metadata = {
           exif: {
             orientation: orientation,
-            date: data.Properties['date:create'],
+            date: (ref1 = (ref2 = (ref3 = data.Properties['exif:DateTimeOriginal']) != null ? ref3 : data.Properties['exif:DateTimeDigitized']) != null ? ref2 : data.Properties['exif:DateTime']) != null ? ref1 : data.Properties['date:create'],
             gps: GPS
           }
         };
