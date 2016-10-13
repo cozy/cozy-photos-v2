@@ -141,8 +141,8 @@ module.exports.create = function(req, res, next) {
           orientation = metadata.exif.orientation;
           req.body.orientation = photoHelpers.getOrientation(orientation);
         }
-        if ((metadata != null ? (ref3 = metadata.exif) != null ? ref3.dateTime : void 0 : void 0) != null) {
-          req.body.date = metadata.exif.dateTime;
+        if ((metadata != null ? (ref3 = metadata.exif) != null ? ref3.date : void 0 : void 0) != null) {
+          req.body.date = metadata.exif.date;
         }
         req.body.gps = (metadata != null ? (ref4 = metadata.exif) != null ? ref4.gps : void 0 : void 0) || null;
       }

@@ -115,8 +115,8 @@ module.exports.create = (req, res, next) ->
                     req.body.orientation = \
                         photoHelpers.getOrientation orientation
 
-                if metadata?.exif?.dateTime?
-                    req.body.date = metadata.exif.dateTime
+                if metadata?.exif?.date?
+                    req.body.date = metadata.exif.date
 # MODIF : Rémi
                 req.body.gps = metadata?.exif?.gps or null
 #
