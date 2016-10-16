@@ -210,7 +210,7 @@ module.exports = PhotoCollection = (function(_super) {
   };
 
   PhotoCollection.prototype.comparator = function(model) {
-    return model.get('title');
+    return model.get('date');
   };
 
   PhotoCollection.prototype.hasGPS = function() {
