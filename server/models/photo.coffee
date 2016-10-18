@@ -37,7 +37,7 @@ module.exports = class Photo extends cozydb.CozyModel
             async.eachSeries photos, (photo, next) ->
 
                 # Don't try to extract data if we already got them
-                if photo.binary? and not photo.gps?
+                if photo.binary? && !(photo.gps? && photo.date?)
                     photo.extractGpsFromBinary next
                 else setImmediate next
             , callback
@@ -54,7 +54,7 @@ module.exports = class Photo extends cozydb.CozyModel
                     log.error err
                     callback()
                 else
-                    @updateAttributes { gps: data.exif.gps }, (err) ->
+                    @updateAttributes { gps: data.exif.gps, date: data.exif.date }, (err) ->
                         log.error err if err?
                         callback() # ~ next()
 

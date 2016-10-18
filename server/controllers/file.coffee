@@ -103,6 +103,8 @@ module.exports.createPhoto = (req, res, next) ->
             log.raw err
             return next err
 
+        photo.extractGpsFromBinary ->
+
         if photo.binary?.thumb? and photo.binary.screen?
             res.status(201).send photo
         else

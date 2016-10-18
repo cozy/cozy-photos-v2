@@ -130,6 +130,7 @@ module.exports.createPhoto = function(req, res, next) {
       log.raw(err);
       return next(err);
     }
+    photo.extractGpsFromBinary(function() {});
     if ((((ref = photo.binary) != null ? ref.thumb : void 0) != null) && (photo.binary.screen != null)) {
       return res.status(201).send(photo);
     } else {
